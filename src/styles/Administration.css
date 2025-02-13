@@ -1,0 +1,302 @@
+/* Administração de Usuários */
+.administration-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.message {
+  margin: 10px 0;
+  color: green;
+}
+
+/* Colunas de Usuários */
+.user-columns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+}
+
+.user-column {
+  flex: 1;
+  background-color: transparent;
+  border-radius: 10px;
+  padding: 20px;
+  max-height: 800px;
+  height: 800px;
+}
+
+.user-column h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  text-align: center;
+  color: #FFF;
+}
+
+.user-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  min-height: 200px;
+  max-height: 700px;
+  height: 100%;
+  border: 2px dashed #525252;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #1d1d1d;
+  transition: background-color 0.3s ease;
+  overflow-y: scroll;
+}
+
+.user-boxes::-webkit-scrollbar {
+  width: 10px;
+}
+
+.user-boxes::-webkit-scrollbar-track {
+  background-color: #525252;
+  border-radius: 5px;
+}
+
+.user-boxes.dragging-over {
+  background-color: #e6f7ff;
+  border-color: #007bff;
+}
+
+/* Garante que a box fique visível durante o arraste */
+.user-box {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+  background-color: #111111;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  padding: 15px;
+  width: 300px;
+  min-height: 200px;
+  max-height: 220px;
+  height: 100%;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+  cursor: grab; 
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-box:active {
+  cursor: grabbing; /* Indica o estado de arraste */
+}
+
+.user-box.dragging {
+  opacity: 1 !important;
+}
+
+.user-box img.profile-picture {
+  width: 130px;
+  height: 190px;
+  border-radius: 5%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.user-box h3 {
+  font-size: 1rem;
+  margin: 10px 0;
+  color: #FFF;
+}
+
+.user-box p {
+  margin: 5px 0;
+  font-size: 0.8rem;
+  color: #ffffff;
+  word-wrap: break-word;
+}
+
+.user-box .button {
+  margin-top: 10px;
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  color: #fff;
+  background-color: #eca500;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.user-box .button:hover {
+  background-color: #0056b3;
+}
+
+.icon-troca img {
+  max-width: 40px;
+  width: 100%;
+}
+
+/* Modal de Edição */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content-admin {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  width: 450px;
+  position: relative;
+  box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.1);
+}
+
+.modal-content-admin h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.modal-content-admin label {
+  display: block;
+  margin: 10px 0;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #d5d5d5;
+}
+
+.modal-content-admin select,
+.modal-content-admin input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.modal-content-admin input {
+  background-color: #FFF;
+}
+
+.modal-content-admin .button {
+  margin: 10px 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content-admin .button:hover {
+  background-color: #0056b3;
+}
+
+.modal-content-admin .cancel {
+  background-color: #e57803;
+  color: #fff;
+}
+
+.modal-content-admin .cancel:hover {
+  background-color: #cc6e0a;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .user-columns {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .user-box {
+    width: 90%;
+  }
+
+  .modal-content {
+    width: 90%;
+  }
+}
+
+
+.dashboard-administration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.dashboard-administration h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.admin-ds {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  width: 80%;
+}
+  
+.admin-ds-div1 { grid-area: 1 / 1 / 2 / 2; }
+.admin-ds-div2 { grid-area: 2 / 1 / 3 / 2; }
+.admin-ds-div3 { grid-area: 1 / 2 / 2 / 3; }
+.admin-ds-div4 { grid-area: 1 / 3 / 2 / 6; }
+.admin-ds-div5 { grid-area: 2 / 3 / 3 / 6; }
+.admin-ds-div6 { grid-area: 1 / 6 / 2 / 8; }
+
+
+.dashboard-box {
+  background-color: #252525;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.doughnut-chart-container-admin {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  margin: auto;
+}
+
+.doughnut-center-admin {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 22px;
+  font-weight: bold;
+  color: #ffffff;
+  text-align: center;
+}
+
+.doughnut-center-admin p {
+  font-size: 3rem;
+  margin-bottom: 0;
+}
+
+.doughnut-center-admin b {
+  display: block;
+  margin: 0;
+  font-size: 14px;
+  color: #ffffff;
+}

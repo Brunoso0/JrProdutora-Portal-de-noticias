@@ -1,0 +1,255 @@
+/* ====== Configuração Geral ====== */
+.body-admin {
+    background: #f6f5f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    margin: -20px 0 50px;
+}
+
+/* ====== Layout Principal ====== */
+.admin-container {
+    display: grid;
+    grid-template-columns: auto 1fr; /* Sidebar auto */
+    grid-template-rows: 100vh;
+    height: 100vh;
+    transition: grid-template-columns 0.3s ease; /* Transição suave */
+}
+
+/* ====== Sidebar Modernizada ====== */
+.sidebar {
+    background-color: #1e1e2f; /* Cor de fundo */
+    width: 80px; /* Largura retraída */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid #2a2a3a;
+    overflow-x: hidden; /* Garante que o conteúdo extra seja ocultado horizontalmente */
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.sidebar:hover {
+    width: 260px; /* Expande ao hover */
+}
+
+/* ====== Seção do Perfil na Sidebar ====== */
+.profile-section {
+    text-align: center;
+    margin-bottom: 1rem;
+    transition: opacity 0.3s ease;
+    padding: 1rem 0;
+}
+
+.profile-picture {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 2px solid #ffffff33;
+    transition: width 0.3s ease, height 0.3s ease, border 0.3s ease;
+}
+
+.sidebar:hover .profile-picture {
+    border: 3px solid #ffffff66;
+}
+
+.profile-name {
+    font-weight: bold;
+    color: #ddd;
+    opacity: 0;
+    visibility: hidden;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar:hover .profile-name {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ====== Menu da Sidebar ====== */
+.menu ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Ícones sempre alinhados à esquerda */
+    padding: 0.8rem 1rem;
+    color: #aaa;
+    font-size: 1rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Os ícones sempre ficam visíveis */
+.menu-item svg {
+    width: 24px;
+    height: 24px;
+    min-width: 24px; /* Garante que os ícones tenham um tamanho fixo */
+    color: #aaa;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.menu-item:hover svg {
+    color: white;
+    transform: scale(1.1); /* Aumenta levemente no hover */
+}
+
+.menu-item:hover {
+    background: #25253a;
+    color: #ffffff;
+}
+
+.menu-item.active {
+    background: linear-gradient(90deg, #4f46e5 0%, #312e81 100%);
+    color: white;
+    font-weight: bold;
+} 
+
+.menu-item i {
+    width: 40px;
+    min-width: 40px; /* Garante que o espaço do ícone não mude */
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-item i img {
+    width: 24px;
+    filter: brightness(0.8);
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.menu-item:hover i img {
+    filter: brightness(1);
+    transform: scale(1.1);
+}
+
+.menu-item .menu-text {
+    margin-left: 10px; /* Espaço entre o texto e o ícone */
+}
+
+/* Mostra os textos quando a sidebar estiver expandida */
+.sidebar:hover .menu-item .menu-text {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+.toggle-btn {
+    background: #25253a;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 20px;
+    right: 10px;
+    transition: all 0.3s ease;
+  }
+  .toggle-btn:hover {
+    background: #4f46e5;
+  }
+
+/* Texto do Menu */
+.menu-item .menu-text {
+    display: none; /* Esconde completamente quando a sidebar está retraída */
+    margin-left: 10px; /* Espaço entre o ícone e o texto */
+    transition: display 0.3s ease;
+}
+
+.sidebar:hover .menu-item .menu-text {
+    display: inline-block; /* Exibe o texto apenas quando a sidebar está expandida */
+}
+
+/* ====== Botão de Logout ====== */
+.logout-btn {
+    margin-top: auto;
+    padding: 0.9rem 1rem;
+    background: transparent;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.logout-btn:hover {
+    background: #ff4d4d;
+    color: white;
+}
+
+.logout-btn i img {
+    width: 26px;
+    transform: rotate(180deg);
+}
+
+/* Indicadores (exemplo de notificação) */
+.notification-badge {
+    background: red;
+    color: white;
+    font-size: 0.7rem;
+    padding: 3px 6px;
+    border-radius: 10px;
+    position: absolute;
+    right: 15px;
+    font-weight: bold;
+}
+
+.sidebar:hover .notification-badge {
+    right: 20px;
+}
+
+
+/* ====== Conteúdo Principal ====== */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    transition: margin-left 0.3s ease;
+    background-color: #121212;
+}
+
+.admin-container .sidebar:hover ~ .main-content {
+    margin-left: 1px;
+}
+
+/* ====== Grid de Widgets ====== */
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.content-box {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.content-box:hover {
+    transform: scale(1.05);
+}

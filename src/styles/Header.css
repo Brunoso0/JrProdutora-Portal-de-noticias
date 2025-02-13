@@ -1,0 +1,75 @@
+body {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+}
+
+  
+  .hamburger-menu {
+    font-size: 1.5rem;
+    border: none;
+    background: none;
+  }
+
+  .logo img {
+    width: 160px;
+  }
+  
+  .search-bar input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+
+  .search-button2 {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    background-color: #fff;
+    cursor: pointer;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+  }
+
+  .search-bar input {
+    margin-right: 0.5rem;
+  }
+
+  .search-bar {
+    position: relative;
+  }
+
+  .search-bar input {
+    padding-left: 2rem;
+  }
+
+  .search-bar input::placeholder {
+    color: #b1b1b1;
+  }
+
+  .search-bar input:focus {
+    outline: none;
+  }
+
+  .search-bar::before {
+    content: "\1F50D"; /* Unicode for magnifying glass icon */
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: #ccc;
+  }

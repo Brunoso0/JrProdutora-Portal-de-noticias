@@ -1,13 +1,36 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
+@font-face { font-family: Archivo; src: url(../src/fonts/Archivo-Bold.ttf); }
+@font-face { font-family: Archivo; src: url(../src/fonts/Archivo-Medium.ttf); }
+@font-face { font-family: Archivo; src: url(../src/fonts/Archivo-Regular.ttf); }
+@font-face { font-family: Archivo; src: url(../src/fonts/Archivo-SemiBold.ttf); }
+
+/* Adicionando largura e altura ao html e body */
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: Archivo;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+
+/* Corrigindo layout da aplicação principal */
+.app {
+  margin: 0 auto;
+  max-width: 1200px; /* Define a largura máxima da aplicação */
+  padding: 20px; /* Espaçamento interno confortável */
+  position: relative; /* Garante que o fluxo permaneça natural */
+}
+
+/* Correção para grids */
+.news-grid, .second-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.news-grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsividade */
+}
+
+.second-grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Configuração semelhante */
 }

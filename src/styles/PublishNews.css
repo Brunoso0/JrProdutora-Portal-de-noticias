@@ -1,0 +1,378 @@
+/* ==============================
+  Estilo Geral
+============================== */
+/* Container principal */
+
+
+.publish-news-container {
+  display: flex;
+  flex-direction: column;
+  padding-left: 30px; 
+  height: 100%;
+  justify-content: center;
+}
+
+/* Responsividade geral */
+@media (max-width: 1024px) {
+  .editor-preview {
+   flex-direction: column;
+   align-items: center;
+  }
+
+  .news-editor,
+  .news-preview {
+   width: 100%;
+   max-width: 100%;
+  }
+
+  .row-fields {
+   flex-direction: column;
+   gap: 10px;
+  }
+
+  .publish-button {
+   max-width: 300px;
+  }
+}
+
+/* ==============================
+  Editor e Preview
+============================== */
+/* Editor e Preview lado a lado */
+
+.news-details {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+}
+
+.Container-editor {
+  border-radius: 10px;
+  max-width: 1500px;
+  width: 100%;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#editor-container {
+  background-color: #f9f9f9;
+}
+
+#editor-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+#editor-container::-webkit-scrollbar-thumb {
+  width: 3px;
+  background-color: #262626;
+  border-radius: 5px;
+}
+
+#editor-container::-webkit-scrollbar-corner {
+  background-color: transparent;
+  border-radius: 5px;
+}
+
+/* Editor de Notícia */
+
+#editorjs {
+  min-height: 300px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: text;
+}
+
+.codex-editor__placeholder {
+  user-select: none; /* Impede que o placeholder seja selecionado */
+  pointer-events: none; /* Impede interação com o placeholder */
+  color: #b0b0b0; /* Deixa o placeholder visualmente mais discreto */
+}
+
+
+.news-editor {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-items: start;
+  justify-content: center;
+}
+
+.news-editor h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+}
+
+/* Preview de Notícia */
+.news-preview {
+  flex: 1.5;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.news-preview h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.preview-content h1 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.preview-content h3 {
+  font-size: 1.4rem;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.preview-content p {
+  font-size: 1rem;
+  margin: 15px 0;
+  color: #555;
+}
+
+/* ==============================
+  Campos e Botões
+============================== */
+/* Campos lado a lado */
+
+.title-field { 
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-direction: column;
+}
+
+.title-field label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.title-field input {
+  padding: 10px;
+  font-size: 1rem;
+  background-color: #fff;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.autor-fields {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.autor-fields label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.autor-fields input {
+  padding: 10px;
+  font-size: 1rem;
+  background-color: #fff;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.row-fields {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.row-fields label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.row-fields input,
+.row-fields select {
+  padding: 10px;
+  font-size: 1rem;
+  background-color: #fff;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+/* Botão de Publicar */
+.publish-button {
+  font-family: inherit;
+  font-size: 20px;
+  background: #ffae00;
+  color: white;
+  padding: 0.7em 1em;
+  padding-left: 0.9em;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 10px auto;
+}
+
+.publish-button span {
+  display: block;
+  margin-left: 0.3em;
+  transition: all 0.3s ease-in-out;
+}
+
+.publish-button svg {
+  display: block;
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.publish-button:hover .svg-wrapper {
+  animation: fly-1 0.6s ease-in-out infinite alternate;
+}
+
+.publish-button:hover svg {
+  transform: translateX(1.2em) rotate(45deg) scale(1.1);
+}
+
+.publish-button:hover span {
+  transform: translateX(5em);
+}
+
+.publish-button:active {
+  transform: scale(0.95);
+}
+
+@keyframes fly-1 {
+  from {
+    transform: translateY(0.1em);
+  }
+
+  to {
+    transform: translateY(-0.1em);
+  }
+}
+
+
+
+select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+select:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+/* ==============================
+  Editor.js Customizado
+============================== */
+/* Campo de texto para o Editor */
+
+.editorjs, .ce-paragraph {
+  font-family: consolas, monospace;
+}
+
+
+/* ==============================
+  Barra de Ferramentas
+============================== */
+/* Barra de ferramentas do Editor */
+
+.menu-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.menu-bar button {
+  background-color: #ffae00;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.menu-bar button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.menu-bar button.is-active {
+  background-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.menu-bar button:disabled {
+  background-color: #ddd;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+/* ==============================
+  Estilo de Elementos do Editor.js
+============================== */
+/* Estilo adicional para H1-H6 */
+
+.ce-header {
+  font-weight: 0;
+}
+
+/* ==============================
+  Estilo do Texto Editado
+============================== */
+
+.cdx-text-color {
+  font-size: inherit; /* Mantém o tamanho do texto */
+  line-height: inherit; /* Mantém a altura da linha */
+}
+
+.cdx-block__content {
+  font-size: 16px; /* Ajuste o tamanho da fonte conforme necessário */
+}
+
+.cdx-inline-tool-input {
+  font-size: 16px; /* Ajuste o tamanho da fonte conforme necessário */
+}
+/* Remover estilo bold padrão */
+.cdx-block  {
+  font-weight: normal;
+}
+
+
+.ce-paragraph b {
+  line-height: 1.5;
+}
+
+

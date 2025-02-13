@@ -1,0 +1,20 @@
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2rem auto;
+    width: 60%;
+    border-top: 1.5px solid #2929295a;
+}
+
+.section-header h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #292929;
+}
+
+.section-header a {
+    text-decoration: none;
+    color: #292929;
+    font-size: 1rem;
+}

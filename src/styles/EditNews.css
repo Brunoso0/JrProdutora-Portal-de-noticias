@@ -1,0 +1,186 @@
+.news-container-custom {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.news-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #FFF;
+  }
+  
+  .news-description {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #FFF;
+}
+
+.news-grid-custom {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 20px;
+}
+
+.news-item-custom {
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #2d2d2d;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.news-item-custom p {
+  color: #FFF;
+}
+
+.news-item-title {
+    margin-top: 0;
+    color: #FFF;
+}
+
+.news-item-author,
+.news-item-category,
+.news-item-date {
+    margin: 10px 0;
+}
+
+.edit-button {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-button:hover {
+    background-color: #faa72a;
+}
+
+.delete-button {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: none;
+    cursor: pointer;
+}
+
+.news-item-custom:hover .delete-button {
+    display: block;
+}
+
+.modal-title {
+    margin-bottom: 20px;
+}
+
+.modal-program,
+.modal-category {
+    margin-bottom: 10px;
+}
+
+.modal-label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.modal-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.editor-container {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px;
+    height: 50rem;
+    overflow: scroll;
+}
+
+.save-button,
+.cancel-button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.save-button:hover,
+.cancel-button:hover {
+    opacity: 0.8;
+}
+
+.bin-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: rgb(255, 68, 68);
+    cursor: pointer;
+    border: 2px solid rgb(255, 201, 201);
+    transition-duration: 0.3s;
+    position: absolute;
+    right: 10px;
+    overflow: hidden;
+    padding: 0;
+}
+
+  .bin-bottom {
+    width: 15px;
+    z-index: 2;
+  }
+  .bin-top {
+    width: 17px;
+    transform-origin: right;
+    transition-duration: 0.3s;
+    z-index: 2;
+  }
+  .bin-button:hover .bin-top {
+    transform: rotate(45deg);
+  }
+  .bin-button:hover {
+    background-color: rgb(255, 0, 0);
+  }
+  .bin-button:active {
+    transform: scale(0.9);
+  }
+  .garbage {
+    position: absolute;
+    width: 14px;
+    height: auto;
+    z-index: 1;
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  .bin-button:hover .garbage {
+    animation: throw 0.4s linear;
+  }
+  @keyframes throw {
+    from {
+      transform: translate(-400%, -700%);
+      opacity: 0;
+    }
+    to {
+      transform: translate(0%, 0%);
+      opacity: 1;
+    }
+  }
+  
+
+  .Toastify__toast-container {
+    z-index: 9999 !important; /* Garante que o toast seja exibido sobre todos os elementos */
+  }
+  

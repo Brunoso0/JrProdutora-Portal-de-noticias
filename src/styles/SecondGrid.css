@@ -1,0 +1,68 @@
+/* Estilos para o SecondGrid */
+.second-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Quatro colunas */
+    gap: 1rem; /* Espaçamento entre os itens */
+    margin: 2rem auto; /* Margem superior/inferior e centralização horizontal */
+    width: 60%; /* Largura da seção */
+}
+
+.grid-item {
+    background-color: #ffffff; /* Fundo branco */
+    border: 1px solid #ddd; /* Borda sutil */
+    border-radius: 8px; /* Cantos arredondados */
+    overflow: hidden; /* Garante que o conteúdo respeite os cantos arredondados */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.208); /* Sombra leve */
+    text-align: center;
+    position: relative; /* Necessário para posicionamento da tag */
+    text-decoration: none;
+}
+
+.grid-item:hover {
+    text-decoration: none;
+}
+
+/* Estilo para o container da imagem */
+.image-container {
+    position: relative;
+    overflow: hidden; /* Garante que o zoom da imagem não vaze */
+}
+
+.image-container img {
+    width: 100%; /* A imagem ocupa toda a largura do container */
+    height: auto;
+    transition: transform 0.3s ease-in-out; /* Transição suave */
+}
+
+.image-container:hover img {
+    transform: scale(1.1); /* Zoom na imagem */
+}
+
+/* Tag sobre a imagem */
+.image-container .tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #ff4b4b;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    opacity: 1; /* A tag sempre visível */
+    transition: opacity 0.3s ease-in-out; /* Transição suave */
+    z-index: 2;
+}
+
+.image-container:hover .tag {
+    opacity: 1; /* Mantém a tag visível no hover */
+    z-index: 2;
+}
+
+/* Título abaixo da imagem */
+.grid-item .title {
+    padding: 0.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
