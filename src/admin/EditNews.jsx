@@ -313,14 +313,15 @@ const handleDelete = async (id) => {
             ></path>
           </svg>
             </button>
+            <div className="Edit-img">
               {firstImage && (
                <img
                  src={firstImage}
                  alt="Imagem da notícia"
                  className="news-thumbnail"
-                 style={{ width: "100%", height: "auto", borderRadius: "5px" }}
                />
              )}
+            </div>
             <h3 className="news-item-title">
               {news.conteudo?.blocks?.find((block) => block.type === "title")?.data?.text || "Sem título"}
             </h3>

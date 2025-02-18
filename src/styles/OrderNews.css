@@ -1,0 +1,267 @@
+.order-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    overflow-y: scroll;
+    background-color: #1b1b1b;
+}
+
+.order-container::-webkit-scrollbar   {
+    width: 15px;
+}
+
+.order-container::-webkit-scrollbar-track   {
+    background-color: #000000;
+    border-radius: 11px;
+}
+
+.order-container::-webkit-scrollbar-corner {
+    width: 20px;
+}
+
+.order-container::-webkit-scrollbar-thumb {
+    background-color: #e68900;
+    border-radius: 11px;
+    border: 5px solid #000000;
+}
+
+/* 🔹 Grid principal */
+.order-news-grid {
+    display: grid;
+    grid-template-columns: 3fr 1.5fr 1.5fr;
+    gap: 1rem;
+    margin: 0 auto;
+    padding-top: 30px;
+}
+
+/* 🔹 Notícia principal (grande) */
+.order-main-article {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+    position: relative;
+    width: 100%;
+    height: 400px; /* Definição fixa para manter padrão */
+    cursor: grab;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+/* 🔹 Imagem da notícia grande (sempre ocupa toda a div) */
+.order-main-article img {
+    position: absolute; /* Permite ajustar à div */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que preencha o espaço sem distorção */
+}
+
+/* 🔹 Container das notícias laterais */
+.order-side-articles {
+    grid-column: 2 / 4;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 1rem;
+}
+
+/* 🔹 Estilização das notícias laterais */
+.order-article {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: grab;
+    height: 200px; /* Mantendo altura padronizada */
+}
+
+/* 🔹 Imagens das notícias laterais */
+.order-article img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* 🔹 Categoria */
+.order-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #ff4b4b;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+/* 🔹 Título da notícia (principal e laterais) */
+.order-title {
+    margin-bottom: 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.534);
+    background-color: rgba(0, 0, 0, 0.5);
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    -webkit-box-shadow: inset -1px -8px 59px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: inset -1px -8px 59px 0px rgba(0,0,0,0.75);
+    box-shadow: inset -1px -8px 59px 0px rgba(0,0,0,0.75);
+}
+
+/* 🔹 Botão de salvar */
+.order-save-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background: #ff9100;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.order-save-button:hover {
+    background: #ffae00;
+}
+
+/* 🔹 SEÇÃO PARA ESCOLHA DE NOTÍCIAS */
+.news-selection {
+    margin-top: 30px;
+    padding: 20px;
+    background: #0c0c0c;
+    border-radius: 8px;
+    color: #FFF;
+    overflow-y: scroll;
+}
+
+
+.news-filter {
+    width: 30%;
+}
+
+.news-selection::-webkit-scrollbar   {
+    width: 15px;
+}
+
+.news-selection::-webkit-scrollbar-track   {
+    background-color: #000000;
+    border-radius: 11px;
+}
+
+.news-selection::-webkit-scrollbar-corner {
+    width: 20px;
+}
+
+.news-selection::-webkit-scrollbar-thumb {
+    background-color: #e68900;
+    border-radius: 11px;
+    border: 5px solid #000000;
+}
+
+.news-selection h3 {
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* 🔹 Lista de notícias disponíveis */
+.news-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+/* 🔹 Item da lista */
+.news-item-order {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.265);
+    transition: transform 0.2s ease-in-out;
+}
+
+.news-item-order:hover {
+    transform: scale(1.03);
+}
+
+/* 🔹 Imagem das notícias na lista */
+.news-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* 🔹 Informações da notícia */
+.news-info {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.news-info h4 {
+    font-size: 15px;
+    margin-bottom: 5px;
+    color: #dbdbdb;
+}
+
+.news-info p {
+    font-size: 14px;
+    color: rgb(166, 166, 166);
+}
+
+/* 🔹 Botão de destaque */
+.highlight-button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #ff9800;
+    color: white;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.highlight-button:hover {
+    background: #e68900;
+}
+
+/* 🔹 Responsividade */
+@media (max-width: 1024px) {
+    .order-news-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .order-side-articles {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .news-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .order-news-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .order-side-articles {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .news-list {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}

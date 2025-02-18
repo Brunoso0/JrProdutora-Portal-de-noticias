@@ -110,7 +110,7 @@ const PublishNews = () => {
       console.error("Editor container not found.");
       return;
     }
-
+  
     try {
       editorInstance.current = new EditorJS({
         holder: editorContainerRef.current.id,
@@ -122,7 +122,20 @@ const PublishNews = () => {
           list: { class: List, inlineToolbar: true },
           marker: Marker,
           table: { class: Table, inlineToolbar: true },
-          embed: Embed,
+          embed: {
+            class: Embed,
+            config: {
+              services: {
+                youtube: true,
+                twitter: true,
+                instagram: true,
+                facebook: true,
+                codepen: true,
+                vimeo: true,
+                pinterest: true,
+              },
+            },
+          },
           quote: { class: Quote, inlineToolbar: true },
           code: CodeTool,
           inlineCode: InlineCode,
@@ -161,16 +174,17 @@ const PublishNews = () => {
             },
           ],
         },
-        onReady: () => console.log("EditorJS is ready."),
+        onReady: () => console.log("✅ EditorJS inicializado com Embed."),
         onChange: async () => {
           const content = await editorInstance.current.save();
           setNewsData((prev) => ({ ...prev, content }));
         },
-      }); 
+      });
     } catch (error) {
-      console.error("Error initializing EditorJS:", error);
+      console.error("❌ Erro ao inicializar o EditorJS:", error);
     }
   };
+  
 
   const handleSubmit = async () => {
     try {

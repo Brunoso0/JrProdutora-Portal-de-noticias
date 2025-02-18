@@ -23,6 +23,16 @@ const Administration = () => {
   const [userStates, setUserStates] = useState({}); // Estados locais dos usuários
   const [userCountByAccess, setUserCountByAccess] = useState([]); // Contagem de usuários por nível de acesso
 const [totalUsuariosLiberados, setTotalUsuariosLiberados] = useState(0); // Total de usuários liberados
+const [newCategory, setNewCategory] = useState(""); // Para criar nova categoria
+const [newProgram, setNewProgram] = useState(""); // Para criar novo programa
+const [categories, setCategories] = useState([]);
+const [programs, setPrograms] = useState([]);
+const [deleteTarget, setDeleteTarget] = useState(null); // Guarda o ID da categoria ou programa
+const [deleteType, setDeleteType] = useState(""); // Define se é categoria ou programa
+const [showConfirmModal, setShowConfirmModal] = useState(false); // Controla o modal de confirmação
+
+
+
 
   
 
@@ -188,9 +198,151 @@ const doughnutOptions = {
         setIsLoading(false);
       }
     };
+    
   
     fetchUsers();
+    fetchCategoriesAndPrograms();
   }, []);
+
+  // Função para buscar categorias e programas atualizados
+const fetchCategoriesAndPrograms = async () => {
+  try {
+    const token = localStorage.getItem("authToken");
+
+    const [categoriesResponse, programsResponse] = await Promise.all([
+      axios.get("http://localhost:5000/noticias/categorias", {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+      axios.get("http://localhost:5000/noticias/programas", {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    ]);
+
+    setCategories(categoriesResponse.data);
+    setPrograms(programsResponse.data);
+  } catch (error) {
+    console.error("Erro ao buscar categorias e programas:", error);
+  }
+};
+
+  // Criar Categoria
+const handleCreateCategory = async () => {
+  if (!newCategory.trim()) {
+    toast.warn("⚠️ O nome da categoria não pode estar vazio.");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("authToken");
+    await axios.post(
+      "http://localhost:5000/noticias/nova-categoria",
+      { nome: newCategory },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    toast.success("✅ Categoria criada com sucesso!");
+    setNewCategory("");
+    await fetchCategoriesAndPrograms(); // Atualiza a lista
+  } catch (error) {
+    console.error("Erro ao criar categoria:", error.response?.data || error.message);
+    toast.error("❌ Erro ao criar categoria.");
+  }
+};
+
+// Criar Programa
+const handleCreateProgram = async () => {
+  if (!newProgram.trim()) {
+    toast.warn("⚠️ O nome do programa não pode estar vazio.");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("authToken");
+    await axios.post(
+      "http://localhost:5000/noticias/novo-programa",
+      { nome: newProgram },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    toast.success("✅ Programa criado com sucesso!");
+    setNewProgram("");
+    await fetchCategoriesAndPrograms(); // Atualiza a lista
+  } catch (error) {
+    console.error("Erro ao criar programa:", error.response?.data || error.message);
+    toast.error("❌ Erro ao criar programa.");
+  }
+};
+
+// Remover Categoria
+const handleDeleteCategory = async (id) => {
+  if (!id) return;
+
+  try {
+    const token = localStorage.getItem("authToken");
+    await axios.delete(`http://localhost:5000/noticias/remover-categoria/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    toast.success("✅ Categoria removida com sucesso!");
+    await fetchCategoriesAndPrograms(); // Atualiza a lista
+  } catch (error) {
+    console.error("Erro ao remover categoria:", error.response?.data || error.message);
+    toast.error("❌ Erro ao remover categoria.");
+  }
+};
+
+// Remover Programa
+const handleDeleteProgram = async (id) => {
+  if (!id) return;
+
+  try {
+    const token = localStorage.getItem("authToken");
+    await axios.delete(`http://localhost:5000/noticias/remover-programa/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    toast.success("✅ Programa removido com sucesso!");
+    await fetchCategoriesAndPrograms(); // Atualiza a lista
+  } catch (error) {
+    console.error("Erro ao remover programa:", error.response?.data || error.message);
+    toast.error("❌ Erro ao remover programa.");
+  }
+};
+
+const handleDeleteConfirmed = async () => {
+  if (!deleteTarget) return;
+
+  try {
+    const token = localStorage.getItem("authToken");
+    const url = deleteType === "categoria"
+      ? `http://localhost:5000/noticias/remover-categoria/${deleteTarget}`
+      : `http://localhost:5000/noticias/remover-programa/${deleteTarget}`;
+
+    await axios.delete(url, { headers: { Authorization: `Bearer ${token}` } });
+
+    toast.success(deleteType === "categoria" ? "✅ Categoria removida!" : "✅ Programa removido!");
+    fetchCategoriesAndPrograms();
+  } catch (error) {
+    console.error("Erro ao remover:", error.response?.data || error.message);
+    toast.error("❌ Erro ao remover.");
+  } finally {
+    setShowConfirmModal(false);
+    setDeleteTarget(null);
+    setDeleteType("");
+  }
+};
+
+
+const confirmDelete = (id, type) => {
+  setDeleteTarget(id);
+  setDeleteType(type);
+  setShowConfirmModal(true);
+};
+
   
 
   const handleDragStart = (event, user) => {
@@ -303,6 +455,8 @@ const doughnutOptions = {
       setMessage("Erro ao atualizar usuário.");
     }
   };
+  
+
 
   const openEditModal = (user) => {
     setSelectedUser(user);
@@ -484,10 +638,63 @@ const doughnutOptions = {
             <h3>Receita gerada</h3>
           </div>
           <div className="admin-ds-div6 dashboard-box">
+            <h2>Categorias e Programas</h2>
 
+            {/* Criar Nova Categoria */}
+            <div className="form-group">
+              <input
+                type="text"
+                placeholder="Nome da nova categoria"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+              />
+              <button onClick={handleCreateCategory} className="button">Criar Categoria</button>
+            </div>
+
+            {/* Remover Categoria via Select */}
+            <div className="form-group">
+              <select onChange={(e) => confirmDelete(e.target.value, "categoria")} defaultValue="">
+                <option value="" disabled>Selecione uma categoria para excluir</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>{category.nome}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Criar Novo Programa */}
+            <div className="form-group">
+              <input
+                type="text"
+                placeholder="Nome do novo programa"
+                value={newProgram}
+                onChange={(e) => setNewProgram(e.target.value)}
+              />
+              <button onClick={handleCreateProgram} className="button">Criar Programa</button>
+            </div>
+
+            {/* Remover Programa via Select */}
+            <div className="form-group">
+              <select onChange={(e) => confirmDelete(e.target.value, "programa")} defaultValue="">
+                <option value="" disabled>Selecione um programa para excluir</option>
+                {programs.map((program) => (
+                  <option key={program.id} value={program.id}>{program.nome}</option>
+                ))}
+              </select>
+            </div>
           </div>
           </div>
       </div>
+      {showConfirmModal && (
+  <div className="modal">
+    <div className="modal-content">
+      <h3>Confirmação</h3>
+      <p>Tem certeza de que deseja excluir esta {deleteType === "categoria" ? "categoria" : "programa"}?</p>
+      <button onClick={handleDeleteConfirmed} className="button">Sim, Excluir</button>
+      <button onClick={() => setShowConfirmModal(false)} className="button cancel">Cancelar</button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
