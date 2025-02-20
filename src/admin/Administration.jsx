@@ -620,7 +620,6 @@ const confirmDelete = (id, type) => {
       )}
 
       <div className="dashboard-administration">
-        <h2>Dashboard de Administração</h2>
         <div className="admin-ds">
         <div className="admin-ds-div1 dashboard-box" >
           <div className="doughnut-chart-container-admin"  style={{ maxHeight: "250px" }}>

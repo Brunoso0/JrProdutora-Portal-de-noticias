@@ -5,24 +5,25 @@ import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import Paragraph from "@editorjs/paragraph";
+// import AIText from '@alkhipce/editorjs-aitext';   QUEM SABE NO FUTURO
 import ImageTool from "@editorjs/image";
+import SimpleImage from "@editorjs/simple-image";
 import Marker from "@editorjs/marker";
 import Table from "@editorjs/table";
-import Embed from "@editorjs/embed";
+import Embed from '@editorjs/embed';
 import Quote from "@editorjs/quote";
 import CodeTool from "@editorjs/code";
 import InlineCode from "@editorjs/inline-code";
 import Warning from "@editorjs/warning";
-import Checklist from "@editorjs/checklist";
 import Underline from "@editorjs/underline";
 import DragDrop from "editorjs-drag-drop";
 import ColorPicker from "editorjs-color-picker";
 import Title from "title-editorjs";
+import AudioTool from '@furison-tech/editorjs-audio';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/PublishNews.css";
-import moment from "moment"; // Certifique-se de importar o moment.js
-
+import moment from "moment";
 
 const PublishNews = () => {
   const [newsData, setNewsData] = useState({
@@ -38,7 +39,6 @@ const PublishNews = () => {
   const editorInstance = useRef(null);
   const navigate = useNavigate();
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,25 +47,25 @@ const PublishNews = () => {
           navigate("/login");
           return;
         }
-  
+
         const headers = { Authorization: `Bearer ${token}` };
         const [userRes, programsRes, categoriesRes] = await Promise.all([
           axios.get("http://localhost:5000/auth/user", { headers }),
           axios.get("http://localhost:5000/noticias/programas", { headers }),
           axios.get("http://localhost:5000/noticias/categorias", { headers }),
         ]);
-  
+
         const userData = userRes.data;
-  
-        console.log("✅ Dados do usuário carregados:", userData); // Log para depuração
-  
+
+        console.log("✅ Dados do usuário carregados:", userData);
+
         setNewsData((prev) => ({
           ...prev,
           author: userData.name || "Usuário",
-          autor_id: userData.id, // Captura o ID do usuário corretamente
+          autor_id: userData.id,
           publicationDate: new Date().toLocaleString(),
         }));
-  
+
         setPrograms(programsRes.data || []);
         setCategories(categoriesRes.data || []);
       } catch (err) {
@@ -73,21 +73,20 @@ const PublishNews = () => {
         toast.error("Erro ao carregar dados. Tente novamente mais tarde.", {
           position: "top-right",
         });
-  
+
         if (err.response?.status === 401) {
           localStorage.removeItem("authToken");
           navigate("/login");
         }
       }
     };
-  
+
     fetchData();
-  
-    // Inicializa o editor se ainda não foi inicializado
+
     if (!editorInstance.current && editorContainerRef.current) {
       initializeEditor();
     }
-  
+
     return () => {
       if (editorInstance.current) {
         try {
@@ -102,18 +101,11 @@ const PublishNews = () => {
       }
     };
   }, [navigate]);
-  
-  
 
   const initializeEditor = () => {
-    if (!editorContainerRef.current) {
-      console.error("Editor container not found.");
-      return;
-    }
-  
-    try {
+    if (!editorInstance.current) {
       editorInstance.current = new EditorJS({
-        holder: editorContainerRef.current.id,
+        holder: "editor-container",
         placeholder: "Digite o conteúdo da notícia aqui...",
         tools: {
           title: { class: Title, inlineToolbar: true },
@@ -122,25 +114,89 @@ const PublishNews = () => {
           list: { class: List, inlineToolbar: true },
           marker: Marker,
           table: { class: Table, inlineToolbar: true },
+          audio: {
+            class: AudioTool,
+            config: {
+              uploader: {
+                uploadByFile: async (file) => {
+                  return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                      try {
+                        const base64Audio = e.target.result.split(",")[1];
+                        const fileName = file.name;
+  
+                        const response = await fetch("http://localhost:5000/noticias/audio", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            audioBase64: base64Audio,
+                            fileName: fileName,
+                          }),
+                        });
+  
+                        const result = await response.json();
+  
+                        if (result.success) {
+                          resolve({ success: 1, file: { url: result.file.url } });
+                        } else {
+                          reject(new Error("Erro ao enviar áudio"));
+                        }
+                      } catch (error) {
+                        console.error("Erro ao enviar áudio:", error);
+                        reject(error);
+                      }
+                    };
+                    reader.readAsDataURL(file);
+                  });
+                },
+              },
+            },
+          },
+          // aitext: {
+          //   class: AIText,
+          //   config: {
+          //     callback: async (text) => {
+          //       try {
+          //         const response = await fetch("http://localhost:5000/noticias/aitext", {
+          //           method: "POST",
+          //           headers: {
+          //             "Content-Type": "application/json",
+          //           },
+          //           body: JSON.stringify({ prompt: text }),
+          //         });
+          
+          //         if (!response.ok) {
+          //           throw new Error(`Erro na API: ${response.status}`);
+          //         }
+          
+          //         const data = await response.json();
+          
+          //         if (data.success) {
+          //           return data.response; // ✅ Retorna a resposta correta
+          //         } else {
+          //           return "Erro ao processar IA"; // Retorna um texto padrão em caso de erro
+          //         }
+          //       } catch (error) {
+          //         console.error("Erro na IA:", error);
+          //         return "Erro ao acessar a API de IA"; // Retorna um texto de erro para evitar falhas
+          //       }
+          //     },
+          //   },
+          // },
           embed: {
             class: Embed,
+            inlineToolbar: true,
             config: {
-              services: {
-                youtube: true,
-                twitter: true,
-                instagram: true,
-                facebook: true,
-                codepen: true,
-                vimeo: true,
-                pinterest: true,
-              },
+              services: { youtube: true, twitter: true, instagram: true },
             },
           },
           quote: { class: Quote, inlineToolbar: true },
           code: CodeTool,
           inlineCode: InlineCode,
           warning: Warning,
-          checklist: Checklist,
           underline: Underline,
           colorPicker: {
             class: ColorPicker,
@@ -164,121 +220,117 @@ const PublishNews = () => {
               },
             },
           },
+          simpleImage: SimpleImage, // Adicionando o SimpleImage
           dragDrop: DragDrop,
         },
         data: {
-          blocks: [
-            {
-              type: "paragraph",
-              data: { text: "" },
-            },
-          ],
+          blocks: [{ type: "paragraph", data: { text: "" } }],
         },
-        onReady: () => console.log("✅ EditorJS inicializado com Embed."),
+        onReady: () => {
+          console.log("✅ EditorJS inicializado com AI Text.");
+        },
         onChange: async () => {
           const content = await editorInstance.current.save();
           setNewsData((prev) => ({ ...prev, content }));
         },
       });
-    } catch (error) {
-      console.error("❌ Erro ao inicializar o EditorJS:", error);
     }
   };
   
 
+
   const handleSubmit = async () => {
     try {
-        const token = localStorage.getItem("authToken");
-        if (!token) throw new Error("Usuário não autenticado!");
+      const token = localStorage.getItem("authToken");
+      if (!token) throw new Error("Usuário não autenticado!");
 
-        const content = await editorInstance.current.save();
-        const titleBlock = content.blocks.find((block) => block.type === "title");
-        const title = titleBlock ? titleBlock.data.text : "";
+      const content = await editorInstance.current.save();
+      const titleBlock = content.blocks.find((block) => block.type === "title");
+      const title = titleBlock ? titleBlock.data.text : "";
 
-        console.log("🔍 Conteúdo salvo do EditorJS:", content);
-        console.log("🔍 Título extraído:", title);
+      console.log("🔍 Conteúdo salvo do EditorJS:", content);
+      console.log("🔍 Título extraído:", title);
 
-        if (!title) {
-            console.error("❌ Erro: O título da notícia é obrigatório!");
-            toast.error("O título da notícia é obrigatório!", { position: "top-right" });
-            return;
-        }
+      if (!title) {
+        console.error("❌ Erro: O título da notícia é obrigatório!");
+        toast.error("O título da notícia é obrigatório!", { position: "top-right" });
+        return;
+      }
 
-        if (!content.blocks || content.blocks.length === 0) {
-            console.error("❌ Erro: O conteúdo da notícia está vazio!");
-            toast.error("O conteúdo da notícia não pode estar vazio!", { position: "top-right" });
-            return;
-        }
+      if (!content.blocks || content.blocks.length === 0) {
+        console.error("❌ Erro: O conteúdo da notícia está vazio!");
+        toast.error("O conteúdo da notícia não pode estar vazio!", { position: "top-right" });
+        return;
+      }
 
-        console.log("🔍 Dados atuais de newsData:", newsData);
+      console.log("🔍 Dados atuais de newsData:", newsData);
 
-        if (!newsData.autor_id) {
-            console.error("❌ Erro: O ID do autor não foi encontrado!");
-            toast.error("Erro ao identificar o autor. Refaça o login.", { position: "top-right" });
-            return;
-        }
+      if (!newsData.autor_id) {
+        console.error("❌ Erro: O ID do autor não foi encontrado!");
+        toast.error("Erro ao identificar o autor. Refaça o login.", { position: "top-right" });
+        return;
+      }
 
-        if (!newsData.category_id || !newsData.program_id) {
-            console.error("❌ Erro: Programa ou categoria não selecionados!");
-            toast.error("Selecione um programa e uma categoria para a notícia!", { position: "top-right" });
-            return;
-        }
+      if (!newsData.category_id || !newsData.program_id) {
+        console.error("❌ Erro: Programa ou categoria não selecionados!");
+        toast.error("Selecione um programa e uma categoria para a notícia!", { position: "top-right" });
+        return;
+      }
 
-        const payload = {
-          autor_id: newsData.autor_id,
-          autor: newsData.author,
-          categoria_id: newsData.category_id,
-          programa_id: newsData.program_id,
-          conteudo: content,
-          publicationDate: moment().format("DD/MM/YYYY, HH:mm:ss"), // Agora está no formato esperado pelo backend
-          titulo: title,
-        };
+      const payload = {
+        autor_id: newsData.autor_id,
+        autor: newsData.author,
+        categoria_id: newsData.category_id,
+        programa_id: newsData.program_id,
+        conteudo: content,
+        publicationDate: moment().format("DD/MM/YYYY, HH:mm:ss"),
+        titulo: title,
+      };
 
-        console.log("🚀 Payload enviado para o backend:", payload);
+      console.log("🚀 Payload enviado para o backend:", payload);
 
-        const response = await axios.post("http://localhost:5000/noticias/salvar", payload, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
+      const response = await axios.post("http://localhost:5000/noticias/salvar", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-        console.log("✅ Resposta do servidor:", response.data);
+      console.log("✅ Resposta do servidor:", response.data);
 
-        toast.success("Notícia publicada com sucesso!", { position: "top-right" });
-        editorInstance.current.clear();
-        setNewsData((prev) => ({
-            ...prev,
-            program_id: "",
-            category_id: "",
-            content: null,
-            title: "",
-        }));
+      toast.success("Notícia publicada com sucesso!", { position: "top-right" });
+      editorInstance.current.clear();
+      setNewsData((prev) => ({
+        ...prev,
+        program_id: "",
+        category_id: "",
+        content: null,
+        title: "",
+      }));
     } catch (error) {
-        console.error("❌ Erro ao publicar notícia:", error.response?.data || error.message);
-        toast.error(`Erro ao publicar a notícia: ${error.response?.data?.error || error.message}`, {
-            position: "top-right",
-        });
+      console.error("❌ Erro ao publicar notícia:", error.response?.data || error.message);
+      toast.error(`Erro ao publicar a notícia: ${error.response?.data?.error || error.message}`, {
+        position: "top-right",
+      });
     }
-};
-
+  };
 
   return (
     <div className="publish-news-container">
       <ToastContainer />
       <div className="news-editor">
         <div className="news-details">
-        <h2>Publicar Notícia</h2>
+          <h2>Publicar Notícia</h2>
           <div className="autor-fields">
             <div className="title-field">
-            <label>
-              Autor:
-              <input type="text" value={newsData.author} readOnly />
-            </label>
-            <label>
-              Data de Publicação:
-              <input type="text" value={newsData.publicationDate} readOnly />
-            </label>
+              <label>
+                Autor:
+                <input type="text" value={newsData.author} readOnly />
+              </label>
+              <label>
+                Data de Publicação:
+                <input type="text" value={newsData.publicationDate} readOnly />
+              </label>
             </div>
           </div>
 
@@ -330,7 +382,7 @@ const PublishNews = () => {
               height: "50rem",
               overflow: "scroll",
             }}
-          ></div> 
+          ></div>
 
           <button className="publish-button" onClick={handleSubmit}>
             <div className="svg-wrapper-1">
@@ -351,8 +403,6 @@ const PublishNews = () => {
             </div>
             <span>Send</span>
           </button>
-
-          
         </div>
       </div>
     </div>

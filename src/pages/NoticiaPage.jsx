@@ -1,56 +1,100 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import "../styles/NoticiaPage.css";
 
 const NoticiaPage = () => {
-  const { slug } = useParams();
+    const { slug } = useParams();
+    const [noticia, setNoticia] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  // Substituir isso por uma chamada real ao backend, caso necessário
-  const noticias = {
-    'robos-domesticos': {
-      title: 'Robôs domésticos começam a ser adotados para tarefas diárias...',
-      content:
-        'Os robôs domésticos estão revolucionando a maneira como realizamos tarefas diárias, trazendo conforto e eficiência.',
-      image: '/img/image.png',
-    },
-    'smartphone-projetor-3d': {
-      title: 'Novo Smartphone Projetor 3D...',
-      content:
-        'A nova tecnologia de projeção em smartphones promete transformar o entretenimento.',
-      image: '/img/image.png',
-    },
-    'tecnologia-6g': {
-      title: 'Tecnologia 6G chega às metrópoles...',
-      content:
-        'A nova geração da internet oferece velocidades ultrarrápidas e baixa latência.',
-      image: '/img/image.png',
-    },
-    'relogio-inteligente': {
-      title: 'Empresa lança relógio inteligente...',
-      content:
-        'Os relógios inteligentes estão ajudando na saúde mental com novos recursos.',
-      image: '/img/image.png',
-    },
-    'tecnologia-vr': {
-      title: 'Escolas adotam a tecnologia VR...',
-      content:
-        'A realidade virtual está revolucionando a maneira como os estudantes aprendem.',
-      image: '/img/image.png',
-    },
+    useEffect(() => {
+      const fetchNoticia = async () => {
+          try {
+              console.log(`🔹 Buscando notícia com slug: ${slug}`);
+              const response = await axios.get(`http://localhost:5000/noticias/slug/${slug}`);
+
+              console.log("✅ Notícia recebida:", response.data);
+              setNoticia(response.data);
+
+              // 🔹 Se ainda não foi visualizada nesta sessão, incrementa
+              if (!sessionStorage.getItem(`viewed_${slug}`)) {
+                  await axios.post(`http://localhost:5000/noticias/view/${slug}`);
+                  sessionStorage.setItem(`viewed_${slug}`, "true");
+              }
+          } catch (error) {
+              console.error("❌ Erro ao buscar a notícia:", error);
+              setNoticia(null);
+          } finally {
+              setLoading(false);
+          }
+      };
+
+      fetchNoticia();
+  }, [slug]);
+
+    if (loading) return <p>Carregando notícia...</p>;
+    if (!noticia) return <p>Notícia não encontrada.</p>;
+
+    /** 🔹 Converte o conteúdo do Editor.js para HTML */
+    const renderContentFromEditorJS = (content) => {
+      if (!content || !content.blocks) return "<p>Sem conteúdo disponível</p>";
+  
+      return content.blocks.map((block, index) => {
+          switch (block.type) {
+              case "title":
+                  return `<h1 key=${index}>${block.data.text}</h1>`;
+              case "header":
+                  return `<h3 key=${index}>${block.data.text}</h3>`;
+  
+              case "paragraph":
+                  return `<p key=${index}>${block.data.text}</p>`;
+  
+              case "list":
+                  if (!Array.isArray(block.data.items)) return "<ul><li>Erro ao carregar lista</li></ul>";
+  
+                  return block.data.style === "unordered"
+                      ? `<ul key=${index}>${block.data.items
+                          .map(item => `<li>${typeof item === "object" ? (item.content ? item.content : JSON.stringify(item)) : item}</li>`)
+                          .join("")}</ul>`
+                      : `<ol key=${index}>${block.data.items
+                          .map(item => `<li>${typeof item === "object" ? (item.content ? item.content : JSON.stringify(item)) : item}</li>`)
+                          .join("")}</ol>`;
+  
+              case "quote":
+                  return `<blockquote key=${index}><p>${block.data.text}</p><cite>${block.data.caption || ""}</cite></blockquote>`;
+  
+              case "embed":
+                  return `<iframe key=${index} width="560" height="315" src="${block.data.embed}" frameborder="0" allowfullscreen></iframe>`;
+  
+              case "code":
+                  return `<pre key=${index}><code>${block.data.code}</code></pre>`;
+  
+              case "image":
+              case "simpleImage":
+                  return `<img key=${index} src="${block.data.file?.url || block.data.url}" alt="${block.data.caption || "Imagem"}" />`;
+  
+              default:
+                  return `<p key=${index}>${block.data.text || "[Bloco não suportado]"}</p>`;
+          }
+      }).join(""); // 🔹 Junta tudo em uma string HTML
   };
+  
+  
+  
 
-  const noticia = noticias[slug];
-
-  if (!noticia) {
-    return <div>Notícia não encontrada</div>;
-  }
-
-  return (
-    <div className="noticia-page">
-      <img src={noticia.image} alt={noticia.title} style={{ width: '100%', borderRadius: '8px' }} />
-      <h1>{noticia.title}</h1>
-      <p>{noticia.content}</p>
-    </div>
-  );
+    return (
+        <div className="noticia-page">
+            <h1>{noticia.titulo}</h1>
+            <p className="autor">
+                Por {noticia.autor}, publicado em {new Date(noticia.data_hora_publicacao).toLocaleString("pt-BR")}
+            </p>
+            <div
+                className="conteudo"
+                dangerouslySetInnerHTML={{ __html: renderContentFromEditorJS(noticia.conteudo) }}
+            />
+        </div>
+    );
 };
 
 export default NoticiaPage;

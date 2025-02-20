@@ -47,8 +47,15 @@ const OrderNews = () => {
 
       // Ordena as notícias com base no layout salvo no banco
       const orderedNews = layoutResponse.data.map((layoutItem) => {
-        return formattedNews.find((news) => news.id === layoutItem.noticia_id);
-      }).filter(Boolean); // Remove entradas nulas
+        const foundNews = formattedNews.find((news) => news.id === layoutItem.noticia_id);
+        
+        if (foundNews) {
+          return { ...foundNews, slug: layoutItem.slug }; // 🔹 Garante que o slug seja mantido
+        }
+        
+        return null;
+      }).filter(Boolean);
+      
 
       console.log("Notícias organizadas com base no banco:", orderedNews);
 

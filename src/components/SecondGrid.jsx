@@ -1,46 +1,61 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import "../styles/SecondGrid.css";
 
 const SecondGrid = () => {
-    const articles = [
-        {
-            title: 'Protótipo de veículo voador é apresentado...',
-            category: 'Veículos',
-            image: '/img/carrovoador.png',
-            slug: 'protótipo-veículo-voador',
-        },
-        {
-            title: 'Plataforma de videoconferência com hologramas...',
-            category: 'Hologramas',
-            image: '/img/muiesorrino.png',
-            slug: 'videoconferencia-hologramas',
-        },
-        {
-            title: 'Nova geração de consoles é lançada...',
-            category: 'Realidade Virtual',
-            image: '/img/pretodeoculos.png',
-            slug: 'nova-geração-consoles',
-        },
-        {
-            title: 'Internet via satélite alcança áreas remotas...',
-            category: 'Internet',
-            image: '/img/satelite.png',
-            slug: 'internet-satelite',
-        },
-    ];
+    const [articles, setArticles] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchMostViewed = async () => {
+            try {
+                console.log("🔹 Buscando as 4 notícias mais vistas da semana...");
+                const response = await axios.get("http://localhost:5000/noticias/mais-vistas-semana");
+                
+                console.log("✅ Notícias mais vistas recebidas:", response.data);
+                setArticles(response.data);
+            } catch (error) {
+                console.error("❌ Erro ao buscar notícias mais vistas:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchMostViewed();
+    }, []);
+
+    const handleClick = async (slug) => {
+        try {
+            await axios.post(`http://localhost:5000/noticias/view/${slug}`);
+            console.log(`👁️ Visualização registrada para a notícia: ${slug}`);
+        } catch (error) {
+            console.error("❌ Erro ao registrar visualização:", error);
+        }
+    };
 
     return (
         <section className="second-grid">
-            {articles.map((article, index) => (
-                <Link to={`/noticia/${article.slug}`} className="grid-item" key={index}>
-                    <div className="image-container">
-                        <span className="tag">{article.category}</span>
-                        <img src={article.image} alt={article.title} />
-                    </div>
-                    <h3 className="title">{article.title}</h3>
-                </Link>
-            ))}
+            {loading ? (
+                <p>Carregando notícias mais vistas...</p>
+            ) : articles.length > 0 ? (
+                articles.map((article, index) => (
+                    <Link 
+                        to={`/noticia/${article.slug}`} 
+                        className="grid-item" 
+                        key={index}
+                        onClick={() => handleClick(article.slug)}
+                    >
+                        <div className="image-container">
+                            <span className="tag">{article.categoria}</span>
+                            <img src={article.imageUrl} alt={article.titulo} />
+                        </div>
+                        <h3 className="title">{article.titulo}</h3>
+                    </Link>
+                ))
+            ) : (
+                <p>Nenhuma notícia popular encontrada nesta semana.</p>
+            )}
         </section>
     );
 };

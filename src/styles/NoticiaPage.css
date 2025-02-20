@@ -1,0 +1,73 @@
+.noticia-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.noticia-page h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #0a0a0a;
+}
+
+.noticia-page a {
+    color: #ff0000;
+    text-decoration: none;
+}
+
+.noticia-page .autor {
+    font-size: 0.9em;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.noticia-page .conteudo {
+    font-size: 1.1em;
+    color: #444;
+}
+
+.noticia-page .conteudo h1,
+.noticia-page .conteudo h2,
+.noticia-page .conteudo h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.noticia-page .conteudo p {
+    margin-bottom: 15px;
+    font-weight: 200;
+}
+
+.noticia-page .conteudo img {
+    max-width: 100%;
+    height: auto;
+    margin: 20px 0;
+}
+
+.noticia-page .conteudo ul,
+.noticia-page .conteudo ol {
+    margin: 20px 0;
+    padding-left: 20px;
+}
+
+.noticia-page li {
+    font-weight: bold;
+}
+
+.noticia-page .conteudo blockquote {
+    margin: 20px 0;
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    border-left: 5px solid #ccc;
+    color: #555;
+}
+
+.noticia-page .conteudo blockquote cite {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #999;
+}

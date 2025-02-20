@@ -29,6 +29,9 @@ const EditNews = () => {
   const [categories, setCategories] = useState([]);
   const [selectedNews, setSelectedNews] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
+const [newsToDelete, setNewsToDelete] = useState(null);
+
   const editorRef = useRef(null);
 
   // Função para obter a primeira imagem do conteúdo da notícia
@@ -58,6 +61,8 @@ const EditNews = () => {
       return null;
     }
   };
+
+  
   
 
   useEffect(() => {
@@ -219,32 +224,33 @@ const EditNews = () => {
 };
 
 
-const handleDelete = async (id) => {
-  if (window.confirm("Tem certeza que deseja remover esta notícia?")) {
-      try {
-          const response = await axios.delete(`http://localhost:5000/noticias/${id}`);
-          if (response.status === 200) {
-              setNewsList((prev) => prev.filter((news) => news.id !== id));
-              toast.success("Notícia removida com sucesso!", {
-                  position: "top-right",
-              });
-          } else if (response.status === 404) {
-              toast.error("Notícia não encontrada.", {
-                  position: "top-right",
-              });
-          } else {
-              toast.error("Erro ao remover a notícia.", {
-                  position: "top-right",
-              });
-          }
-      } catch (error) {
-          console.error("Erro ao remover a notícia:", error);
-          toast.error("Erro ao remover a notícia. Tente novamente.", {
-              position: "top-right",
-          });
-      }
-  }
+const confirmDelete = (id) => {
+  setNewsToDelete(id);
+  setDeleteModalIsOpen(true);
 };
+
+const handleDelete = async () => {
+  if (!newsToDelete) return;
+
+  try {
+    const response = await axios.delete(`http://localhost:5000/noticias/${newsToDelete}`);
+    if (response.status === 200) {
+      setNewsList((prev) => prev.filter((news) => news.id !== newsToDelete));
+      toast.success("Notícia removida com sucesso!", { position: "top-right" });
+    } else if (response.status === 404) {
+      toast.error("Notícia não encontrada.", { position: "top-right" });
+    } else {
+      toast.error("Erro ao remover a notícia.", { position: "top-right" });
+    }
+  } catch (error) {
+    console.error("Erro ao remover a notícia:", error);
+    toast.error("Erro ao remover a notícia. Tente novamente.", { position: "top-right" });
+  }
+
+  setDeleteModalIsOpen(false);
+  setNewsToDelete(null);
+};
+
 
 
   return (
@@ -265,7 +271,7 @@ const handleDelete = async (id) => {
         return (
           <div key={news.id} className="news-item-custom">
 
-            <button className="bin-button" onClick={() => handleDelete(news.id)}>
+          <button className="bin-button" onClick={() => confirmDelete(news.id)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -415,6 +421,22 @@ const handleDelete = async (id) => {
         <button className="save-button" onClick={handleSave}>Salvar</button>
         <button className="cancel-button" onClick={closeModal}>Cancelar</button>
       </Modal>
+
+      <Modal
+        isOpen={deleteModalIsOpen}
+        onRequestClose={() => setDeleteModalIsOpen(false)}
+        contentLabel="Confirmar Exclusão"
+        className="modal-delete"
+        overlayClassName="overlay-delete"
+      >
+        <h2 className="modal-delete-title">Confirmar Exclusão</h2>
+        <p className="modal-delete-text">Tem certeza que deseja remover esta notícia?</p>
+        <div className="modal-delete-buttons">
+          <button className="delete-confirm-button" onClick={handleDelete}>Sim, excluir</button>
+          <button className="delete-cancel-button" onClick={() => setDeleteModalIsOpen(false)}>Cancelar</button>
+        </div>
+      </Modal>
+
 
       <ToastContainer style={{ zIndex: 9999 }} />
     </div>

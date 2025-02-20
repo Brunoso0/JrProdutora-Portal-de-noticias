@@ -30,7 +30,7 @@
 
 .image-container img {
     width: 100%; /* A imagem ocupa toda a largura do container */
-    height: auto;
+    height: 200px;
     transition: transform 0.3s ease-in-out; /* Transição suave */
 }
 

@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 0 0 20px 20px;
 }
 
 h1 {
@@ -133,7 +133,7 @@ h1 {
 }
 
 .user-box .button:hover {
-  background-color: #0056b3;
+  background-color: #ff9a03;
 }
 
 .icon-troca img {
@@ -205,7 +205,7 @@ h1 {
 }
 
 .modal-content-admin .button:hover {
-  background-color: #0056b3;
+  background-color: #ff9a03;
 }
 
 .modal-content-admin .cancel {
@@ -214,7 +214,7 @@ h1 {
 }
 
 .modal-content-admin .cancel:hover {
-  background-color: #cc6e0a;
+  background-color: #ff9a03;
 }
 
 /* Responsividade */
@@ -299,4 +299,42 @@ h1 {
   margin: 0;
   font-size: 14px;
   color: #ffffff;
+}
+
+
+.admin-ds-div6 h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #fff;
+  text-align: center;
+}
+
+.admin-ds-div6 .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.admin-ds-div6 .form-group input,
+.admin-ds-div6 .form-group select {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.admin-ds-div6 .form-group .button {
+  padding: 10px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #eca500;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.admin-ds-div6 .form-group .button:hover {
+  background-color: #ff9a03;
 }
