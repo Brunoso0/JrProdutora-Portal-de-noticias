@@ -631,6 +631,7 @@ const confirmDelete = (id, type) => {
           </div>
         </div>
           <div className="admin-ds-div3 dashboard-box">
+            <h3>Gerador de Relatorios</h3>
 
           </div>
           <div className="admin-ds-div4 dashboard-box">
@@ -639,47 +640,54 @@ const confirmDelete = (id, type) => {
           <div className="admin-ds-div6 dashboard-box">
             <h2>Categorias e Programas</h2>
 
-            {/* Criar Nova Categoria */}
-            <div className="form-group">
-              <input
-                type="text"
-                placeholder="Nome da nova categoria"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-              />
-              <button onClick={handleCreateCategory} className="button">Criar Categoria</button>
-            </div>
 
-            {/* Remover Categoria via Select */}
-            <div className="form-group">
-              <select onChange={(e) => confirmDelete(e.target.value, "categoria")} defaultValue="">
-                <option value="" disabled>Selecione uma categoria para excluir</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>{category.nome}</option>
-                ))}
-              </select>
-            </div>
+          <div className="categories-programs">
+              <div className="categories-container">
+                {/* Criar Nova Categoria */}
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      placeholder="Nome da nova categoria"
+                      value={newCategory}
+                      onChange={(e) => setNewCategory(e.target.value)}
+                    />
+                    <button onClick={handleCreateCategory} className="button">Criar Categoria</button>
+                  </div>
 
-            {/* Criar Novo Programa */}
-            <div className="form-group">
-              <input
-                type="text"
-                placeholder="Nome do novo programa"
-                value={newProgram}
-                onChange={(e) => setNewProgram(e.target.value)}
-              />
-              <button onClick={handleCreateProgram} className="button">Criar Programa</button>
-            </div>
+                  {/* Remover Categoria via Select */}
+                  <div className="form-group">
+                    <select onChange={(e) => confirmDelete(e.target.value, "categoria")} defaultValue="">
+                      <option value="" disabled>Selecione uma categoria para excluir</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>{category.nome}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-            {/* Remover Programa via Select */}
-            <div className="form-group">
-              <select onChange={(e) => confirmDelete(e.target.value, "programa")} defaultValue="">
-                <option value="" disabled>Selecione um programa para excluir</option>
-                {programs.map((program) => (
-                  <option key={program.id} value={program.id}>{program.nome}</option>
-                ))}
-              </select>
-            </div>
+                <div className="programs-container">
+                  {/* Criar Novo Programa */}
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      placeholder="Nome do novo programa"
+                      value={newProgram}
+                      onChange={(e) => setNewProgram(e.target.value)}
+                    />
+                    <button onClick={handleCreateProgram} className="button">Criar Programa</button>
+                  </div>
+
+                  {/* Remover Programa via Select */}
+                  <div className="form-group">
+                    <select onChange={(e) => confirmDelete(e.target.value, "programa")} defaultValue="">
+                      <option value="" disabled>Selecione um programa para excluir</option>
+                      {programs.map((program) => (
+                        <option key={program.id} value={program.id}>{program.nome}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
           </div>
           </div>
       </div>

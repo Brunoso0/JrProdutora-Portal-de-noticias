@@ -71,10 +71,22 @@ const AdminPage = () => {
   }, [navigate]);
   
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    navigate("/login");
-  };
+  const handleLogout = async () => {
+    try {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+            await axios.post("http://localhost:5000/auth/logout", {}, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+        }
+    } catch (error) {
+        console.error("Erro ao fazer logout:", error);
+    } finally {
+        localStorage.removeItem("authToken");
+        navigate("/login");
+    }
+};
+
 
   const renderActivePage = () => {
     if (userAccessLevel === 0) {

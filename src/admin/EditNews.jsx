@@ -6,6 +6,8 @@ import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import Paragraph from "@editorjs/paragraph";
 import ImageTool from "@editorjs/image";
+import SimpleImage from "@editorjs/simple-image";
+import AudioTool from '@furison-tech/editorjs-audio';
 import Marker from "@editorjs/marker";
 import Table from "@editorjs/table";
 import Embed from "@editorjs/embed";
@@ -142,7 +144,7 @@ const [newsToDelete, setNewsToDelete] = useState(null);
           config: {
             defaultLevel: 1,
             levels: [1, 2, 3],
-            defaultType: "H1",
+            defaultType: "H3",
             defaultColor: "Red",
             defaultAlignment: "Text-Align-Center",
           },
@@ -165,6 +167,47 @@ const [newsToDelete, setNewsToDelete] = useState(null);
             colors: ["#FF1300", "#FFEB00", "#005CFF", "#24D330", "#000000"],
           },
         },
+        audio: {
+                    class: AudioTool,
+                    config: {
+                      uploader: {
+                        uploadByFile: async (file) => {
+                          return new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = async (e) => {
+                              try {
+                                const base64Audio = e.target.result.split(",")[1];
+                                const fileName = file.name;
+          
+                                const response = await fetch("http://localhost:5000/noticias/audio", {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    audioBase64: base64Audio,
+                                    fileName: fileName,
+                                  }),
+                                });
+          
+                                const result = await response.json();
+          
+                                if (result.success) {
+                                  resolve({ success: 1, file: { url: result.file.url } });
+                                } else {
+                                  reject(new Error("Erro ao enviar áudio"));
+                                }
+                              } catch (error) {
+                                console.error("Erro ao enviar áudio:", error);
+                                reject(error);
+                              }
+                            };
+                            reader.readAsDataURL(file);
+                          });
+                        },
+                      },
+                    },
+                  },
         image: {
           class: ImageTool,
           config: {
@@ -181,6 +224,7 @@ const [newsToDelete, setNewsToDelete] = useState(null);
             },
           },
         },
+        simpleImage: SimpleImage, // Adicionando o SimpleImage
       },
       data: content || { blocks: [] },
       onReady: () => console.log("EditorJS está pronto."),

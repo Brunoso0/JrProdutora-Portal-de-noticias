@@ -80,8 +80,6 @@ const NoticiaPage = () => {
       }).join(""); // 🔹 Junta tudo em uma string HTML
   };
   
-  
-  
 
     return (
         <div className="noticia-page">

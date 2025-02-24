@@ -249,17 +249,33 @@ h1 {
 
 .admin-ds {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(9, 1fr);
   gap: 10px;
   width: 80%;
 }
   
-.admin-ds-div1 { grid-area: 1 / 1 / 2 / 2; }
-.admin-ds-div2 { grid-area: 2 / 1 / 3 / 2; }
-.admin-ds-div3 { grid-area: 1 / 2 / 2 / 3; }
-.admin-ds-div4 { grid-area: 1 / 3 / 2 / 6; }
-.admin-ds-div5 { grid-area: 2 / 3 / 3 / 6; }
-.admin-ds-div6 { grid-area: 1 / 6 / 2 / 8; }
+/* 
+  A classe .admin-ds-div1 usa a propriedade grid-area para definir sua posição 
+  dentro de um layout de CSS Grid. Os valores '1 / 1 / 2 / 2' especificam o seguinte:
+  - Começa na linha de linha 1
+  - Começa na linha de coluna 1
+  - Termina na linha de linha 2
+  - Termina na linha de coluna 2
+  Isso efetivamente coloca o elemento na célula superior esquerda da grade.
+*/
+*/
+.admin-ds-div1 { 
+  grid-column: 1; 
+}
+.admin-ds-div3 { 
+ grid-column: 2 / 4;
+}
+.admin-ds-div4 { 
+  grid-column: 4 /6;
+}
+.admin-ds-div6 { 
+  grid-column: 6 / 10;
+}
 
 
 .dashboard-box {
@@ -337,4 +353,11 @@ h1 {
 
 .admin-ds-div6 .form-group .button:hover {
   background-color: #ff9a03;
+}
+
+.categories-programs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
 }
