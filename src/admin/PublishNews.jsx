@@ -241,79 +241,77 @@ const PublishNews = () => {
 
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) throw new Error("Usuário não autenticado!");
+        const token = localStorage.getItem("authToken");
+        console.log("🔑 Token armazenado no localStorage:", token); // ADICIONADO PARA DEPURAÇÃO
+        
+        if (!token) throw new Error("Usuário não autenticado!");
 
-      const content = await editorInstance.current.save();
-      const titleBlock = content.blocks.find((block) => block.type === "title");
-      const title = titleBlock ? titleBlock.data.text : "";
+        const content = await editorInstance.current.save();
+        const titleBlock = content.blocks.find((block) => block.type === "title");
+        const title = titleBlock ? titleBlock.data.text : "";
 
-      console.log("🔍 Conteúdo salvo do EditorJS:", content);
-      console.log("🔍 Título extraído:", title);
+        if (!title) {
+            console.error("❌ Erro: O título da notícia é obrigatório!");
+            toast.error("O título da notícia é obrigatório!", { position: "top-right" });
+            return;
+        }
 
-      if (!title) {
-        console.error("❌ Erro: O título da notícia é obrigatório!");
-        toast.error("O título da notícia é obrigatório!", { position: "top-right" });
-        return;
-      }
+        if (!content.blocks || content.blocks.length === 0) {
+            console.error("❌ Erro: O conteúdo da notícia está vazio!");
+            toast.error("O conteúdo da notícia não pode estar vazio!", { position: "top-right" });
+            return;
+        }
 
-      if (!content.blocks || content.blocks.length === 0) {
-        console.error("❌ Erro: O conteúdo da notícia está vazio!");
-        toast.error("O conteúdo da notícia não pode estar vazio!", { position: "top-right" });
-        return;
-      }
+        if (!newsData.autor_id) {
+            console.error("❌ Erro: O ID do autor não foi encontrado!");
+            toast.error("Erro ao identificar o autor. Refaça o login.", { position: "top-right" });
+            return;
+        }
 
-      console.log("🔍 Dados atuais de newsData:", newsData);
+        if (!newsData.category_id || !newsData.program_id) {
+            console.error("❌ Erro: Programa ou categoria não selecionados!");
+            toast.error("Selecione um programa e uma categoria para a notícia!", { position: "top-right" });
+            return;
+        }
 
-      if (!newsData.autor_id) {
-        console.error("❌ Erro: O ID do autor não foi encontrado!");
-        toast.error("Erro ao identificar o autor. Refaça o login.", { position: "top-right" });
-        return;
-      }
+        const payload = {
+            autor_id: newsData.autor_id,
+            autor: newsData.author,
+            categoria_id: newsData.category_id,
+            programa_id: newsData.program_id,
+            conteudo: content,
+            publicationDate: moment().format("DD/MM/YYYY, HH:mm:ss"),
+            titulo: title,
+        };
 
-      if (!newsData.category_id || !newsData.program_id) {
-        console.error("❌ Erro: Programa ou categoria não selecionados!");
-        toast.error("Selecione um programa e uma categoria para a notícia!", { position: "top-right" });
-        return;
-      }
+        console.log("🚀 Payload enviado para o backend:", payload);
 
-      const payload = {
-        autor_id: newsData.autor_id,
-        autor: newsData.author,
-        categoria_id: newsData.category_id,
-        programa_id: newsData.program_id,
-        conteudo: content,
-        publicationDate: moment().format("DD/MM/YYYY, HH:mm:ss"),
-        titulo: title,
-      };
+        const response = await axios.post("http://localhost:5000/noticias/salvar", payload, {
+            headers: {
+                Authorization: `Bearer ${token}`, // Certifique-se de que esse cabeçalho está presente
+                "Content-Type": "application/json",
+            },
+        });
 
-      console.log("🚀 Payload enviado para o backend:", payload);
+        console.log("✅ Resposta do servidor:", response.data);
 
-      const response = await axios.post("http://localhost:5000/noticias/salvar", payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      console.log("✅ Resposta do servidor:", response.data);
-
-      toast.success("Notícia publicada com sucesso!", { position: "top-right" });
-      editorInstance.current.clear();
-      setNewsData((prev) => ({
-        ...prev,
-        program_id: "",
-        category_id: "",
-        content: null,
-        title: "",
-      }));
+        toast.success("Notícia publicada com sucesso!", { position: "top-right" });
+        editorInstance.current.clear();
+        setNewsData((prev) => ({
+            ...prev,
+            program_id: "",
+            category_id: "",
+            content: null,
+            title: "",
+        }));
     } catch (error) {
-      console.error("❌ Erro ao publicar notícia:", error.response?.data || error.message);
-      toast.error(`Erro ao publicar a notícia: ${error.response?.data?.error || error.message}`, {
-        position: "top-right",
-      });
+        console.error("❌ Erro ao publicar notícia:", error.response?.data || error.message);
+        toast.error(`Erro ao publicar a notícia: ${error.response?.data?.error || error.message}`, {
+            position: "top-right",
+        });
     }
-  };
+};
+
 
   return (
     <div className="publish-news-container">

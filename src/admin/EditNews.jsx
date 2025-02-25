@@ -44,7 +44,7 @@ const [newsToDelete, setNewsToDelete] = useState(null);
     }
   
     // Exibir os blocos para depuração
-    console.log("Estrutura dos blocos:", content.blocks);
+    // console.log("Estrutura dos blocos:", content.blocks);
   
     // Verificar se existe um bloco de imagem e extrair corretamente a URL
     const imageBlock = content.blocks.find(
@@ -56,10 +56,10 @@ const [newsToDelete, setNewsToDelete] = useState(null);
   
     if (imageBlock) {
       const imageUrl = imageBlock.data.file?.url || imageBlock.data.url; // Obtém a URL correta
-      console.log("Imagem encontrada:", imageUrl);
+      // console.log("Imagem encontrada:", imageUrl);
       return imageUrl;
     } else {
-      console.log("Nenhuma imagem encontrada.");
+      // console.log("Nenhuma imagem encontrada.");
       return null;
     }
   };
@@ -244,28 +244,33 @@ const [newsToDelete, setNewsToDelete] = useState(null);
         const updatedNews = {
             ...selectedNews,
             conteudo: content,
-            autor_id: selectedNews.autor_id, // Envia o autor_id ao invés do nome
+            autor_id: selectedNews.autor_id, // Envia o autor_id
         };
+
+        const authToken = localStorage.getItem("authToken");
+        console.log("🔑 Token enviado na requisição:", authToken); // ✅ Verifica o token antes do envio
 
         await axios.put(
             `http://localhost:5000/noticias/${selectedNews.id}`,
             updatedNews,
             {
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${authToken}`
+                }
             }
         );
 
-        toast.success("Notícia atualizada com sucesso!", {
-            position: "top-right",
-        });
+        toast.success("Notícia atualizada com sucesso!", { position: "top-right" });
         closeModal();
     } catch (error) {
-        console.error("Erro ao salvar a notícia:", error);
-        toast.error("Erro ao salvar a notícia. Verifique os dados.", {
-            position: "top-right",
-        });
+        console.error("❌ Erro ao salvar a notícia:", error);
+        toast.error("Erro ao salvar a notícia. Verifique os dados.", { position: "top-right" });
     }
 };
+
+
+    
 
 
 const confirmDelete = (id) => {
@@ -277,7 +282,13 @@ const handleDelete = async () => {
   if (!newsToDelete) return;
 
   try {
-    const response = await axios.delete(`http://localhost:5000/noticias/${newsToDelete}`);
+    const token = localStorage.getItem("authToken"); // Pegando o token salvo no login
+    const response = await axios.delete(`http://localhost:5000/noticias/${newsToDelete}`, {
+      headers: {
+        "Authorization": `Bearer ${token}` // Enviando o token no cabeçalho
+      }
+    });
+
     if (response.status === 200) {
       setNewsList((prev) => prev.filter((news) => news.id !== newsToDelete));
       toast.success("Notícia removida com sucesso!", { position: "top-right" });
@@ -297,6 +308,7 @@ const handleDelete = async () => {
 
 
 
+
   return (
     <div className="news-container-custom">
       <h2 className="news-title">Notícias</h2>
@@ -304,13 +316,13 @@ const handleDelete = async () => {
 
       <div className="news-grid-custom">
       {newsList.map((news) => {
-        console.log("Conteúdo da notícia:", news.conteudo);
+        // console.log("Conteúdo da notícia:", news.conteudo);
 
         const content = typeof news.conteudo === "string" ? JSON.parse(news.conteudo) : news.conteudo;
-        console.log("Conteúdo parseado:", content);
+        // console.log("Conteúdo parseado:", content);
       
         const firstImage = getFirstImageFromContent(content);
-        console.log("Imagem final para exibição:", firstImage);
+        // console.log("Imagem final para exibição:", firstImage);
 
         return (
           <div key={news.id} className="news-item-custom">

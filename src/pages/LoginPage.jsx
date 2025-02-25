@@ -24,17 +24,24 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/auth/login", {
-        email,
-        password,
-      });
-      const { token } = response.data;
-      localStorage.setItem("authToken", token);
-      navigate("/admin"); // Navigate to the admin page
+        const response = await axios.post("http://localhost:5000/auth/login", {
+            email,
+            password,
+        });
+
+        const { token } = response.data;
+
+        console.log("🔑 Token recebido:", token); // Deve mostrar um token válido
+        localStorage.setItem("authToken", token);
+        console.log("📝 Token armazenado:", localStorage.getItem("authToken")); // Deve mostrar o mesmo token
+
+        navigate("/admin"); // Redireciona para a página de admin
     } catch (err) {
-      setError(err.response?.data || "Erro ao fazer login");
+        setError(err.response?.data || "Erro ao fazer login");
     }
-  };
+};
+
+
   
 
   const handleRegister = async (e) => {
