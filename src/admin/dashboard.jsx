@@ -4,12 +4,10 @@ import axios from "axios";
 import { Chart, CategoryScale, LinearScale, LineElement, BarElement, Title, Tooltip, Legend, PointElement, ArcElement, RadialLinearScale  } from "chart.js";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { scaleLinear } from "d3-scale";
-import { FaMedal } from "react-icons/fa"; // Importa ícones de medalha
-
+import Loader from "../components/Loader.jsx"; // Componente de Loader
 import "../styles/Dashboard.css";
 
 
-const medalhas = ["🥇", "🥈", "🥉"]; // Medalhas para os 3 primeiros
 // Registrar os componentes necessários do Chart.js
 Chart.register(CategoryScale,
     LinearScale,
@@ -35,7 +33,7 @@ const diasSemanaPT = {
 
 const Dashboard = () => {
   // Estados para armazenar dados
-  const mapRef = useRef(null);
+  const [loading, setLoading] = useState(true);
   const [weeklyData, setWeeklyData] = useState([]); // Estado para armazenar os dados semanais
   const [monthlyData, setMonthlyData] = useState([]); // Estado para armazenar os dados mensais
   const [totalPageViews] = useState(15000); // Exemplo fictício de total de páginas vistas
@@ -132,6 +130,11 @@ const Dashboard = () => {
         const newsResponse = await axios.get(`http://localhost:5000/noticias/por-mes/${selectedYear}/${selectedMonth}`);
         setNewsData(newsResponse.data);
   
+        // Dados carregados com sucesso
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000); 
+        
       } catch (error) {
         console.error("Erro ao buscar dados do dashboard:", error);
       }
@@ -344,10 +347,6 @@ const Dashboard = () => {
   };
 
   
-  
-
-  
-  
 
   const deviceDoughnutChartOptions = {
     responsive: true,
@@ -375,7 +374,8 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="dashboard-container">
+    <>
+    {loading ? <Loader /> : <div className="dashboard-container">
       <div className="dashboard-grid">
         {/* Widget de visitas semanais */}
         <div className="dashboard-widget div1">
@@ -540,7 +540,7 @@ const Dashboard = () => {
       <p>Carregando...</p>
     )}
   </div>
-</div>
+        </div>
 
 
 
@@ -709,12 +709,12 @@ const Dashboard = () => {
   ) : (
     <p>Carregando...</p>
   )}
-</div>
+        </div>
 
 
-        <div className="dashboard-widget div7"><h3>Taxa de Retorno de Leitores</h3></div>
-        <div className="dashboard-widget div8"><h3>Total de Visitas do Mês</h3></div>
-        <div className="dashboard-widget div9"><h3>Receita Gerada</h3></div>
+        <div className="dashboard-widget div7"><h3>⚠️ EM BREVE!!! </h3></div>
+        <div className="dashboard-widget div8"><h3>⚠️ EM BREVE!!! </h3></div>
+        <div className="dashboard-widget div9"><h3>⚠️ EM BREVE!!! </h3></div>
         <div className="dashboard-widget div10" onClick={() => handleOpenModal("origem-acessos")} style={{ cursor: "pointer" }}>
           <div className="ds10-map-container">
             <ComposableMap>
@@ -925,7 +925,8 @@ const Dashboard = () => {
 )}
 
       </div>
-    </div>
+    </div>}
+    </>
   );
 };
 

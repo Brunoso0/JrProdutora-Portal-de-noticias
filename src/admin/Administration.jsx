@@ -4,6 +4,7 @@ import { Bar, Doughnut, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from "chart.js";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../components/Loader.jsx";
 
 
 
@@ -22,15 +23,15 @@ const Administration = () => {
   const [selectedUser, setSelectedUser] = useState(null); // Modal
   const [userStates, setUserStates] = useState({}); // Estados locais dos usuários
   const [userCountByAccess, setUserCountByAccess] = useState([]); // Contagem de usuários por nível de acesso
-const [totalUsuariosLiberados, setTotalUsuariosLiberados] = useState(0); // Total de usuários liberados
-const [newCategory, setNewCategory] = useState(""); // Para criar nova categoria
-const [newProgram, setNewProgram] = useState(""); // Para criar novo programa
-const [categories, setCategories] = useState([]);
-const [programs, setPrograms] = useState([]);
-const [deleteTarget, setDeleteTarget] = useState(null); // Guarda o ID da categoria ou programa
-const [deleteType, setDeleteType] = useState(""); // Define se é categoria ou programa
-const [showConfirmModal, setShowConfirmModal] = useState(false); // Controla o modal de confirmação
-
+  const [totalUsuariosLiberados, setTotalUsuariosLiberados] = useState(0); // Total de usuários liberados
+  const [newCategory, setNewCategory] = useState(""); // Para criar nova categoria
+  const [newProgram, setNewProgram] = useState(""); // Para criar novo programa
+  const [categories, setCategories] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [deleteTarget, setDeleteTarget] = useState(null); // Guarda o ID da categoria ou programa
+  const [deleteType, setDeleteType] = useState(""); // Define se é categoria ou programa
+  const [showConfirmModal, setShowConfirmModal] = useState(false); // Controla o modal de confirmação
+  const [loading, setLoading] = useState(true);
 
 
 
@@ -73,7 +74,7 @@ const [showConfirmModal, setShowConfirmModal] = useState(false); // Controla o m
     // Define o intervalo para atualizar a cada 60 segundos
     const interval = setInterval(() => {
       fetchUserCountByAccess();
-    }, 100);
+    }, 60000);
 
     // Cleanup para evitar vazamentos de memória
     return () => clearInterval(interval);
@@ -158,6 +159,7 @@ const doughnutOptions = {
   };
 
   useEffect(() => {
+    setLoading(true);
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("authToken");
@@ -190,6 +192,7 @@ const doughnutOptions = {
         setApprovedUsers(approved);
         setPendingUsers(pending);
         setIsLoading(false);
+        setTimeout(() => setLoading(false), 1000); // 🔹 Garante o loader por +1s
       } catch (error) {
         console.error(
           "Erro ao buscar usuários:",
@@ -355,42 +358,84 @@ const confirmDelete = (id, type) => {
   };
 
   const handleDrop = async (event, targetColumn) => {
-    event.preventDefault();
-    const user = JSON.parse(event.dataTransfer.getData("user"));
-  
-    if (targetColumn === "approved" && user.nivel_acesso === 0) {
-      await updateUserAccess(user.id, 1);
-      setPendingUsers((prev) => prev.filter((u) => u.id !== user.id));
-      setApprovedUsers((prev) => [...prev, { ...user, nivel_acesso: 1 }]);
-  
-      // Exibir alerta de sucesso quando um usuário for aprovado
-      toast.success(`✅ ${user.nome} foi APROVADO com sucesso!`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "dark",
-      });
-  
-    } else if (targetColumn === "pending" && user.nivel_acesso > 0) {
-      await updateUserAccess(user.id, 0);
-      setApprovedUsers((prev) => prev.filter((u) => u.id !== user.id));
-      setPendingUsers((prev) => [...prev, { ...user, nivel_acesso: 0 }]);
-  
-      // Exibir alerta de remoção quando um usuário for movido para "Usuários Sem Autorização"
-      toast.warn(`⚠️ ${user.nome} foi REMOVIDO da autorização!`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "dark",
-      });
+  event.preventDefault();
+  const user = JSON.parse(event.dataTransfer.getData("user"));
+
+  const token = localStorage.getItem("authToken");
+
+  // Obter IP do usuário
+  let ipOrigem = "IP não identificado";
+  try {
+    const ipRes = await axios.get("https://api.ipify.org?format=json");
+    ipOrigem = ipRes.data.ip;
+  } catch (error) {
+    console.error("Erro ao obter IP:", error.message);
+  }
+
+  if (targetColumn === "approved" && user.nivel_acesso === 0) {
+    await updateUserAccess(user.id, 1);
+    setPendingUsers((prev) => prev.filter((u) => u.id !== user.id));
+    setApprovedUsers((prev) => [...prev, { ...user, nivel_acesso: 1 }]);
+
+    // 🔒 Log de auditoria: aprovação
+    try {
+      await axios.post(
+        "http://localhost:5000/auth/drag-drop-auditoria",
+        {
+          acao: `Aprovou o usuário ID ${user.id} via drag and drop.`,
+          ip_origem: ipOrigem,
+          alvo_id: user.id // 👈 Aqui
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );      
+    } catch (error) {
+      console.error("Erro ao registrar auditoria:", error.message);
     }
-  };
+
+    // Alerta
+    toast.success(`✅ ${user.nome} foi APROVADO com sucesso!`, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "dark",
+    });
+
+  } else if (targetColumn === "pending" && user.nivel_acesso > 0) {
+    await updateUserAccess(user.id, 0);
+    setApprovedUsers((prev) => prev.filter((u) => u.id !== user.id));
+    setPendingUsers((prev) => [...prev, { ...user, nivel_acesso: 0 }]);
+
+    // 🔒 Log de auditoria: remoção
+    try {
+      await axios.post(
+        "http://localhost:5000/auth/drag-drop-auditoria",
+        {
+          acao: `Removeu o usuário ID ${user.id} da autorização via drag and drop.`,
+          ip_origem: ipOrigem,
+          alvo_id: user.id // 👈 Aqui também
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );           
+    } catch (error) {
+      console.error("Erro ao registrar auditoria:", error.message);
+    }
+
+    // Alerta
+    toast.warn(`⚠️ ${user.nome} foi REMOVIDO da autorização!`, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "dark",
+    });
+  }
+};
+
   
 
   const updateUserAccess = async (userId, nivel_acesso) => {
@@ -471,7 +516,8 @@ const confirmDelete = (id, type) => {
   }
 
   return (
-    <div className="administration-container">
+    <>
+    {loading ? <Loader /> : <div className="administration-container">
       <ToastContainer />  {/* Isso é necessário para exibir os alertas */}
       
 
@@ -702,7 +748,8 @@ const confirmDelete = (id, type) => {
   </div>
 )}
 
-    </div>
+    </div>}
+    </>
   );
 };
 

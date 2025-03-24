@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "../styles/News.css";
+import Loader from "../components/LoaderNewsWorld.jsx"; // 🔹 Importação correta
 
 const News = () => {
   const [news, setNews] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // 🔹 Inicia como true para exibir o loader
   const [error, setError] = useState(null);
-  const [selectedSource, setSelectedSource] = useState("all"); // Estado para selecionar a fonte
+  const [selectedSource, setSelectedSource] = useState("all");
 
   // Função para buscar as notícias da API
   const fetchNews = async () => {
@@ -24,7 +25,7 @@ const News = () => {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 1000); // 🔹 Garante o loader por +1s
     }
   };
 
@@ -42,7 +43,8 @@ const News = () => {
     : news.filter(article => article.source === selectedSource);
 
   return (
-    <div className="news-container">
+        <>
+         {loading ? <Loader /> :<div className="news-container">
       <h1>Últimas Notícias no Brasil e no Mundo</h1>
 
       {/* 🔹 Seletor de Sites */}
@@ -60,23 +62,25 @@ const News = () => {
         </select>
       </div>
 
-      {loading && <p>Carregando...</p>}
-      {error && <p className="error-message">Erro: {error}</p>}
+      {/* 🔹 Exibe o Loader enquanto carrega */}
+          {error && <p className="error-message">Erro: {error}</p>}
 
-      <div className="news-results">
-        {filteredNews.length === 0 && !loading && <p>Nenhuma notícia encontrada.</p>}
-        {filteredNews.map((article, index) => (
-          <div key={index} className="news-item">
-            {article.image && <img src={article.image} alt={article.title} />}
-            <h2>{article.title}</h2>
-            <p><strong>Fonte:</strong> {article.source}</p>
-            <a href={article.link} target="_blank" rel="noopener noreferrer">
-              Leia mais
-            </a>
+          <div className="news-results">
+            {filteredNews.length === 0 && !error && <p>Nenhuma notícia encontrada.</p>}
+            {filteredNews.map((article, index) => (
+              <div key={index} className="news-item">
+                {article.image && <img src={article.image} alt={article.title} />}
+                <h2>{article.title}</h2>
+                <p><strong>Fonte:</strong> {article.source}</p>
+                <a href={article.link} target="_blank" rel="noopener noreferrer">
+                  Leia mais
+                </a>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+      
+    </div>}
+        </>
   );
 };
 

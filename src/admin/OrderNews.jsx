@@ -3,70 +3,71 @@ import axios from "axios";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import SortableItem from "./SortableItem";
+import Loader from "../components/Loader.jsx"; // Componente de Loader
 import "../styles/OrderNews.css";
 
 const OrderNews = () => {
   const [newsLayout, setNewsLayout] = useState([]);
   const [availableNews, setAvailableNews] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  
+  
   useEffect(() => {
-    fetchLayout();
-  }, []);
-
-  /** 🔹 Busca o layout salvo no banco de dados **/
-  const fetchLayout = async () => {
-    try {
-      console.log("Buscando layout salvo no banco...");
-      const layoutResponse = await axios.get("http://localhost:5000/layout/news-layout");
-      const newsResponse = await axios.get("http://localhost:5000/noticias");
-
-      console.log("Layout recebido:", layoutResponse.data);
-      console.log("Notícias recebidas:", newsResponse.data);
-
-      // Formata as notícias
-      const formattedNews = newsResponse.data.map((news) => {
-        let parsedContent = news.conteudo;
-
-        if (typeof parsedContent === "string") {
-          try {
-            parsedContent = JSON.parse(parsedContent);
-          } catch (error) {
-            console.error("Erro ao parsear o conteúdo da notícia:", error);
-            parsedContent = { blocks: [] };
+    const fetchLayout = async () => {
+      try {
+        setLoading(true); // 🔹 Ativa o loader antes do carregamento
+  
+        console.log("Buscando layout salvo no banco...");
+        const layoutResponse = await axios.get("http://localhost:5000/layout/news-layout");
+        const newsResponse = await axios.get("http://localhost:5000/noticias");
+  
+        console.log("Layout recebido:", layoutResponse.data);
+        console.log("Notícias recebidas:", newsResponse.data);
+  
+        const formattedNews = newsResponse.data.map((news) => {
+          let parsedContent = news.conteudo;
+  
+          if (typeof parsedContent === "string") {
+            try {
+              parsedContent = JSON.parse(parsedContent);
+            } catch (error) {
+              console.error("Erro ao parsear o conteúdo da notícia:", error);
+              parsedContent = { blocks: [] };
+            }
           }
-        }
-
-        return {
-          id: news.id,
-          titulo: getTitleFromContent(parsedContent),
-          imageUrl: getFirstImageFromContent(parsedContent),
-          categoria: news.categoria || "Sem categoria",
-          autor: news.autor || "Desconhecido",
-        };
-      });
-
-      // Ordena as notícias com base no layout salvo no banco
-      const orderedNews = layoutResponse.data.map((layoutItem) => {
-        const foundNews = formattedNews.find((news) => news.id === layoutItem.noticia_id);
-        
-        if (foundNews) {
-          return { ...foundNews, slug: layoutItem.slug }; // 🔹 Garante que o slug seja mantido
-        }
-        
-        return null;
-      }).filter(Boolean);
-      
-
-      console.log("Notícias organizadas com base no banco:", orderedNews);
-
-      // Define as notícias no layout principal
-      setNewsLayout(orderedNews.slice(0, 5)); // Apenas 5 destaques
-      setAvailableNews(formattedNews.filter((news) => !orderedNews.some((ordered) => ordered.id === news.id)));
-      
-    } catch (error) {
-      console.error("❌ Erro ao buscar layout e notícias:", error);
-    }
-  };
+  
+          return {
+            id: news.id,
+            titulo: getTitleFromContent(parsedContent),
+            imageUrl: getFirstImageFromContent(parsedContent),
+            categoria: news.categoria || "Sem categoria",
+            autor: news.autor || "Desconhecido",
+          };
+        });
+  
+        const orderedNews = layoutResponse.data
+          .map((layoutItem) => {
+            const foundNews = formattedNews.find((news) => news.id === layoutItem.noticia_id);
+            return foundNews ? { ...foundNews, slug: layoutItem.slug } : null;
+          })
+          .filter(Boolean);
+  
+        console.log("Notícias organizadas com base no banco:", orderedNews);
+  
+        setNewsLayout(orderedNews.slice(0, 5)); // Apenas 5 destaques
+        setAvailableNews(formattedNews.filter((news) => !orderedNews.some((ordered) => ordered.id === news.id)));
+  
+        setTimeout(() => setLoading(false), 1000); // 🔹 Mantém o loader por 1 segundo extra
+      } catch (error) {
+        console.error("❌ Erro ao buscar layout e notícias:", error);
+        setLoading(false); // 🔹 Mesmo em caso de erro, desativa o loader
+      }
+    };
+  
+    fetchLayout(); // 🔹 Mantém a chamada do layout ao carregar o componente
+  }, []); // 🔹 Garante que o layout seja buscado apenas na montagem do componente
+  
+  
 
   /** 🔹 Obtém o título da notícia **/
   const getTitleFromContent = (content) => {
@@ -98,7 +99,12 @@ const OrderNews = () => {
   const saveLayout = async () => {
     try {
       const updatedLayout = newsLayout.map((item, index) => ({ id: item.id, posicao: index + 1 }));
-      await axios.post("http://localhost:5000/layout/update-news-layout", { layout: updatedLayout });
+      const token = localStorage.getItem("authToken"); // Assuming the token is stored in localStorage
+      await axios.post("http://localhost:5000/layout/update-news-layout", { layout: updatedLayout }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       alert("Layout atualizado com sucesso!");
     } catch (error) {
       console.error("❌ Erro ao salvar o layout:", error);
@@ -114,7 +120,8 @@ const OrderNews = () => {
   };
 
   return (
-    <div className="order-container">
+    <>
+    {loading ? <Loader /> : <div className="order-container">
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={newsLayout.map((item) => item.id)}>
           <div className="order-news-grid">
@@ -164,7 +171,8 @@ const OrderNews = () => {
           ))}
         </div>
       </div>
-    </div>
+    </div>}
+    </>
   );
 };
 

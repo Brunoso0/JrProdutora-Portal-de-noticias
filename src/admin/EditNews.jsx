@@ -21,6 +21,7 @@ import ColorPicker from "editorjs-color-picker";
 import Title from "title-editorjs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../components/Loader.jsx"; // Componente de Loader
 import "../styles/EditNews.css";
 
 Modal.setAppElement("#root");
@@ -32,7 +33,9 @@ const EditNews = () => {
   const [selectedNews, setSelectedNews] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
-const [newsToDelete, setNewsToDelete] = useState(null);
+  const [newsToDelete, setNewsToDelete] = useState(null);
+  const [loading, setLoading] = useState(true);
+
 
   const editorRef = useRef(null);
 
@@ -70,6 +73,7 @@ const [newsToDelete, setNewsToDelete] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true); // 🔹 Ativa o loader antes do carregamento
         const newsResponse = await axios.get("http://localhost:5000/noticias");
         const programsResponse = await axios.get(
           "http://localhost:5000/noticias/programas"
@@ -81,6 +85,7 @@ const [newsToDelete, setNewsToDelete] = useState(null);
         setNewsList(newsResponse.data);
         setPrograms(programsResponse.data);
         setCategories(categoriesResponse.data);
+        setTimeout(() => setLoading(false), 1000); // 🔹 Mantém o loader por 1 segundo extra
       } catch (error) {
         toast.error("Erro ao buscar dados. Tente novamente.", {
           position: "top-right",
@@ -310,7 +315,8 @@ const handleDelete = async () => {
 
 
   return (
-    <div className="news-container-custom">
+    <>
+    {loading ? <Loader /> :<div className="news-container-custom">
       <h2 className="news-title">Notícias</h2>
       <p className="news-description">Gerencie todas as notícias publicadas no site.</p>
 
@@ -495,7 +501,8 @@ const handleDelete = async () => {
 
 
       <ToastContainer style={{ zIndex: 9999 }} />
-    </div>
+    </div>}
+    </>
   );
 };
 
