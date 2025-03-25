@@ -178,6 +178,7 @@ const doughnutOptions = {
             cargo: user.cargo || "", // Garante que o cargo seja uma string vazia caso não exista
             programa: user.programa_id || 0, // Padrão para "Nenhum"
             nivel_acesso: user.nivel_acesso || 0,
+            total_noticias: user.total_noticias || 0,
           };
         });
   
@@ -253,6 +254,80 @@ const handleCreateCategory = async () => {
     toast.error("❌ Erro ao criar categoria.");
   }
 };
+
+const handleToggleUserStatus = async (user) => {
+  const novoNivel = user.nivel_acesso > 0 ? 0 : 1;
+
+  const token = localStorage.getItem("authToken");
+
+  // Obter IP do usuário
+  let ipOrigem = "IP não identificado";
+  try {
+    const ipRes = await axios.get("https://api.ipify.org?format=json");
+    ipOrigem = ipRes.data.ip;
+  } catch (error) {
+    console.error("Erro ao obter IP:", error.message);
+  }
+
+  try {
+    await axios.put(
+      "http://localhost:5000/auth/update-user",
+      { userId: user.id, nivel_acesso: novoNivel },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Log de auditoria
+    try {
+      await axios.post(
+        "http://localhost:5000/auth/drag-drop-auditoria",
+        {
+          acao:
+            novoNivel === 1
+              ? `Ativou o usuário via botão no modal.`
+              : `Desativou o usuário via botão no modal.`,
+          ip_origem: ipOrigem,
+          alvo_id: user.id,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (error) {
+      console.error("Erro ao registrar auditoria:", error.message);
+    }
+
+    // Atualiza estados locais
+    setApprovedUsers((prev) =>
+      novoNivel === 0 ? prev.filter((u) => u.id !== user.id) : [...prev, { ...user, nivel_acesso: 1 }]
+    );
+    setPendingUsers((prev) =>
+      novoNivel === 0 ? [...prev, { ...user, nivel_acesso: 0 }] : prev.filter((u) => u.id !== user.id)
+    );
+
+    setSelectedUser((prev) => ({
+      ...prev,
+      nivel_acesso: novoNivel,
+    }));
+
+    toast.success(
+      novoNivel === 1
+        ? `✅ ${user.nome} foi ativado com sucesso!`
+        : `⚠️ ${user.nome} foi desativado com sucesso!`,
+      {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "dark",
+      }
+    );
+  } catch (error) {
+    console.error("Erro ao atualizar status do usuário:", error.message);
+    toast.error("❌ Erro ao atualizar status do usuário.", {
+      position: "top-right",
+      autoClose: 4000,
+      theme: "dark",
+    });
+  }
+};
+
+
 
 // Criar Programa
 const handleCreateProgram = async () => {
@@ -474,7 +549,7 @@ const confirmDelete = (id, type) => {
     try {
       const token = localStorage.getItem("authToken");
       const { cargo, programa, nivel_acesso } = userStates[selectedUser.id];
-
+  
       await axios.put(
         "http://localhost:5000/auth/update-user",
         {
@@ -489,20 +564,37 @@ const confirmDelete = (id, type) => {
           },
         }
       );
-
-      setMessage("Usuário atualizado com sucesso!");
-      setSelectedUser(null);
+  
+      toast.success(`✅ Dados de ${selectedUser.nome} atualizados com sucesso!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+      });
+  
+      setSelectedUser(null); // Fecha o modal
     } catch (error) {
       console.error(
         "Erro ao atualizar usuário:",
         error.response?.data || error.message
       );
-      setMessage("Erro ao atualizar usuário.");
+  
+      toast.error("❌ Erro ao atualizar os dados do usuário.", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+      });
     }
   };
   
-
-
+  
   const openEditModal = (user) => {
     setSelectedUser(user);
   };
@@ -521,149 +613,124 @@ const confirmDelete = (id, type) => {
       <ToastContainer />  {/* Isso é necessário para exibir os alertas */}
       
 
-      <div className="user-columns">
-        <div
-          className="user-column approved"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => handleDrop(e, "approved")}
-        >
-          <h2>Usuários Liberados</h2>
-          <div className="user-boxes">
-            {approvedUsers.map((user) => (
-              <div
-                key={user.id}
-                className="user-box"
-                draggable
-                onDragStart={(e) => handleDragStart(e, user)}
-                onDragEnd={handleDragEnd}
-              >
-                <div className="user-box-img">
-                  <img
-                    src={
-                      user.perfil_imagem
-                        ? `http://localhost:5000${user.perfil_imagem}`
-                        : "/img/user.jpg"
-                    }
-                    alt="Perfil"
-                    className="profile-picture"
-                  />
-                </div>
-                <div className="user-box-text">
-                  <h3>{user.nome}</h3>
-                  <p>
-                    {user.cargo || "Nenhum"}
-                  </p>
+      <div className="tabela-usuarios">
+        <h1>Controle de Usuarios</h1>
+  <table className="admin-user-table">
+    <thead>
+      <tr>
+        <th>Nome ↓</th>
+        <th>E-mail ↓</th>
+        <th>Função ↓</th>
+        <th>Nível ↓</th>
+        <th>Programa Associado ↓</th>
+        <th>Notícias ↓</th>
+        <th>Status ↓</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      {[...approvedUsers, ...pendingUsers].map((user) => (
+        <tr key={user.id}>
+          <td>{user.nome}</td>
+          <td>{user.email}</td>
+          <td>{user.cargo || "Nenhum"}</td>
+          <td>{accessLevels[user.nivel_acesso] || "Nenhum"}</td>
+          <td>
+            {user.programa_id === 1
+              ? "Café com Resenhas"
+              : user.programa_id === 2
+              ? "Jr Esportes"
+              : user.programa_id === 3
+              ? "Jr Notícias"
+              : "Nenhum"}
+          </td>
+          <td>{user.total_noticias || 0}</td>
+          <td>{user.nivel_acesso > 0 ? "Ativo" : "Inativo"}</td>
+          <td>
+            <button className="edit-btn" onClick={() => openEditModal(user)}>
+              <img src="/img/edit.png" alt="Editar" />
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
 
-                  <p>
-                    {" "}
-                    {user.programa_id === 1
-                      ? "Café com Resenhas"
-                      : user.programa_id === 2
-                      ? "Jr Esportes"
-                      : user.programa_id === 3
-                      ? "Jr Notícias"
-                      : "Nenhum"}
-                  </p>
-                  <p>
-                     {accessLevels[user.nivel_acesso]}
-                  </p>
-                  <button className="button" onClick={() => openEditModal(user)}>
-                    Editar
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="icon-troca">
-            <img src="/img/troca.png" alt="troca" />
-        </div>
 
-        <div
-          className="user-column pending"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => handleDrop(e, "pending")}
-        >
-          <h2>Usuários Sem Autorização</h2>
-          <div className="user-boxes">
-            {pendingUsers.map((user) => (
-              <div
-                key={user.id}
-                className="user-box"
-                draggable
-                onDragStart={(e) => handleDragStart(e, user)}
-                onDragEnd={handleDragEnd}
-              >
-                <div className="user-box-text">
-                <h3>{user.nome}</h3>
-                <p>{user.email}</p>
-                <button className="button" onClick={() => openEditModal(user)}>
-                  Editar
-                </button>
-              </div>
-            </div>
-            ))}
-          </div>
+{selectedUser && (
+  <div className="modal">
+    <div className="modal-user-card dark-theme">
+      <div className="modal-left">
+        <div className="user-profile-pic">
+          <img
+            src={
+              selectedUser.perfil_imagem
+                ? `http://localhost:5000${selectedUser.perfil_imagem}`
+                : "/img/user.jpg"
+            }
+            alt="Perfil"
+          />
         </div>
+        <h2>{selectedUser.nome}</h2>
+        <p>{selectedUser.email}</p>
+        <p><b>Total de Notícias:</b> {selectedUser.total_noticias || 0}</p>
+        <p><b>Status:</b> {selectedUser.nivel_acesso > 0 ? "Ativo" : "Inativo"}</p>
+        <button
+          className={`button ${selectedUser.nivel_acesso > 0 ? 'cancel' : ''}`}
+          onClick={() => handleToggleUserStatus(selectedUser)}
+        >
+          {selectedUser.nivel_acesso > 0 ? "Desativar Usuário" : "Ativar Usuário"}
+        </button>
+
       </div>
 
-      {selectedUser && (
-        <div className="modal">
-          <div className="modal-content-admin">
-            <h2>Editar Usuário</h2>
-            <label>
-              Nome:
-              <input type="text" value={selectedUser.nome} disabled />
-            </label>
-            <label type="text" value={selectedUser.email}>
-            Email:
-            <input type="text" value={selectedUser.email} disabled />
-            </label>
-            <label>
-              Cargo:
-              <input
-                type="text"
-                value={userStates[selectedUser.id]?.cargo || ""}
-                onChange={(e) => handleInputChange("cargo", e.target.value)}
-              />
-            </label>
-            <label>
-              Programa:
-              <select
-                value={userStates[selectedUser.id]?.programa || 0}
-                onChange={(e) =>
-                  handleInputChange("programa", parseInt(e.target.value))
-                }
-              >
-                <option value={0}>Nenhum</option>
-                <option value={1}>Café com Resenhas</option>
-                <option value={2}>Jr Esportes</option>
-                <option value={3}>Jr Notícias</option>
-              </select>
-            </label>
-            <label>
-              Nível de Acesso:
-              <select
-                value={userStates[selectedUser.id]?.nivel_acesso || 0}
-                onChange={(e) =>
-                  handleInputChange("nivel_acesso", parseInt(e.target.value))
-                }
-              >
-                <option value={1}>Básico</option>
-                <option value={2}>Intermediário</option>
-                <option value={3}>Administrador</option>
-                <option value={4}>Admin Chefe</option>
-              </select>
-            </label>
-            <button className="button" onClick={handleConfirmChanges}>
-              Salvar
-            </button>
-            <button className="button cancel" onClick={closeModal}>
-              Cancelar
-            </button>
-          </div>
+      <div className="modal-right">
+        <h3>Editar Dados</h3>
+        <label>
+          Cargo:
+          <input
+            type="text"
+            value={userStates[selectedUser.id]?.cargo || ""}
+            onChange={(e) => handleInputChange("cargo", e.target.value)}
+          />
+        </label>
+        <label>
+          Programa:
+          <select
+            value={userStates[selectedUser.id]?.programa || 0}
+            onChange={(e) =>
+              handleInputChange("programa", parseInt(e.target.value))
+            }
+          >
+            <option value={0}>Nenhum</option>
+            <option value={1}>Café com Resenhas</option>
+            <option value={2}>Jr Esportes</option>
+            <option value={3}>Jr Notícias</option>
+          </select>
+        </label>
+        <label>
+          Nível de Acesso:
+          <select
+            value={userStates[selectedUser.id]?.nivel_acesso || 0}
+            onChange={(e) =>
+              handleInputChange("nivel_acesso", parseInt(e.target.value))
+            }
+          >
+            <option value={1}>Básico</option>
+            <option value={2}>Intermediário</option>
+            <option value={3}>Administrador</option>
+            <option value={4}>Admin Chefe</option>
+          </select>
+        </label>
+        <div className="modal-buttons">
+          <button className="button" onClick={handleConfirmChanges}>Salvar</button>
+          <button className="button cancel" onClick={closeModal}>Cancelar</button>
         </div>
-      )}
+      </div>
+    </div>
+  </div>
+)}
 
       <div className="dashboard-administration">
         <div className="admin-ds">
@@ -677,11 +744,11 @@ const confirmDelete = (id, type) => {
           </div>
         </div>
           <div className="admin-ds-div3 dashboard-box">
-            <h3>Gerador de Relatorios</h3>
+            <h3>⚠️ EM BREVE!!! </h3>
 
           </div>
           <div className="admin-ds-div4 dashboard-box">
-            <h3>Receita gerada</h3>
+            <h3>⚠️ EM BREVE!!! </h3>
           </div>
           <div className="admin-ds-div6 dashboard-box">
             <h2>Categorias e Programas</h2>

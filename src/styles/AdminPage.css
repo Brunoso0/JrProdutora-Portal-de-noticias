@@ -226,6 +226,7 @@
     flex-direction: column;
     transition: margin-left 0.3s ease;
     background-color: #121212;
+    overflow-y: scroll;
 }
 
 .admin-container .sidebar:hover ~ .main-content {
