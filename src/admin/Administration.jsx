@@ -32,6 +32,11 @@ const Administration = () => {
   const [deleteType, setDeleteType] = useState(""); // Define se é categoria ou programa
   const [showConfirmModal, setShowConfirmModal] = useState(false); // Controla o modal de confirmação
   const [loading, setLoading] = useState(true);
+  const [dataInicio, setDataInicio] = useState(""); // Data de início do relatório
+  const [dataFim, setDataFim] = useState(""); // Data de fim do relatório
+  const [formatoRelatorio, setFormatoRelatorio] = useState("pdf"); // Formato do relatório (PDF, Excel, DOC)
+  const [relatorios, setRelatorios] = useState([]);
+
 
 
 
@@ -255,6 +260,66 @@ const handleCreateCategory = async () => {
   }
 };
 
+useEffect(() => {
+  const fetchRelatorios = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.get("http://localhost:5000/relatorios/lista", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setRelatorios(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar relatórios:", error);
+    }
+  };
+
+  fetchRelatorios();
+}, []);
+
+
+const handleGerarRelatorio = async () => {
+  if (!dataInicio || !dataFim) {
+    toast.warn("⚠️ Selecione as datas de início e fim.");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.post(
+      "http://localhost:5000/relatorios/auditorias",
+      {
+        data_inicio: dataInicio,
+        data_fim: dataFim,
+        formato: formatoRelatorio,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: "blob", // Importante para downloads
+      }
+    );
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+
+    // Nome do arquivo sugerido pelo backend
+    const nomeArquivo = response.headers["content-disposition"]
+      ?.split("filename=")[1]
+      ?.replace(/"/g, "") || "relatorio.pdf";
+
+    link.setAttribute("download", nomeArquivo);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error) {
+    console.error("Erro ao gerar relatório:", error.message);
+    toast.error("❌ Erro ao gerar o relatório.");
+  }
+};
+
+
 const handleToggleUserStatus = async (user) => {
   const novoNivel = user.nivel_acesso > 0 ? 0 : 1;
 
@@ -422,15 +487,6 @@ const confirmDelete = (id, type) => {
 };
 
   
-
-  const handleDragStart = (event, user) => {
-    event.dataTransfer.setData("user", JSON.stringify(user));
-    event.currentTarget.style.opacity = "1";
-  };
-
-  const handleDragEnd = (event) => {
-    event.currentTarget.style.opacity = "1";
-  };
 
   const handleDrop = async (event, targetColumn) => {
   event.preventDefault();
@@ -743,13 +799,87 @@ const confirmDelete = (id, type) => {
             </div>
           </div>
         </div>
-          <div className="admin-ds-div3 dashboard-box">
-            <h3>⚠️ EM BREVE!!! </h3>
+        <div className="admin-ds-div3 dashboard-box">
+          <h3>Gerar Relatorios de Admin</h3>
 
+          <div className="relatorio-form">
+            <label>
+              Data Início:
+              <input
+                type="date"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+              />
+            </label>
+            <label>
+              Data Fim:
+              <input
+                type="date"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+              />
+            </label>
+            <label>
+              Formato:
+              <select value={formatoRelatorio} onChange={(e) => setFormatoRelatorio(e.target.value)}>
+                <option value="pdf">PDF</option>
+                <option value="excel" disabled>Excel (em breve)</option>
+                <option value="doc" disabled>DOC (em breve)</option>
+              </select>
+            </label>
+            <button className="button" onClick={handleGerarRelatorio}>Gerar Relatório</button>
           </div>
-          <div className="admin-ds-div4 dashboard-box">
-            <h3>⚠️ EM BREVE!!! </h3>
-          </div>
+        </div>
+
+        <div className="admin-ds-div4 dashboard-box">
+          <h3>Relatórios Gerados</h3>
+
+          {relatorios.length === 0 ? (
+            <p>Nenhum relatório disponível.</p>
+          ) : (
+            <table className="tabela-relatorios">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Data do Relatório</th>
+                  <th>Tipo</th>
+                  <th>Data de Criação</th>
+                  <th>Arquivo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {relatorios.map((rel) => {
+                  const nomeArquivo = rel.caminho_arquivo.split("/").pop();
+                  const tipo = nomeArquivo.includes("Admin") ? "Admin" : "Rotina";
+                  return (
+                    <tr key={rel.id}>
+                      <td className="archive-name">{nomeArquivo}</td>
+                      <td className="archive-date">{new Date(rel.data_relatorio).toLocaleDateString()}</td>
+                      <td className="type-archive">{tipo}</td>
+                      <td className="">{new Date(rel.criado_em).toLocaleString()}</td>
+                      <td className="archive-download">
+                      <a
+                        className="button"
+                        href={`http://localhost:5000/${rel.caminho_arquivo}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                      >
+                        Visualizar
+                      </a>
+
+
+
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+
           <div className="admin-ds-div6 dashboard-box">
             <h2>Categorias e Programas</h2>
 
