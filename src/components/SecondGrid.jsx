@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "../styles/SecondGrid.css";
+import api, { API_BASE_URL } from '../services/api'; // Importando o arquivo de configuração do Axios
 
 const SecondGrid = () => {
     const [articles, setArticles] = useState([]);
@@ -11,7 +12,7 @@ const SecondGrid = () => {
         const fetchMostViewed = async () => {
             try {
                 console.log("🔹 Buscando as 4 notícias mais vistas da semana...");
-                const response = await axios.get("http://localhost:5000/noticias/mais-vistas-semana");
+                const response = await axios.get(`${API_BASE_URL}/noticias/mais-vistas-semana`);
                 
                 console.log("✅ Notícias mais vistas recebidas:", response.data);
                 setArticles(response.data);
@@ -27,7 +28,7 @@ const SecondGrid = () => {
 
     const handleClick = async (slug) => {
         try {
-            await axios.post(`http://localhost:5000/noticias/view/${slug}`);
+            await axios.post(`${API_BASE_URL}/noticias/view/${slug}`);
             console.log(`👁️ Visualização registrada para a notícia: ${slug}`);
         } catch (error) {
             console.error("❌ Erro ao registrar visualização:", error);

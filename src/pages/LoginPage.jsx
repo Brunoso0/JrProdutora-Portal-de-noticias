@@ -4,6 +4,8 @@ import axios from "axios";
 import LoginLayout from "../layouts/LoginLayout"; // Importing LoginLayout
 import "../styles/LoginPage.css";
 
+import  { API_BASE_URL } from '../services/api'; // Importando o arquivo de configuração do Axios
+
 const LoginPage = () => {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
   const [email, setEmail] = useState("");
@@ -24,7 +26,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-        const response = await axios.post("http://localhost:5000/auth/login", {
+        const response = await axios.post(`${API_BASE_URL}/auth/login`, {
             email,
             password,
         });
@@ -47,7 +49,7 @@ const LoginPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/auth/register", {
+      await axios.post(`${API_BASE_URL}/auth/register`, {
         name,
         email,
         password,

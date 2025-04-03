@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/AdminPage.css";
 
+
+import { API_BASE_URL } from '../services/api'; // Importando o arquivo de configuração do Axios
+
 // Componentes das telas
 import Dashboard from "../admin/dashboard";
 import OrderNews from "../admin/OrderNews";
@@ -42,7 +45,7 @@ const AdminPage = () => {
           return;
         }
   
-        const response = await axios.get("http://localhost:5000/auth/user", {
+        const response = await axios.get(`${API_BASE_URL}/auth/user`, {
           headers: { Authorization: `Bearer ${token}` },
         });
   
@@ -50,7 +53,7 @@ const AdminPage = () => {
         setUserName(data.name || "Usuário");
         setUserAccessLevel(data.nivel_acesso);
         setImagePreview(
-          data.profileImage ? `http://localhost:5000${data.profileImage}` : "/img/user.jpg"
+          data.profileImage ? `${API_BASE_URL}${data.profileImage}` : "/img/user.jpg"
         );
         setIsLoading(false);
       } catch (err) {
@@ -75,7 +78,7 @@ const AdminPage = () => {
     try {
         const token = localStorage.getItem("authToken");
         if (token) {
-            await axios.post("http://localhost:5000/auth/logout", {}, {
+            await axios.post(`${API_BASE_URL}/auth/logout`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
             });
         }
@@ -125,7 +128,7 @@ const AdminPage = () => {
       case "Administration":
         return userAccessLevel >= 3 ? <Administration /> : <p className="error-message">Acesso negado.</p>;
       case "UserProfile":
-        return <UserProfile onUpdateProfileImage={(newImagePath) => setImagePreview(`http://localhost:5000${newImagePath}`)} />;
+        return <UserProfile onUpdateProfileImage={(newImagePath) => setImagePreview(`${API_BASE_URL}${newImagePath}`)} />;
       default:
         return <Dashboard />;
     }

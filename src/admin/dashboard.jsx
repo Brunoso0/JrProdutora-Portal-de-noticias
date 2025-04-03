@@ -7,6 +7,8 @@ import { scaleLinear } from "d3-scale";
 import Loader from "../components/Loader.jsx"; // Componente de Loader
 import "../styles/Dashboard.css";
 
+import { API_BASE_URL } from "../services/api"; // Importando o arquivo de configuração do Axios
+
 
 // Registrar os componentes necessários do Chart.js
 Chart.register(CategoryScale,
@@ -70,11 +72,11 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         // Notícias mais visualizadas
-        const noticiasResponse = await axios.get("http://localhost:5000/noticias/mais-visualizadas");
+        const noticiasResponse = await axios.get(`${API_BASE_URL}/noticias/mais-visualizadas`);
         setNoticias(noticiasResponse.data);
   
         // Categorias mais visualizadas
-        const categoriasResponse = await axios.get("http://localhost:5000/noticias/categorias-mais-visualizadas");
+        const categoriasResponse = await axios.get(`${API_BASE_URL}/noticias/categorias-mais-visualizadas`);
         const categoriasCalculadas = categoriasResponse.data.map(categoria => ({
           ...categoria,
           popularidade: categoria.total_noticias > 0 ? categoria.total_visualizacoes / categoria.total_noticias : 0,
@@ -83,11 +85,11 @@ const Dashboard = () => {
         setCategoriasData(top5Categorias);
   
         // Dados de dispositivos
-        const dispositivosResponse = await axios.get("http://localhost:5000/admin/dispositivos");
+        const dispositivosResponse = await axios.get(`${API_BASE_URL}/admin/dispositivos`);
         setDeviceData(dispositivosResponse.data);
   
         // Dados de localização
-        const locationsResponse = await fetch("http://localhost:5000/admin/locations");
+        const locationsResponse = await fetch(`${API_BASE_URL}/admin/locations`);
         const locationsData = await locationsResponse.json();
         if (locationsData.success) {
           const formattedData = locationsData.data.reduce((acc, row) => {
@@ -98,14 +100,14 @@ const Dashboard = () => {
         }
   
         // Dados de cidades
-        const citiesResponse = await fetch("http://localhost:5000/admin/locations/cities");
+        const citiesResponse = await fetch(`${API_BASE_URL}/admin/locations/cities`);
         const citiesData = await citiesResponse.json();
         if (citiesData.success) {
           setCityData(citiesData.data);
         }
   
         // Dados de visitas semanais
-        const weeklyResponse = await fetch("http://localhost:5000/admin/weekly-visits");
+        const weeklyResponse = await fetch(`${API_BASE_URL}/admin/weekly-visits`);
         const weeklyData = await weeklyResponse.json();
         if (weeklyData.success) {
           setPrevWeeklyVisits(weeklyData.data.reduce((sum, item) => sum + item.visits, 0));
@@ -116,7 +118,7 @@ const Dashboard = () => {
         }
   
         // Dados de visitas mensais
-        const monthlyResponse = await fetch("http://localhost:5000/admin/monthly-yearly-visits");
+        const monthlyResponse = await fetch(`${API_BASE_URL}/admin/monthly-yearly-visits`);
         const monthlyData = await monthlyResponse.json();
         if (monthlyData.success) {
           setPrevMonthlyVisits(monthlyData.data.reduce((sum, item) => sum + item.visits, 0));
@@ -127,7 +129,7 @@ const Dashboard = () => {
         }
   
         // Dados de notícias do mês
-        const newsResponse = await axios.get(`http://localhost:5000/noticias/por-mes/${selectedYear}/${selectedMonth}`);
+        const newsResponse = await axios.get(`${API_BASE_URL}/noticias/por-mes/${selectedYear}/${selectedMonth}`);
         setNewsData(newsResponse.data);
   
         // Dados carregados com sucesso
@@ -261,7 +263,7 @@ const Dashboard = () => {
 
   const fetchWeeklyVisits = async () => {
     try {
-      const response = await fetch("http://localhost:5000/admin/weekly-visits");
+      const response = await fetch(`${API_BASE_URL}/admin/weekly-visits`);
       const data = await response.json();
       if (data.success) {
         // Obtendo o total atual
@@ -282,7 +284,7 @@ const Dashboard = () => {
 
   const fetchMonthlyYearlyVisits = async () => {
     try {
-      const response = await fetch("http://localhost:5000/admin/monthly-yearly-visits");
+      const response = await fetch(`${API_BASE_URL}/admin/monthly-yearly-visits`);
       const data = await response.json();
       if (data.success) {
         // Obtendo o total atual

@@ -24,7 +24,7 @@
 .section-header2 a {
     text-decoration: none;
     color: #292929;
-    font-size: 1rem;
+    font-size: clamp(0.8rem, 2vw, 1rem);
 }
 
 /* Coluna esquerda e direita */
@@ -40,12 +40,13 @@
     overflow: hidden;
     padding: 1rem;
     transition: box-shadow 0.3s ease-in-out;
+    margin-bottom: 10px;
     text-align: left;
 }
 
 .right-column .grid-item2 {
     display: grid;
-    grid-template-columns: 0.6fr 2fr;
+    grid-template-columns: 2fr 0.6fr;
     gap: 1rem;
     align-items: center;
     text-decoration: none;
@@ -67,6 +68,7 @@
 .image-wrapper {
     position: relative;
     overflow: hidden;
+    max-height: 120px;
 }
 
 .left-image img {
@@ -169,3 +171,150 @@
     color: #292929;
     font-size: 1rem;
 }
+
+
+.ver-mais-btn {
+    width: 140px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    position: relative;
+    background-color: transparent;
+    transition: .2s cubic-bezier(0.19, 1, 0.22, 1);
+    opacity: 0.6;
+    margin: 0 auto;
+  }
+  
+  .ver-mais-btn::after {
+    content: '';
+    border-bottom: 3px double rgb(210, 73, 73);
+    width: 0;
+    height: 100%;
+    position: absolute;
+    margin-top: -5px;
+    top: 0;
+    left: 5px;
+    visibility: hidden;
+    opacity: 1;
+    transition: .2s linear;
+  }
+  
+  .ver-mais-btn .icon {
+    transform: translateX(0%);
+    transition: .2s linear;
+    animation: attention 1.2s linear infinite;
+  }
+  
+  .ver-mais-btn:hover::after {
+    visibility: visible;
+    opacity: 0.7;
+    width: 90%;
+  }
+  
+  .ver-mais-btn:hover {
+    letter-spacing: 2px;
+    opacity: 1;
+  }
+  
+  .ver-mais-btn:hover > .icon {
+    transform: translateX(30%);
+    animation: none;
+  }
+  
+  @keyframes attention {
+    0% {
+      transform: translateX(0%);
+    }
+  
+    50% {
+      transform: translateX(30%);
+    }
+  }
+  
+
+/* Responsividade - Tablet */
+@media (max-width: 1024px) {
+    .third-grid {
+        grid-template-columns: 1fr;
+        width: 80%;
+    }
+
+    .section-header2 h2{
+        font-size: 1.1rem;
+        width: 70%;
+    }
+
+    .section-header2,
+    .section-header3 {
+        width: 80%;
+        gap: 10px;
+    }
+
+    .left-column .grid-item2,
+    .right-column .grid-item2 {
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* Textos maiores à esquerda, imagem menor à direita */
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .left-image img,
+    .right-image img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+
+/* Responsividade - Mobile */
+@media (max-width: 768px) {
+    .third-grid {
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+
+    .section-header2 h2{
+        font-size: 1.1rem;
+        width: 70%;
+    }
+
+    .section-header2,
+    .section-header3 {
+        width: 80%;
+        gap: 10px;
+    }
+
+    .left-column .grid-item2,
+    .right-column .grid-item2 {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: flex-start; /* 👈 Alinha imagem e texto ao topo */
+        gap: 1rem;
+        padding: 1rem 0.5rem; /* 👈 Remove o espaço interno que afastava do topo */
+    }
+
+    .content {
+        padding-right: 10px;
+    }
+
+
+
+    .image-wrapper {
+        width: 45%; /* 👈 Tamanho mediano */
+        height: auto;
+        overflow: hidden;
+    }
+
+    .left-image img,
+    .right-image img {
+        width: 100%;
+        height: auto;
+        object-fit: cover; /* 👈 Garante que a imagem não fique esticada */
+    }
+}
+
+

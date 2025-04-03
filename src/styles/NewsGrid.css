@@ -65,6 +65,7 @@
 .article {
     position: relative;
     width: 100%;
+    max-height: 230px;
     overflow: hidden;
     border-radius: 8px;
     display: flex;
@@ -95,6 +96,7 @@
 
 .article .title {
     position: absolute;
+    width: 100%;
     bottom: -18px;
     color: white;
     padding: 10px 10px 5px 10px;
@@ -156,5 +158,105 @@
     }
     100% {
         background-position: 200px 0;
+    }
+}
+
+
+/* Responsividade - Desktop pequenos */
+@media (max-width: 1580px) {
+    .news-grid {
+        display: grid;
+        grid-template-columns: 3fr 1.5fr 1.5fr;
+        grid-template-rows: 1fr;
+        row-gap: 0;
+        margin: 0 auto;
+        width: 70%;
+        padding-top: 30px;
+    }
+
+    .article {
+        max-height: 160px;
+    }
+
+
+    .title {
+        font-size: 1rem;
+    }
+
+    .main-article .title {
+        margin: 20px;
+    }
+}
+
+/* Responsividade - Desktop médios */
+@media (max-width: 1280px) {
+    .news-grid {
+        grid-template-columns: 2.5fr 1.5fr 1.5fr;
+        width: 80%;
+    }
+
+    .article {
+        max-height: 150px;
+    }
+
+    .title {
+        font-size: 1rem;
+    }
+
+    .main-article .title {
+        margin: 20px;
+    }
+}
+
+
+/* Responsividade - Tablet */
+@media (max-width: 1024px) {
+    .news-grid {
+        grid-template-columns: 1fr;
+        width: 80%;
+    }
+
+
+    .article {
+        max-height: 200px;
+    }
+
+    .title {
+        width: 100%;
+    }
+
+    .side-articles {
+        grid-column: 1 / -1;
+        grid-template-columns: 1fr 1fr;
+        margin-top: 15px;
+    }
+}
+
+/* Responsividade - Mobile */
+@media (max-width: 768px) {
+    .news-grid {
+        grid-template-columns: 1fr;
+        width: 95%;
+    }
+
+    .main-article {
+        grid-column: 1 / -1;
+        height: 250px; /* Ajuste opcional para manter proporção legal */
+        margin-bottom: 15px;
+    }
+
+    .side-articles {
+        grid-column: 1 / -1;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .side-articles .tag {
+        font-size: 0.7rem;
+        top: 5px;
+        left: 5px;
+    }
+
+    .article {
+        height: 180px;
     }
 }

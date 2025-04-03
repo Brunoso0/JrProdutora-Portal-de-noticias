@@ -5,6 +5,9 @@ import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import Paragraph from "@editorjs/paragraph";
+
+import { API_BASE_URL } from "../services/api"; // Importando o arquivo de configuração do Axios
+
 // import AIText from '@alkhipce/editorjs-aitext';   QUEM SABE NO FUTURO
 import ImageTool from "@editorjs/image";
 import SimpleImage from "@editorjs/simple-image";
@@ -50,9 +53,9 @@ const PublishNews = () => {
 
         const headers = { Authorization: `Bearer ${token}` };
         const [userRes, programsRes, categoriesRes] = await Promise.all([
-          axios.get("http://localhost:5000/auth/user", { headers }),
-          axios.get("http://localhost:5000/noticias/programas", { headers }),
-          axios.get("http://localhost:5000/noticias/categorias", { headers }),
+          axios.get(`${API_BASE_URL}/auth/user`, { headers }),
+          axios.get(`${API_BASE_URL}/noticias/programas`, { headers }),
+          axios.get(`${API_BASE_URL}/noticias/categorias`, { headers }),
         ]);
 
         const userData = userRes.data;
@@ -126,7 +129,7 @@ const PublishNews = () => {
                         const base64Audio = e.target.result.split(",")[1];
                         const fileName = file.name;
   
-                        const response = await fetch("http://localhost:5000/noticias/audio", {
+                        const response = await fetch(`${API_BASE_URL}/noticias/audio`, {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json",
@@ -160,7 +163,7 @@ const PublishNews = () => {
           //   config: {
           //     callback: async (text) => {
           //       try {
-          //         const response = await fetch("http://localhost:5000/noticias/aitext", {
+          //         const response = await fetch("${API_BASE_URL}/noticias/aitext", {
           //           method: "POST",
           //           headers: {
           //             "Content-Type": "application/json",
@@ -286,7 +289,7 @@ const PublishNews = () => {
 
         console.log("🚀 Payload enviado para o backend:", payload);
 
-        const response = await axios.post("http://localhost:5000/noticias/salvar", payload, {
+        const response = await axios.post(`${API_BASE_URL}/noticias/salvar`, payload, {
             headers: {
                 Authorization: `Bearer ${token}`, // Certifique-se de que esse cabeçalho está presente
                 "Content-Type": "application/json",

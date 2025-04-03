@@ -14,7 +14,11 @@ const PublicLayout = () => {
       <Header />
       <Navbar />
         <NewsGrid />
-        <SectionHeader title="Mais lidas da semana" link="Ver tudo ->" />
+        <SectionHeader 
+          title="Notícias da Semana" 
+          linkText="Ver todos" 
+          linkTo="/ver-todos/semana" 
+        />
         <SecondGrid />
         <ThirdGrid link="Ver tudo ->" />
       </main>

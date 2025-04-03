@@ -45,6 +45,7 @@
     max-width: 100%;
     height: auto;
     margin: 20px 0;
+    border-radius: 8px;
 }
 
 .noticia-page .conteudo ul,
@@ -70,4 +71,69 @@
     margin-top: 5px;
     font-size: 0.9em;
     color: #999;
+}
+
+/* Estilo para propagandas */
+.propaganda-banner {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.propaganda-banner img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.propaganda-google {
+    margin: 30px 0;
+    text-align: center;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+    .noticia-page {
+        padding: 15px;
+    }
+
+    .noticia-page h1 {
+        font-size: 2em;
+        text-align: center;
+    }
+
+    .noticia-page .autor {
+        text-align: center;
+        font-size: 0.85em;
+    }
+
+    .noticia-page .conteudo {
+        font-size: 1em;
+    }
+
+    .noticia-page .conteudo blockquote {
+        padding: 10px;
+    }
+
+    .propaganda-banner img {
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .noticia-page {
+        padding: 10px;
+    }
+
+    .noticia-page h1 {
+        font-size: 1.6em;
+    }
+
+    .noticia-page .autor {
+        font-size: 0.8em;
+    }
+
+    .noticia-page .conteudo {
+        font-size: 0.95em;
+    }
 }

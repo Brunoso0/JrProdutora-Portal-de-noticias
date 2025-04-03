@@ -23,6 +23,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../components/Loader.jsx"; // Componente de Loader
 import "../styles/EditNews.css";
+import { API_BASE_URL } from '../services/api'; // Importando o arquivo de configuração do Axios
 
 Modal.setAppElement("#root");
 
@@ -74,12 +75,12 @@ const EditNews = () => {
     const fetchData = async () => {
       try {
         setLoading(true); // 🔹 Ativa o loader antes do carregamento
-        const newsResponse = await axios.get("http://localhost:5000/noticias");
+        const newsResponse = await axios.get(`${API_BASE_URL}/noticias`);
         const programsResponse = await axios.get(
-          "http://localhost:5000/noticias/programas"
+          `${API_BASE_URL}/noticias/programas`
         );
         const categoriesResponse = await axios.get(
-          "http://localhost:5000/noticias/categorias"
+          `${API_BASE_URL}/noticias/categorias`
         );
 
         setNewsList(newsResponse.data);
@@ -118,7 +119,7 @@ const EditNews = () => {
     }
 
     try {
-      const newsResponse = await axios.get("http://localhost:5000/noticias");
+      const newsResponse = await axios.get(`${API_BASE_URL}/noticias`);
       setNewsList(newsResponse.data);
     } catch (error) {
       toast.error("Erro ao atualizar a lista de notícias.", {
@@ -184,7 +185,7 @@ const EditNews = () => {
                                 const base64Audio = e.target.result.split(",")[1];
                                 const fileName = file.name;
           
-                                const response = await fetch("http://localhost:5000/noticias/audio", {
+                                const response = await fetch(`${API_BASE_URL}/noticias/audio`, {
                                   method: "POST",
                                   headers: {
                                     "Content-Type": "application/json",
@@ -256,7 +257,7 @@ const EditNews = () => {
         console.log("🔑 Token enviado na requisição:", authToken); // ✅ Verifica o token antes do envio
 
         await axios.put(
-            `http://localhost:5000/noticias/${selectedNews.id}`,
+            `${API_BASE_URL}/noticias/${selectedNews.id}`,
             updatedNews,
             {
                 headers: {
@@ -288,7 +289,7 @@ const handleDelete = async () => {
 
   try {
     const token = localStorage.getItem("authToken"); // Pegando o token salvo no login
-    const response = await axios.delete(`http://localhost:5000/noticias/${newsToDelete}`, {
+    const response = await axios.delete(`${API_BASE_URL}/noticias/${newsToDelete}`, {
       headers: {
         "Authorization": `Bearer ${token}` // Enviando o token no cabeçalho
       }

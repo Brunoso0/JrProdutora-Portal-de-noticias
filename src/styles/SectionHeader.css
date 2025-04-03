@@ -18,3 +18,34 @@
     color: #292929;
     font-size: 1rem;
 }
+
+
+/* Responsividade - Tablet */
+@media (max-width: 1024px) {
+    .section-header {
+        width: 80%;
+    }
+
+    .section-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .section-header a {
+        font-size: 0.9rem;
+    }
+}
+
+/* Responsividade - Mobile */
+@media (max-width: 768px) {
+    .section-header {
+        width: 90%;
+    }
+
+    .section-header h2 {
+        font-size: 1.2rem;
+    }
+
+    .section-header a {
+        font-size: 0.8rem;
+    }
+}

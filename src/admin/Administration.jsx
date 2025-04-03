@@ -6,7 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../components/Loader.jsx";
 
-
+import { API_BASE_URL } from '../services/api'; // Importando o arquivo de configuração do Axios
 
 import "../styles/Administration.css";
 
@@ -47,7 +47,7 @@ const Administration = () => {
       try {
         const token = localStorage.getItem("authToken");
         const response = await axios.get(
-          "http://localhost:5000/auth/user-count-by-access-level",
+          `${API_BASE_URL}/auth/user-count-by-access-level`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -92,7 +92,7 @@ useEffect(() => {
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.get(
-        "http://localhost:5000/auth/user-count-by-access-level",
+        `${API_BASE_URL}/auth/user-count-by-access-level`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -168,7 +168,7 @@ const doughnutOptions = {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("authToken");
-        const response = await axios.get("http://localhost:5000/auth/users", {
+        const response = await axios.get(`${API_BASE_URL}/auth/users`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -219,10 +219,10 @@ const fetchCategoriesAndPrograms = async () => {
     const token = localStorage.getItem("authToken");
 
     const [categoriesResponse, programsResponse] = await Promise.all([
-      axios.get("http://localhost:5000/noticias/categorias", {
+      axios.get(`${API_BASE_URL}/noticias/categorias`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
-      axios.get("http://localhost:5000/noticias/programas", {
+      axios.get(`${API_BASE_URL}/noticias/programas`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
     ]);
@@ -244,7 +244,7 @@ const handleCreateCategory = async () => {
   try {
     const token = localStorage.getItem("authToken");
     await axios.post(
-      "http://localhost:5000/noticias/nova-categoria",
+      `${API_BASE_URL}/noticias/nova-categoria`,
       { nome: newCategory },
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -264,7 +264,7 @@ useEffect(() => {
   const fetchRelatorios = async () => {
     try {
       const token = localStorage.getItem("authToken");
-      const response = await axios.get("http://localhost:5000/relatorios/lista", {
+      const response = await axios.get(`${API_BASE_URL}/relatorios/lista`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRelatorios(response.data);
@@ -286,7 +286,7 @@ const handleGerarRelatorio = async () => {
   try {
     const token = localStorage.getItem("authToken");
     const response = await axios.post(
-      "http://localhost:5000/relatorios/auditorias",
+      `${API_BASE_URL}/relatorios/auditorias`,
       {
         data_inicio: dataInicio,
         data_fim: dataFim,
@@ -336,7 +336,7 @@ const handleToggleUserStatus = async (user) => {
 
   try {
     await axios.put(
-      "http://localhost:5000/auth/update-user",
+      `${API_BASE_URL}/auth/update-user`,
       { userId: user.id, nivel_acesso: novoNivel },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -344,7 +344,7 @@ const handleToggleUserStatus = async (user) => {
     // Log de auditoria
     try {
       await axios.post(
-        "http://localhost:5000/auth/drag-drop-auditoria",
+        `${API_BASE_URL}/auth/drag-drop-auditoria`,
         {
           acao:
             novoNivel === 1
@@ -404,7 +404,7 @@ const handleCreateProgram = async () => {
   try {
     const token = localStorage.getItem("authToken");
     await axios.post(
-      "http://localhost:5000/noticias/novo-programa",
+      `${API_BASE_URL}/noticias/novo-programa`,
       { nome: newProgram },
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -426,7 +426,7 @@ const handleDeleteCategory = async (id) => {
 
   try {
     const token = localStorage.getItem("authToken");
-    await axios.delete(`http://localhost:5000/noticias/remover-categoria/${id}`, {
+    await axios.delete(`${API_BASE_URL}/noticias/remover-categoria/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -444,7 +444,7 @@ const handleDeleteProgram = async (id) => {
 
   try {
     const token = localStorage.getItem("authToken");
-    await axios.delete(`http://localhost:5000/noticias/remover-programa/${id}`, {
+    await axios.delete(`${API_BASE_URL}/noticias/remover-programa/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -462,8 +462,8 @@ const handleDeleteConfirmed = async () => {
   try {
     const token = localStorage.getItem("authToken");
     const url = deleteType === "categoria"
-      ? `http://localhost:5000/noticias/remover-categoria/${deleteTarget}`
-      : `http://localhost:5000/noticias/remover-programa/${deleteTarget}`;
+      ? `${API_BASE_URL}/noticias/remover-categoria/${deleteTarget}`
+      : `${API_BASE_URL}/noticias/remover-programa/${deleteTarget}`;
 
     await axios.delete(url, { headers: { Authorization: `Bearer ${token}` } });
 
@@ -511,7 +511,7 @@ const confirmDelete = (id, type) => {
     // 🔒 Log de auditoria: aprovação
     try {
       await axios.post(
-        "http://localhost:5000/auth/drag-drop-auditoria",
+        `${API_BASE_URL}/auth/drag-drop-auditoria"```,
         {
           acao: `Aprovou o usuário ID ${user.id} via drag and drop.`,
           ip_origem: ipOrigem,
@@ -542,7 +542,7 @@ const confirmDelete = (id, type) => {
     // 🔒 Log de auditoria: remoção
     try {
       await axios.post(
-        "http://localhost:5000/auth/drag-drop-auditoria",
+        `${API_BASE_URL}/auth/drag-drop-auditoria`,
         {
           acao: `Removeu o usuário ID ${user.id} da autorização via drag and drop.`,
           ip_origem: ipOrigem,
@@ -573,7 +573,7 @@ const confirmDelete = (id, type) => {
     try {
       const token = localStorage.getItem("authToken");
       await axios.put(
-        "http://localhost:5000/auth/update-user",
+        `${API_BASE_URL}/auth/update-user`,
         { userId, nivel_acesso },
         {
           headers: {
@@ -607,7 +607,7 @@ const confirmDelete = (id, type) => {
       const { cargo, programa, nivel_acesso } = userStates[selectedUser.id];
   
       await axios.put(
-        "http://localhost:5000/auth/update-user",
+        `${API_BASE_URL}/auth/update-user`,
         {
           userId: selectedUser.id,
           cargo: cargo || null,
@@ -722,7 +722,7 @@ const confirmDelete = (id, type) => {
           <img
             src={
               selectedUser.perfil_imagem
-                ? `http://localhost:5000${selectedUser.perfil_imagem}`
+                ? `${API_BASE_URL}${selectedUser.perfil_imagem}`
                 : "/img/user.jpg"
             }
             alt="Perfil"
@@ -860,7 +860,7 @@ const confirmDelete = (id, type) => {
                       <td className="archive-download">
                       <a
                         className="button"
-                        href={`http://localhost:5000/${rel.caminho_arquivo}`}
+                        href={`${API_BASE_URL}/${rel.caminho_arquivo}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         download

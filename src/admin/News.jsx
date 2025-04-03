@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/News.css";
 import Loader from "../components/LoaderNewsWorld.jsx"; // 🔹 Importação correta
+import { API_BASE_URL } from '../services/api'; // Importando o arquivo de configuração do Axios
 
 const News = () => {
   const [news, setNews] = useState([]);
@@ -14,7 +15,7 @@ const News = () => {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:5000/news/scrape-news");
+      const response = await fetch(`${API_BASE_URL}/news/scrape-news`);
       const data = await response.json();
 
       if (data.success && data.articles) {

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/UserProfile.css";
 
+import { API_BASE_URL } from '../services/api'; // Importando o arquivo de configuração do Axios
+
 const UserProfile = () => {
   const [userData, setUserData] = useState({
     name: "",
@@ -33,7 +35,7 @@ const UserProfile = () => {
           return;
         }
 
-        const response = await axios.get("http://localhost:5000/auth/user", {
+        const response = await axios.get(`${API_BASE_URL}/auth/user`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -44,7 +46,7 @@ const UserProfile = () => {
         setUserAccessLevel(data.nivel_acesso);
         setImagePreview(
           data.profileImage
-            ? `http://localhost:5000${data.profileImage}`
+            ? `${API_BASE_URL}${data.profileImage}`
             : "/img/user.jpg"
         );
         setCargo(data.cargo || "Funcionário"); // Se for null, mostra "Funcionário"
@@ -113,7 +115,7 @@ const UserProfile = () => {
       // Atualiza o nome
       if (newName !== name) {
         await axios.put(
-          "http://localhost:5000/auth/update-name",
+          `${API_BASE_URL}/auth/update-name`,
           { name: newName },
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -128,7 +130,7 @@ const UserProfile = () => {
         formData.append("profileImage", newProfileImage);
   
         const response = await axios.put(
-          "http://localhost:5000/auth/update-image",
+          `${API_BASE_URL}/auth/update-image`,
           formData,
           {
             headers: {
@@ -139,7 +141,7 @@ const UserProfile = () => {
         );
   
         if (response.data.profileImage) {
-          setImagePreview(`http://localhost:5000${response.data.profileImage}`);
+          setImagePreview(`${API_BASE_URL}${response.data.profileImage}`);
         }
       }
   

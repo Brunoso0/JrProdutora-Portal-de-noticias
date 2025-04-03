@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/NewsGrid.css';
+import { API_BASE_URL } from '../services/api'; // Importando o arquivo de configuração do Axios
 
 const NewsGrid = () => {
     const [destaques, setDestaques] = useState([]);
@@ -11,7 +12,7 @@ const NewsGrid = () => {
         const fetchDestaques = async () => {
             try {
                 console.log("🔹 Buscando destaques...");
-                const layoutResponse = await axios.get("http://localhost:5000/layout/news-layout");
+                const layoutResponse = await axios.get(`${API_BASE_URL}/layout/news-layout`); 
 
                 console.log("✅ Layout recebido:", layoutResponse.data);
 
@@ -58,6 +59,13 @@ const NewsGrid = () => {
         return imageBlock ? (imageBlock.data.file?.url || imageBlock.data.url) : "/img/placeholder.png";
     };
 
+    const truncateText = (text, maxLength) => {
+        if (text.length > maxLength) {
+            return text.substring(0, maxLength) + "...";
+        }
+        return text;
+    };
+
     return (
         <section className="news-grid">
             {loading ? (
@@ -77,14 +85,14 @@ const NewsGrid = () => {
                             <Link to={`/noticia/${destaques[0].slug}`} className="main-article">
                                 <img src={destaques[0].imageUrl} alt={destaques[0].titulo} />
                                 <div className="tag">{destaques[0].categoria}</div>
-                                <h2 className="title">{destaques[0].titulo}</h2>
+                                <h2 className="title">{truncateText(destaques[0].titulo, 50)}</h2>
                             </Link>
                             <div className="side-articles">
                                 {destaques.slice(1, 5).map((article, index) => (
                                     <Link to={`/noticia/${article.slug}`} className="article" key={index}>
                                         <img src={article.imageUrl} alt={article.titulo} />
                                         <div className="tag">{article.categoria}</div>
-                                        <h3 className="title">{article.titulo}</h3>
+                                        <h3 className="title">{truncateText(article.titulo, 50)}</h3>
                                     </Link>
                                 ))}
                             </div>

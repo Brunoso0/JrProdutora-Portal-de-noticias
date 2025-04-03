@@ -5,10 +5,15 @@ import { UserProvider } from "./context/UserContext";
 import LoginPage from "./pages/LoginPage";
 import AdminPage from "./pages/AdminPage";
 import NoticiaPage from "./pages/NoticiaPage";
+import VerTodos from "./pages/VerTudoPage"
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicLayout from "./layouts/PublicLayout";
 import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
+
+import { API_BASE_URL } from './services/api'; // Importando o arquivo de configuração do Axios
+
+
 
 import "./index.css";
 
@@ -51,7 +56,7 @@ const App = () => {
         sessionStorage.setItem("visitTracked", "true");
 
         // Enviar os dados para o servidor
-        await axios.post("http://localhost:5000/admin/track-visit", {
+        await axios.post(`${API_BASE_URL}/admin/track-visit`, {
           visitorId,
           ip: ipData.ip,
           cidade: ipData.city || "Desconhecido",
@@ -82,6 +87,7 @@ const App = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
             <Route path="/noticia/:slug" element={<NoticiaPage />} />
+            <Route path="/ver-todos/:tipo" element={<VerTodos />} />
             <Route path="/" element={<PublicLayout />} />
           </Routes>
         </Router>
