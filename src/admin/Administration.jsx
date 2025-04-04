@@ -36,9 +36,35 @@ const Administration = () => {
   const [dataFim, setDataFim] = useState(""); // Data de fim do relatório
   const [formatoRelatorio, setFormatoRelatorio] = useState("pdf"); // Formato do relatório (PDF, Excel, DOC)
   const [relatorios, setRelatorios] = useState([]);
+  const [anuncios, setAnuncios] = useState([]);
+  const [novoAnuncio, setNovoAnuncio] = useState({
+    espaco_id: "",
+    nome_empresa: "",
+    tipo: "banner",
+    imagem: "",
+    link: "",
+    google_client_id: "",
+    google_slot: "",
+    valor: "",
+    contrato: "",
+    inicio_contrato: "",
+    fim_contrato: ""
+  });
+  
 
-
-
+  useEffect(() => {
+    const fetchAnuncios = async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/anuncios`);
+        setAnuncios(res.data);
+      } catch (error) {
+        console.error("Erro ao buscar anúncios:", error);
+      }
+    };
+  
+    fetchAnuncios();
+  }, []);
+  
 
   
 
@@ -932,18 +958,129 @@ const confirmDelete = (id, type) => {
                 </div>
               </div>
           </div>
+
+          <div className="admin-ds-div5 dashboard-box">
+          <h3>Controle de Anúncios</h3>
+          <table className="admin-anuncios-table">
+            <thead>
+              <tr>
+                <th>Espaço</th>
+                <th>Empresa</th>
+                <th>Tipo</th>
+                <th>Status</th>
+                <th>Valor</th>
+                <th>Contrato</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {anuncios.map((anuncio) => (
+                <tr key={anuncio.id}>
+                  <td>{anuncio.espaco_id}</td>
+                  <td>{anuncio.nome_empresa || "-"}</td>
+                  <td>{anuncio.tipo}</td>
+                  <td>{anuncio.ativo ? "Ativo" : "Inativo"}</td>
+                  <td>R$ {anuncio.valor}</td>
+                  <td>
+                    {anuncio.contrato ? (
+                      <a href={anuncio.contrato} target="_blank" rel="noopener noreferrer">Ver</a>
+                    ) : "-"}
+                  </td>
+                  <td>
+                    <button
+                      className={`button ${anuncio.ativo ? "cancel" : ""}`}
+                      onClick={async () => {
+                        try {
+                          await axios.put(`${API_BASE_URL}/anuncios/${anuncio.id}/status`, {
+                            ativo: anuncio.ativo ? 0 : 1,
+                          });
+                          toast.success("✅ Status alterado!");
+                          setAnuncios((prev) =>
+                            prev.map((a) =>
+                              a.id === anuncio.id ? { ...a, ativo: anuncio.ativo ? 0 : 1 } : a
+                            )
+                          );
+                        } catch (error) {
+                          console.error("Erro ao alterar status:", error);
+                          toast.error("❌ Erro ao alterar status");
+                        }
+                      }}
+                    >
+                      {anuncio.ativo ? "Desativar" : "Ativar"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+
+          <div className="admin-ds-div7 dashboard-box">
+            <h3>Cadastro de Anúncios</h3>
+            <div className="form-group">
+              <label>Espaço:</label>
+              <input type="number" value={novoAnuncio.espaco_id} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, espaco_id: e.target.value })} />
+              <label>Empresa:</label>
+              <input type="text" value={novoAnuncio.nome_empresa} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, nome_empresa: e.target.value })} />
+              <label>Tipo:</label>
+              <select value={novoAnuncio.tipo} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, tipo: e.target.value })}>
+                <option value="banner">Banner</option>
+                <option value="google">Google</option>
+              </select>
+
+              {novoAnuncio.tipo === "banner" && (
+                <>
+                  <label>Imagem (URL):</label>
+                  <input type="text" value={novoAnuncio.imagem} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, imagem: e.target.value })} />
+                  <label>Link:</label>
+                  <input type="text" value={novoAnuncio.link} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, link: e.target.value })} />
+                </>
+              )}
+
+              {novoAnuncio.tipo === "google" && (
+                <>
+                  <label>Google Client ID:</label>
+                  <input type="text" value={novoAnuncio.google_client_id} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, google_client_id: e.target.value })} />
+                  <label>Google Slot:</label>
+                  <input type="text" value={novoAnuncio.google_slot} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, google_slot: e.target.value })} />
+                </>
+              )}
+
+              <label>Valor:</label>
+              <input type="number" value={novoAnuncio.valor} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, valor: e.target.value })} />
+              <label>Contrato (URL do PDF):</label>
+              <input type="text" value={novoAnuncio.contrato} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, contrato: e.target.value })} />
+              <label>Início:</label>
+              <input type="date" value={novoAnuncio.inicio_contrato} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, inicio_contrato: e.target.value })} />
+              <label>Fim:</label>
+              <input type="date" value={novoAnuncio.fim_contrato} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, fim_contrato: e.target.value })} />
+
+              <button className="button" onClick={async () => {
+                try {
+                  await axios.post(`${API_BASE_URL}/anuncios`, novoAnuncio);
+                  toast.success("✅ Anúncio cadastrado!");
+                  setNovoAnuncio({ espaco_id: "", nome_empresa: "", tipo: "banner", imagem: "", link: "", google_client_id: "", google_slot: "", valor: "", contrato: "", inicio_contrato: "", fim_contrato: "" });
+                } catch (err) {
+                  toast.error("❌ Erro ao cadastrar anúncio");
+                  console.error(err);
+                }
+              }}>Cadastrar</button>
+            </div>
+          </div>
+
           </div>
       </div>
       {showConfirmModal && (
-  <div className="modal">
-    <div className="modal-content">
-      <h3>Confirmação</h3>
-      <p>Tem certeza de que deseja excluir esta {deleteType === "categoria" ? "categoria" : "programa"}?</p>
-      <button onClick={handleDeleteConfirmed} className="button">Sim, Excluir</button>
-      <button onClick={() => setShowConfirmModal(false)} className="button cancel">Cancelar</button>
-    </div>
-  </div>
-)}
+      <div className="modal">
+        <div className="modal-content">
+          <h3>Confirmação</h3>
+          <p>Tem certeza de que deseja excluir esta {deleteType === "categoria" ? "categoria" : "programa"}?</p>
+          <button onClick={handleDeleteConfirmed} className="button">Sim, Excluir</button>
+          <button onClick={() => setShowConfirmModal(false)} className="button cancel">Cancelar</button>
+        </div>
+      </div>
+    )}
 
     </div>}
     </>

@@ -125,11 +125,15 @@
 /* Propaganda vertical */
 .propaganda-vertical {
   width: 150px;
+  position: absolute;
+  height: 400px;
+  right: 31%;
+  transform: translateX(50%);
 }
 
 .propaganda-vertical img {
   width: 100%;
-  height: 120px;
+  height: 100%;
   object-fit: cover;
   border-radius: 6px;
 }

@@ -309,8 +309,16 @@ h1 {
 }
 .admin-ds-div4 { /* receita */
   grid-column: 2 /4;
+  grid-row: 2;
 }
-
+.admin-ds-div5 { /*4anuncios */
+  grid-column: 2 / 4;
+  grid-row: 3;
+}
+.admin-ds-div7 { /* anuncios */
+  grid-column: 1 / 2;
+  grid-row: 3;
+}
 
 .dashboard-box {
   background-color: #252525;
@@ -502,6 +510,26 @@ h1 {
   overflow-y: auto;
 }
 
+.tabela-relatorios tbody::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tabela-relatorios tbody::-webkit-scrollbar-track {
+  background: #1e1e1e;
+  border-radius: 10px;
+}
+
+.tabela-relatorios tbody::-webkit-scrollbar-thumb {
+  background: #5658C6;
+  border-radius: 10px;
+}
+
+.tabela-relatorios tbody::-webkit-scrollbar-thumb:hover {
+  background: #4e50d1;
+}
+
+
+
 .tabela-relatorios thead,
 .tabela-relatorios tbody tr {
   display: table;
@@ -511,4 +539,167 @@ h1 {
 
 .archive-date {
   padding-left: 50px;
+}
+
+
+.admin-ds-div7 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 400px;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar Styling */
+.admin-ds-div7::-webkit-scrollbar {
+  width: 8px;
+}
+
+.admin-ds-div7::-webkit-scrollbar-track {
+  background: #1e1e1e;
+  border-radius: 10px;
+}
+
+.admin-ds-div7::-webkit-scrollbar-thumb {
+  background: #5658C6;
+  border-radius: 10px;
+}
+
+.admin-ds-div7::-webkit-scrollbar-thumb:hover {
+  background: #4e50d1;
+}
+
+.admin-ds-div7 h3 {
+  font-size: 1.5rem;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.admin-ds-div7 .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.admin-ds-div7 .form-group label {
+  font-size: 1rem;
+  color: #ccc;
+}
+
+.admin-ds-div7 .form-group input,
+.admin-ds-div7 .form-group select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #2c2c2c;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.admin-ds-div7 .form-group select option {
+  background-color: #2c2c2c;
+  color: #fff;
+}
+
+.admin-ds-div7 .form-group .button {
+  align-self: flex-start;
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #5658C6;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.admin-ds-div7 .form-group .button:hover {
+  background-color: #4e50d1;
+}
+
+/* controle de anuncios */
+
+
+/* Estilos para a div de controle de anúncios */
+.admin-ds-div5 {
+  grid-column: 2 / 4;
+  grid-row: 3;
+  background-color: #252525;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.admin-ds-div5 h3 {
+  color: #FFF;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+/* Estilos para a tabela de anúncios */
+.admin-anuncios-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.admin-anuncios-table thead {
+  background-color: #1c1c1c;
+}
+
+.admin-anuncios-table th,
+.admin-anuncios-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.admin-anuncios-table th {
+  font-weight: bold;
+}
+
+.admin-anuncios-table tbody tr:nth-child(even) {
+  background-color: #292929;
+}
+
+.admin-anuncios-table tbody td a {
+  color: #5658C6;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.admin-anuncios-table tbody td a:hover {
+  color: #4e50d1;
+}
+
+.admin-anuncios-table tbody td .button {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+  color: #fff;
+  background-color: #4caf50; /* Cor padrão do botão */
+}
+
+.admin-anuncios-table tbody td .button:hover {
+  background-color: #43a047;
+}
+
+.admin-anuncios-table tbody td .button.cancel {
+  background-color: #f44336; /* Estilo para o botão de desativar */
+}
+
+.admin-anuncios-table tbody td .button.cancel:hover {
+  background-color: #e53935;
+}
+
+.admin-anuncios-table tbody td:last-child {
+  text-align: center;
 }
