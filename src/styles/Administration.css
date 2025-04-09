@@ -703,3 +703,209 @@ h1 {
 .admin-anuncios-table tbody td:last-child {
   text-align: center;
 }
+
+
+
+@media (max-width: 768px) {
+  .administration-container {
+    padding: 0 10px;
+  }
+
+  .dashboard-administration {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .admin-ds {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .admin-ds-div1,
+  .admin-ds-div3,
+  .admin-ds-div4,
+  .admin-ds-div5,
+  .admin-ds-div6,
+  .admin-ds-div7 {
+    grid-column: auto;
+    grid-row: auto;
+    width: 93%;
+  }
+
+  .admin-ds-div5 {
+    overflow-x: auto;
+    display: block;
+  }
+
+  .dashboard-box {
+    padding: 15px;
+    font-size: calc(0.7rem + 0.2vw);
+  }
+
+  .doughnut-center-admin p{
+    font-size: calc(1.5rem + 0.2vw);
+  }
+
+  .doughnut-center-admin b {
+    font-size: calc(0.9rem + 0.2vw);
+  }
+
+  .relatorio-form label, .relatorio-form input, .relatorio-form select {
+    font-size: calc(0.7rem + 0.2vw);
+  }
+
+  .admin-anuncios-table {
+    font-size: 0.8rem;
+  }
+
+  .modal-user-card {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .modal-left {
+    border-right: none;
+    padding-right: 0;
+    margin-bottom: 20px;
+  }
+
+  .modal-right {
+    gap: 10px;
+  }
+
+  .user-columns {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .user-column {
+    height: auto;
+    max-height: none;
+  }
+
+  .tabela-usuarios h1 {
+    padding-left: 0;
+    text-align: center;
+  }
+
+  .admin-user-table {
+    max-width: 95%;
+    overflow-x: auto;
+    display: block;
+  }
+
+  .admin-ds-div7 {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .admin-user-table th{
+    font-size: calc(0.5rem + 0.2vw);
+  }
+
+  .admin-user-table td{
+    font-size: calc(0.5rem + 0.2vw);
+  }
+
+  .relatorio-form .button {
+    font-size: calc(0.5rem + 0.2vw);
+    margin: 0 auto;
+  }
+
+  .admin-ds-div4 h3 {
+    font-size: calc(0.9rem + 0.2vw);
+  }
+
+  .tabela-relatorios {
+    font-size: calc(0.5rem + 0.2vw);
+  }
+
+  .tabela-relatorios th, .tabela-relatorios td {
+    font-size: calc(0.4rem + 0.2vw);
+  }
+
+  .archive-name {
+    width: 20%;
+    overflow-x: hidden
+  }
+
+  .admin-ds-div6 h2 {
+    font-size: calc(0.9rem + 0.2vw);
+  }
+
+  .admin-ds-div6 .form-group input, .admin-ds-div6 .form-group select {
+    font-size: calc(0.7rem + 0.2vw);
+    padding: 8px;
+    width: 100%;
+  }
+
+  .admin-ds-div6 .form-group .button {
+    font-size: calc(0.5rem + 0.2vw);
+  }
+  
+  .admin-anuncios-table {
+    font-size: calc(0.5rem + 0.2vw);
+  }
+
+  .admin-ds-div7 h3, .admin-ds-div5 h3 {
+    font-size: calc(0.9rem + 0.2vw);
+  }
+
+  .admin-ds-div7 .form-group label {
+    font-size: calc(0.5rem + 0.2vw);
+  }
+
+  .admin-ds-div7 .form-group select {
+    font-size: calc(0.5rem + 0.2vw);
+  }
+
+  .admin-ds-div7 .form-group input {
+    font-size: calc(0.5rem + 0.2vw);
+  }
+  
+}
+
+
+@media (max-width: 480px) {
+  .administration-container {
+    padding: 0 5px;
+  }
+
+  
+
+  .admin-ds {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .admin-ds-div1,
+  .admin-ds-div3,
+  .admin-ds-div4,
+  .admin-ds-div5,
+  .admin-ds-div6,
+  .admin-ds-div7 {
+    grid-column: auto;
+    grid-row: auto;
+    width: calc(100% - 110px);
+  }
+
+  .dashboard-box {
+    padding: 10px;
+  }
+
+  .modal-user-card {
+    padding: 15px;
+  }
+
+  .modal-left {
+    margin-bottom: 15px;
+  }
+
+  .admin-ds-div7 .form-group input {
+    font-size: 1rem;
+  }
+}

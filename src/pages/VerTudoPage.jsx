@@ -76,6 +76,9 @@ const VerTodos = () => {
         } else if (tipo === "regiao") {
           setTituloPagina("Notícias da Região");
           res = await axios.get(`${API_BASE_URL}/noticias/regiao/resumo`);
+        } else if (tipo === "semana") {
+          setTituloPagina("Notícias da Semana");
+          res = await axios.get(`${API_BASE_URL}/noticias/semana/resumo`);
         } else {
           setTituloPagina(`Notícias de ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`);
           res = await axios.get(`${API_BASE_URL}/noticias/categoria/${tipo}`);

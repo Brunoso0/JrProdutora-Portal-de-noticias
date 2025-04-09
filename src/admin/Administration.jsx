@@ -697,122 +697,122 @@ const confirmDelete = (id, type) => {
 
       <div className="tabela-usuarios">
         <h1>Controle de Usuarios</h1>
-  <table className="admin-user-table">
-    <thead>
-      <tr>
-        <th>Nome ↓</th>
-        <th>E-mail ↓</th>
-        <th>Função ↓</th>
-        <th>Nível ↓</th>
-        <th>Programa Associado ↓</th>
-        <th>Notícias ↓</th>
-        <th>Status ↓</th>
-        <th>Ação</th>
-      </tr>
-    </thead>
-    <tbody>
-      {[...approvedUsers, ...pendingUsers].map((user) => (
-        <tr key={user.id}>
-          <td>{user.nome}</td>
-          <td>{user.email}</td>
-          <td>{user.cargo || "Nenhum"}</td>
-          <td>{accessLevels[user.nivel_acesso] || "Nenhum"}</td>
-          <td>
-            {user.programa_id === 1
-              ? "Café com Resenhas"
-              : user.programa_id === 2
-              ? "Jr Esportes"
-              : user.programa_id === 3
-              ? "Jr Notícias"
-              : "Nenhum"}
-          </td>
-          <td>{user.total_noticias || 0}</td>
-          <td>{user.nivel_acesso > 0 ? "Ativo" : "Inativo"}</td>
-          <td>
-            <button className="edit-btn" onClick={() => openEditModal(user)}>
-              <img src="/img/edit.png" alt="Editar" />
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-
-
-{selectedUser && (
-  <div className="modal">
-    <div className="modal-user-card dark-theme">
-      <div className="modal-left">
-        <div className="user-profile-pic">
-          <img
-            src={
-              selectedUser.perfil_imagem
-                ? `${API_BASE_URL}${selectedUser.perfil_imagem}`
-                : "/img/user.jpg"
-            }
-            alt="Perfil"
-          />
-        </div>
-        <h2>{selectedUser.nome}</h2>
-        <p>{selectedUser.email}</p>
-        <p><b>Total de Notícias:</b> {selectedUser.total_noticias || 0}</p>
-        <p><b>Status:</b> {selectedUser.nivel_acesso > 0 ? "Ativo" : "Inativo"}</p>
-        <button
-          className={`button ${selectedUser.nivel_acesso > 0 ? 'cancel' : ''}`}
-          onClick={() => handleToggleUserStatus(selectedUser)}
-        >
-          {selectedUser.nivel_acesso > 0 ? "Desativar Usuário" : "Ativar Usuário"}
-        </button>
-
+        <table className="admin-user-table">
+          <thead>
+            <tr>
+              <th>Nome ↓</th>
+              <th>E-mail ↓</th>
+              <th>Função ↓</th>
+              <th>Nível ↓</th>
+              <th>Programa Associado ↓</th>
+              <th>Notícias ↓</th>
+              <th>Status ↓</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...approvedUsers, ...pendingUsers].map((user) => (
+              <tr key={user.id}>
+                <td>{user.nome}</td>
+                <td>{user.email}</td>
+                <td>{user.cargo || "Nenhum"}</td>
+                <td>{accessLevels[user.nivel_acesso] || "Nenhum"}</td>
+                <td>
+                  {user.programa_id === 1
+                    ? "Café com Resenhas"
+                    : user.programa_id === 2
+                    ? "Jr Esportes"
+                    : user.programa_id === 3
+                    ? "Jr Notícias"
+                    : "Nenhum"}
+                </td>
+                <td>{user.total_noticias || 0}</td>
+                <td>{user.nivel_acesso > 0 ? "Ativo" : "Inativo"}</td>
+                <td>
+                  <button className="edit-btn" onClick={() => openEditModal(user)}>
+                    <img src="/img/edit.png" alt="Editar" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      <div className="modal-right">
-        <h3>Editar Dados</h3>
-        <label>
-          Cargo:
-          <input
-            type="text"
-            value={userStates[selectedUser.id]?.cargo || ""}
-            onChange={(e) => handleInputChange("cargo", e.target.value)}
-          />
-        </label>
-        <label>
-          Programa:
-          <select
-            value={userStates[selectedUser.id]?.programa || 0}
-            onChange={(e) =>
-              handleInputChange("programa", parseInt(e.target.value))
-            }
-          >
-            <option value={0}>Nenhum</option>
-            <option value={1}>Café com Resenhas</option>
-            <option value={2}>Jr Esportes</option>
-            <option value={3}>Jr Notícias</option>
-          </select>
-        </label>
-        <label>
-          Nível de Acesso:
-          <select
-            value={userStates[selectedUser.id]?.nivel_acesso || 0}
-            onChange={(e) =>
-              handleInputChange("nivel_acesso", parseInt(e.target.value))
-            }
-          >
-            <option value={1}>Básico</option>
-            <option value={2}>Intermediário</option>
-            <option value={3}>Administrador</option>
-            <option value={4}>Admin Chefe</option>
-          </select>
-        </label>
-        <div className="modal-buttons">
-          <button className="button" onClick={handleConfirmChanges}>Salvar</button>
-          <button className="button cancel" onClick={closeModal}>Cancelar</button>
+
+      {selectedUser && (
+        <div className="modal">
+          <div className="modal-user-card dark-theme">
+            <div className="modal-left">
+              <div className="user-profile-pic">
+                <img
+                  src={
+                    selectedUser.perfil_imagem
+                      ? `${API_BASE_URL}${selectedUser.perfil_imagem}`
+                      : "/img/user.jpg"
+                  }
+                  alt="Perfil"
+                />
+              </div>
+              <h2>{selectedUser.nome}</h2>
+              <p>{selectedUser.email}</p>
+              <p><b>Total de Notícias:</b> {selectedUser.total_noticias || 0}</p>
+              <p><b>Status:</b> {selectedUser.nivel_acesso > 0 ? "Ativo" : "Inativo"}</p>
+              <button
+                className={`button ${selectedUser.nivel_acesso > 0 ? 'cancel' : ''}`}
+                onClick={() => handleToggleUserStatus(selectedUser)}
+              >
+                {selectedUser.nivel_acesso > 0 ? "Desativar Usuário" : "Ativar Usuário"}
+              </button>
+
+            </div>
+
+            <div className="modal-right">
+              <h3>Editar Dados</h3>
+              <label>
+                Cargo:
+                <input
+                  type="text"
+                  value={userStates[selectedUser.id]?.cargo || ""}
+                  onChange={(e) => handleInputChange("cargo", e.target.value)}
+                />
+              </label>
+              <label>
+                Programa:
+                <select
+                  value={userStates[selectedUser.id]?.programa || 0}
+                  onChange={(e) =>
+                    handleInputChange("programa", parseInt(e.target.value))
+                  }
+                >
+                  <option value={0}>Nenhum</option>
+                  <option value={1}>Café com Resenhas</option>
+                  <option value={2}>Jr Esportes</option>
+                  <option value={3}>Jr Notícias</option>
+                </select>
+              </label>
+              <label>
+                Nível de Acesso:
+                <select
+                  value={userStates[selectedUser.id]?.nivel_acesso || 0}
+                  onChange={(e) =>
+                    handleInputChange("nivel_acesso", parseInt(e.target.value))
+                  }
+                >
+                  <option value={1}>Básico</option>
+                  <option value={2}>Intermediário</option>
+                  <option value={3}>Administrador</option>
+                  <option value={4}>Admin Chefe</option>
+                </select>
+              </label>
+              <div className="modal-buttons">
+                <button className="button" onClick={handleConfirmChanges}>Salvar</button>
+                <button className="button cancel" onClick={closeModal}>Cancelar</button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
 
       <div className="dashboard-administration">
         <div className="admin-ds">
@@ -964,7 +964,7 @@ const confirmDelete = (id, type) => {
           <table className="admin-anuncios-table">
             <thead>
               <tr>
-                <th>Espaço</th>
+                <th>Bloco do Anúncio</th>
                 <th>Empresa</th>
                 <th>Tipo</th>
                 <th>Status</th>
@@ -1016,58 +1016,161 @@ const confirmDelete = (id, type) => {
         </div>
 
 
-          <div className="admin-ds-div7 dashboard-box">
-            <h3>Cadastro de Anúncios</h3>
-            <div className="form-group">
-              <label>Espaço:</label>
-              <input type="number" value={novoAnuncio.espaco_id} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, espaco_id: e.target.value })} />
-              <label>Empresa:</label>
-              <input type="text" value={novoAnuncio.nome_empresa} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, nome_empresa: e.target.value })} />
-              <label>Tipo:</label>
-              <select value={novoAnuncio.tipo} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, tipo: e.target.value })}>
-                <option value="banner">Banner</option>
-                <option value="google">Google</option>
-              </select>
+        <div className="admin-ds-div7 dashboard-box">
+  <h3>Cadastro de Anúncios</h3>
+  <div className="form-group">
 
-              {novoAnuncio.tipo === "banner" && (
-                <>
-                  <label>Imagem (URL):</label>
-                  <input type="text" value={novoAnuncio.imagem} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, imagem: e.target.value })} />
-                  <label>Link:</label>
-                  <input type="text" value={novoAnuncio.link} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, link: e.target.value })} />
-                </>
-              )}
+    <label>Bloco de Anúncio:</label>
+    <select
+      value={novoAnuncio.espaco_id}
+      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, espaco_id: e.target.value })}
+    >
+      <option value="">Selecione...</option>
+      <option value={1}>Topo - Horizontal</option>
+      <option value={2}>Sidebar - Vertical</option>
+      <option value={3}>Rodapé - Horizontal</option>
+      <option value={4}>Meio da Lista</option>
+    </select>
 
-              {novoAnuncio.tipo === "google" && (
-                <>
-                  <label>Google Client ID:</label>
-                  <input type="text" value={novoAnuncio.google_client_id} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, google_client_id: e.target.value })} />
-                  <label>Google Slot:</label>
-                  <input type="text" value={novoAnuncio.google_slot} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, google_slot: e.target.value })} />
-                </>
-              )}
+    <label>Empresa:</label>
+    <input
+      type="text"
+      value={novoAnuncio.nome_empresa}
+      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, nome_empresa: e.target.value })}
+    />
 
-              <label>Valor:</label>
-              <input type="number" value={novoAnuncio.valor} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, valor: e.target.value })} />
-              <label>Contrato (URL do PDF):</label>
-              <input type="text" value={novoAnuncio.contrato} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, contrato: e.target.value })} />
-              <label>Início:</label>
-              <input type="date" value={novoAnuncio.inicio_contrato} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, inicio_contrato: e.target.value })} />
-              <label>Fim:</label>
-              <input type="date" value={novoAnuncio.fim_contrato} onChange={(e) => setNovoAnuncio({ ...novoAnuncio, fim_contrato: e.target.value })} />
+    <label>Tipo:</label>
+    <select
+      value={novoAnuncio.tipo}
+      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, tipo: e.target.value })}
+    >
+      <option value="banner">Banner</option>
+      <option value="google">Google</option>
+    </select>
 
-              <button className="button" onClick={async () => {
-                try {
-                  await axios.post(`${API_BASE_URL}/anuncios`, novoAnuncio);
-                  toast.success("✅ Anúncio cadastrado!");
-                  setNovoAnuncio({ espaco_id: "", nome_empresa: "", tipo: "banner", imagem: "", link: "", google_client_id: "", google_slot: "", valor: "", contrato: "", inicio_contrato: "", fim_contrato: "" });
-                } catch (err) {
-                  toast.error("❌ Erro ao cadastrar anúncio");
-                  console.error(err);
-                }
-              }}>Cadastrar</button>
-            </div>
-          </div>
+    {novoAnuncio.tipo === "banner" && (
+      <>
+        <label>Imagem do Anúncio:</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setNovoAnuncio({ ...novoAnuncio, imagemFile: e.target.files[0] })}
+        />
+
+        <label>Link ao clicar no banner:</label>
+        <input
+          type="text"
+          value={novoAnuncio.link}
+          onChange={(e) => setNovoAnuncio({ ...novoAnuncio, link: e.target.value })}
+        />
+      </>
+    )}
+
+    {novoAnuncio.tipo === "google" && (
+      <>
+        <label>Google Client ID:</label>
+        <input
+          type="text"
+          value={novoAnuncio.google_client_id}
+          onChange={(e) => setNovoAnuncio({ ...novoAnuncio, google_client_id: e.target.value })}
+        />
+
+        <label>Google Slot:</label>
+        <input
+          type="text"
+          value={novoAnuncio.google_slot}
+          onChange={(e) => setNovoAnuncio({ ...novoAnuncio, google_slot: e.target.value })}
+        />
+      </>
+    )}
+
+    <label>Valor do Anúncio:</label>
+    <input
+      type="number"
+      value={novoAnuncio.valor}
+      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, valor: e.target.value })}
+    />
+
+    <label>Contrato (PDF):</label>
+    <input
+      type="file"
+      accept="application/pdf"
+      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, contratoFile: e.target.files[0] })}
+    />
+
+    <label>Início do Contrato:</label>
+    <input
+      type="date"
+      value={novoAnuncio.inicio_contrato}
+      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, inicio_contrato: e.target.value })}
+    />
+
+    <label>Fim do Contrato:</label>
+    <input
+      type="date"
+      value={novoAnuncio.fim_contrato}
+      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, fim_contrato: e.target.value })}
+    />
+
+    <button
+      className="button"
+      onClick={async () => {
+        try {
+          const formData = new FormData();
+          formData.append("espaco_id", novoAnuncio.espaco_id);
+          formData.append("nome_empresa", novoAnuncio.nome_empresa);
+          formData.append("tipo", novoAnuncio.tipo);
+          formData.append("valor", novoAnuncio.valor);
+          formData.append("inicio_contrato", novoAnuncio.inicio_contrato);
+          formData.append("fim_contrato", novoAnuncio.fim_contrato);
+
+          if (novoAnuncio.tipo === "banner") {
+            formData.append("imagem", novoAnuncio.imagemFile);
+            formData.append("link", novoAnuncio.link || "");
+          }
+
+          if (novoAnuncio.tipo === "google") {
+            formData.append("google_client_id", novoAnuncio.google_client_id);
+            formData.append("google_slot", novoAnuncio.google_slot);
+          }
+
+          if (novoAnuncio.contratoFile) {
+            formData.append("contrato", novoAnuncio.contratoFile);
+          }
+
+          await axios.post(`${API_BASE_URL}/anuncios`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+
+          toast.success("✅ Anúncio cadastrado com sucesso!");
+
+          setNovoAnuncio({
+            espaco_id: "",
+            nome_empresa: "",
+            tipo: "banner",
+            imagemFile: null,
+            link: "",
+            google_client_id: "",
+            google_slot: "",
+            valor: "",
+            contratoFile: null,
+            inicio_contrato: "",
+            fim_contrato: "",
+          });
+        } catch (err) {
+          console.error(err);
+          toast.error("❌ Erro ao cadastrar anúncio");
+        }
+      }}
+    >
+      Cadastrar
+    </button>
+  </div>
+</div>
+
+
 
           </div>
       </div>

@@ -274,3 +274,145 @@
     background-color: darkgray;
   }
   
+
+  @media (max-width: 1200px) {
+    .news-grid-custom {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 2fr));
+    }
+
+    .news-item-custom {
+      padding: 15px;
+      font-size: calc(0.5rem + 0.5vw);
+      width: 100%;
+    }
+
+    .news-item-custom h3 {
+      font-size: calc(1rem + 0.5vw);
+    }
+
+    .news-container-custom p {
+      margin: 0;
+    }
+
+    
+    .Edit-img {
+      height: 200px;
+    }
+
+    .Edit-img img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .edit-button,
+    .delete-confirm-button,
+    .delete-cancel-button {
+      padding: 8px 16px;
+    }
+
+    .editor-container {
+      height: 40rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .news-grid-custom {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    .news-container-custom {
+      padding: 15px;
+    }
+
+    .news-item-custom {
+      padding: 10px;
+      font-size: calc(0.5rem + 0.5vw);
+    }
+
+    .news-item-custom h3 {
+      font-size: calc(1rem + 0.5vw);
+    }
+
+    .news-container-custom p {
+      margin: 0;
+    }
+
+    .modal-title {
+      font-size: calc(1rem + 0.5vw);
+    }
+
+    .modal-category, .modal-program {
+      font-size: calc(0.8rem + 0.5vw);
+    }
+
+    .modal-label {
+      font-size: calc(0.8rem + 0.5vw);
+    }
+
+    .modal-label select {
+      font-size: calc(0.5rem + 0.5vw);
+    }
+
+    .edit-button,
+    .delete-confirm-button,
+    .delete-cancel-button {
+      padding: 6px 12px;
+    }
+
+    .Edit-img {
+      height: 200px;
+    }
+
+    .Edit-img img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .editor-container {
+      height: 30rem;
+    }
+
+    .modal-delete {
+      width: 90%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .news-grid-custom {
+      grid-template-columns: 1fr;
+    }
+
+    .news-container-custom {
+      padding: 10px;
+    }
+
+    .news-title,
+    .news-description {
+      font-size: 16px;
+    }
+
+    .edit-button,
+    .delete-confirm-button,
+    .delete-cancel-button {
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+
+    .editor-container {
+      height: 20rem;
+    }
+
+    .modal-delete {
+      padding: 15px;
+    }
+
+    .modal-delete-title {
+      font-size: 18px;
+    }
+
+    .modal-delete-text {
+      font-size: 14px;
+    }
+  }

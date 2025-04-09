@@ -247,3 +247,104 @@
   color: #3c97bf;
   text-decoration: none;
 }
+
+
+
+
+@media (max-width: 1024px) {
+  .Login-container {
+    width: 90%;
+    min-height: 400px;
+  }
+
+  .Login-body h1 {
+    font-size: calc(24px + 1vw);
+  }
+
+  .Login-body p {
+    font-size: calc(12px + 0.5vw);
+  }
+
+  .Login-body button {
+    font-size: calc(10px + 0.5vw);
+    padding: calc(10px + 0.5vw) calc(30px + 1vw);
+  }
+
+  .Login-body input {
+    padding: calc(10px + 0.5vw);
+  }
+
+  .Login-overlay-panel {
+    padding: 0 calc(20px + 1vw);
+  }
+}
+
+@media (max-width: 768px) {
+  .Login-container {
+    flex-direction: column;
+    width: 100%;
+    min-height: 40%;
+  }
+
+  .Login-body h1 {
+    font-size: calc(20px + 1vw);
+  }
+
+  .Login-body p {
+    font-size: calc(10px + 0.5vw);
+  }
+
+  .Login-body a {
+    font-size: calc(8px + 0.5vw);
+  }
+
+  .Login-body button {
+    font-size: calc(8px + 0.5vw);
+    padding: calc(8px + 0.5vw) calc(20px + 1vw);
+  }
+
+  .Login-body input {
+    padding: calc(6px + 0.5vw);
+    font-size: calc(8px + 0.5vw);
+  }
+
+  .Login-body form {
+    padding: 0 calc(25px + 1vw);
+  }
+
+  .Login-overlay-panel {
+    padding: 0 calc(15px + 1vw);
+  }
+}
+
+@media (max-width: 480px) {
+  .Login-body h1 {
+    font-size: calc(18px + 1vw);
+  }
+
+  .Login-body span {
+    font-size: calc(8px + 0.5vw);
+  }
+
+  .Login-body p {
+    font-size: calc(8px + 0.5vw);
+  }
+
+  .Login-body button {
+    font-size: calc(6px + 0.5vw);
+    padding: calc(6px + 0.5vw) calc(15px + 1vw);
+  }
+
+  .Login-body input {
+    padding: calc(6px + 0.5vw);
+    font-size: calc(8px + 0.5vw);
+  }
+
+  .Login-body form {
+    padding: 0 calc(10px + 1vw);
+  }
+
+  .Login-overlay-panel {
+    padding: 0 calc(10px + 1vw);
+  }
+}

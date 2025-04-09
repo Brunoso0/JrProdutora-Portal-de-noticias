@@ -531,4 +531,176 @@ input[type="month"] {
 
 /* Estilização do loader */
 
+/* ================================
+   📱 RESPONSIVIDADE - DASHBOARD
+   ================================ */
 
+   @media (max-width: 1024px) {
+    .dashboard3-modal-content {
+      width: 90%;
+      height: 90%;
+    }
+  
+    .ds3-chart2 canvas {
+      width: 80% !important;
+    }
+  
+    .dashboard3-information-grid,
+    .dashboard3-charts-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .ds5-modal-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .ds5-actions {
+      grid-column: span 1;
+      justify-content: center;
+    }
+  
+    .dashboard-widget.div10 {
+      flex-direction: column;
+      height: auto;
+    }
+  
+    .ds10-map-container, .ds10-bar-chart {
+      width: 100%;
+      height: auto;
+    }
+  
+    .container-bars-chart {
+      flex-direction: column;
+      width: 100%;
+      gap: 20px;
+    }
+  
+    .bar-chart-container {
+      justify-content: center;
+      height: 300px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard3-modal-content {
+      width: 95%;
+      height: auto;
+      padding: 10px;
+    }
+  
+    .dashboard3-information-grid,
+    .dashboard3-charts-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .ds3-chart2 canvas {
+      width: 100% !important;
+    }
+  
+    .dashboard5-modal-content {
+      width: 100%;
+      padding: 10px;
+    }
+  
+    .ds5-modal-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .ds5-actions {
+      grid-column: span 1;
+      justify-content: center;
+    }
+  
+    .dashboard-widget.div10 {
+      flex-direction: column;
+      height: auto;
+    }
+  
+    .ds10-map-container, .ds10-bar-chart {
+      width: 100%;
+      height: auto;
+    }
+  
+    .container-bars-chart {
+      flex-direction: column;
+      width: 100%;
+      gap: 20px;
+    }
+  
+    .bar-chart-container {
+      justify-content: center;
+      height: 300px;
+    }
+  
+    .dashboard3-close-btn {
+      width: 3em;
+      height: 3em;
+    }
+  
+    .X, .Y {
+      width: 1.5em;
+    }
+  
+    .modal-content {
+      width: 90%;
+      padding: 15px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .dashboard-grid {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dashboard-widget h3 {
+      font-size: calc(1.1rem + 0.5vw);
+      margin-top: 0;
+    }
+    
+    .dashboard-title {
+      font-size: 20px;
+    }
+  
+    .stats-widget {
+      font-size: 16px;
+    }
+  
+    .dashboard3-modal-content h2 {
+      font-size: 20px;
+    }
+  
+    .dashboard-widget {
+      padding: 15px;
+    }
+  
+    .dashboard3-close-btn {
+      width: 2.5em;
+      height: 2.5em;
+    }
+  
+    .X, .Y {
+      width: 1.2em;
+    }
+  
+    .close {
+      font-size: 10px;
+      width: 2.5em;
+      height: 1.5em;
+    }
+  
+    .donut-center {
+      font-size: 26px;
+    }
+  
+    .donut-center span {
+      font-size: 12px;
+    }
+  
+    .ds5-actions {
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+  

@@ -7,6 +7,11 @@
   color: white;
 }
 
+.user-dashboard h1 {
+  font-size: 2rem;
+  padding-left: 30px;
+}
+
 /* Sidebar */
 .sidebar-profile {
   display: flex;
@@ -245,3 +250,76 @@ progress {
   cursor: pointer;
 }
 
+
+
+/* Responsividade */
+@media (max-width: 1200px) {
+  .user-dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+  }
+
+  .user-dashboard-grid > .profile-card,
+  .user-dashboard-grid > .trophy-card,
+  .user-dashboard-grid > .points-card,
+  .user-dashboard-grid > .level-card,
+  .user-dashboard-grid > .quests-card,
+  .user-dashboard-grid > .reward-card,
+  .user-dashboard-grid > .stats-card,
+  .user-dashboard-grid > .tokens-card,
+  .user-dashboard-grid > .energy-card,
+  .user-dashboard-grid > .endorsements-card {
+    grid-column: span 2;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-dashboard {
+    flex-direction: column;
+  }
+  
+  .user-dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-bottom: 20px;
+  }
+
+  .user-dashboard-grid > .profile-card,
+  .user-dashboard-grid > .trophy-card,
+  .user-dashboard-grid > .points-card,
+  .user-dashboard-grid > .level-card,
+  .user-dashboard-grid > .quests-card,
+  .user-dashboard-grid > .reward-card,
+  .user-dashboard-grid > .stats-card,
+  .user-dashboard-grid > .tokens-card,
+  .user-dashboard-grid > .energy-card,
+  .user-dashboard-grid > .endorsements-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-profile {
+    padding: 10px;
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .customize-btn, .info-btn, .collect-btn, .spend-btn, .browse-btn {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
+
+  .modal-content {
+    width: 90%;
+  }
+}
