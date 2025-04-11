@@ -27,6 +27,22 @@
     border: 5px solid #000000;
 }
 
+.news-filter select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #333; /* Cor de fundo do seletor */
+    color: #fff; /* Cor do texto do seletor */
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.news-filter select:hover {
+    background-color: #444; /* Cor de fundo ao passar o mouse */
+    cursor: pointer;
+}
+
+
 /* Seção onde as notícias serão exibidas */
 .news-results {
     display: grid;

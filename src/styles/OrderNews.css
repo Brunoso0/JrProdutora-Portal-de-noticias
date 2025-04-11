@@ -133,92 +133,7 @@
     background: #ffae00;
 }
 
-/* 🔹 SEÇÃO PARA ESCOLHA DE NOTÍCIAS */
-.news-selection {
-    margin-top: 30px;
-    padding: 20px;
-    background: #0c0c0c;
-    border-radius: 8px;
-    color: #FFF;
-    overflow-y: scroll;
-}
 
-
-.news-filter {
-    width: 30%;
-}
-
-.news-selection::-webkit-scrollbar   {
-    width: 15px;
-}
-
-.news-selection::-webkit-scrollbar-track   {
-    background-color: #000000;
-    border-radius: 11px;
-}
-
-.news-selection::-webkit-scrollbar-corner {
-    width: 20px;
-}
-
-.news-selection::-webkit-scrollbar-thumb {
-    background-color: #e68900;
-    border-radius: 11px;
-    border: 5px solid #000000;
-}
-
-.news-selection h3 {
-    font-size: 22px;
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-/* 🔹 Lista de notícias disponíveis */
-.news-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-}
-
-/* 🔹 Item da lista */
-.news-item-order {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.265);
-    transition: transform 0.2s ease-in-out;
-}
-
-.news-item-order:hover {
-    transform: scale(1.03);
-}
-
-/* 🔹 Imagem das notícias na lista */
-.news-image {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 5px;
-}
-
-/* 🔹 Informações da notícia */
-.news-info {
-    text-align: center;
-    padding: 10px 0;
-}
-
-.news-info h4 {
-    font-size: 15px;
-    margin-bottom: 5px;
-    color: #dbdbdb;
-}
-
-.news-info p {
-    font-size: 14px;
-    color: rgb(166, 166, 166);
-}
 
 /* 🔹 Botão de destaque */
 .highlight-button {
@@ -237,31 +152,68 @@
     background: #e68900;
 }
 
+.news-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ajusta o número de colunas conforme o tamanho da tela */
+    gap: 50px 20px;
+}
+
 /* 🔹 Responsividade */
+/* 🔹 Responsividade */
+
+/* Telas médias (tablets) */
 @media (max-width: 1024px) {
+    .order-container {
+        padding: 15px;
+    }
+
     .order-news-grid {
-        grid-template-columns: repeat(1, 1fr);
+        grid-template-columns: 1fr; /* Duas colunas para tablets */
+        grid-template-rows: auto; /* Ajusta a altura automaticamente */
+    }
+
+    .order-main-article {
+        height: 350px; /* Ajuste a altura conforme necessário */
     }
 
     .order-side-articles {
-        grid-template-columns: repeat(1, 1fr);
+        grid-column: 1 / 3; /* Ocupa toda a largura */
+        grid-template-columns: repeat(2, 1fr); /* Duas colunas para tablets */
+        grid-template-rows: repeat(2, auto); /* Duas linhas para as notícias laterais */
     }
 
-    .news-list {
-        grid-template-columns: repeat(2, 1fr);
+    .order-article {
+        height: 180px; /* Ajuste a altura conforme necessário */
     }
 }
 
+/* Telas pequenas (smartphones) */
 @media (max-width: 768px) {
+    .order-container {
+        padding: 10px;
+    }
+
     .order-news-grid {
-        grid-template-columns: repeat(1, 1fr);
+        grid-template-columns: 1fr; /* Uma coluna para telas pequenas */
+        grid-template-rows: auto; /* Ajusta a altura automaticamente */
+    }
+
+    .order-main-article {
+        height: 300px; /* Ajuste a altura conforme necessário */
     }
 
     .order-side-articles {
-        grid-template-columns: repeat(1, 1fr);
+        grid-column: 1 / 2; /* Ocupa toda a largura */
+        grid-template-columns: 1fr; /* Uma coluna para telas pequenas */
+        grid-template-rows: repeat(4, auto); /* Quatro linhas para as notícias laterais */
+    }
+
+    .order-article {
+        height: 150px; /* Ajuste a altura conforme necessário */
     }
 
     .news-list {
-        grid-template-columns: repeat(1, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Ajusta o número de colunas conforme o tamanho da tela */
+        gap: 50px 10px; /* Ajusta o espaçamento entre os itens */
     }
 }

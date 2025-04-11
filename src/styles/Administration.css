@@ -705,6 +705,104 @@ h1 {
 }
 
 
+/* Modal de Edição de Anúncio */
+.modal-content {
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 600px;
+  width: 90%;
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  animation: slideIn 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modal-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #fff;
+}
+
+.modal-content label {
+  font-size: 1rem;
+  color: #ccc;
+  margin-bottom: 5px;
+}
+
+.modal-content input,
+.modal-content select {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  background-color: #2c2c2c;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+.modal-content select option {
+  background-color: #2c2c2c;
+  color: #fff;
+}
+
+.modal-content img {
+  max-width: 200px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #444;
+}
+
+.modal-content a {
+  color: #4caf50;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+.modal-content a:hover {
+  color: #43a047;
+}
+
+.modal-content p {
+  font-size: 0.95rem;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.modal-buttons .button {
+  padding: 10px 18px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal-buttons .button:hover {
+  background-color: #43a047;
+}
+
+.modal-buttons .button.cancel {
+  background-color: #f44336;
+}
+
+.modal-buttons .button.cancel:hover {
+  background-color: #e53935;
+}
+
+
 
 @media (max-width: 768px) {
   .administration-container {

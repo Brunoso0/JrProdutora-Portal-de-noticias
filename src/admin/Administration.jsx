@@ -50,20 +50,31 @@ const Administration = () => {
     inicio_contrato: "",
     fim_contrato: ""
   });
+  const [anuncioEditando, setAnuncioEditando] = useState(null);
+  const [imagemEditada, setImagemEditada] = useState(null);
+  const [contratoEditado, setContratoEditado] = useState(null);
+
+
+
+
+
   
 
-  useEffect(() => {
-    const fetchAnuncios = async () => {
-      try {
-        const res = await axios.get(`${API_BASE_URL}/anuncios`);
-        setAnuncios(res.data);
-      } catch (error) {
-        console.error("Erro ao buscar anúncios:", error);
-      }
-    };
-  
-    fetchAnuncios();
-  }, []);
+  // ⬆️ Adicione isso antes do useEffect
+const fetchAnuncios = async () => {
+  try {
+    const res = await axios.get(`${API_BASE_URL}/anuncios`);
+    setAnuncios(res.data);
+  } catch (error) {
+    console.error("Erro ao buscar anúncios:", error);
+  }
+};
+
+// ⬇️ Agora apenas chame dentro do useEffect
+useEffect(() => {
+  fetchAnuncios();
+}, []);
+
   
 
   
@@ -146,6 +157,57 @@ useEffect(() => {
 
   fetchUserCountByAccess();
 }, []);
+
+
+
+const abrirModalEdicao = (anuncio) => {
+  setAnuncioEditando(anuncio);
+};
+
+const handleEditarAnuncio = async () => {
+  if (!anuncioEditando) return;
+
+  try {
+    const formData = new FormData();
+formData.append("espaco_id", anuncioEditando.espaco_id);
+formData.append("nome_empresa", anuncioEditando.nome_empresa);
+formData.append("tipo", anuncioEditando.tipo);
+formData.append("valor", anuncioEditando.valor);
+formData.append("link", anuncioEditando.link);
+formData.append("google_client_id", anuncioEditando.google_client_id);
+formData.append("google_slot", anuncioEditando.google_slot);
+formData.append("inicio_contrato", anuncioEditando.inicio_contrato);
+formData.append("fim_contrato", anuncioEditando.fim_contrato);
+
+// Se tiver novos arquivos
+if (imagemEditada) formData.append("imagem", imagemEditada);
+if (contratoEditado) formData.append("contrato", contratoEditado);
+
+// 🔹 Aqui mantemos a chamada como PUT!
+await axios.put(`${API_BASE_URL}/anuncios/${anuncioEditando.id}`, formData, {
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
+});
+
+
+    toast.success("✅ Anúncio atualizado com sucesso!");
+
+    // Opcional: atualizar a lista de anúncios ou resetar estados
+    setAnuncioEditando(null);
+    setImagemEditada(null);
+    setContratoEditado(null);
+    fetchAnuncios(); // se essa função já estiver definida
+
+  } catch (error) {
+    console.error("Erro ao editar anúncio:", error);
+    toast.error("❌ Erro ao editar anúncio");
+  }
+};
+
+
+
+
 
 const cargoLabels = ["Nenhum", "Básico", "Intermediário", "Administrador", "Admin Chefe"];
 
@@ -1008,6 +1070,14 @@ const confirmDelete = (id, type) => {
                     >
                       {anuncio.ativo ? "Desativar" : "Ativar"}
                     </button>
+
+                    <button
+                      className="button"
+                      style={{ marginLeft: "5px" }}
+                      onClick={() => abrirModalEdicao(anuncio)}
+                    >
+                      Editar
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -1015,160 +1085,290 @@ const confirmDelete = (id, type) => {
           </table>
         </div>
 
+        {/* Modal de edição */}
+        {anuncioEditando && (
+          <div className="modal">
+            <div className="modal-content">
+              <h3>Editar Anúncio</h3>
+
+              <label>Empresa:</label>
+              <input
+                type="text"
+                value={anuncioEditando.nome_empresa}
+                onChange={(e) =>
+                  setAnuncioEditando({ ...anuncioEditando, nome_empresa: e.target.value })
+                }
+              />
+
+              <label>Tipo:</label>
+              <select
+                value={anuncioEditando.tipo}
+                onChange={(e) =>
+                  setAnuncioEditando({ ...anuncioEditando, tipo: e.target.value })
+                }
+              >
+                <option value="banner">Banner</option>
+                <option value="google">Google</option>
+              </select>
+
+              {anuncioEditando.tipo === "banner" && (
+                <>
+                  <label>Link:</label>
+                  <input
+                    type="text"
+                    value={anuncioEditando.link}
+                    onChange={(e) =>
+                      setAnuncioEditando({ ...anuncioEditando, link: e.target.value })
+                    }
+                  />
+                </>
+              )}
+
+              {anuncioEditando.tipo === "banner" && (
+                <>
+                  <label>Imagem atual:</label>
+                  <img src={`${API_BASE_URL}${anuncioEditando.imagem}`} alt="Atual" style={{ maxWidth: "200px", marginBottom: "10px" }} />
+
+                  <label>Nova Imagem:</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setImagemEditada(e.target.files[0])}
+                  />
+                </>
+              )}
+
+              <label>Contrato atual:</label>
+              {anuncioEditando.contrato ? (
+                <a href={`${API_BASE_URL}/${anuncioEditando.contrato}`} target="_blank" rel="noopener noreferrer">Ver Contrato</a>
+              ) : (
+                <p>Nenhum contrato</p>
+              )}
+
+              <label>Substituir Contrato (PDF):</label>
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => setContratoEditado(e.target.files[0])}
+              />
+
+
+              {anuncioEditando.tipo === "google" && (
+                <>
+                  <label>Google Client ID:</label>
+                  <input
+                    type="text"
+                    value={anuncioEditando.google_client_id}
+                    onChange={(e) =>
+                      setAnuncioEditando({ ...anuncioEditando, google_client_id: e.target.value })
+                    }
+                  />
+
+                  <label>Google Slot:</label>
+                  <input
+                    type="text"
+                    value={anuncioEditando.google_slot}
+                    onChange={(e) =>
+                      setAnuncioEditando({ ...anuncioEditando, google_slot: e.target.value })
+                    }
+                  />
+                </>
+              )}
+
+              <label>Valor:</label>
+              <input
+                type="number"
+                value={anuncioEditando.valor}
+                onChange={(e) =>
+                  setAnuncioEditando({ ...anuncioEditando, valor: e.target.value })
+                }
+              />
+
+              <label>Início do Contrato:</label>
+              <input
+                type="date"
+                value={anuncioEditando.inicio_contrato?.substring(0, 10) || ""}
+                onChange={(e) =>
+                  setAnuncioEditando({ ...anuncioEditando, inicio_contrato: e.target.value })
+                }
+              />
+
+              <label>Fim do Contrato:</label>
+              <input
+                type="date"
+                value={anuncioEditando.fim_contrato?.substring(0, 10) || ""}
+                onChange={(e) =>
+                  setAnuncioEditando({ ...anuncioEditando, fim_contrato: e.target.value })
+                }
+              />
+
+              <div className="modal-buttons">
+                <button className="button" onClick={handleEditarAnuncio}>
+                  Salvar Alterações
+                </button>
+                <button className="button cancel" onClick={() => setAnuncioEditando(null)}>
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+
 
         <div className="admin-ds-div7 dashboard-box">
-  <h3>Cadastro de Anúncios</h3>
-  <div className="form-group">
+          <h3>Cadastro de Anúncios</h3>
+          <div className="form-group">
 
-    <label>Bloco de Anúncio:</label>
-    <select
-      value={novoAnuncio.espaco_id}
-      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, espaco_id: e.target.value })}
-    >
-      <option value="">Selecione...</option>
-      <option value={1}>Topo - Horizontal</option>
-      <option value={2}>Sidebar - Vertical</option>
-      <option value={3}>Rodapé - Horizontal</option>
-      <option value={4}>Meio da Lista</option>
-    </select>
+            <label>Bloco de Anúncio:</label>
+            <select
+              value={novoAnuncio.espaco_id}
+              onChange={(e) => setNovoAnuncio({ ...novoAnuncio, espaco_id: e.target.value })}
+            >
+              <option value="">Selecione...</option>
+              <option value={1}>Topo - Horizontal</option>
+              <option value={2}>Sidebar - Vertical</option>
+              <option value={3}>Rodapé - Horizontal</option>
+              <option value={4}>Meio da Lista</option>
+            </select>
 
-    <label>Empresa:</label>
-    <input
-      type="text"
-      value={novoAnuncio.nome_empresa}
-      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, nome_empresa: e.target.value })}
-    />
+            <label>Empresa:</label>
+            <input
+              type="text"
+              value={novoAnuncio.nome_empresa}
+              onChange={(e) => setNovoAnuncio({ ...novoAnuncio, nome_empresa: e.target.value })}
+            />
 
-    <label>Tipo:</label>
-    <select
-      value={novoAnuncio.tipo}
-      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, tipo: e.target.value })}
-    >
-      <option value="banner">Banner</option>
-      <option value="google">Google</option>
-    </select>
+            <label>Tipo:</label>
+            <select
+              value={novoAnuncio.tipo}
+              onChange={(e) => setNovoAnuncio({ ...novoAnuncio, tipo: e.target.value })}
+            >
+              <option value="banner">Banner</option>
+              <option value="google">Google</option>
+            </select>
 
-    {novoAnuncio.tipo === "banner" && (
-      <>
-        <label>Imagem do Anúncio:</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setNovoAnuncio({ ...novoAnuncio, imagemFile: e.target.files[0] })}
-        />
+            {novoAnuncio.tipo === "banner" && (
+              <>
+                <label>Imagem do Anúncio:</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setNovoAnuncio({ ...novoAnuncio, imagemFile: e.target.files[0] })}
+                />
 
-        <label>Link ao clicar no banner:</label>
-        <input
-          type="text"
-          value={novoAnuncio.link}
-          onChange={(e) => setNovoAnuncio({ ...novoAnuncio, link: e.target.value })}
-        />
-      </>
-    )}
+                <label>Link ao clicar no banner:</label>
+                <input
+                  type="text"
+                  value={novoAnuncio.link}
+                  onChange={(e) => setNovoAnuncio({ ...novoAnuncio, link: e.target.value })}
+                />
+              </>
+            )}
 
-    {novoAnuncio.tipo === "google" && (
-      <>
-        <label>Google Client ID:</label>
-        <input
-          type="text"
-          value={novoAnuncio.google_client_id}
-          onChange={(e) => setNovoAnuncio({ ...novoAnuncio, google_client_id: e.target.value })}
-        />
+            {novoAnuncio.tipo === "google" && (
+              <>
+                <label>Google Client ID:</label>
+                <input
+                  type="text"
+                  value={novoAnuncio.google_client_id}
+                  onChange={(e) => setNovoAnuncio({ ...novoAnuncio, google_client_id: e.target.value })}
+                />
 
-        <label>Google Slot:</label>
-        <input
-          type="text"
-          value={novoAnuncio.google_slot}
-          onChange={(e) => setNovoAnuncio({ ...novoAnuncio, google_slot: e.target.value })}
-        />
-      </>
-    )}
+                <label>Google Slot:</label>
+                <input
+                  type="text"
+                  value={novoAnuncio.google_slot}
+                  onChange={(e) => setNovoAnuncio({ ...novoAnuncio, google_slot: e.target.value })}
+                />
+              </>
+            )}
 
-    <label>Valor do Anúncio:</label>
-    <input
-      type="number"
-      value={novoAnuncio.valor}
-      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, valor: e.target.value })}
-    />
+            <label>Valor do Anúncio:</label>
+            <input
+              type="number"
+              value={novoAnuncio.valor}
+              onChange={(e) => setNovoAnuncio({ ...novoAnuncio, valor: e.target.value })}
+            />
 
-    <label>Contrato (PDF):</label>
-    <input
-      type="file"
-      accept="application/pdf"
-      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, contratoFile: e.target.files[0] })}
-    />
+            <label>Contrato (PDF):</label>
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setNovoAnuncio({ ...novoAnuncio, contratoFile: e.target.files[0] })}
+            />
 
-    <label>Início do Contrato:</label>
-    <input
-      type="date"
-      value={novoAnuncio.inicio_contrato}
-      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, inicio_contrato: e.target.value })}
-    />
+            <label>Início do Contrato:</label>
+            <input
+              type="date"
+              value={novoAnuncio.inicio_contrato}
+              onChange={(e) => setNovoAnuncio({ ...novoAnuncio, inicio_contrato: e.target.value })}
+            />
 
-    <label>Fim do Contrato:</label>
-    <input
-      type="date"
-      value={novoAnuncio.fim_contrato}
-      onChange={(e) => setNovoAnuncio({ ...novoAnuncio, fim_contrato: e.target.value })}
-    />
+            <label>Fim do Contrato:</label>
+            <input
+              type="date"
+              value={novoAnuncio.fim_contrato}
+              onChange={(e) => setNovoAnuncio({ ...novoAnuncio, fim_contrato: e.target.value })}
+            />
 
-    <button
-      className="button"
-      onClick={async () => {
-        try {
-          const formData = new FormData();
-          formData.append("espaco_id", novoAnuncio.espaco_id);
-          formData.append("nome_empresa", novoAnuncio.nome_empresa);
-          formData.append("tipo", novoAnuncio.tipo);
-          formData.append("valor", novoAnuncio.valor);
-          formData.append("inicio_contrato", novoAnuncio.inicio_contrato);
-          formData.append("fim_contrato", novoAnuncio.fim_contrato);
+            <button
+              className="button"
+              onClick={async () => {
+                try {
+                  const formData = new FormData();
+                  formData.append("espaco_id", novoAnuncio.espaco_id);
+                  formData.append("nome_empresa", novoAnuncio.nome_empresa);
+                  formData.append("tipo", novoAnuncio.tipo);
+                  formData.append("valor", novoAnuncio.valor);
+                  formData.append("inicio_contrato", novoAnuncio.inicio_contrato);
+                  formData.append("fim_contrato", novoAnuncio.fim_contrato);
 
-          if (novoAnuncio.tipo === "banner") {
-            formData.append("imagem", novoAnuncio.imagemFile);
-            formData.append("link", novoAnuncio.link || "");
-          }
+                  if (novoAnuncio.tipo === "banner") {
+                    formData.append("imagem", novoAnuncio.imagemFile);
+                    formData.append("link", novoAnuncio.link || "");
+                  }
 
-          if (novoAnuncio.tipo === "google") {
-            formData.append("google_client_id", novoAnuncio.google_client_id);
-            formData.append("google_slot", novoAnuncio.google_slot);
-          }
+                  if (novoAnuncio.tipo === "google") {
+                    formData.append("google_client_id", novoAnuncio.google_client_id);
+                    formData.append("google_slot", novoAnuncio.google_slot);
+                  }
 
-          if (novoAnuncio.contratoFile) {
-            formData.append("contrato", novoAnuncio.contratoFile);
-          }
+                  if (novoAnuncio.contratoFile) {
+                    formData.append("contrato", novoAnuncio.contratoFile);
+                  }
 
-          await axios.post(`${API_BASE_URL}/anuncios`, formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          });
+                  await axios.post(`http://localhost:5001/anuncios`, formData, {
+                    headers: {
+                      "Content-Type": "multipart/form-data",
+                    },
+                  });
 
-          toast.success("✅ Anúncio cadastrado com sucesso!");
+                  toast.success("✅ Anúncio cadastrado com sucesso!");
 
-          setNovoAnuncio({
-            espaco_id: "",
-            nome_empresa: "",
-            tipo: "banner",
-            imagemFile: null,
-            link: "",
-            google_client_id: "",
-            google_slot: "",
-            valor: "",
-            contratoFile: null,
-            inicio_contrato: "",
-            fim_contrato: "",
-          });
-        } catch (err) {
-          console.error(err);
-          toast.error("❌ Erro ao cadastrar anúncio");
-        }
-      }}
-    >
-      Cadastrar
-    </button>
-  </div>
-</div>
+                  setNovoAnuncio({
+                    espaco_id: "",
+                    nome_empresa: "",
+                    tipo: "banner",
+                    imagemFile: null,
+                    link: "",
+                    google_client_id: "",
+                    google_slot: "",
+                    valor: "",
+                    contratoFile: null,
+                    inicio_contrato: "",
+                    fim_contrato: "",
+                  });
+                } catch (err) {
+                  console.error(err);
+                  toast.error("❌ Erro ao cadastrar anúncio");
+                }
+              }}
+            >
+              Cadastrar
+            </button>
+          </div>
+        </div>
 
 
 

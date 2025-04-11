@@ -536,114 +536,81 @@ input[type="month"] {
    ================================ */
 
    @media (max-width: 1024px) {
-    .dashboard3-modal-content {
-      width: 90%;
-      height: 90%;
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Ajusta conforme o espaço disponível */
+      grid-template-rows: repeat(auto-fit, minmax(300px, auto)); /* Evita expansão excessiva */
+      grid-column-gap: 8px;
+      grid-row-gap: 8px;
     }
-  
-    .ds3-chart2 canvas {
-      width: 80% !important;
-    }
-  
-    .dashboard3-information-grid,
-    .dashboard3-charts-grid {
-      grid-template-columns: 1fr;
-    }
-  
-    .ds5-modal-grid {
-      grid-template-columns: 1fr;
-    }
-  
-    .ds5-actions {
-      grid-column: span 1;
-      justify-content: center;
-    }
-  
-    .dashboard-widget.div10 {
-      flex-direction: column;
-      height: auto;
-    }
-  
-    .ds10-map-container, .ds10-bar-chart {
-      width: 100%;
-      height: auto;
-    }
-  
-    .container-bars-chart {
-      flex-direction: column;
-      width: 100%;
-      gap: 20px;
-    }
-  
-    .bar-chart-container {
-      justify-content: center;
-      height: 300px;
-    }
+    
+    .div1 { grid-area: 1 / 1 / 2 / 2; }
+    .div2 { grid-area: 1 / 2 / 2 / 3; }
+    .div3 { grid-area: 2 / 1 / 3 / 2; }
+    .div4 { grid-area: 2 / 2 / 3 / 3; }
+    .div10 { grid-area: 3 / 1 / 4 / 3; }
+    .div5 { grid-area: 4 / 1 / 5 / 2; }
+    .div6 { grid-area: 4 / 2 / 5 / 3; }
+    .div7 { grid-area: 5 / 1 / 6 / 3; }
+    .div8 { grid-area: 6 / 1 / 7 / 3; }
+    .div9 { grid-area: 7 / 1 / 8 / 3; }
+    
   }
   
   @media (max-width: 768px) {
-    .dashboard3-modal-content {
-      width: 95%;
-      height: auto;
-      padding: 10px;
-    }
-  
-    .dashboard3-information-grid,
-    .dashboard3-charts-grid {
-      grid-template-columns: 1fr;
-    }
-  
-    .ds3-chart2 canvas {
-      width: 100% !important;
-    }
-  
-    .dashboard5-modal-content {
-      width: 100%;
-      padding: 10px;
-    }
-  
-    .ds5-modal-grid {
-      grid-template-columns: 1fr;
-    }
-  
-    .ds5-actions {
-      grid-column: span 1;
-      justify-content: center;
-    }
-  
-    .dashboard-widget.div10 {
+    .dashboard-grid {
+      display: flex;
       flex-direction: column;
-      height: auto;
+    }
+
+    .dashboard-widget h3 {
+      font-size: calc(1.1rem + 0.5vw);
+      margin-top: 0;
+    }
+    
+    .dashboard-title {
+      font-size: 20px;
     }
   
-    .ds10-map-container, .ds10-bar-chart {
-      width: 100%;
-      height: auto;
+    .stats-widget {
+      font-size: 16px;
     }
   
-    .container-bars-chart {
-      flex-direction: column;
-      width: 100%;
-      gap: 20px;
+    .dashboard3-modal-content h2 {
+      font-size: 20px;
     }
   
-    .bar-chart-container {
-      justify-content: center;
-      height: 300px;
+    .dashboard-widget {
+      padding: 15px;
     }
   
     .dashboard3-close-btn {
-      width: 3em;
-      height: 3em;
+      width: 2.5em;
+      height: 2.5em;
     }
   
     .X, .Y {
-      width: 1.5em;
+      width: 1.2em;
     }
   
-    .modal-content {
-      width: 90%;
-      padding: 15px;
+    .close {
+      font-size: 10px;
+      width: 2.5em;
+      height: 1.5em;
+    }
+  
+    .donut-center {
+      font-size: 26px;
+    }
+  
+    .donut-center span {
+      font-size: 12px;
+    }
+  
+    .ds5-actions {
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
   }
   
@@ -704,3 +671,77 @@ input[type="month"] {
     }
   }
   
+
+
+  /* Responsividade adicional para telas muito pequenas */
+  @media (max-width: 360px) {
+    .dashboard-container {
+      padding: 10px;
+    }
+
+    .dashboard-title {
+      font-size: 18px;
+    }
+
+    .dashboard-widget {
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .dashboard3-modal-content {
+      width: 95%;
+      padding: 10px;
+    }
+
+    .dashboard3-information-grid,
+    .dashboard3-charts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ds5-modal-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ds5-actions {
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .dashboard-widget.div10 {
+      flex-direction: column;
+      height: auto;
+    }
+
+    .ds10-map-container, .ds10-bar-chart {
+      width: 100%;
+      height: auto;
+    }
+
+    .container-bars-chart {
+      flex-direction: column;
+      width: 100%;
+      gap: 10px;
+    }
+
+    .bar-chart-container {
+      justify-content: center;
+      height: 250px;
+    }
+
+    .dashboard-widget h3 {
+      font-size: 16px;
+    }
+
+    .stats-widget {
+      font-size: 14px;
+    }
+
+    .donut-center {
+      font-size: 20px;
+    }
+
+    .donut-center span {
+      font-size: 10px;
+    }
+  }
