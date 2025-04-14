@@ -169,41 +169,64 @@ const handleEditarAnuncio = async () => {
 
   try {
     const formData = new FormData();
-formData.append("espaco_id", anuncioEditando.espaco_id);
-formData.append("nome_empresa", anuncioEditando.nome_empresa);
-formData.append("tipo", anuncioEditando.tipo);
-formData.append("valor", anuncioEditando.valor);
-formData.append("link", anuncioEditando.link);
-formData.append("google_client_id", anuncioEditando.google_client_id);
-formData.append("google_slot", anuncioEditando.google_slot);
-formData.append("inicio_contrato", anuncioEditando.inicio_contrato);
-formData.append("fim_contrato", anuncioEditando.fim_contrato);
 
-// Se tiver novos arquivos
-if (imagemEditada) formData.append("imagem", imagemEditada);
-if (contratoEditado) formData.append("contrato", contratoEditado);
+    // 🔁 Formata datas para o formato aceito pelo MySQL
+    const formatDateForMySQL = (date) => {
+      if (!date) return "";
+      return new Date(date).toISOString().split("T")[0]; // Fica "2025-04-10"
+    };
 
-// 🔹 Aqui mantemos a chamada como PUT!
-await axios.put(`${API_BASE_URL}/anuncios/${anuncioEditando.id}`, formData, {
-  headers: {
-    "Content-Type": "multipart/form-data",
-  },
-});
+    // Campos obrigatórios
+    formData.append("espaco_id", anuncioEditando.espaco_id);
+    formData.append("nome_empresa", anuncioEditando.nome_empresa);
+    formData.append("tipo", anuncioEditando.tipo);
+    formData.append("valor", anuncioEditando.valor);
+    formData.append("inicio_contrato", formatDateForMySQL(anuncioEditando.inicio_contrato));
+    formData.append("fim_contrato", formatDateForMySQL(anuncioEditando.fim_contrato));
 
+    // Campos específicos por tipo
+    if (anuncioEditando.tipo === "banner") {
+      formData.append("link", anuncioEditando.link || "");
+    }
+
+    if (anuncioEditando.tipo === "google") {
+      formData.append("google_client_id", anuncioEditando.google_client_id || "");
+      formData.append("google_slot", anuncioEditando.google_slot || "");
+    }
+
+    // Arquivos
+    if (imagemEditada) {
+      formData.append("imagem", imagemEditada);
+    } else {
+      formData.append("imagem", anuncioEditando.imagem); // caminho atual da imagem
+    }
+
+    if (contratoEditado) {
+      formData.append("contrato", contratoEditado);
+    } else {
+      formData.append("contrato", anuncioEditando.contrato); // caminho atual do contrato
+    }
+
+    // Envia a requisição PUT
+    await axios.put(`${API_BASE_URL}/anuncios/${anuncioEditando.id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
     toast.success("✅ Anúncio atualizado com sucesso!");
-
-    // Opcional: atualizar a lista de anúncios ou resetar estados
     setAnuncioEditando(null);
     setImagemEditada(null);
     setContratoEditado(null);
-    fetchAnuncios(); // se essa função já estiver definida
+    fetchAnuncios();
 
   } catch (error) {
     console.error("Erro ao editar anúncio:", error);
     toast.error("❌ Erro ao editar anúncio");
   }
 };
+
+
 
 
 
