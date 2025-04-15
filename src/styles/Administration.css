@@ -648,8 +648,23 @@ h1 {
   font-size: 0.9rem;
 }
 
+.admin-anuncios-table tbody {
+  display: block;
+  max-height: 250px; /* Ajuste a altura conforme necessário */
+  overflow-y: auto;
+}
+
+.admin-anuncios-table thead, .admin-anuncios-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
 .admin-anuncios-table thead {
   background-color: #1c1c1c;
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 .admin-anuncios-table th,
@@ -702,6 +717,10 @@ h1 {
 
 .admin-anuncios-table tbody td:last-child {
   text-align: center;
+}
+
+.actions {
+  text-align: center !important;
 }
 
 

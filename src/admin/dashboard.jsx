@@ -717,7 +717,7 @@ const Dashboard = () => {
         <div className="dashboard-widget div7"><h3>⚠️ EM BREVE!!! </h3></div>
         <div className="dashboard-widget div8"><h3>⚠️ EM BREVE!!! </h3></div>
         <div className="dashboard-widget div9"><h3>⚠️ EM BREVE!!! </h3></div>
-        <div className="dashboard-widget div10" onClick={() => handleOpenModal("origem-acessos")} style={{ cursor: "pointer" }}>
+        <div className="dashboard-widget div10" onClick={() => handleOpenModal("origem-acessos")} style={{ cursor: "pointer" }} >
           <div className="ds10-map-container">
             <ComposableMap>
               <Geographies geography="/data/countries-110m.json">
@@ -735,7 +735,6 @@ const Dashboard = () => {
                           setTooltipContent(countryData ? `${geo.properties.name}: ${countryData} acessos` : `${geo.properties.name}: 0 acessos`);
                         }}
                         onMouseLeave={() => setTooltipContent("")}
-                        onClick={() => setSelectedCountry(countryData)}
                         style={{
                           default: { outline: "none" },
                           hover: { fill: "#cc331f", outline: "none" },
@@ -900,7 +899,6 @@ const Dashboard = () => {
                           setTooltipContent(countryData ? `${geo.properties.name}: ${countryData} acessos` : `${geo.properties.name}: 0 acessos`);
                         }}
                         onMouseLeave={() => setTooltipContent("")}
-                        onClick={() => setSelectedCountry(countryData)}
                         style={{
                           default: { outline: "none" },
                           hover: { fill: "rgb(100, 231, 139)", outline: "none" },

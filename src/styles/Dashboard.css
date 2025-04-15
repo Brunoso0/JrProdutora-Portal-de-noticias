@@ -259,6 +259,7 @@ input[type="month"] {
   padding: 8px;
   margin: 10px 0;
   font-size: 16px;
+  color: #1e1e1e;
 }
 
 /* Graficos */
@@ -295,7 +296,7 @@ input[type="month"] {
 /* Estilo geral do modal */
 .dashboard5-modal-content {
     padding: 20px;
-    background: rgba(255, 255, 255, 0.9);
+    background: #272c34;
     border-radius: 10px;
     width: 90%;
     max-width: 1200px;
@@ -308,7 +309,7 @@ input[type="month"] {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Se ajusta automaticamente */
     gap: 20px; /* Espaçamento entre os elementos */
     padding: 20px;
-    background: white;
+    background: rgb(67, 67, 67);
     border-radius: 10px;
     width: 90%;
     max-width: 1200px;
@@ -326,7 +327,6 @@ input[type="month"] {
 
 /* Área do gráfico de categorias */
 .ds5-modal-categories {
-    background: #f9f9f9;
     padding: 15px;
     border-radius: 8px;
     display: flex;

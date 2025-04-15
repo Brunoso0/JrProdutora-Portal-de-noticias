@@ -1055,7 +1055,7 @@ const confirmDelete = (id, type) => {
                 <th>Status</th>
                 <th>Valor</th>
                 <th>Contrato</th>
-                <th>Ações</th>
+                <th className="actions">Ações</th>
               </tr>
             </thead>
             <tbody>
