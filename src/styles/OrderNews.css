@@ -113,6 +113,7 @@
     -webkit-box-shadow: inset -1px -8px 59px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: inset -1px -8px 59px 0px rgba(0,0,0,0.75);
     box-shadow: inset -1px -8px 59px 0px rgba(0,0,0,0.75);
+    font-size: calc(0.1rem + 0.5vw); /* Tamanho do texto responsivo */
 }
 
 /* 🔹 Botão de salvar */
@@ -133,7 +134,9 @@
     background: #ffae00;
 }
 
-
+.news-selection h3{
+    color: white;
+}
 
 /* 🔹 Botão de destaque */
 .highlight-button {

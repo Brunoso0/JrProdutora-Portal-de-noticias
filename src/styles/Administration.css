@@ -656,7 +656,7 @@ h1 {
 
 .admin-anuncios-table thead, .admin-anuncios-table tbody tr {
   display: table;
-  width: 100%;
+  width: 97%;
   table-layout: fixed;
 }
 
@@ -723,6 +723,17 @@ h1 {
   text-align: center !important;
 }
 
+.contrat {
+  
+}
+
+
+.button-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
 
 /* Modal de Edição de Anúncio */
 .modal-content {
@@ -737,6 +748,27 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+/* Custom Scrollbar Styling for Modal Content */
+.modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #1e1e1e;
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #5658C6;
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #4e50d1;
 }
 
 .modal-content h3 {

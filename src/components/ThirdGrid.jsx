@@ -25,6 +25,8 @@ const ThirdGrid = ({ link }) => {
     const [scrollUltimasLimit, setScrollUltimasLimit] = useState(10);
     const [scrollRegiaoLimit, setScrollRegiaoLimit] = useState(10);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
+    const [meioListaAd, setMeioListaAd] = useState(null);
+
 
 
 
@@ -37,6 +39,11 @@ const ThirdGrid = ({ link }) => {
 
                 setUltimasNoticias(ultimasRes.data);
                 setNoticiasRegiao(regiaoRes.data);
+
+                const anuncioMeioLista = await axios.get(`${API_BASE_URL}/anuncios/espaco/${encodeURIComponent("horizontal-2")}`);
+
+                setMeioListaAd(anuncioMeioLista.data);
+
             } catch (error) {
                 console.error("Erro ao buscar notícias:", error);
             } finally {
@@ -91,7 +98,7 @@ const ThirdGrid = ({ link }) => {
             console.error("Erro ao contabilizar visualização:", error);
         }
     };
-
+  
 
     const renderNoticias = (noticias, limit) => {
             return noticias.slice(0, limit).map((article, index) => (
@@ -114,13 +121,23 @@ const ThirdGrid = ({ link }) => {
                 </Link>
 
                 {/* 🔹 INSERE UMA PROPAGANDA A CADA 5 NOTÍCIAS */}
-                {(index + 1) % 5 === 0 && (
+                {(index + 1) % 5 === 0 && meioListaAd && (
                     <div className="ad-container">
-                        <Link to="/anuncio" className="ad-link">
-                            <img src="/img/propaganda-3.jpg" alt="Anúncio" />
-                        </Link>
+                        {meioListaAd.tipo === "banner" ? (
+                            <a href={meioListaAd.link} target="_blank" rel="noopener noreferrer">
+                                <img src={meioListaAd.imagem} alt={meioListaAd.nome_empresa} />
+                            </a>
+                        ) : (
+                            <ins className="adsbygoogle"
+                                style={{ display: "block" }}
+                                data-ad-client={meioListaAd.google_client_id}
+                                data-ad-slot={meioListaAd.google_slot}
+                                data-ad-format="auto"
+                                data-full-width-responsive="true"></ins>
+                        )}
                     </div>
                 )}
+
             </React.Fragment>
         ));
     };

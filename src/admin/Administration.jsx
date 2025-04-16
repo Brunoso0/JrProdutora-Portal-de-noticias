@@ -55,9 +55,6 @@ const Administration = () => {
   const [contratoEditado, setContratoEditado] = useState(null);
 
 
-
-
-
   
 
   // ⬆️ Adicione isso antes do useEffect
@@ -69,6 +66,23 @@ const fetchAnuncios = async () => {
     console.error("Erro ao buscar anúncios:", error);
   }
 };
+
+const handleDeleteAnuncio = async (id) => {
+  const confirm = window.confirm("Tem certeza que deseja excluir este anúncio?");
+  if (!confirm) return;
+
+  try {
+    await axios.delete(`${API_BASE_URL}/anuncios/${id}`);
+    toast.success("✅ Anúncio deletado com sucesso!");
+    fetchAnuncios(); // Atualiza a lista após deletar
+  } catch (error) {
+    console.error("Erro ao deletar anúncio:", error);
+    toast.error("❌ Erro ao deletar anúncio");
+  }
+};
+
+
+
 
 // ⬇️ Agora apenas chame dentro do useEffect
 useEffect(() => {
@@ -1049,7 +1063,7 @@ const confirmDelete = (id, type) => {
           <table className="admin-anuncios-table">
             <thead>
               <tr>
-                <th>Bloco do Anúncio</th>
+                <th>Bloco</th>
                 <th>Empresa</th>
                 <th>Tipo</th>
                 <th>Status</th>
@@ -1066,12 +1080,12 @@ const confirmDelete = (id, type) => {
                   <td>{anuncio.tipo}</td>
                   <td>{anuncio.ativo ? "Ativo" : "Inativo"}</td>
                   <td>R$ {anuncio.valor}</td>
-                  <td>
+                  <td className="contrat">
                     {anuncio.contrato ? (
                       <a href={anuncio.contrato} target="_blank" rel="noopener noreferrer">Ver</a>
                     ) : "-"}
                   </td>
-                  <td>
+                  <td className="button-actions">
                     <button
                       className={`button ${anuncio.ativo ? "cancel" : ""}`}
                       onClick={async () => {
@@ -1101,6 +1115,15 @@ const confirmDelete = (id, type) => {
                     >
                       Editar
                     </button>
+
+                    <button
+                      className="button cancel"
+                      style={{ marginLeft: "5px" }}
+                      onClick={() => handleDeleteAnuncio(anuncio.id)}
+                    >
+                      Excluir
+                    </button>
+
                   </td>
                 </tr>
               ))}
@@ -1122,6 +1145,23 @@ const confirmDelete = (id, type) => {
                   setAnuncioEditando({ ...anuncioEditando, nome_empresa: e.target.value })
                 }
               />
+
+              <label>Posição do Anúncio:</label>
+              <select
+                value={anuncioEditando.espaco_id}
+                onChange={(e) =>
+                  setAnuncioEditando({ ...anuncioEditando, espaco_id: e.target.value })
+                }
+              >
+                <option value="">Selecione...</option>
+                <option value={1}>Banner entre notícia principal e lista</option>
+                <option value={2}>Banner no meio da lista de notícias</option>
+                <option value={3}>Banner no final da página</option>
+                <option value={4}>Lateral entre cards</option>
+                <option value={5}>Lateral após segundo card</option>
+                <option value={6}>Adsense após destaque principal</option>
+                <option value={7}>Adsense lateral entre cards</option>
+              </select>
 
               <label>Tipo:</label>
               <select
@@ -1250,9 +1290,13 @@ const confirmDelete = (id, type) => {
             >
               <option value="">Selecione...</option>
               <option value={1}>Topo - Horizontal</option>
-              <option value={2}>Sidebar - Vertical</option>
+              <option value={2}>Meio da Lista</option>
               <option value={3}>Rodapé - Horizontal</option>
-              <option value={4}>Meio da Lista</option>
+              <option value={4}>Sidebar - Vertical</option>
+              <option value={5}>Sidebar - Vertical 2</option>
+              <option value={5}>Sidebar - Vertical 2</option>
+              <option value={6}>Horizontal - Google</option>
+              <option value={7}>Vertical - Google</option>
             </select>
 
             <label>Empresa:</label>
