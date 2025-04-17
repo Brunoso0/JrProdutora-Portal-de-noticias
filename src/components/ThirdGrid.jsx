@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import SectionHeader from "./SectionHeader";
 import "../styles/ThirdGrid.css";
+import Propaganda from "../components/Propaganda"; // ✅ AQUI
+import PropagandaRotativa from "../components/PropagandaRotativa";
+
+
 
 import  { API_BASE_URL } from '../services/api'; // Importando o arquivo de configuração do Axios
 
@@ -25,31 +29,31 @@ const ThirdGrid = ({ link }) => {
     const [scrollUltimasLimit, setScrollUltimasLimit] = useState(10);
     const [scrollRegiaoLimit, setScrollRegiaoLimit] = useState(10);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
-    const [meioListaAd, setMeioListaAd] = useState(null);
-
+    const [meioListaAds, setMeioListaAds] = useState(false);
 
 
 
 
     useEffect(() => {
         const fetchNoticias = async () => {
-            try {
-                const ultimasRes = await axios.get(`${API_BASE_URL}/noticias/resumo`);
-                const regiaoRes = await axios.get(`${API_BASE_URL}/noticias/regiao/resumo`);
-
-                setUltimasNoticias(ultimasRes.data);
-                setNoticiasRegiao(regiaoRes.data);
-
-                const anuncioMeioLista = await axios.get(`${API_BASE_URL}/anuncios/espaco/${encodeURIComponent("horizontal-2")}`);
-
-                setMeioListaAd(anuncioMeioLista.data);
-
-            } catch (error) {
-                console.error("Erro ao buscar notícias:", error);
-            } finally {
-                setLoading(false);
-            }
+          try {
+            const ultimasRes = await axios.get(`${API_BASE_URL}/noticias/resumo`);
+            const regiaoRes = await axios.get(`${API_BASE_URL}/noticias/regiao/resumo`);
+            const anuncioMeioLista = await axios.get(`${API_BASE_URL}/anuncios/espaco/horizontal-2/todos`);
+      
+            // 🔽 Ordena por valor (quem paga mais em primeiro)
+            const ordenados = anuncioMeioLista.data.sort((a, b) => b.valor - a.valor);
+      
+            setUltimasNoticias(ultimasRes.data);
+            setNoticiasRegiao(regiaoRes.data);
+            setMeioListaAds(ordenados);
+          } catch (error) {
+            console.error("Erro ao buscar notícias ou anúncios:", error);
+          } finally {
+            setLoading(false);
+          }
         };
+      
         fetchNoticias();
         
         const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -121,22 +125,26 @@ const ThirdGrid = ({ link }) => {
                 </Link>
 
                 {/* 🔹 INSERE UMA PROPAGANDA A CADA 5 NOTÍCIAS */}
-                {(index + 1) % 5 === 0 && meioListaAd && (
+                {(index + 1) % 5 === 0 && meioListaAds.length > 0 && (() => {
+                const posicao = Math.floor(index / 5) % meioListaAds.length;
+                const ad = meioListaAds[posicao];
+
+                return (
                     <div className="ad-container">
-                        {meioListaAd.tipo === "banner" ? (
-                            <a href={meioListaAd.link} target="_blank" rel="noopener noreferrer">
-                                <img src={meioListaAd.imagem} alt={meioListaAd.nome_empresa} />
-                            </a>
-                        ) : (
-                            <ins className="adsbygoogle"
-                                style={{ display: "block" }}
-                                data-ad-client={meioListaAd.google_client_id}
-                                data-ad-slot={meioListaAd.google_slot}
-                                data-ad-format="auto"
-                                data-full-width-responsive="true"></ins>
-                        )}
+                    <Propaganda
+                        tipo={ad.tipo}
+                        imagem={ad.imagem}
+                        link={ad.link}
+                        id={ad.google_client_id}
+                        slot={ad.google_slot}
+                    />
                     </div>
-                )}
+                );
+                })()}
+
+
+
+
 
             </React.Fragment>
         ));

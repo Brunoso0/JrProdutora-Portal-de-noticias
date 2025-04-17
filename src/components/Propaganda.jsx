@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { API_BASE_URL } from "../services/api";
 
 const Propaganda = ({ tipo, imagem, link, id, slot }) => {
   useEffect(() => {
@@ -17,7 +18,7 @@ const Propaganda = ({ tipo, imagem, link, id, slot }) => {
     return (
       <div className="propaganda-banner">
         <a href={link} target="_blank" rel="noopener noreferrer">
-          <img src={imagem} alt="Propaganda" />
+        <img src={`${API_BASE_URL}${imagem}`} alt="Propaganda" />
         </a>
       </div>
     );
