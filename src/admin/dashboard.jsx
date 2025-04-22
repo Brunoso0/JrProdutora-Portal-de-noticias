@@ -248,6 +248,14 @@ const Dashboard = () => {
   };
 
 
+  const generateColor = (name) => {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const color = `#${((hash >> 24) & 0xff).toString(16).padStart(2, "0")}${((hash >> 16) & 0xff).toString(16).padStart(2, "0")}${((hash >> 8) & 0xff).toString(16).padStart(2, "0")}`.slice(0, 7);
+    return color;
+  };
 
   const colorScale = scaleLinear()
     .domain([0, Math.max(...Object.values(mapData))])
@@ -426,7 +434,9 @@ const Dashboard = () => {
         </div>
 
         {/* Estatísticas gerais - Clicável para abrir o modal */}
-        <div className="dashboard-widget div3" onClick={() => handleOpenModal("dispositivos")} style={{ cursor: "pointer" }}>
+        <div className="dashboard-widget div3" 
+        // onClick={() => handleOpenModal("dispositivos")}     Desativar quando estiver corrigido
+        style={{ cursor: "pointer" }}>
           <h3>📊 Dispositivos Mais Usados</h3>
           <div className="donut-chart-container">
             <Pie data={deviceDoughnutChartData} options={deviceDoughnutChartOptions} />
@@ -503,59 +513,59 @@ const Dashboard = () => {
 
         {/* Widget de Notícias Mais Lidas */}
         <div className="dashboard-widget div4" style={{ maxHeight: "450px" }}>
-  <h3>🏆 Notícias Mais Lidas</h3>
-  <div className="ds4-chart">
-    {noticias.length > 0 ? (
-      <PolarArea
-        key={noticias.map(n => n.visualizacoes).join(",")}
-        data={{
-          labels: ["🥇 TOP 1", "🥈 TOP 2", "🥉 TOP 3", "TOP 4", "TOP 5"], // 🔥 Medalhas incluídas
-          datasets: [
-            {
-              label: "Visualizações",
-              data: noticias.map(noticia => noticia.visualizacoes),
-              backgroundColor: [
-                "rgba(255, 215, 0, 0.6)",   // Ouro 🥇
-                "rgba(192, 192, 192, 0.6)", // Prata 🥈
-                "rgba(205, 127, 50, 0.6)",  // Bronze 🥉
-                "rgba(54, 162, 235, 0.6)",  // Oculto
-                "rgba(153, 102, 255, 0.6)", // Oculto
-              ],
-              borderWidth: 1,
-            },
-          ],
-        }}
-        options={{
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: legendOptions.plugins.legend, // 🔥 Aplica a configuração de legenda branca
-            tooltip: {
-              enabled: true,
-              callbacks: {
-                label: function (tooltipItem) {
-                  return `${noticias[tooltipItem.dataIndex].titulo}: ${noticias[tooltipItem.dataIndex].visualizacoes} visualizações`;
-                },
-              },
-            },
-          },
-          scales: {
-            r: {
-              beginAtZero: true,
-              suggestedMin: 0,
-              suggestedMax: Math.max(...noticias.map(n => n.visualizacoes)) + 5,
-              ticks: {
-                color: "#ffffff", // 🔥 Define a cor do texto dos números como branco
-                backdropColor: "transparent", // 🔥 Remove o fundo dos números
-              },
-            },
-          },
-        }}
-      />
-    ) : (
-      <p>Carregando...</p>
-    )}
-  </div>
+          <h3>🏆 Notícias Mais Lidas</h3>
+          <div className="ds4-chart">
+            {noticias.length > 0 ? (
+              <PolarArea
+                key={noticias.map(n => n.visualizacoes).join(",")}
+                data={{
+                  labels: ["🥇 TOP 1", "🥈 TOP 2", "🥉 TOP 3", "TOP 4", "TOP 5"], // 🔥 Medalhas incluídas
+                  datasets: [
+                    {
+                      label: "Visualizações",
+                      data: noticias.map(noticia => noticia.visualizacoes),
+                      backgroundColor: [
+                        "rgba(255, 215, 0, 0.6)",   // Ouro 🥇
+                        "rgba(192, 192, 192, 0.6)", // Prata 🥈
+                        "rgba(205, 127, 50, 0.6)",  // Bronze 🥉
+                        "rgba(54, 162, 235, 0.6)",  // Oculto
+                        "rgba(153, 102, 255, 0.6)", // Oculto
+                      ],
+                      borderWidth: 1,
+                    },
+                  ],
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: legendOptions.plugins.legend, // 🔥 Aplica a configuração de legenda branca
+                    tooltip: {
+                      enabled: true,
+                      callbacks: {
+                        label: function (tooltipItem) {
+                          return `${noticias[tooltipItem.dataIndex].titulo}: ${noticias[tooltipItem.dataIndex].visualizacoes} visualizações`;
+                        },
+                      },
+                    },
+                  },
+                  scales: {
+                    r: {
+                      beginAtZero: true,
+                      suggestedMin: 0,
+                      suggestedMax: Math.max(...noticias.map(n => n.visualizacoes)) + 5,
+                      ticks: {
+                        color: "#ffffff", // 🔥 Define a cor do texto dos números como branco
+                        backdropColor: "transparent", // 🔥 Remove o fundo dos números
+                      },
+                    },
+                  },
+                }}
+              />
+            ) : (
+              <p>Carregando...</p>
+            )}
+          </div>
         </div>
 
 
@@ -633,15 +643,18 @@ const Dashboard = () => {
                   <div className="ds5-modal-categories">
                     <h3>📊 Publicações Diárias por Categoria</h3>
                     {newsData && newsData.categoriesPerDay ? (
-                      <Line
+                                            <Line
                         data={{
-                          labels: [...new Set(newsData.categoriesPerDay.map(item => item.dia))], // Obtendo os dias do mês
+                          labels: newsData.categoriesPerDay.map(item =>
+                            new Date(item.dia).toLocaleDateString("pt-BR", { day: "2-digit" })
+                          ), // Exibe apenas o dia do mês
                           datasets: newsData.categories.map(category => ({
                             label: category.name,
                             data: newsData.categoriesPerDay
                               .filter(item => item.categoria === category.name)
                               .map(item => item.total), // Pegando a contagem correta
-                            borderColor: "#" + Math.floor(Math.random()*16777215).toString(16), // Cor aleatória para cada linha
+                            borderColor: generateColor(category.name), // Cor única baseada no nome da categoria
+                            backgroundColor: `${generateColor(category.name)}33`, // Cor com transparência para o fundo
                             fill: false,
                           })),
                         }}
