@@ -1289,14 +1289,13 @@ const confirmDelete = (id, type) => {
               onChange={(e) => setNovoAnuncio({ ...novoAnuncio, espaco_id: e.target.value })}
             >
               <option value="">Selecione...</option>
-              <option value={1}>Topo - Horizontal</option>
-              <option value={2}>Meio da Lista</option>
-              <option value={3}>Rodapé - Horizontal</option>
-              <option value={4}>Sidebar - Vertical</option>
-              <option value={5}>Sidebar - Vertical 2</option>
-              <option value={5}>Sidebar - Vertical 2</option>
-              <option value={6}>Horizontal - Google</option>
-              <option value={7}>Vertical - Google</option>
+              <option value={1}>Banner entre notícia principal e lista</option>
+                <option value={2}>Banner no meio da lista de notícias</option>
+                <option value={3}>Banner no final da página</option>
+                <option value={4}>Lateral entre cards</option>
+                <option value={5}>Lateral após segundo card</option>
+                <option value={6}>Adsense após destaque principal</option>
+                <option value={7}>Adsense lateral entre cards</option>
             </select>
 
             <label>Empresa:</label>
@@ -1405,7 +1404,7 @@ const confirmDelete = (id, type) => {
                     formData.append("contrato", novoAnuncio.contratoFile);
                   }
 
-                  await axios.post(`http://localhost:5001/anuncios`, formData, {
+                  await axios.post(`${API_BASE_URL}/anuncios`, formData, {
                     headers: {
                       "Content-Type": "multipart/form-data",
                     },

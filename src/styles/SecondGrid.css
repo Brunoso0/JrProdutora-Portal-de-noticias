@@ -72,7 +72,7 @@
 @media (max-width: 1580px) {
     .second-grid {
         grid-template-columns: repeat(4, 1fr); /* Três colunas */
-        width: 60%; /* Largura da seção */
+        width: 80%; /* Largura da seção */
     }
     .grid-item {
         height: 100%; /* Altura total do item */

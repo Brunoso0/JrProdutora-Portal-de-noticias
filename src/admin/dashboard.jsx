@@ -62,6 +62,8 @@ const Dashboard = () => {
   // const [barChartData, setBarChartData] = useState(null); // Dados do gráfico de barras
   const [cityData, setCityData] = useState([]); // Dados das cidades
   const [categoriasData, setCategoriasData] = useState([]); // Dados das categorias
+  const [visitasDiarias, setVisitasDiarias] = useState([]);
+
 
   // deixando os textos dos graficos brancos
   Chart.defaults.color = "#fff";
@@ -127,6 +129,13 @@ const Dashboard = () => {
             visits: Number(item.visits),
           })));
         }
+
+        // Visitas únicas e recorrentes por dia (últimos 30 dias)
+        const visitasResponse = await axios.get(`${API_BASE_URL}/auth/admin/visitas-diarias`);
+        if (visitasResponse.data.success) {
+          setVisitasDiarias(visitasResponse.data.data);
+        }
+
   
         // Dados de notícias do mês
         const newsResponse = await axios.get(`${API_BASE_URL}/noticias/por-mes/${selectedYear}/${selectedMonth}`);
@@ -306,12 +315,16 @@ const Dashboard = () => {
   const avgDailyVisits = (weeklyData.reduce((sum, item) => sum + item.visits, 0) / 7).toFixed(2);
 
   // Dados do gráfico de Visitantes Únicos vs Retornantes (Linha Progressiva)
+  const visitasOrdenadas = [...visitasDiarias].sort((a, b) => new Date(a.dia) - new Date(b.dia));
+
   const progressiveLineChartData = {
-    labels: Array.from({ length: 30 }, (_, i) => `Dia ${i + 1}`), // Simulação de 30 dias
+    labels: visitasOrdenadas.map(d =>
+      new Date(d.dia).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })
+    ),
     datasets: [
       {
         label: "Primeiro Acesso",
-        data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 300)), // Exemplo aleatório
+        data: visitasOrdenadas.map(d => d.unicos),
         borderColor: "#4f46e5",
         backgroundColor: "rgba(79, 70, 229, 0.2)",
         fill: true,
@@ -320,7 +333,7 @@ const Dashboard = () => {
       },
       {
         label: "Acesso Recorrente",
-        data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 500)), // Exemplo aleatório
+        data: visitasOrdenadas.map(d => d.recorrentes),
         borderColor: "#22c55e",
         backgroundColor: "rgba(34, 197, 94, 0.2)",
         fill: true,
@@ -329,6 +342,7 @@ const Dashboard = () => {
       },
     ],
   };
+
 
   // Dados do gráfico de pizza - Dispositivos mais usados (cores suaves)
   const deviceDoughnutChartData = {

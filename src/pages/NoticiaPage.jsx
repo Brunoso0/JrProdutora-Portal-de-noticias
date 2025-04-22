@@ -48,6 +48,7 @@ const NoticiaPage = () => {
     fetchNoticia();
   }, [slug]);
   
+  
 
   if (loading) return <p>Carregando notícia...</p>;
   if (!noticia) return <p>Notícia não encontrada.</p>;
@@ -103,7 +104,7 @@ const NoticiaPage = () => {
           htmlParts.push(html);
           blocoCount++;
       
-          if (blocoCount >= Math.floor(Math.random() * 2) + 5  && adsCorpo.length > 0) {
+          if (blocoCount >= Math.floor(Math.random() * 2) + 3 && adsCorpo.length > 0) {
             const ad = adsCorpo[adIndex % adsCorpo.length];
       
             const adHtml = ad.tipo === "banner"
@@ -128,34 +129,47 @@ const NoticiaPage = () => {
       };
       
       
+      
 
   return (
     <>
       <Header />
       <Navbar />
-      <div className="noticia-page">
-        <h1>{titulo}</h1>
-        <p className="autor">
-          Por {noticia.autor}, publicado em {new Date(noticia.data_hora_publicacao).toLocaleString("pt-BR")}
-        </p>
+      <div className="noticia-page-wrapper">
+        <div className="noticia-page">
+          <h1>{titulo}</h1>
+          <p className="autor">Por {noticia.autor}, publicado em {new Date(noticia.data_hora_publicacao).toLocaleString("pt-BR")}</p>
 
-        {/* 🔝 Propaganda fixa no topo */}
-        {adsTopo && (
-          <Propaganda
-            tipo={adsTopo.tipo}
-            imagem={adsTopo.imagem}
-            link={adsTopo.link}
-            id={adsTopo.google_client_id}
-            slot={adsTopo.google_slot}
-          />
-        )}
+          {/* 🔝 Propaganda topo */}
+          {adsTopo && (
+            <Propaganda
+              tipo={adsTopo.tipo}
+              imagem={adsTopo.imagem}
+              link={adsTopo.link}
+              id={adsTopo.google_client_id}
+              slot={adsTopo.google_slot}
+            />
+          )}
 
+          <div className="conteudo" dangerouslySetInnerHTML={{ __html: renderContentFromEditorJS(noticia.conteudo) }} />
+        </div>
 
-        <div
-          className="conteudo"
-          dangerouslySetInnerHTML={{ __html: renderContentFromEditorJS(noticia.conteudo) }}
-        />
+        <div className="anuncios-verticais">
+          {adsVertical.map((ad, idx) => (
+            <Propaganda
+              key={idx}
+              tipo={ad.tipo}
+              imagem={ad.imagem}
+              link={ad.link}
+              id={ad.google_client_id}
+              slot={ad.google_slot}
+            />
+          ))}
+        </div>
       </div>
+
+
+
 
 
     </>

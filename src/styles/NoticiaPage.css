@@ -1,7 +1,18 @@
-.noticia-page {
-    max-width: 800px;
+/* Container principal com conteúdo centralizado */
+.noticia-page-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    position: relative;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+}
+
+/* Conteúdo da notícia */
+.noticia-page {
+    max-width: 800px;
+    flex: 1;
     font-family: Arial, sans-serif;
     line-height: 1.6;
 }
@@ -44,7 +55,7 @@
 .noticia-page .conteudo img {
     max-width: 100%;
     height: auto;
-    margin: 20px 0;
+    margin: 20px 0 0 0;
     border-radius: 8px;
 }
 
@@ -73,7 +84,18 @@
     color: #999;
 }
 
-/* Estilo para propagandas */
+/* Anúncios verticais na lateral */
+.anuncios-verticais {
+    width: 250px;
+    top: 420px;
+    margin: 300px auto;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Propagandas horizontais */
 .propaganda-banner {
     text-align: center;
     margin: 30px 0;
@@ -84,56 +106,37 @@
     height: auto;
     border-radius: 8px;
     box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
 }
 
 .propaganda-google {
     margin: 30px 0;
     text-align: center;
+    width: 100%;
+    min-height: 250px;
 }
 
-/* RESPONSIVIDADE */
-@media (max-width: 768px) {
+/* Responsividade */
+@media (max-width: 1024px) {
+    .noticia-page-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .anuncios-verticais {
+        position: static;
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .propaganda-google, .propaganda-banner {
+        width: 100%;
+        margin: 20px auto;
+    }
+
     .noticia-page {
-        padding: 15px;
-    }
-
-    .noticia-page h1 {
-        font-size: 2em;
-        text-align: center;
-    }
-
-    .noticia-page .autor {
-        text-align: center;
-        font-size: 0.85em;
-    }
-
-    .noticia-page .conteudo {
-        font-size: 1em;
-    }
-
-    .noticia-page .conteudo blockquote {
-        padding: 10px;
-    }
-
-    .propaganda-banner img {
-        border-radius: 6px;
-    }
-}
-
-@media (max-width: 480px) {
-    .noticia-page {
-        padding: 10px;
-    }
-
-    .noticia-page h1 {
-        font-size: 1.6em;
-    }
-
-    .noticia-page .autor {
-        font-size: 0.8em;
-    }
-
-    .noticia-page .conteudo {
-        font-size: 0.95em;
+        max-width: 90%;
     }
 }
