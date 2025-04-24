@@ -542,6 +542,8 @@ h1 {
 }
 
 
+
+
 .admin-ds-div7 {
   display: flex;
   flex-direction: column;
@@ -976,7 +978,7 @@ h1 {
   }
 
   .archive-name {
-    width: 20%;
+    width: 20% !important;
     overflow-x: hidden
   }
 

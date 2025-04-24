@@ -1,361 +1,490 @@
-    .festival-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: #243066;
-        position: relative;
-        overflow: hidden;
-        padding: 2rem 0;
-        min-height: 100vh;
-        height: 100%;
-    }
-    
-    
-    .textura-festival {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        
-        z-index: 0;
-        opacity: 0.5;
-        filter: brightness(0.9);
-    }
-    
-    .textura-festival img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+/* ================= CONTAINER PRINCIPAL ================= */
 
-    .bandeirolas-topo, .bandeirolas-baixo {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        z-index: 4;
-    }
-
-    .bandeirolas-topo {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 5;
-    }
-
-    .bandeirolas-baixo {
-        position: absolute;
-        bottom: 60rem;
-        left: 0;
-        z-index: 5;
-    }
-
-    .bandeirolas-topo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .bandeirolas-baixo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-  .borda-esquerda {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: auto;
-    max-height: 190vh;
-
-    z-index: 1;
-  }
-
-  .borda-direita {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    max-height: 180vh;
-    z-index: 2;
-  }
-  
-
-  .conteudo-central {
-    z-index: 2;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 2rem;
-    gap: 10rem;
-    text-align: center;
-    max-width: 90%;
-    margin-top: 10rem;
-  }
-
-  .logo-festival img {
-    max-width: 500px;
-    width: 100%;
-  }
-
-  .texto-arraia h2 { 
-    font-weight: bold;
-    line-height: 0.7;
-    text-transform: uppercase;
-    font-family: HoghFish, sans-serif;
-    margin: 0;
-  }
-
-  .texto-arraia img {
-    max-width: 100px;
-    width: 100%;
-    margin: 0 auto;
-  }
-
-  .talento {
-    color: #FFC711;
-    letter-spacing: 5px;
-    font-size: calc(2.3rem + 0.5vw);
+.festival-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #243066;
+  background-image: url('/public/img/textura.png');
+  position: relative;
+  overflow-x: hidden;
 }
 
-.brilhar {
-    color: #FFF;
-    font-size: calc(1.6rem + 0.5vw);
-    font-weight: 100;
+/* ================= TOPO DO FESTIVAL ================= */
+
+.topo-festival {
+  position: relative;
+  width: 100%;
+  padding: 12rem 2rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15rem;
+  flex-wrap: wrap;
 }
 
-.arraia {
-    color: #FF6500;
-    letter-spacing: 10px;
-    font-size: calc(2.1rem + 0.5vw);
-  }
-
-  .conteudo-central-2 {
-    z-index: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 2rem;
-    gap: 2rem;
-    text-align: center;
-    max-width: 90%;
-    margin-top: 2rem;
-  }
-
-  .datas-festival {
-    max-width: 500px;
-  }
-
-  .datas-festival img {
-    max-width: 100%;
-    width: 100%;
-  }
-
-  .informativo-festival {
-    max-width: 400px;
-    margin: 0 auto;
-  }
-
-  .informativo-festival img {
-    max-width: 100%;
-    width: 100%;
-  }
-
-  .inscricao-festival {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    top: 20rem;
-    z-index: 2;
-  }
-  
-  .fundo-inscricao img {
-    width: 100%;
-    max-height: 1600px;
-    display: block;
-  }
-  
-  .titulo-inscricao {
-    position: absolute;
-    top: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3;
-  }
-  
-  .balao-inscricao {
-    position: absolute;
-    top: 4rem;
-    right: 2rem;
-    width: 120px;
-    z-index: 3;
-  }
-  .formulario-inscricao {
-    background: #5f1d7a;
-    padding: 2rem;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 1000px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: absolute;
-    top: 30rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 4;
-  }
-  
-  /* Foto upload */
-  .foto-upload {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 2rem;
-  }
-  
-  .foto-upload img {
-    width: 100px;
-    margin-bottom: 0.5rem;
-  }
-  
-  .foto-upload p {
-    color: white;
-    font-weight: bold;
-    text-align: center;
-  }
-  
-  /* Formulário */
-  .form-inscricao-bonfim {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-  }
-  
-  .input-inscricao {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1rem;
-    border: none;
-    outline: none;
-    border-radius: 5px;
-    box-sizing: border-box;
-  }
-  
-  /* Linhas duplas */
-  .linha-dupla-inscricao {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  
-  .linha-dupla-inscricao input,
-  .linha-dupla-inscricao label {
-    flex: 1;
-  }
-  
-  /* Upload */
-  .upload-inscricao .label-inscricao {
-    background-color: white;
-    color: #000;
-    font-size: 0.9rem;
-    padding: 0.5rem;
-    border-radius: 5px;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  
-  .upload-inscricao input[type="file"] {
-    background-color: #e0f0ff;
-    padding: 0.5rem;
-    border-radius: 5px;
-    margin-top: 0.5rem;
-  }
-  
-  /* Upload final */
-  .upload-final-inscricao {
-    display: flex;
-    justify-content: center;
-    margin-top: 1.5rem;
-  }
-  
-  .label-inscricao-final {
-    background-color: #e0f0ff;
-    padding: 0.75rem 1.5rem;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-  }
-  
-
-.rodape-inscricao {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    margin-top: 2rem;
-    z-index: 2;
+.logo-festival {
+  max-width: 500px;
+  width: 100%;
 }
 
-.rodape-inscricao img {
-    max-width: 150px;
-    width: 100%;
-    height: auto;
+.texto-topo {
+  text-align: center;
+  font-family: HoghFish, sans-serif;
 }
 
-.corda-baixo {
-    position: absolute;
-    width: 100%;
-    bottom: -8rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1;
+.texto-topo h2 {
+  margin: 0;
+  line-height: 1.2;
 }
 
-.corda-baixo img {
-    width: 100%;
-    height: auto;
+.bandeirolinhas {
+  width: 130px;
 }
 
+.topo-talento {
+  font-size: 4.5rem;
+  color: #FFC711;
+  letter-spacing: 3px;
+  font-family: HoghFish, sans-serif;
+}
+
+.topo-brilhar {
+  font-size: 3rem;
+  color: white;
+  font-weight: 300;
+}
+
+.topo-arraia {
+  font-size: 4.5rem;
+  color: #FF6500;
+  letter-spacing: 5px;
+  font-weight: 800;
+}
+
+/* ================= Cordas ================= */
+.corda-esquerda,
+.corda-direita {
+  position: absolute;
+  top: 0;
+
+  z-index: 1;
+}
+
+.corda-esquerda {
+  left: 0;
+  height: 130rem;
+}
+
+.corda-direita {
+  right: 0;
+  height: 110rem;
+}
+
+/* ================= REGRAS E INFORMAÇÕES ================= */
+
+.regras-festival {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin: 3rem 0;
+  z-index: 2;
+}
+
+.regras-festival img {
+  max-width: 500px;
+  width: 100%;
+}
+
+/* ================= BANDEIROLAS ================= */
+
+.bandeirolas-festival {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: -4rem;
+  z-index: 5;
+}
+
+.bandeirolas-festival img {
+  width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+
+.bandeirolas-topo,
+.bandeirolas-intermediarias {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
+  position: relative;
+}
+
+.bandeirolas-topo {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bandeirolas-topo img,
+.bandeirolas-intermediarias img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+
+/* ================= INSCRIÇÃO ================= */
+
+.secao-inscricao {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  z-index: 4;
+  bottom: 15rem;
+}
+
+.fundo-costura {
+  width: 100%;
+  max-height: 1600px;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.titulo-inscricao {
+  position: absolute;
+  top: 20rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+}
+
+.titulo-inscricao img {
+  width: 100%;
+  max-width: 400px;
+}
+
+.decoracao-direita,
+.decoracao-esquerda,
+.decoracao-direita-baixo,
+.decoracao-esquerda-baixo {
+  position: absolute;
+  z-index: 9;
+  animation: float1 4s ease-in-out infinite;
+}
+
+.decoracao-direita {
+  right: 8rem;
+  top: 22rem;
+  width: 320px;
+  animation-delay: 0.4s;
+}
+
+.decoracao-esquerda {
+  left: 3rem;
+  top: 38rem;
+  width: 320px;
+  animation-delay: 1.2s;
+}
+
+.decoracao-direita-baixo {
+  right: 2rem;
+  bottom: 42rem;
+  width: 280px;
+  animation-delay: 1.5s;
+}
+
+.decoracao-esquerda-baixo {
+  left: 3rem;
+  bottom: 25rem;
+  width: 280px;
+  animation-delay: 0.8s;
+}
+
+.decoracao-direita img,
+.decoracao-esquerda img,
+.decoracao-direita-baixo img,
+.decoracao-esquerda-baixo img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Animações suaves de flutuação */
+@keyframes float1 {
+  0% {
+    transform: translateY(0);
+    filter: blur(3px);
+  }
+  50% {
+    transform: translateY(-10px);
+    filter: blur(0);
+  }
+  100% {
+    transform: translateY(0);
+    filter: blur(3px);
+  }
+}
+
+/* ================= Formulario ================= */
+
+.formulario-inscricao {
+  position: absolute;
+  top: 32rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+
+  background: #5f1d7a;
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  width: 95%;
+  max-width: 1000px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.foto-upload {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.foto-upload-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px; /* Ajuste o tamanho conforme necessário */
+  height: 150px;
+  border: 1px dashed #ccc; /* Borda tracejada como na imagem */
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.foto-upload-box img {
+  width: 30px; /* Ajuste o tamanho do ícone */
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.form-inscricao-bonfim {
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Ocupar a largura total do container pai */
+  max-width: 600px; /* Largura máxima do formulário */
+}
+
+.input-inscricao {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.linha-dupla-inscricao {
+  display: flex;
+  gap: 10px; /* Espaçamento entre os elementos na mesma linha */
+  margin-bottom: 10px;
+}
+
+.linha-dupla-inscricao .input-inscricao {
+  flex: 1; /* Fazer com que os inputs ocupem o mesmo espaço */
+}
+
+.upload-inscricao {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.label-inscricao {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.upload-botao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background-color: #f0f0f0; /* Cor de fundo do botão */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  gap: 5px;
+}
+
+.upload-botao img {
+  width: 20px; /* Ajuste o tamanho do ícone de upload */
+  height: 20px;
+}
+
+.upload-final-inscricao {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.label-envio-video {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 20px;
+  background-color: #e0e0e0; /* Cor de fundo do botão de vídeo */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  gap: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.label-envio-video img {
+  width: 25px; /* Ajuste o tamanho do ícone de vídeo */
+  height: 25px;
+}
+
+.label-inscricao {
+  color: #c2c2c2;
+  margin-bottom: 10px;
+}
+
+/* ================= RODAPÉ ================= */
+
+.rodape-festival {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: 3rem 0;
+  z-index: 5;
+  width: 100%;
+}
+
+.corda-rodape {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  z-index: 1;
+}
+
+.rodape-content {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 3rem 0;
+  z-index: 9;
+}
+
+.selos-finais {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.coracao {
+  width: 80px;
+  height: 80px;
+}
+
+.assinatura {
+  position: absolute;
+  width: 100%;
+  background-color: #c2c2c2;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+}
+
+/* ================= Cactos laterais fixos ================= */
+.cactos {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  z-index: 3;
+}
 .cacto-esquerda,
 .cacto-direita {
-    position: absolute;
-    bottom: 0;
-    z-index: 2;
+  position: absolute;
+  bottom: 0;
+  height: auto;
+  z-index: 3;
+  pointer-events: none;
 }
 
-.cacto-esquerda {
-    left: 0;
+.cacto-esquerda img {
+  width: 150px;
+  left: 0;
 }
 
 .cacto-direita {
-    right: 0;
+  right: 0;
 }
 
-.cacto-esquerda img,
-.cacto-direita img {
-    max-width: 200px;
-    width: 100%;
-    height: auto;
-}
-
-
-  @media (max-width: 768px) {
-    .texto-arraia h2 {
-      font-size: 1.6rem;
-    }
-
-    .faixas-informativas img {
-      max-width: 90%;
-    }
-
-    .logo-festival img {
-      max-width: 80%;
-    }
+/* ================= RESPONSIVO ================= */
+@media (max-width: 768px) {
+  .selos-finais {
+    flex-direction: column;
+    gap: 1.2rem;
   }
+
+  .cacto-esquerda,
+  .cacto-direita {
+    width: 100px;
+  }
+}
+
+
+/* ================= RESPONSIVO ================= */
+
+@media (max-width: 768px) {
+  .topo-festival {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .topo-talento,
+  .topo-brilhar,
+  .topo-arraia {
+    font-size: 1.4rem;
+  }
+
+  .formulario-inscricao {
+    padding: 1rem;
+    margin-top: 8rem;
+  }
+
+  .linha-dupla-inscricao {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .selos-finais {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cacto-esquerda,
+  .cacto-direita {
+    width: 100px;
+  }
+
+  .bandeirolas-festival img {
+    max-height: 60px;
+  }
+}
