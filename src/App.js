@@ -8,6 +8,7 @@ import NoticiaPage from "./pages/NoticiaPage";
 import VerTodos from "./pages/VerTudoPage"
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicLayout from "./layouts/PublicLayout";
+import FestivalMusica from "./pages/FestivalMusica";
 import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
@@ -86,6 +87,7 @@ const App = () => {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+            <Route path="/Festival-de-Musica" element={<FestivalMusica />} />
             <Route path="/noticia/:slug" element={<NoticiaPage />} />
             <Route path="/ver-todos/:tipo" element={<VerTodos />} />
             <Route path="/" element={<PublicLayout />} />
