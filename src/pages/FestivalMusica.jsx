@@ -75,58 +75,59 @@ const FestivalMusica = () => {
             <input type="file" id="foto" hidden />
         </div>
 
-        <form>
-            <input type="text" placeholder="NOME COMPLETO" />
-            <input type="text" placeholder="NOME ARTÍSTICO" />
-            <input type="text" placeholder="CONTATO (WHATSAPP)" />
-            <input type="text" placeholder="CÓPIA DE RG E CPF" />
+        <form className="form-inscricao-bonfim">
+            <input type="text" placeholder="NOME COMPLETO" className="input-inscricao nome-completo" />
+            <input type="text" placeholder="NOME ARTÍSTICO" className="input-inscricao nome-artistico" />
+            <input type="text" placeholder="CONTATO (WHATSAPP)" className="input-inscricao contato-whatsapp" />
+            <input type="text" placeholder="CÓPIA DE RG E CPF" className="input-inscricao copia-rg-cpf" />
 
-            <div className="dupla">
-            <input type="text" placeholder="RG" />
-            <input type="text" placeholder="CPF" />
+            <div className="linha-dupla-inscricao">
+                <input type="text" placeholder="RG" className="input-inscricao rg" />
+                <input type="text" placeholder="CPF" className="input-inscricao cpf" />
             </div>
 
-            <div className="dupla">
-            <input type="text" placeholder="DESENVOLVE ATIVIDADE PROFISSIONAL COM A MÚSICA?" />
-            <input type="text" placeholder="MÚSICA QUE PRETENDE CANTAR" />
+            <div className="linha-dupla-inscricao">
+                <input type="text" placeholder="DESENVOLVE ATIVIDADE PROFISSIONAL COM A MÚSICA?" className="input-inscricao atividade-musical" />
+                <input type="text" placeholder="MÚSICA QUE PRETENDE CANTAR" className="input-inscricao musica-interesse" />
             </div>
 
-            <div className="dupla">
-            <input type="text" placeholder="FAZ PARTE DE ALGUM GRUPO/BANDA?" />
-            <input type="text" placeholder="QUAL SUA EXPERIÊNCIA COM MÚSICA? FAVOR, DESCREVER!" />
+            <div className="linha-dupla-inscricao">
+                <input type="text" placeholder="FAZ PARTE DE ALGUM GRUPO/BANDA?" className="input-inscricao grupo-banda" />
+                <input type="text" placeholder="QUAL SUA EXPERIÊNCIA COM MÚSICA? FAVOR, DESCREVER!" className="input-inscricao experiencia-musical" />
             </div>
 
-            <div className="dupla upload">
-            <label>
+            <div className="linha-dupla-inscricao upload-inscricao">
+                <label className="label-inscricao">
                 CÓPIA DE RG E CPF
-                <input type="file" />
-            </label>
-            <label>
+                <input type="file" className="input-inscricao arquivo-rg-cpf" />
+                </label>
+                <label className="label-inscricao">
                 CERTIDÃO MUNICIPAL
-                <input type="file" />
-            </label>
+                <input type="file" className="input-inscricao certidao-municipal" />
+                </label>
             </div>
 
-            <div className="dupla upload">
-            <label>
+            <div className="linha-dupla-inscricao upload-inscricao">
+                <label className="label-inscricao">
                 CERTIDÃO FEDERAL
-                <input className="inscricao-form" type="file" />
-            </label>
-            <label>
+                <input type="file" className="input-inscricao certidao-federal" />
+                </label>
+                <label className="label-inscricao">
                 COMPROVANTE DE RESIDÊNCIA
-                <input className="inscricao-form" type="file" />
-            </label>
+                <input type="file" className="input-inscricao comprovante-residencia" />
+                </label>
             </div>
 
-            <div className="upload-final">
-            <label>
-                <input className="inscricao-form" type="file" />
+            <div className="upload-final-inscricao">
+                <label className="label-inscricao-final">
+                <input type="file" className="input-inscricao arquivo-final" />
                 ADICIONAR ARQUIVO
-            </label>
+                </label>
             </div>
-        </form>
-        </div>
+            </form>
 
+        </div>
+        
         {/* Faixa inferior com logos */}
             <div className="rodape-inscricao">
                 <img src="/img/rodape-selo-prefeitura.png" alt="Selo Prefeitura" />
