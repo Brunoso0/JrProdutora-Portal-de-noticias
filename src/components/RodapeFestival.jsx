@@ -1,6 +1,6 @@
 const RodapeFestival = () => (
     <div className="rodape-festival">
-      <div class="corda-rodape">
+      <div className="corda-rodape">
         <img src="/img/corda-baixo.png" alt="Corda inferior" />
       
       </div>
