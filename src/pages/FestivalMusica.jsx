@@ -130,8 +130,8 @@ const FestivalMusica = () => {
         
         {/* Faixa inferior com logos */}
             <div className="rodape-inscricao">
-                <img src="/img/rodape-selo-prefeitura.png" alt="Selo Prefeitura" />
-                <img src="/img/logo-sao-joao.png" alt="Logo São João" />
+                <img src="/img/prefeitura.png" alt="Selo Prefeitura" />
+                <img src="/img/coracao.png" alt="Logo São João" />
             </div>
 
             {/* Cordas decorativas (separadas ou dentro do fundo) */}
