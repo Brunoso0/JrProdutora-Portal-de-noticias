@@ -586,6 +586,118 @@
 
 /* ================= RESPONSIVO ================= */
 
+@media (min-width: 2000px) {
+  .topo-festival {
+    padding: 15% 0 3rem;
+    gap: 20rem;
+  }
+
+  .logo-festival {
+    max-width: 700px;
+    width: 100%;
+  }
+
+  .topo-talento {
+    font-size: 6rem;
+    letter-spacing: 5px;
+  }
+
+  .topo-brilhar {
+    font-size: 4rem;
+  }
+
+  .topo-arraia {
+    font-size: 6rem;
+    letter-spacing: 7px;
+  }
+
+  .corda-esquerda,
+  .corda-direita {
+    height: 200rem;
+    width: 30%;
+  }
+
+  .titulo-inscricao {
+    top: 25rem;
+  }
+
+  .formulario-inscricao {
+    padding: 4rem;
+    width: 70%;
+    max-width: 1200px;
+    top: 55rem;
+  }
+
+  .input-inscricao {
+    padding: 15px;
+    font-size: 1.2rem;
+  }
+
+  .linha-dupla-inscricao {
+    gap: 15px;
+  }
+
+  .upload-botao {
+    padding: 15px;
+    font-size: 1.1rem;
+  }
+
+  .label-envio-video {
+    padding: 20px 25px;
+    font-size: 1.2rem;
+  }
+
+  .decoracao-direita,
+  .decoracao-esquerda,
+  .decoracao-direita-baixo,
+  .decoracao-esquerda-baixo {
+    width: 400px;
+  }
+
+  .decoracao-direita {
+    right: 5rem;
+    top: 55rem;
+    width: 800px;
+    z-index: 1;
+  }
+
+  .decoracao-esquerda {
+    left: -15rem;
+    top: 55rem;
+    width: 800px;
+    z-index: 1;
+  }
+
+  .decoracao-direita-baixo {
+    display: none;
+  }
+
+  .decoracao-esquerda-baixo {
+    display: none;
+  }
+
+  .cacto-esquerda,
+  .cacto-direita {
+    width: 500px;
+  }
+
+  .bandeirolas-festival img {
+    max-height: 200px;
+  }
+
+  .titulo-inscricao img {
+    max-width: 600px;
+  }
+
+  .rodape-festival {
+    gap: 3rem;
+  }
+
+  .selos-finais {
+    gap: 3rem;
+  }
+}
+
 
 @media (max-width: 1700px) {
   .topo-festival {
