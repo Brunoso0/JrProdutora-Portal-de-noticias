@@ -26,11 +26,13 @@
 .logo-festival {
   max-width: 500px;
   width: 100%;
+  z-index: 900;
 }
 
 .texto-topo {
   text-align: center;
   font-family: HoghFish, sans-serif;
+  z-index: 900;
 }
 
 .texto-topo h2 {
@@ -586,7 +588,7 @@
 
 /* ================= RESPONSIVO ================= */
 
-@media (min-width: 2000px) {
+@media (min-width: 1920px) {
   .topo-festival {
     padding: 15% 0 3rem;
     gap: 20rem;
@@ -625,7 +627,7 @@
     padding: 4rem;
     width: 70%;
     max-width: 1200px;
-    top: 55rem;
+    top: 45rem;
   }
 
   .input-inscricao {
