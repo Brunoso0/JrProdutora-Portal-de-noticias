@@ -145,11 +145,13 @@
   z-index: 4;
 }
 
-.mobile-amarelo, .tablet-amarelo {
-  display: none;
+ .tablet-amarelo {
+  display: none !important;
 }
 
-
+.mobile-amarelo {
+  display: none !important;
+}
 
 
 
@@ -584,11 +586,7 @@
 
 /* ================= RESPONSIVO ================= */
 
-@media (min-width: 1700) {
-  .tablet-amarelo, .mobile-amarelo {
-    display: none;
-  }
-}
+
 @media (max-width: 1700px) {
   .topo-festival {
     padding: 10% 0 2rem;
@@ -802,14 +800,14 @@
 }
 
 
-@media (max-width: 900px) {
+@media (min-width: 551px) and (max-width: 900px) {
   .topo-festival {
     padding: 10% 0 2rem;
     gap: 5rem;
   }
 
   .tablet-amarelo {
-    display: flex;
+    display: flex !important;
   }
 
   .desktop-amarelo{
@@ -898,7 +896,7 @@
   }
 
   .mobile-amarelo {
-    display: flex;
+    display: flex !important;
   }
 
   .desktop-amarelo{
@@ -1012,6 +1010,10 @@
   .topo-brilhar,
   .topo-arraia {
     font-size: 1.5rem;
+  }
+
+  .mobile-amarelo {
+    display: flex !important;
   }
   
   .topo-festival {
