@@ -124,7 +124,7 @@
     "build": "craco build && node scripts/copy-htaccess.js",
     "test": "craco test"
   },
-  
+
   "eslintConfig": {
     "extends": [
       "react-app",
