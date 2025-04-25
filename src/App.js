@@ -79,6 +79,7 @@ const App = () => {
   }, []);
   
   
+// forçando o carregamento do app no build
 
   return (
     <UserProvider>
