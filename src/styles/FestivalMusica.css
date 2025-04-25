@@ -145,6 +145,11 @@
   z-index: 4;
 }
 
+.mobile-amarelo, .tablet-amarelo {
+  display: none;
+}
+
+
 
 
 
@@ -228,9 +233,8 @@
     filter: blur(3px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-5px) rotate(-5deg);
     filter: blur(0);
-    transform: rotate(-5deg);
   }
   100% {
     transform: translateY(0);
@@ -579,55 +583,519 @@
 
 
 /* ================= RESPONSIVO ================= */
-@media (max-width: 768px) {
+@media (max-width: 1700px) {
+  .topo-festival {
+    padding: 10% 0 2rem;
+    gap: 5rem;
+  }
+
+  .mobile-amarelo, .tablet-amarelo {
+    display: none;
+  }
+
+  .logo-festival {
+    width: 80%;
+  }
+
+  .texto-topo {
+    z-index: 5;
+  }
+
+  .corda-direita {
+    height: 140rem;
+    width: 25%;
+  }
+
+  .corda-esquerda {
+    height: 150rem;
+    width: 25%;
+  }
+
+  .titulo-inscricao {
+    top: 15rem;
+  }
+
+  .decoracao-direita {
+    right: -2rem;
+    top: 5rem;
+  }
+
+  .decoracao-direita-baixo {
+    right: -2rem;
+    top: 45rem;
+    z-index: 1;
+  }
+
+  .decoracao-esquerda {
+    left: -6rem;
+    top: 20rem;
+    z-index: 1;
+  }
+
+  .decoracao-esquerda-baixo {
+    width: 350px;
+    left: -15rem;
+    top: 50rem;
+    z-index: 7;
+  }
+
+  .formulario-inscricao {
+    padding: 1rem;
+    margin-top: -3rem;
+    width: 80%;
+    max-width: 800px;
+  }
+
+  .formulario-inscricao {
+    padding: 1rem;
+    margin-top: 4rem;
+    width: 90%;
+    max-width: 600px;
+  }
+
+  .input-inscricao {
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9rem;
+  }
+
+  .linha-dupla-inscricao {
+    gap: 8px;
+  }
+
+  .upload-inscricao {
+    gap: 8px;
+  }
+
+  .label-inscricao {
+    font-size: 0.85rem;
+  }
+
+  .upload-botao {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .label-envio-video {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+
+  .cacto-esquerda,
+  .cacto-direita {
+    width: 250px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .topo-festival {
+    padding: 10% 0 2rem;
+    gap: 5rem;
+  }
+
+  .mobile-amarelo, .tablet-amarelo {
+    display: none;
+  }
+
+  .logo-festival {
+    width: 80%;
+  }
+
+  .texto-topo {
+    z-index: 5;
+  }
+
+  .corda-direita {
+    height: 140rem;
+    width: 25%;
+  }
+
+  .corda-esquerda {
+    height: 150rem;
+    width: 25%;
+  }
+
+  .titulo-inscricao {
+    top: 8rem;
+  }
+
+  .decoracao-direita {
+    right: -2rem;
+    top: 5rem;
+  }
+
+  .decoracao-direita-baixo {
+    right: -2rem;
+    top: 45rem;
+    z-index: 1;
+  }
+
+  .decoracao-esquerda {
+    left: -6rem;
+    top: 20rem;
+    z-index: 1;
+  }
+
+  .decoracao-esquerda-baixo {
+    width: 350px;
+    left: -15rem;
+    top: 50rem;
+    z-index: 7;
+  }
+
+  .formulario-inscricao {
+    padding: 1rem;
+    margin-top: -3rem;
+    width: 80%;
+    max-width: 800px;
+  }
+
+  .formulario-inscricao {
+    padding: 1rem;
+    margin-top: -9rem;
+    width: 90%;
+    max-width: 600px;
+  }
+
+  .input-inscricao {
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9rem;
+  }
+
+  .linha-dupla-inscricao {
+    gap: 8px;
+  }
+
+  .upload-inscricao {
+    gap: 8px;
+  }
+
+  .label-inscricao {
+    font-size: 0.85rem;
+  }
+
+  .upload-botao {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .label-envio-video {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+
+  .cacto-esquerda,
+  .cacto-direita {
+    width: 250px;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .topo-festival {
+    padding: 10% 0 2rem;
+    gap: 5rem;
+  }
+
+  .tablet-amarelo {
+    display: flex;
+  }
+
+  .desktop-amarelo{
+    display: none;
+  }
+
+  .mobile-amarelo {
+    display: none;
+  }
+
+  .logo-festival {
+    width: 80%;
+  }
+
+  .texto-topo {
+    z-index: 5;
+  }
+
+  .corda-direita {
+    height: 140rem;
+    width: 25%;
+  }
+
+  .corda-esquerda {
+    height: 150rem;
+    width: 25%;
+  }
+
+  .titulo-inscricao {
+    top: 8rem;
+  }
+
+  .formulario-inscricao {
+    padding: 1.5rem;
+    margin-top: -5rem;
+    width: 90%;
+  }
+
+  .cacto-esquerda,
+  .cacto-direita {
+    width: 100px;
+  }
+
+  .decoracao-direita,
+  .decoracao-esquerda,
+  .decoracao-direita-baixo,
+  .decoracao-esquerda-baixo {
+    width: 200px;
+  }
+
+  .decoracao-direita {
+    right: -2rem;
+    top: 5rem;
+  }
+
+  .decoracao-direita-baixo {
+    display: none;
+  }
+
+  .decoracao-esquerda {
+    left: -6rem;
+    top: 20rem;
+    z-index: 1;
+  }
+
+  .decoracao-esquerda-baixo {
+    width: 350px;
+    left: -15rem;
+    top: 60rem;
+    z-index: 7;
+  }
+
+
+  .topo-talento,
+  .topo-brilhar,
+  .topo-arraia {
+    font-size: calc(3em + 1vw);
+    text-align: center;
+  }
+}
+
+@media (max-width: 550px) {
   .selos-finais {
     flex-direction: column;
     gap: 1.2rem;
   }
 
+  .mobile-amarelo {
+    display: flex;
+  }
+
+  .desktop-amarelo{
+    display: none;
+  }
+
+  .tablet-amarelo {
+    display: none;
+  }
+
   .cacto-esquerda,
   .cacto-direita {
     width: 100px;
   }
-}
 
-
-
-/* ================= RESPONSIVO ================= */
-
-@media (max-width: 768px) {
   .topo-festival {
     flex-direction: column;
     align-items: center;
+    gap: 2rem;
+    padding: 18% 0 2rem;
+  }
+  
+  .logo-festival {
+    z-index: 5;
+    width: 80%;
+  }
+
+  .texto-topo {
+    z-index: 5;
+  }
+
+  .corda-direita {
+    height: 110rem;
+    width: 30%;
+  }
+
+  .corda-esquerda {
+    height: 130rem;
+    width: 25%;
   }
 
   .topo-talento,
   .topo-brilhar,
   .topo-arraia {
-    font-size: 1.4rem;
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .regras-festival img {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .titulo-inscricao {
+    top: 8rem;
   }
 
   .formulario-inscricao {
-    padding: 1rem;
-    margin-top: 8rem;
+    padding: 1.5rem;
+    margin-top: -8rem;
+    width: 90%;
   }
 
   .linha-dupla-inscricao {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
   }
 
-  .selos-finais {
-    flex-direction: column;
-    gap: 1rem;
+  .bandeirolas-festival img {
+    max-height: 80px;
+  }
+
+  .titulo-inscricao img {
+    max-width: 300px;
+  }
+
+  .decoracao-direita,
+  .decoracao-esquerda,
+  .decoracao-direita-baixo,
+  .decoracao-esquerda-baixo {
+    width: 200px;
+  }
+
+  .decoracao-direita {
+    right: -2rem;
+    top: 5rem;
+  }
+
+  .decoracao-direita-baixo {
+    display: none;
+  }
+
+  .decoracao-esquerda {
+    left: -6rem;
+    top: 20rem;
+    z-index: 1;
+  }
+
+  .decoracao-esquerda-baixo {
+    width: 350px;
+    left: -15rem;
+    transform: rotate(180deg);
+    z-index: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .topo-talento,
+  .topo-brilhar,
+  .topo-arraia {
+    font-size: 1.5rem;
+  }
+  
+  .topo-festival {
+    padding: 10% 0 2rem;
+  }
+  
+  .logo-festival {
+    z-index: 5;
+  }
+
+  .texto-topo {
+    z-index: 5;
+  }
+
+  .corda-direita {
+    height: 110rem;
+  }
+
+  .corda-esquerda {
+    height: 130rem;
+
+  }
+
+  .formulario-inscricao {
+    padding: 1rem;
+    margin-top: -12rem;
+  }
+
+  .bandeirolas-festival img {
+    max-height: 50px;
+  }
+
+  .titulo-inscricao img {
+    max-width: 250px;
+  }
+
+  .decoracao-direita,
+  .decoracao-esquerda {
+    width: 150px;
   }
 
   .cacto-esquerda,
   .cacto-direita {
-    width: 100px;
+    width: 80px;
   }
 
-  .bandeirolas-festival img {
-    max-height: 60px;
+  .selos-finais {
+    gap: 0.8rem;
+  }
+
+  .rodape-festival {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 50px;
+  }
+
+  .label-inscricao {
+    font-size: calc(0.8em + 0.2vw);
+  }
+
+  .formulario-inscricao select {
+    padding: 10px;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: calc(0.6em + 0.2vw); /* Tamanho da fonte responsivo */
+  }
+
+  .inscricao-selects {
+    margin-bottom: 1rem;
+  }
+
+  .endereco {
+    margin-bottom: 1rem !important;
+  }
+
+  .input-inscricao {
+    padding: 10px;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: calc(0.6em + 0.2vw); /* Tamanho da fonte responsivo */
+  }
+
+ .formulario-inscricao label {
+    font-size: calc(0.7em + 0.2vw); /* Tamanho da fonte responsivo */
+  }
+
+  .label-inscricao {
+    font-size: calc(0.7em + 0.2vw); /* Tamanho da fonte responsivo */
+    margin: 0;
   }
 }

@@ -161,7 +161,7 @@ const FormularioInscricao = () => {
         <input type="text" name="endereco" placeholder="ENDEREÇO" className="input-inscricao endereco" />
 
 
-        <div className="linha-dupla-inscricao">
+        <div className="linha-dupla-inscricao inscricao-selects">
           <input type="text" name="musica" placeholder="MÚSICA QUE PRETENDE CANTAR" className="input-inscricao musica-interesse" />
           <select name="atividade_profissional_musica" className="input-inscricao atividade-musical">
             <option value="">ATIVIDADE PROFISSIONAL COM A MÚSICA?</option>
@@ -170,7 +170,7 @@ const FormularioInscricao = () => {
           </select>
         </div>
 
-        <div className="linha-dupla-inscricao">
+        <div className="linha-dupla-inscricao ">
           <select name="faz_parte_grupo" className="input-inscricao grupo-banda">
             <option value="">FAZ PARTE DE ALGUM GRUPO/BANDA?</option>
             <option value="true">Sim</option>

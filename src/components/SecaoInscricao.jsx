@@ -2,7 +2,9 @@ import FormularioInscricao from "./FormularioInscricao";
 
 const SecaoInscricao = () => (
   <section className="secao-inscricao">
-    <img src="/img/fundo-amarelo.png" alt="Fundo amarelo" className="fundo-costura" />
+    <img src="/img/fundo-amarelo.png" alt="Fundo amarelo" className="fundo-costura desktop-amarelo" />
+    <img src="/img/fundo-amarelo-gigante.png" alt="Fundo amarelo" className="fundo-costura mobile-amarelo"  />
+    <img src="/img/fundo-amarelo-grande.png" alt="Fundo amarelo" className="fundo-costura tablet-amarelo"  />
     
     <div className="conteudo-inscricao">
         <div className="titulo-inscricao">
