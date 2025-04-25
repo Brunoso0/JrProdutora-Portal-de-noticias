@@ -87,7 +87,7 @@ const App = () => {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-            <Route path="/Festival-de-Musica" element={<FestivalMusica />} />
+            <Route path="/festivaldemusica" element={<FestivalMusica />} />
             <Route path="/noticia/:slug" element={<NoticiaPage />} />
             <Route path="/ver-todos/:tipo" element={<VerTodos />} />
             <Route path="/" element={<PublicLayout />} />

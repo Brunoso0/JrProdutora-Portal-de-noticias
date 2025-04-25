@@ -1,63 +1,87 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { API_FESTIVAL } from "../services/api"; // ajuste conforme sua estrutura
+import { API_FESTIVAL } from "../services/api";
+
+// Funções de formatação
+const formatarCPF = (valor) => {
+  return valor
+    .replace(/\D/g, "")
+    .slice(0, 11)
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+};
+
+const formatarTelefone = (valor) => {
+  return valor
+    .replace(/\D/g, "")
+    .slice(0, 11)
+    .replace(/^(\d{2})(\d)/g, "($1) $2")
+    .replace(/(\d{4})(\d)/, "$1-$2");
+};
+
+const formatarRG = (valor) => {
+  return valor
+    .replace(/\D/g, "")
+    .slice(0, 9)
+    .replace(/^(\d{2})(\d)/g, "$1.$2")
+    .replace(/(\d{3})(\d)/g, "$1.$2")
+    .replace(/(\d{3})(\d{1})$/, "$1-$2");
+};
 
 const FormularioInscricao = () => {
   const [arquivos, setArquivos] = useState({});
   const [arquivosSelecionados, setArquivosSelecionados] = useState({});
+  const [cpf, setCPF] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [rg, setRG] = useState("");
 
-    const handleFileChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     const name = e.target.name;
-  
-    if (file && file.size > 5 * 1024 * 1024) { // Limite de 5MB
+
+    if (file && file.size > 5 * 1024 * 1024) {
       alert("O arquivo deve ter no máximo 5MB.");
       return;
     }
-  
+
     setArquivos((prev) => ({
       ...prev,
       [name]: file,
     }));
-  
+
     setArquivosSelecionados((prev) => ({
       ...prev,
       [name]: file?.name || "",
     }));
   };
 
-     const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
     const data = new FormData();
-  
-    data.append("nome", form[0].value);
-    data.append("nome_artistico", form[1].value);
-    data.append("telefone", form[2].value);
-    data.append("rg", form[4].value);
-    data.append("cpf", form[5].value);
-    data.append("musica", form[6].value);
-    data.append("atividade_profissional_musica", form[3].value.toUpperCase() === "SIM");
-    data.append("tempo_atividade", "");
-    data.append("faz_parte_grupo", form[7].value.toUpperCase() === "SIM");
-    data.append("experiencia", form[8].value);
-  
+
+    data.append("nome", form.nome.value);
+    data.append("nome_artistico", form.nome_artistico.value);
+    data.append("telefone", telefone);
+    data.append("email", form.email.value);
+    data.append("endereco", form.endereco.value);
+    data.append("rg", rg);
+    data.append("cpf", cpf);
+    data.append("musica", form.musica.value);
+    data.append("atividade_profissional_musica", form.atividade_profissional_musica.value === "true");
+    data.append("tempo_atividade", form.tempo_atividade?.value || "");
+    data.append("faz_parte_grupo", form.faz_parte_grupo.value === "true");
+    data.append("experiencia", form.experiencia.value);
+
     Object.entries(arquivos).forEach(([key, file]) => {
       if (file) data.append(key, file);
     });
-  
-    // Log dos dados enviados
-    for (let pair of data.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-  
+
     try {
       const response = await axios.post(`${API_FESTIVAL}/api/inscricoes/inscrever`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log("Resposta do servidor:", response.data);
       alert("Inscrição enviada com sucesso!");
     } catch (err) {
       console.error("Erro ao enviar inscrição:", err.response?.data || err.message);
@@ -98,46 +122,85 @@ const FormularioInscricao = () => {
         />
       </div>
 
-
       <form className="form-inscricao-bonfim" onSubmit={handleSubmit}>
-        <input type="text" placeholder="NOME COMPLETO" className="input-inscricao nome-completo" />
-        <input type="text" placeholder="NOME ARTÍSTICO" className="input-inscricao nome-artistico" />
-        <input type="text" placeholder="CONTATO (WHATSAPP)" className="input-inscricao contato-whatsapp" />
-        <input type="text" placeholder="DESENVOLVE ATIVIDADE PROFISSIONAL COM A MÚSICA?" className="input-inscricao atividade-musical" />
-
+      <div className="linha-dupla-inscricao">
+        <input type="text" name="nome" placeholder="NOME COMPLETO" className="input-inscricao nome-completo" />
+        <input type="text" name="nome_artistico" placeholder="NOME ARTÍSTICO" className="input-inscricao nome-artistico" />
+      </div>
         <div className="linha-dupla-inscricao">
-          <input type="text" placeholder="RG" className="input-inscricao rg" />
-          <input type="text" placeholder="CPF" className="input-inscricao cpf" />
+          <input
+            type="text"
+            name="telefone"
+            placeholder="CONTATO (WHATSAPP)"
+            className="input-inscricao contato-whatsapp"
+            value={telefone}
+            onChange={(e) => setTelefone(formatarTelefone(e.target.value))}
+          />
+          <input type="email" name="email" placeholder="E-MAIL" className="input-inscricao email" />
         </div>
 
         <div className="linha-dupla-inscricao">
-          <input type="text" placeholder="MÚSICA QUE PRETENDE CANTAR" className="input-inscricao musica-interesse" />
-          <input type="text" placeholder="FAZ PARTE DE ALGUM GRUPO/BANDA?" className="input-inscricao grupo-banda" />
+          <input
+            type="text"
+            name="rg"
+            placeholder="RG"
+            className="input-inscricao rg"
+            value={rg}
+            onChange={(e) => setRG(formatarRG(e.target.value))}
+          />
+          <input
+            type="text"
+            name="cpf"
+            placeholder="CPF"
+            className="input-inscricao cpf"
+            value={cpf}
+            onChange={(e) => setCPF(formatarCPF(e.target.value))}
+          />
+        </div>
+
+        <input type="text" name="endereco" placeholder="ENDEREÇO" className="input-inscricao endereco" />
+
+
+        <div className="linha-dupla-inscricao">
+          <input type="text" name="musica" placeholder="MÚSICA QUE PRETENDE CANTAR" className="input-inscricao musica-interesse" />
+          <select name="atividade_profissional_musica" className="input-inscricao atividade-musical">
+            <option value="">ATIVIDADE PROFISSIONAL COM A MÚSICA?</option>
+            <option value="true">Sim</option>
+            <option value="false">Não</option>
+          </select>
         </div>
 
         <div className="linha-dupla-inscricao">
-          <input type="text" placeholder="QUAL SUA EXPERIÊNCIA COM MÚSICA? FAVOR, DESCREVER!" className="input-inscricao experiencia-musical" />
+          <select name="faz_parte_grupo" className="input-inscricao grupo-banda">
+            <option value="">FAZ PARTE DE ALGUM GRUPO/BANDA?</option>
+            <option value="true">Sim</option>
+            <option value="false">Não</option>
+          </select>
+          <select name="experiencia" className="input-inscricao experiencia-musical">
+            <option value="">QUAL SUA EXPERIÊNCIA COM MÚSICA?</option>
+            <option value="0-2 anos">0 - 2 anos</option>
+            <option value="2-4 anos">2 - 4 anos</option>
+            <option value="5+ anos">5 anos ou mais</option>
+          </select>
         </div>
 
-        {/* Uploads com preview */}
+        {/* Uploads */}
         <div className="linha-dupla-inscricao upload-inscricao">
-        <label className="label-inscricao">
-          <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-            CÓPIA DO RG
-            <span className="tooltip-container">
-              <span className="tooltip-icon">?</span>
-              <span className="tooltip-text">Frente e verso do RG em uma única foto</span>
+          <label className="label-inscricao">
+            <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              CÓPIA DO RG
+              <span className="tooltip-container">
+                <span className="tooltip-icon">?</span>
+                <span className="tooltip-text">Frente e verso do RG em uma única foto</span>
+              </span>
             </span>
-          </span>
-
-          <span className="upload-botao">
-            <img src="/img/icones/upload.png" alt="upload" />
-            ADICIONAR ARQUIVO
-          </span>
-
-          <input type="file" name="rg_arquivo" hidden onChange={handleFileChange} />
-          {renderPreview("rg_arquivo")}
-        </label>
+            <span className="upload-botao">
+              <img src="/img/icones/upload.png" alt="upload" />
+              ADICIONAR ARQUIVO
+            </span>
+            <input type="file" name="rg_arquivo" hidden onChange={handleFileChange} />
+            {renderPreview("rg_arquivo")}
+          </label>
 
           <label className="label-inscricao">
             CÓPIA DO CPF
@@ -170,6 +233,7 @@ const FormularioInscricao = () => {
             <input type="file" name="certidao_federal_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("certidao_federal_arquivo")}
           </label>
+
           <label className="label-inscricao">
             COMPROVANTE DE RESIDÊNCIA
             <span className="upload-botao">
@@ -191,6 +255,7 @@ const FormularioInscricao = () => {
             <input type="file" name="espelho_conta_bancaria_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("espelho_conta_bancaria_arquivo")}
           </label>
+
           <label className="label-inscricao">
             ARQUIVO COM A LETRA DA MÚSICA
             <span className="upload-botao">
@@ -202,7 +267,7 @@ const FormularioInscricao = () => {
           </label>
         </div>
 
-        {/* Upload do vídeo com preview */}
+
         <div className="upload-final-inscricao">
           <label htmlFor="video-upload" className="label-envio-video">
             <img src="/img/icones/upload.png" alt="Ícone de vídeo" />
@@ -212,11 +277,8 @@ const FormularioInscricao = () => {
           {renderPreview("video")}
         </div>
 
-        {/* Botão de envio */}
         <div className="botao-enviar-inscricao">
-          <button type="submit" className="botao-enviar Btn">
-            Enviar
-          </button>
+          <button type="submit" className="botao-enviar Btn">Enviar</button>
         </div>
       </form>
     </div>
