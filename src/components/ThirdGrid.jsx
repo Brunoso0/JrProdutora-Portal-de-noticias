@@ -116,8 +116,9 @@ const ThirdGrid = ({ link }) => {
                         <div className="tagdiv">
                             <span className="tag">{article.categoria}</span>
                         </div>
-                        <h3 className="title">{truncateText(article.titulo, 90)}</h3>
-                        <p className="subtitle">{truncateText(article.subtitulo, 190)}</p>
+                            <h3 className="title">{truncateText(article.titulo, isMobile ? 40 : 70)}</h3>
+                            <p className="subtitle">{truncateText(article.subtitulo, isMobile ? 60 : 190)}</p>
+
                     </div>
                     <div className="image-wrapper left-image">
                         <img src={article.imagem} alt={article.titulo} />
@@ -171,7 +172,8 @@ const ThirdGrid = ({ link }) => {
                 <div className="tagdiv">
                   <span className="tag">{article.categoria}</span>
                 </div>
-                <h3 className="title">{truncateText(article.titulo, 90)}</h3>
+                <h3 className="title">{truncateText(article.titulo, isMobile ? 60 : 90)}</h3>
+
               </div>
               <div className="image-wrapper left-image">
                 <img src={article.imagem} alt={article.titulo} />

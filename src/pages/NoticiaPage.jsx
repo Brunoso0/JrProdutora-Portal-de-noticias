@@ -38,7 +38,6 @@ const NoticiaPage = () => {
         setAdsCorpo(adsCorpoRes.data.sort((a, b) => b.valor - a.valor));
         setAdsVertical(adsVerticalRes.data.sort((a, b) => b.valor - a.valor));
       } catch (error) {
-        console.error("❌ Erro ao buscar a notícia ou anúncios:", error);
         setNoticia(null);
       } finally {
         setLoading(false);
