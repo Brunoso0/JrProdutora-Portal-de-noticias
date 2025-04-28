@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import { API_FESTIVAL } from "../services/api";
+import { toast } from "react-toastify";
+
+
 
 // Funções de formatação
 const formatarCPF = (valor) => {
@@ -36,12 +39,15 @@ const FormularioInscricao = () => {
   const [telefone, setTelefone] = useState("");
   const [rg, setRG] = useState("");
 
+  const formRef = useRef(null); // AQUI você declara a referência pro formulário
+
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const name = e.target.name;
 
-    if (file && file.size > 5 * 1024 * 1024) {
-      alert("O arquivo deve ter no máximo 5MB.");
+    if (file && file.size > 100 * 1024 * 1024) {
+      toast.error("O arquivo deve ter no máximo 100MB.");
       return;
     }
 
@@ -79,19 +85,34 @@ const FormularioInscricao = () => {
     });
 
     try {
-      const response = await axios.post(`${API_FESTIVAL}/api/inscricoes/inscrever`, data, {
+      await axios.post(`${API_FESTIVAL}/api/inscricoes/inscrever`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert("Inscrição enviada com sucesso!");
+    
+      toast.success("Inscrição enviada com sucesso!");
+    
+      // Resetar formulário
+      formRef.current.reset();
+      setCPF("");
+      setRG("");
+      setTelefone("");
+      setArquivos({});
+      setArquivosSelecionados({});
+    
     } catch (err) {
       console.error("Erro ao enviar inscrição:", err.response?.data || err.message);
-      alert("Erro ao enviar inscrição.");
+      toast.error("Erro ao enviar inscrição.");
     }
+    
   };
 
   const renderPreview = (name) => {
     return arquivosSelecionados[name] ? (
-      <span className="nome-arquivo">{arquivosSelecionados[name]}</span>
+      <span className="nome-arquivo">
+      {arquivosSelecionados[name].length > 10
+        ? `${arquivosSelecionados[name].substring(0, 10)}...`
+        : arquivosSelecionados[name]}
+      </span>
     ) : null;
   };
 
@@ -122,7 +143,7 @@ const FormularioInscricao = () => {
         />
       </div>
 
-      <form className="form-inscricao-bonfim" onSubmit={handleSubmit}>
+      <form ref={formRef} className="form-inscricao-bonfim" onSubmit={handleSubmit}>
       <div className="linha-dupla-inscricao">
         <input type="text" name="nome" placeholder="NOME COMPLETO" className="input-inscricao nome-completo" />
         <input type="text" name="nome_artistico" placeholder="NOME ARTÍSTICO" className="input-inscricao nome-artistico" />
