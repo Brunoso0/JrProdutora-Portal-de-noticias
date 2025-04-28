@@ -5,6 +5,8 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import SortableItem from "./SortableItem";
 import Loader from "../components/Loader.jsx"; // Componente de Loader
 import "../styles/OrderNews.css";
+import { toast, ToastContainer } from "react-toastify"; // Importando o Toastify para notificações
+import "react-toastify/dist/ReactToastify.css"; // Importando os estilos do Toastify
 import { useDroppable } from "@dnd-kit/core";
 
 
@@ -125,19 +127,35 @@ const OrderNews = () => {
 
  /** 🔹 Salva a nova organização no banco **/
  const saveLayout = async () => {
-  try {
-   const updatedLayout = newsLayout.map((item, index) => ({ id: item.id, posicao: index + 1 }));
-   const token = localStorage.getItem("authToken"); // Assuming the token is stored in localStorage
-   await axios.post(`${API_BASE_URL}/layout/update-news-layout`, { layout: updatedLayout }, {
-    headers: {
-     Authorization: `Bearer ${token}`
+    try {
+      const updatedLayout = newsLayout.map((item, index) => ({ id: item.id, posicao: index + 1 }));
+      const token = localStorage.getItem("authToken");
+      await axios.post(`${API_BASE_URL}/layout/update-news-layout`, { layout: updatedLayout }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      toast.success("Layout atualizado com sucesso!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (error) {
+      console.error("❌ Erro ao salvar o layout:", error);
+      toast.error("Erro ao salvar o layout!", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
-   });
-   alert("Layout atualizado com sucesso!");
-  } catch (error) {
-   console.error("❌ Erro ao salvar o layout:", error);
-  }
- };
+  };
+  
 
  /** 🔹 Adiciona uma notícia aos destaques **/
  const addToHighlights = (newsToAdd) => {
@@ -176,6 +194,7 @@ const OrderNews = () => {
                     category={news.categoria}
                 />
                 ))}
+                <ToastContainer />
             </div>
             </div>
         </SortableContext>
@@ -205,6 +224,7 @@ const OrderNews = () => {
     </div>
    </div>
   </div>}
+  
   </>
  );
 };
