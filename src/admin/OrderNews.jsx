@@ -149,7 +149,7 @@ const OrderNews = () => {
    setAvailableNews(updatedAvailableNews);
   }
  };
-
+// force
  return (
   <>
   {loading ? <Loader /> : <div className="order-container">
