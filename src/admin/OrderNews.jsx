@@ -109,24 +109,18 @@ const OrderNews = () => {
 
  /** 🔹 Lida com o Drag and Drop **/
  const handleDragEnd = (event) => {
-  const { active, over } = event;
-  if (!over) return;
-  if (active.id === over.id) return;
-
-  const activeId = active.id;
-  const overId = over.id;
-
-  const activeIsInLayout = newsLayout.some((item) => item.id === activeId);
-
-  // 🔃 Reordenação dentro da seção de Destaques
-  if (overId === "destaques" && activeIsInLayout) {
-   const oldIndex = newsLayout.findIndex((item) => item.id === activeId);
-   const newIndex = newsLayout.findIndex((item) => item.id === overId && newsLayout.some(n => n.id === over.id));
-   if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-    setNewsLayout(arrayMove(newsLayout, oldIndex, newIndex));
-   }
-  }
- };
+    const { active, over } = event;
+    if (!over) return;
+    if (active.id === over.id) return;
+  
+    const oldIndex = newsLayout.findIndex((item) => item.id === active.id);
+    const newIndex = newsLayout.findIndex((item) => item.id === over.id);
+  
+    if (oldIndex !== -1 && newIndex !== -1) {
+      setNewsLayout((prev) => arrayMove(prev, oldIndex, newIndex));
+    }
+  };
+  
 
 
  /** 🔹 Salva a nova organização no banco **/
@@ -159,33 +153,34 @@ const OrderNews = () => {
  return (
   <>
   {loading ? <Loader /> : <div className="order-container">
-   <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-    <SortableContext items={newsLayout.map((item) => item.id)}>
-    <div className="order-news-grid" ref={setDestaquesRef}>
-     {newsLayout.length > 0 && (
-      <SortableItem
-       key={newsLayout[0].id}
-       id={newsLayout[0].id}
-       title={newsLayout[0].titulo}
-       image={newsLayout[0].imageUrl}
-       category={newsLayout[0].categoria}
-       isMain
-      />
-     )}
-     <div className="order-side-articles">
-      {newsLayout.slice(1, 5).map((news) => (
-       <SortableItem
-        key={news.id}
-        id={news.id}
-        title={news.titulo}
-        image={news.imageUrl}
-        category={news.categoria}
-       />
-      ))}
-     </div>
-    </div>
-    </SortableContext>
-   </DndContext>
+    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={newsLayout.map((item) => item.id)}>
+            <div className="order-news-grid" ref={setDestaquesRef}>
+            {newsLayout.length > 0 && (
+                <SortableItem
+                key={newsLayout[0].id}
+                id={newsLayout[0].id}
+                title={newsLayout[0].titulo}
+                image={newsLayout[0].imageUrl}
+                category={newsLayout[0].categoria}
+                isMain
+                />
+            )}
+            <div className="order-side-articles">
+                {newsLayout.slice(1, 5).map((news) => (
+                <SortableItem
+                    key={news.id}
+                    id={news.id}
+                    title={news.titulo}
+                    image={news.imageUrl}
+                    category={news.categoria}
+                />
+                ))}
+            </div>
+            </div>
+        </SortableContext>
+    </DndContext>
+
 
    <button onClick={saveLayout} className="order-save-button">Salvar Alterações</button>
 
