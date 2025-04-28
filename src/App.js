@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { UserProvider } from "./context/UserContext";
 import LoginPage from "./pages/LoginPage";
+import LoginFestival from "./pages/LoginFestival";
 import AdminPage from "./pages/AdminPage";
 import NoticiaPage from "./pages/NoticiaPage";
 import VerTodos from "./pages/VerTudoPage"
@@ -87,6 +88,7 @@ const App = () => {
         <Router>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/loginfestival" element={<LoginFestival />} />
             <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
             <Route path="/festivaldemusica" element={<FestivalMusica />} />
             <Route path="/noticia/:slug" element={<NoticiaPage />} />
