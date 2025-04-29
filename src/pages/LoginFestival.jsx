@@ -5,10 +5,10 @@ const LoginFestival = () => {
   return (
     <div className="login-festival-container">
       <div className="login-festival-content">
-        <div className="left-column">
+        <div className="left-column2">
           <img src="/img/festival-inscricoes.png" alt="Imagem Festival Inscrições" />
         </div>
-        <div className="right-column">
+        <div className="right-column2">
           <div className="right-column-content">
             <h1>Login</h1>
             <form
