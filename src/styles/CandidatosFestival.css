@@ -77,6 +77,16 @@
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
   }
+
+  .imagem-candidato img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
   
   .rodape-candidato {
     background-color: white;
@@ -117,4 +127,67 @@
     position: relative;
     width: 100%;
     bottom: 0;
+  }
+
+  .selo-etapa {
+    background-color: #e76d6d;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+  }
+  
+  .card-candidato {
+    position: relative;
+  }
+  
+
+
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .filter-candidatos {
+        width: 60%;
+    }
+
+    .grid-candidatos {
+        width: 70%;
+    }
+
+    .card-candidato {
+        width: 250px;
+    }
+
+    .imagem-candidato {
+        height: 180px;
+    }
+
+    .nome-candidato {
+        font-size: 1rem;
+    }
+
+    .botao-perfil {
+        font-size: 0.9rem;
+        padding: 6px 10px;
+    }
+}
+
+
+  @media (max-width: 768px) {
+    .filter-candidatos {
+      width: 90%;
+    }
+
+    .grid-candidatos {
+      width: 90%;
+    }
+
+    .cacto-esquerda2 {
+        margin-left: -50% !important;
+        transform: translateX(-100%);
+      }
   }

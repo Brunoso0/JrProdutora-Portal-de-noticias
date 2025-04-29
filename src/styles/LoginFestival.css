@@ -180,6 +180,7 @@
     flex-direction: column; /* Empilha as colunas */
     padding: 1.5rem;
     gap: 2rem;
+    margin-top: 5rem;
   }
 
   .left-column2,
@@ -216,20 +217,25 @@
   .cacto-esquerda {
     width: 60px;
   }
+  .cacto-esquerda2 {
+    margin-left: -50% !important;
+    transform: translateX(-100%);
+  }
 }
 
 /* Telas muito pequenas (até 480px) */
 @media (max-width: 480px) {
   .login-festival-container {
-    padding: 1rem; /* Respira melhor nas beiradas */
+    padding: 0rem; /* Respira melhor nas beiradas */
   }
 
   .login-festival-content {
     padding: 1rem;
+    margin-top: 5rem;
   }
 
   .left-column2 img {
-    max-width: 100%;
+    max-width: 60%;
   }
 
   .login-form input,
@@ -246,8 +252,17 @@
     font-size: 0.75rem;
   }
 
-  .cacto-direita,
-  .cacto-esquerda {
-    width: 50px;
+  .cactus-img {
+    width: 100%;
+  }
+
+
+  .cacto-esquerda2 {
+    margin-left: -50% !important;
+    transform: translateX(-100%);
+  }
+
+  .footer-festival-logo img {
+    max-width: 100%;
   }
 }

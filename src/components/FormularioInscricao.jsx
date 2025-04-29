@@ -45,22 +45,41 @@ const FormularioInscricao = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const name = e.target.name;
-
-    if (file && file.size > 100 * 1024 * 1024) {
+  
+    if (!file) return;
+  
+    // Se for o campo da letra da música, deve ser PDF
+    if (name === "letra_musica_arquivo") {
+      if (file.type !== "application/pdf") {
+        toast.error("O arquivo da Letra da Música deve ser um PDF.");
+        return;
+      }
+    } else {
+      // Para todos os outros, deve ser imagem
+      if (!file.type.startsWith("image/")) {
+        toast.error("Somente imagens são permitidas nos campos de documentos.");
+        return;
+      }
+    }
+  
+    // Validação de tamanho (100MB máximo)
+    if (file.size > 100 * 1024 * 1024) {
       toast.error("O arquivo deve ter no máximo 100MB.");
       return;
     }
-
+  
+    // Se passou pelas validações:
     setArquivos((prev) => ({
       ...prev,
       [name]: file,
     }));
-
+  
     setArquivosSelecionados((prev) => ({
       ...prev,
       [name]: file?.name || "",
     }));
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -217,7 +236,7 @@ const FormularioInscricao = () => {
             </span>
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
-              ADICIONAR ARQUIVO
+              ADICIONAR IMAGEM
             </span>
             <input type="file" name="rg_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("rg_arquivo")}
@@ -227,7 +246,7 @@ const FormularioInscricao = () => {
             CÓPIA DO CPF
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
-              ADICIONAR ARQUIVO
+              ADICIONAR IMAGEM
             </span>
             <input type="file" name="cpf_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("cpf_arquivo")}
@@ -237,7 +256,7 @@ const FormularioInscricao = () => {
             CERTIDÃO MUNICIPAL
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
-              ADICIONAR ARQUIVO
+              ADICIONAR IMAGEM
             </span>
             <input type="file" name="certidao_municipal_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("certidao_municipal_arquivo")}
@@ -249,7 +268,7 @@ const FormularioInscricao = () => {
             CERTIDÃO FEDERAL
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
-              ADICIONAR ARQUIVO
+              ADICIONAR IMAGEM
             </span>
             <input type="file" name="certidao_federal_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("certidao_federal_arquivo")}
@@ -259,7 +278,7 @@ const FormularioInscricao = () => {
             COMPROVANTE DE RESIDÊNCIA
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
-              ADICIONAR ARQUIVO
+              ADICIONAR IMAGEM
             </span>
             <input type="file" name="comprovante_residencia_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("comprovante_residencia_arquivo")}
@@ -271,7 +290,7 @@ const FormularioInscricao = () => {
             ESPELHO DA CONTA BANCÁRIA
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
-              ADICIONAR ARQUIVO
+              ADICIONAR IMAGEM
             </span>
             <input type="file" name="espelho_conta_bancaria_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("espelho_conta_bancaria_arquivo")}
@@ -281,7 +300,7 @@ const FormularioInscricao = () => {
             ARQUIVO COM A LETRA DA MÚSICA
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
-              ADICIONAR ARQUIVO
+              ADICIONAR PDF
             </span>
             <input type="file" name="letra_musica_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("letra_musica_arquivo")}
