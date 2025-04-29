@@ -1,7 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "../styles/LoginFestival.css";
+import { API_FESTIVAL } from "../services/api";
 
 const LoginFestival = () => {
+  const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(true);
+  const [formData, setFormData] = useState({
+    nome: "",
+    email: "",
+    senha: "",
+    confirmarSenha: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const toggleForm = () => {
+    setIsLogin((prev) => !prev);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (isLogin) {
+        const res = await axios.post(`${API_FESTIVAL}/api/jurados/login`, {
+          email: formData.email,
+          senha: formData.senha,
+        });
+        alert("Login realizado com sucesso!");
+        console.log(res.data);
+        localStorage.setItem("juradoLogado", "true");
+        // Armazenar token ou redirecionar se necessário
+
+        navigate("/candidatosfestivaldemusica");
+      } else {
+        if (formData.senha !== formData.confirmarSenha) {
+          return alert("As senhas não coincidem.");
+        }
+        const res = await axios.post(`${API_FESTIVAL}/api/jurados/cadastrar`, {
+          nome: formData.nome,
+          email: formData.email,
+          senha: formData.senha,
+        });
+        alert("Cadastro realizado com sucesso!");
+        console.log(res.data);
+        setIsLogin(true);
+      }
+    } catch (error) {
+      alert(error.response?.data?.erro || "Erro na requisição.");
+    }
+  };
+
   return (
     <div className="login-festival-container">
       <div className="login-festival-content">
@@ -10,28 +62,67 @@ const LoginFestival = () => {
         </div>
         <div className="right-column2">
           <div className="right-column-content">
-            <h1>Login</h1>
-            <form
-              action="https://www.jrprodutora.com.br/festival/login"
-              method="POST"
-              className="login-form"
-            >
+            <h1>{isLogin ? "Login" : "Cadastro"}</h1>
+
+            <form onSubmit={handleSubmit} className="login-form">
+              {!isLogin && (
+                <input
+                  type="text"
+                  name="nome"
+                  placeholder="Nome completo"
+                  required
+                  value={formData.nome}
+                  onChange={handleChange}
+                />
+              )}
+
               <input
-                type="text"
+                type="email"
                 name="email"
                 placeholder="E-mail"
                 required
+                value={formData.email}
+                onChange={handleChange}
               />
               <input
                 type="password"
                 name="senha"
                 placeholder="Senha"
                 required
+                value={formData.senha}
+                onChange={handleChange}
               />
-              <button type="submit">Entrar</button>
+
+              {!isLogin && (
+                <input
+                  type="password"
+                  name="confirmarSenha"
+                  placeholder="Confirmar senha"
+                  required
+                  value={formData.confirmarSenha}
+                  onChange={handleChange}
+                />
+              )}
+
+              <button type="submit">{isLogin ? "Entrar" : "Registrar"}</button>
             </form>
+
             <p className="signup-text">
-              Não tem uma conta? <a href="/festival/cadastro">Cadastre-se</a>
+              {isLogin ? (
+                <>
+                  Não tem uma conta?{" "}
+                  <button type="button" onClick={toggleForm} className="link-button">
+                    Cadastre-se
+                  </button>
+                </>
+              ) : (
+                <>
+                  Já tem uma conta?{" "}
+                  <button type="button" onClick={toggleForm} className="link-button">
+                    Fazer login
+                  </button>
+                </>
+              )}
             </p>
           </div>
         </div>
@@ -39,22 +130,11 @@ const LoginFestival = () => {
 
       <footer className="footer-festival">
         <div className="cactus-img">
-          <img
-            src="/img/cacto-direita.png"
-            className="cacto-direita"
-            alt="Cacto à direita"
-          />
-          <img
-            src="/img/cacto-esquerda.png"
-            className="cacto-esquerda"
-            alt="Cacto à esquerda"
-          />
+          <img src="/img/cacto-direita.png" className="cacto-direita" alt="Cacto à direita" />
+          <img src="/img/cacto-esquerda.png" className="cacto-esquerda" alt="Cacto à esquerda" />
         </div>
         <div className="footer-festival-logo">
-          <img
-            src="/img/fundo-festival.png"
-            alt="Decoração de corda no rodapé"
-          />
+          <img src="/img/fundo-festival.png" alt="Decoração de corda no rodapé" />
         </div>
       </footer>
     </div>

@@ -15,7 +15,7 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 800px;
+  max-width: 850px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -122,7 +122,57 @@
     text-decoration: underline;
   }
 
+  .link-button {
+    background: none;
+    border: none;
+    color: #8805bc;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+  }
+  
+
 /* =================== RESPONSIVIDADE =================== */
+
+
+/* Telas grandes (desktops) */
+@media (min-width: 1200px) {
+  .login-festival-container {
+    padding: 0rem; /* Respira melhor nas beiradas */
+  }
+
+  .login-festival-content {
+    gap: 3rem;
+  }
+
+  .left-column2 img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .right-column2 {
+    padding-right: 3rem;
+  }
+
+  .right-column-content {
+    max-width: 400px;
+  }
+
+  .login-form input,
+  .login-form button {
+    font-size: 1.2rem;
+    padding: 1rem;
+  }
+
+  .signup-text {
+    font-size: 1.1rem;
+  }
+
+  .footer-festival {
+    width: 100%;
+  }
+}
 
 /* Telas menores que 768px (tablets pequenos e celulares) */
 @media (max-width: 768px) {

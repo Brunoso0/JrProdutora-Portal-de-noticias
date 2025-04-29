@@ -4,10 +4,12 @@ import { AuthProvider } from "./context/AuthContext";
 import { UserProvider } from "./context/UserContext";
 import LoginPage from "./pages/LoginPage";
 import LoginFestival from "./pages/LoginFestival";
+import CandidatosFestivalDeMusica from "./pages/candidatosfestivaldemusica";
 import AdminPage from "./pages/AdminPage";
 import NoticiaPage from "./pages/NoticiaPage";
 import VerTodos from "./pages/VerTudoPage"
 import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRouteJurado from "./components/ProtectedRouteJurado";
 import PublicLayout from "./layouts/PublicLayout";
 import FestivalMusica from "./pages/FestivalMusica";
 import axios from "axios";
@@ -89,6 +91,7 @@ const App = () => {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/loginfestival" element={<LoginFestival />} />
+            <Route path="/candidatosfestivaldemusica" element={<ProtectedRouteJurado><CandidatosFestivalDeMusica /></ProtectedRouteJurado>} />
             <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
             <Route path="/festivaldemusica" element={<FestivalMusica />} />
             <Route path="/noticia/:slug" element={<NoticiaPage />} />

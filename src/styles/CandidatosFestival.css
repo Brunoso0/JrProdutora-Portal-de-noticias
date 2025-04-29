@@ -1,0 +1,120 @@
+.candidatos-container {
+    background-color: #4b0071;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+
+  .filter-candidatos {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    gap: 1rem;
+    width: 20%;
+  }
+
+  /* From Uiverse.io by alexruix */ 
+    .input-group-candidatos {
+    position: relative;
+   }
+   
+   .input-candidatos {
+    border: solid 1.5px #9e9e9e;
+    border-radius: 1rem;
+    background: none;
+    padding: 1rem;
+    font-size: 1rem;
+    color: #f5f5f5;
+    transition: border 150ms cubic-bezier(0.4,0,0.2,1);
+   }
+   
+   .user-label {
+    position: absolute;
+    left: 15px;
+    color: #e8e8e8;
+    pointer-events: none;
+    transform: translateY(1rem);
+    transition: 150ms cubic-bezier(0.4,0,0.2,1);
+   }
+   
+   .input-candidatos:focus, input-candidatos:valid {
+    outline: none;
+    border: 1.5px solid #a31ae8;
+   }
+   
+   .input-candidatos:focus ~ label, input-candidatos:valid ~ label {
+    transform: translateY(-50%) scale(0.8);
+    background-color: #212121;
+    padding: 0 .2em;
+    color: #de21f3;
+   }
+  
+  .grid-candidatos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    justify-items: center;
+    width: 50%;
+    margin: auto;
+    padding-bottom: 2rem;
+    flex-grow: 1; /* Faz com que o grid cresça para ocupar o espaço restante */
+  }
+  
+  .card-candidato {
+    background: transparent;
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .imagem-candidato {
+    background-color: #f19c00;
+    height: 150px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .rodape-candidato {
+    background-color: white;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+  
+  .bolinha-candidato {
+    background-color: white;
+    border: 4px solid #fff;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+  }
+  
+  .nome-candidato {
+    flex-grow: 1;
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+  
+  .botao-perfil {
+    background-color: #f03e3e;
+    border: none;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  
+
+  .footer-festival-candidatos {
+    position: relative;
+    width: 100%;
+    bottom: 0;
+  }
