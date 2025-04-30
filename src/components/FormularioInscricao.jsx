@@ -48,18 +48,22 @@ const FormularioInscricao = () => {
   
     if (!file) return;
   
-    // Se for o campo da letra da música, deve ser PDF
-    if (name === "letra_musica_arquivo") {
-      if (file.type !== "application/pdf") {
-        toast.error("O arquivo da Letra da Música deve ser um PDF.");
-        return;
-      }
-    } else {
-      // Para todos os outros, deve ser imagem
+    // Validação por tipo de campo
+    if ((name === "foto" || name.endsWith("_arquivo")) && name !== "letra_musica_arquivo") {
       if (!file.type.startsWith("image/")) {
-        toast.error("Somente imagens são permitidas nos campos de documentos.");
+        toast.error("Apenas imagens são permitidas neste campo.");
         return;
       }
+    }
+  
+    if (name === "letra_musica_arquivo" && file.type !== "application/pdf") {
+      toast.error("A letra da música deve estar em formato PDF.");
+      return;
+    }
+  
+    if (name === "video" && !file.type.startsWith("video/")) {
+      toast.error("O vídeo deve estar em formato de vídeo válido.");
+      return;
     }
   
     // Validação de tamanho (100MB máximo)
@@ -79,6 +83,7 @@ const FormularioInscricao = () => {
       [name]: file?.name || "",
     }));
   };
+  
   
 
   const handleSubmit = async (e) => {
@@ -238,7 +243,8 @@ const FormularioInscricao = () => {
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR IMAGEM
             </span>
-            <input type="file" name="rg_arquivo" hidden onChange={handleFileChange} />
+            <input id="foto"
+            accept="image/*" type="file" name="rg_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("rg_arquivo")}
           </label>
 
@@ -248,7 +254,8 @@ const FormularioInscricao = () => {
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR IMAGEM
             </span>
-            <input type="file" name="cpf_arquivo" hidden onChange={handleFileChange} />
+            <input id="foto"
+            accept="image/*" type="file" name="cpf_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("cpf_arquivo")}
           </label>
 
@@ -258,7 +265,8 @@ const FormularioInscricao = () => {
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR IMAGEM
             </span>
-            <input type="file" name="certidao_municipal_arquivo" hidden onChange={handleFileChange} />
+            <input id="foto"
+            accept="image/*" type="file" name="certidao_municipal_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("certidao_municipal_arquivo")}
           </label>
         </div>
@@ -270,7 +278,8 @@ const FormularioInscricao = () => {
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR IMAGEM
             </span>
-            <input type="file" name="certidao_federal_arquivo" hidden onChange={handleFileChange} />
+            <input id="foto"
+            accept="image/*" type="file" name="certidao_federal_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("certidao_federal_arquivo")}
           </label>
 
@@ -280,7 +289,8 @@ const FormularioInscricao = () => {
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR IMAGEM
             </span>
-            <input type="file" name="comprovante_residencia_arquivo" hidden onChange={handleFileChange} />
+            <input id="foto"
+            accept="image/*" type="file" name="comprovante_residencia_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("comprovante_residencia_arquivo")}
           </label>
         </div>
@@ -292,7 +302,11 @@ const FormularioInscricao = () => {
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR IMAGEM
             </span>
-            <input type="file" name="espelho_conta_bancaria_arquivo" hidden onChange={handleFileChange} />
+            <input type="file"
+            id="foto"
+            accept="image/*"
+            name="espelho_conta_bancaria_arquivo" 
+            hidden onChange={handleFileChange} />
             {renderPreview("espelho_conta_bancaria_arquivo")}
           </label>
 
@@ -302,7 +316,7 @@ const FormularioInscricao = () => {
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR PDF
             </span>
-            <input type="file" name="letra_musica_arquivo" hidden onChange={handleFileChange} />
+            <input type="file" id="letra" accept=".pdf" name="letra_musica_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("letra_musica_arquivo")}
           </label>
         </div>
@@ -312,7 +326,15 @@ const FormularioInscricao = () => {
           <label htmlFor="video-upload" className="label-envio-video">
             <img src="/img/icones/upload.png" alt="Ícone de vídeo" />
             <span>ENVIAR VÍDEO DE APRESENTAÇÃO</span>
-            <input type="file" id="video-upload" name="video" accept="video/*" hidden onChange={handleFileChange} />
+            <input
+              type="file"
+              id="video-upload"
+              name="video"
+              accept="video/*"
+              hidden
+              onChange={handleFileChange}
+            />
+
           </label>
           {renderPreview("video")}
         </div>
