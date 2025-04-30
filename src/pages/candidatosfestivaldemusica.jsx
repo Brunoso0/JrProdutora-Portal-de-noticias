@@ -30,22 +30,19 @@ const CandidatosFestivalDeMusica = () => {
   }, []);
 
 
-    useEffect(() => {
-    const fetchData = async () => {
-        try {
-        const [candidatosRes, etapasRes] = await Promise.all([
-            axios.get(`${API_FESTIVAL}/api/inscricoes/listar`),
-            axios.get(`${API_FESTIVAL}/api/etapas/listar`)
-        ]);
-        setCandidatos(candidatosRes.data);
-        setEtapas(etapasRes.data);
-        } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-        }
-    };
-
-    fetchData();
-    }, []);
+  const fetchData = async () => {
+    try {
+      const [candidatosRes, etapasRes] = await Promise.all([
+        axios.get(`${API_FESTIVAL}/api/inscricoes/listar`),
+        axios.get(`${API_FESTIVAL}/api/etapas/listar`)
+      ]);
+      setCandidatos(candidatosRes.data);
+      setEtapas(etapasRes.data);
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  };
+  
 
 
   // 🔎 Filtro e ordenação
@@ -130,7 +127,10 @@ const CandidatosFestivalDeMusica = () => {
       <ModalCandidato
         candidato={candidatoSelecionado}
         onClose={() => setCandidatoSelecionado(null)}
+        onUpdate={fetchData} // ✅ AQUI!
       />
+
+
 
       <ToastContainer
            position="top-right" 

@@ -99,6 +99,31 @@
     width: 100%;
   }
   
+
+  .botoes-etapas {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+  
+  .botao-etapa {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .botao-etapa.avancar {
+    background-color: #2e9f3e;
+    color: white;
+  }
+  
+  .botao-etapa.voltar {
+    background-color: #d62f2f;
+    color: white;
+  }
+  
   
   .item-documento img:hover {
     transform: scale(1.05);
