@@ -26,11 +26,12 @@ const formatarTelefone = (valor) => {
 const formatarRG = (valor) => {
   return valor
     .replace(/\D/g, "")  // Remove qualquer coisa que não seja número
-    .slice(0, 11)  // Limita a 11 caracteres (precisamos de 10 números no total)
+    .slice(0, 10)  // Limita a 10 números
     .replace(/^(\d{2})(\d)/, "$1.$2")  // Adiciona ponto após os dois primeiros números
     .replace(/(\d{3})(\d)/, "$1.$2")  // Adiciona ponto após os próximos 3 números
-    .replace(/(\d{3})(\d{2})$/, "$1.$2");  // Adiciona ponto nos últimos 3 números
+    .replace(/(\d{3})(\d{2})$/, "$1.$2");  // Adiciona ponto nos últimos 2 números
 };
+
 
 
 const FormularioInscricao = () => {
