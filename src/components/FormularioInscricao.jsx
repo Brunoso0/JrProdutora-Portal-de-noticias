@@ -29,7 +29,7 @@ const formatarRG = (valor) => {
     .slice(0, 10)
     .replace(/^(\d{2})(\d)/g, "$1.$2")
     .replace(/(\d{3})(\d)/g, "$1.$2")
-    .replace(/(\d{3})(\d{2})$/, "$1-$2");
+    .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 };
 
 const FormularioInscricao = () => {
