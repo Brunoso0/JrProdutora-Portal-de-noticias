@@ -51,12 +51,23 @@ const FormularioInscricao = () => {
     if (!file) return;
   
     // Validação por tipo de campo
-    if ((name === "foto" || name.endsWith("_arquivo")) && name !== "letra_musica_arquivo") {
+    if (name === "foto") {
       if (!file.type.startsWith("image/")) {
-        toast.error("Apenas imagens são permitidas neste campo.");
+        toast.error("Apenas imagens são permitidas para a foto.");
         return;
       }
     }
+    
+    if (
+      name.endsWith("_arquivo") &&
+      name !== "letra_musica_arquivo" &&
+      !file.type.startsWith("image/") &&
+      file.type !== "application/pdf"
+    ) {
+      toast.error("Apenas imagens ou PDFs são permitidos neste campo.");
+      return;
+    }
+    
   
     if (name === "letra_musica_arquivo" && file.type !== "application/pdf") {
       toast.error("A letra da música deve estar em formato PDF.");
