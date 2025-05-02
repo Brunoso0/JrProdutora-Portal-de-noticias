@@ -89,8 +89,64 @@ const FormularioInscricao = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
+  
+    // Validação de campos obrigatórios de texto
+    const camposTexto = [
+      "nome",
+      "nome_artistico",
+      "email",
+      "endereco",
+      "musica",
+      "atividade_profissional_musica",
+      "faz_parte_grupo",
+      "experiencia"
+    ];
+  
+    for (const campo of camposTexto) {
+      if (!form[campo].value) {
+        toast.error(`O campo "${campo.replace(/_/g, " ")}" é obrigatório.`);
+        return;
+      }
+    }
+  
+    // Validação de RG, CPF e telefone formatados
+    if (!telefone || telefone.length < 14) {
+      toast.error("Telefone inválido ou não preenchido.");
+      return;
+    }
+  
+    if (!cpf || cpf.length < 14) {
+      toast.error("CPF inválido ou não preenchido.");
+      return;
+    }
+  
+    if (!rg || rg.length < 12) {
+      toast.error("RG inválido ou não preenchido.");
+      return;
+    }
+  
+    // Validação de todos os arquivos obrigatórios
+    const arquivosObrigatorios = [
+      "foto",
+      "video",
+      "rg_arquivo",
+      "cpf_arquivo",
+      "certidao_municipal_arquivo",
+      "certidao_federal_arquivo",
+      "comprovante_residencia_arquivo",
+      "espelho_conta_bancaria_arquivo",
+      "letra_musica_arquivo"
+    ];
+  
+    for (const nome of arquivosObrigatorios) {
+      if (!arquivos[nome]) {
+        toast.error(`O campo de arquivo "${nome.replace(/_/g, " ").toUpperCase()}" é obrigatório.`);
+        return;
+      }
+    }
+  
+    // Se passou por todas as validações
     const data = new FormData();
-
     data.append("nome", form.nome.value);
     data.append("nome_artistico", form.nome_artistico.value);
     data.append("telefone", telefone);
@@ -103,32 +159,29 @@ const FormularioInscricao = () => {
     data.append("tempo_atividade", form.tempo_atividade?.value || "");
     data.append("faz_parte_grupo", form.faz_parte_grupo.value === "true");
     data.append("experiencia", form.experiencia.value);
-
+  
     Object.entries(arquivos).forEach(([key, file]) => {
       if (file) data.append(key, file);
     });
-
+  
     try {
       await axios.post(`${API_FESTIVAL}/api/inscricoes/inscrever`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-    
+  
       toast.success("Inscrição enviada com sucesso!");
-    
-      // Resetar formulário
       formRef.current.reset();
       setCPF("");
       setRG("");
       setTelefone("");
       setArquivos({});
       setArquivosSelecionados({});
-    
     } catch (err) {
       console.error("Erro ao enviar inscrição:", err.response?.data || err.message);
       toast.error("Erro ao enviar inscrição.");
     }
-    
   };
+  
 
   const renderPreview = (name) => {
     return arquivosSelecionados[name] ? (
