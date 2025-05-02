@@ -316,10 +316,10 @@ const FormularioInscricao = () => {
             CERTIDÃO MUNICIPAL
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
-              ADICIONAR IMAGEM
+              ADICIONAR DOCUMENTO
             </span>
             <input id="foto"
-            accept="image/*" type="file" name="certidao_municipal_arquivo" hidden onChange={handleFileChange} />
+            accept="image/*, .pdf" type="file" name="certidao_municipal_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("certidao_municipal_arquivo")}
           </label>
         </div>
@@ -329,10 +329,10 @@ const FormularioInscricao = () => {
             CERTIDÃO FEDERAL
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
-              ADICIONAR IMAGEM
+              ADICIONAR DOCUMENTO
             </span>
             <input id="foto"
-            accept="image/*" type="file" name="certidao_federal_arquivo" hidden onChange={handleFileChange} />
+            accept="image/*, .pdf" type="file" name="certidao_federal_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("certidao_federal_arquivo")}
           </label>
 
