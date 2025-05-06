@@ -12,6 +12,7 @@ const LoginFestival = () => {
     email: "",
     senha: "",
     confirmarSenha: "",
+    tipoUsuario: "", // candidato ou jurado
   });
 
   const handleChange = (e) => {
@@ -24,32 +25,62 @@ const LoginFestival = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.tipoUsuario) {
+      alert("Por favor, selecione se você é candidato ou jurado.");
+      return;
+    }
+
     try {
       if (isLogin) {
-        const res = await axios.post(`${API_FESTIVAL}/api/jurados/login`, {
-          email: formData.email,
-          senha: formData.senha,
-        });
-        alert("Login realizado com sucesso!");
-        console.log(res.data);
-        localStorage.setItem("juradoLogado", "true");
-        // Armazenar token ou redirecionar se necessário
+        const rota =
+          formData.tipoUsuario === "jurado"
+            ? "/api/jurados/login"
+            : "/api/inscricoes/login";
 
-        navigate("/candidatosfestivaldemusica");
+        const payload =
+          formData.tipoUsuario === "jurado"
+            ? {
+                email: formData.email,
+                senha: formData.senha,
+              }
+            : {
+                email: formData.email,
+                cpf: formData.senha,
+              };
+
+        const res = await axios.post(`${API_FESTIVAL}${rota}`, payload);
+
+        alert("Login realizado com sucesso!");
+
+        if (formData.tipoUsuario === "jurado") {
+          localStorage.setItem("juradoLogado", "true");
+          navigate("/candidatosfestivaldemusica");
+        } else {
+          const id = res.data?.candidato?.id;
+          if (!id) {
+            return alert("ID do candidato não recebido.");
+          }
+          localStorage.setItem("candidatoLogado", "true");
+          localStorage.setItem("candidatoId", id);
+          navigate("/areadocandidato");
+        }
       } else {
         if (formData.senha !== formData.confirmarSenha) {
           return alert("As senhas não coincidem.");
         }
+
         const res = await axios.post(`${API_FESTIVAL}/api/jurados/cadastrar`, {
           nome: formData.nome,
           email: formData.email,
           senha: formData.senha,
         });
+
         alert("Cadastro realizado com sucesso!");
-        console.log(res.data);
         setIsLogin(true);
       }
     } catch (error) {
+      console.error("Erro ao fazer login:", error);
       alert(error.response?.data?.erro || "Erro na requisição.");
     }
   };
@@ -103,6 +134,17 @@ const LoginFestival = () => {
                   onChange={handleChange}
                 />
               )}
+
+              <select
+                name="tipoUsuario"
+                value={formData.tipoUsuario}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecione seu tipo de acesso</option>
+                <option value="candidato">Candidato</option>
+                <option value="jurado">Jurado</option>
+              </select>
 
               <button type="submit">{isLogin ? "Entrar" : "Registrar"}</button>
             </form>

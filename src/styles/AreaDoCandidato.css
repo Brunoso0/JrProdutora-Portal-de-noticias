@@ -1,0 +1,91 @@
+.area-candidato-container {
+    background-color: #fce9db;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .area-candidato-header {
+    background: linear-gradient(to right, #a640d6, #7d27db);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 4rem;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .perfil {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .foto-perfil {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+  }
+  
+  .perfil h2 {
+    font-size: 1.8rem;
+    margin: 0;
+  }
+  
+  .perfil p {
+    font-size: 1rem;
+    margin: 0;
+    opacity: 0.9;
+  }
+  
+  .botao-atualizar {
+    background: #66aaff;
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 15px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  .botao-atualizar:hover {
+    background: #4b93e6;
+  }
+  
+  .area-candidato-main {
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+  
+  .area-candidato-main h3 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .select-etapa {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+    width: 300px;  
+  }
+  
+  .tabela-notas {
+    margin-top: 2rem;
+    background: #e2c4f7;
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  

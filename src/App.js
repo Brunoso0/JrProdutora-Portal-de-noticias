@@ -5,6 +5,8 @@ import { UserProvider } from "./context/UserContext";
 import LoginPage from "./pages/LoginPage";
 import LoginFestival from "./pages/LoginFestival";
 import CandidatosFestivalDeMusica from "./pages/candidatosfestivaldemusica";
+import AreaDoCandidato from "./pages/AreaDoCandidato";
+import ProtectedRouteCandidato from "./components/ProtectedRouteCandidato";
 import AdminPage from "./pages/AdminPage";
 import NoticiaPage from "./pages/NoticiaPage";
 import VerTodos from "./pages/VerTudoPage"
@@ -92,6 +94,7 @@ const App = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/loginfestival" element={<LoginFestival />} />
             <Route path="/candidatosfestivaldemusica" element={<ProtectedRouteJurado><CandidatosFestivalDeMusica /></ProtectedRouteJurado>} />
+            <Route path="/areadocandidato" element={<ProtectedRouteCandidato><AreaDoCandidato /></ProtectedRouteCandidato>} />
             <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
             <Route path="/festivaldemusica" element={<FestivalMusica />} />
             <Route path="/noticia/:slug" element={<NoticiaPage />} />
