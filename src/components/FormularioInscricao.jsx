@@ -69,8 +69,8 @@ const FormularioInscricao = () => {
     }
     
   
-    if (name === "letra_musica_arquivo" && file.type !== "application/pdf") {
-      toast.error("A letra da música deve estar em formato PDF.");
+    if (name === "letra_musica_arquivo" && !["application/pdf", "image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      toast.error("A letra da música deve estar em formato PDF ou imagem (JPEG/PNG).");
       return;
     }
   
@@ -382,7 +382,7 @@ const FormularioInscricao = () => {
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR PDF
             </span>
-            <input type="file" id="letra" accept=".pdf" name="letra_musica_arquivo" hidden onChange={handleFileChange} />
+            <input type="file" id="letra" accept="image/*, .pdf" name="letra_musica_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("letra_musica_arquivo")}
           </label>
         </div>
