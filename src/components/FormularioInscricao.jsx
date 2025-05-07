@@ -107,13 +107,13 @@ const FormularioInscricao = () => {
     const camposTexto = [
       "nome",
       "nome_artistico",
-      "email",
       "endereco",
       "musica",
       "atividade_profissional_musica",
       "faz_parte_grupo",
       "experiencia"
     ];
+    
   
     for (const campo of camposTexto) {
       if (!form[campo].value) {
@@ -140,8 +140,6 @@ const FormularioInscricao = () => {
   
     // Validação de todos os arquivos obrigatórios
     const arquivosObrigatorios = [
-      "foto",
-      "video",
       "rg_arquivo",
       "cpf_arquivo",
       "certidao_municipal_arquivo",
@@ -150,6 +148,8 @@ const FormularioInscricao = () => {
       "espelho_conta_bancaria_arquivo",
       "letra_musica_arquivo"
     ];
+    // ❌ removendo 'foto' e 'video'
+    
   
     for (const nome of arquivosObrigatorios) {
       if (!arquivos[nome]) {
