@@ -11,8 +11,7 @@ const LoginFestival = () => {
     nome: "",
     email: "",
     senha: "",
-    confirmarSenha: "",
-    tipoUsuario: "", // candidato ou jurado
+    confirmarSenha: ""
   });
 
   const handleChange = (e) => {
@@ -26,51 +25,24 @@ const LoginFestival = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.tipoUsuario) {
-      alert("Por favor, selecione se você é candidato ou jurado.");
-      return;
-    }
-
     try {
       if (isLogin) {
-        const rota =
-          formData.tipoUsuario === "jurado"
-            ? "/api/jurados/login"
-            : "/api/inscricoes/login";
-
-        const payload =
-          formData.tipoUsuario === "jurado"
-            ? {
-                email: formData.email,
-                senha: formData.senha,
-              }
-            : {
-                email: formData.email,
-                cpf: formData.senha,
-              };
-
-        const res = await axios.post(`${API_FESTIVAL}${rota}`, payload);
+        const res = await axios.post(`${API_FESTIVAL}/api/jurados/login`, {
+          email: formData.email,
+          senha: formData.senha,
+        });
 
         alert("Login realizado com sucesso!");
+        localStorage.setItem("juradoLogado", "true");
+        localStorage.setItem("tipoUsuario", res.data.tipo || "jurado");
+        navigate("/candidatosfestivaldemusica");
 
-        if (formData.tipoUsuario === "jurado") {
-          localStorage.setItem("juradoLogado", "true");
-          navigate("/candidatosfestivaldemusica");
-        } else {
-          const id = res.data?.candidato?.id;
-          if (!id) {
-            return alert("ID do candidato não recebido.");
-          }
-          localStorage.setItem("candidatoLogado", "true");
-          localStorage.setItem("candidatoId", id);
-          navigate("/areadocandidato");
-        }
       } else {
         if (formData.senha !== formData.confirmarSenha) {
           return alert("As senhas não coincidem.");
         }
 
-        const res = await axios.post(`${API_FESTIVAL}/api/jurados/cadastrar`, {
+        await axios.post(`${API_FESTIVAL}/api/jurados/cadastrar`, {
           nome: formData.nome,
           email: formData.email,
           senha: formData.senha,
@@ -93,7 +65,7 @@ const LoginFestival = () => {
         </div>
         <div className="right-column2">
           <div className="right-column-content">
-            <h1>{isLogin ? "Login" : "Cadastro"}</h1>
+            <h1>{isLogin ? "Login de Jurado" : "Cadastro de Jurado"}</h1>
 
             <form onSubmit={handleSubmit} className="login-form">
               {!isLogin && (
@@ -134,17 +106,6 @@ const LoginFestival = () => {
                   onChange={handleChange}
                 />
               )}
-
-              <select
-                name="tipoUsuario"
-                value={formData.tipoUsuario}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Selecione seu tipo de acesso</option>
-                <option value="candidato">Candidato</option>
-                <option value="jurado">Jurado</option>
-              </select>
 
               <button type="submit">{isLogin ? "Entrar" : "Registrar"}</button>
             </form>

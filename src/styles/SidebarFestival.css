@@ -1,0 +1,19 @@
+.sidebar-festival {
+    width: 250px;
+    background-color: #5b4f8c;
+    color: white;
+    padding: 20px;
+  }
+  .sidebar-festival ul {
+    list-style: none;
+    padding: 0;
+  }
+  .sidebar-festival li {
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .sidebar-festival li:hover {
+    text-decoration: underline;
+  }
+  

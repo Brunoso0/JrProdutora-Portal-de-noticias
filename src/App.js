@@ -4,6 +4,10 @@ import { AuthProvider } from "./context/AuthContext";
 import { UserProvider } from "./context/UserContext";
 import LoginPage from "./pages/LoginPage";
 import LoginFestival from "./pages/LoginFestival";
+import LoginJurados from "./pages/LoginJurados";
+import PainelCandidatos from "./pages/PainelCandidatos"; // novo import
+import ProtectedRouteAdminFestival from "./components/ProtectedRouteAdminFestival"; // 👈 novo import
+
 import CandidatosFestivalDeMusica from "./pages/candidatosfestivaldemusica";
 import AreaDoCandidato from "./pages/AreaDoCandidato";
 import ProtectedRouteCandidato from "./components/ProtectedRouteCandidato";
@@ -90,17 +94,19 @@ const App = () => {
     <UserProvider>
       <AuthProvider>
         <Router>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/loginfestival" element={<LoginFestival />} />
-            <Route path="/candidatosfestivaldemusica" element={<ProtectedRouteJurado><CandidatosFestivalDeMusica /></ProtectedRouteJurado>} />
-            <Route path="/areadocandidato" element={<ProtectedRouteCandidato><AreaDoCandidato /></ProtectedRouteCandidato>} />
-            <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-            <Route path="/festivaldemusica" element={<FestivalMusica />} />
-            <Route path="/noticia/:slug" element={<NoticiaPage />} />
-            <Route path="/ver-todos/:tipo" element={<VerTodos />} />
-            <Route path="/" element={<PublicLayout />} />
-          </Routes>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/loginfestival" element={<LoginFestival />} />
+          <Route path="/loginjurados" element={<LoginJurados />} />
+          <Route path="/candidatosfestivaldemusica" element={<ProtectedRouteJurado><CandidatosFestivalDeMusica /></ProtectedRouteJurado>} />
+          <Route path="/areadocandidato" element={<ProtectedRouteCandidato><AreaDoCandidato /></ProtectedRouteCandidato>} />
+          <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+          <Route path="/painelcandidatos" element={<ProtectedRouteAdminFestival><PainelCandidatos /></ProtectedRouteAdminFestival>} />
+          <Route path="/festivaldemusica" element={<FestivalMusica />} />
+          <Route path="/noticia/:slug" element={<NoticiaPage />} />
+          <Route path="/ver-todos/:tipo" element={<VerTodos />} />
+          <Route path="/" element={<PublicLayout />} />
+        </Routes>
         </Router>
       </AuthProvider>
     </UserProvider>

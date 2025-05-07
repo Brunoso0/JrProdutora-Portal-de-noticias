@@ -1,0 +1,9 @@
+.painel-festival {
+    display: flex;
+    min-height: 100vh;
+  }
+  .conteudo-festival {
+    flex: 1;
+    padding: 20px;
+  }
+  

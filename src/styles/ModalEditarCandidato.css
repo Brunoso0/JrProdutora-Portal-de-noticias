@@ -1,0 +1,145 @@
+.modal-editar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-editar-content {
+  background: #fff;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 10px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.modal-editar-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.modal-editar-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-editar-content input,
+.modal-editar-content select {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  width: 100%;
+}
+
+.modal-editar-content input[type="file"] {
+  padding: 8px;
+  background-color: #f8f8f8;
+}
+
+.upload-label {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 0.5rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.btn-cancelar {
+  background-color: #bbb;
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-salvar {
+  background-color: #2e7d32;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-cancelar:hover {
+  background-color: #999;
+}
+
+.btn-salvar:hover {
+  background-color: #1b5e20;
+}
+
+.documentos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.caixa-documento {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  background-color: #f8f8f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.doc-label {
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.doc-status {
+  font-size: 1.5rem;
+}
+
+.doc-status.enviado {
+  color: #2e7d32;
+}
+
+.doc-status.nao-enviado {
+  color: #d32f2f;
+}
+
+.botao-ver-documento {
+  background-color: #1976d2;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.botao-ver-documento:hover {
+  background-color: #125ea6;
+}
+
+.doc-ausente {
+  font-size: 0.8rem;
+  color: #777;
+}
+
