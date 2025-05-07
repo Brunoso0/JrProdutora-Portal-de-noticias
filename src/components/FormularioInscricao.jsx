@@ -232,12 +232,13 @@ const FormularioInscricao = () => {
           onChange={handleFileChange}
         />
       </div>
-
+  
       <form ref={formRef} className="form-inscricao-bonfim" onSubmit={handleSubmit}>
-      <div className="linha-dupla-inscricao">
-        <input type="text" name="nome" placeholder="NOME COMPLETO" className="input-inscricao nome-completo" />
-        <input type="text" name="nome_artistico" placeholder="NOME ARTÍSTICO" className="input-inscricao nome-artistico" />
-      </div>
+        <div className="linha-dupla-inscricao">
+          <input type="text" name="nome" placeholder="NOME COMPLETO" className="input-inscricao nome-completo" />
+          <input type="text" name="nome_artistico" placeholder="NOME ARTÍSTICO" className="input-inscricao nome-artistico" />
+        </div>
+  
         <div className="linha-dupla-inscricao">
           <input
             type="text"
@@ -249,7 +250,7 @@ const FormularioInscricao = () => {
           />
           <input type="email" name="email" placeholder="E-MAIL" className="input-inscricao email" />
         </div>
-
+  
         <div className="linha-dupla-inscricao">
           <input
             type="text"
@@ -268,10 +269,9 @@ const FormularioInscricao = () => {
             onChange={(e) => setCPF(formatarCPF(e.target.value))}
           />
         </div>
-
+  
         <input type="text" name="endereco" placeholder="ENDEREÇO" className="input-inscricao endereco" />
-
-
+  
         <div className="linha-dupla-inscricao inscricao-selects">
           <input type="text" name="musica" placeholder="MÚSICA QUE PRETENDE CANTAR" className="input-inscricao musica-interesse" />
           <select name="atividade_profissional_musica" className="input-inscricao atividade-musical">
@@ -280,8 +280,8 @@ const FormularioInscricao = () => {
             <option value="false">Não</option>
           </select>
         </div>
-
-        <div className="linha-dupla-inscricao ">
+  
+        <div className="linha-dupla-inscricao">
           <select name="faz_parte_grupo" className="input-inscricao grupo-banda">
             <option value="">FAZ PARTE DE ALGUM GRUPO/BANDA?</option>
             <option value="true">Sim</option>
@@ -294,10 +294,10 @@ const FormularioInscricao = () => {
             <option value="5+ anos">5 anos ou mais</option>
           </select>
         </div>
-
+  
         {/* Uploads */}
         <div className="linha-dupla-inscricao upload-inscricao">
-          <label className="label-inscricao">
+          <label className="label-inscricao" htmlFor="rg_arquivo">
             <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
               CÓPIA DO RG
               <span className="tooltip-container">
@@ -309,85 +309,75 @@ const FormularioInscricao = () => {
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR IMAGEM
             </span>
-            <input id="foto"
-            accept="image/*" type="file" name="rg_arquivo" hidden onChange={handleFileChange} />
+            <input id="rg_arquivo" accept="image/*" type="file" name="rg_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("rg_arquivo")}
           </label>
-
-          <label className="label-inscricao">
+  
+          <label className="label-inscricao" htmlFor="cpf_arquivo">
             CÓPIA DO CPF
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR IMAGEM
             </span>
-            <input id="foto"
-            accept="image/*" type="file" name="cpf_arquivo" hidden onChange={handleFileChange} />
+            <input id="cpf_arquivo" accept="image/*" type="file" name="cpf_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("cpf_arquivo")}
           </label>
-
-          <label className="label-inscricao">
+  
+          <label className="label-inscricao" htmlFor="certidao_municipal_arquivo">
             CERTIDÃO MUNICIPAL
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR DOCUMENTO
             </span>
-            <input id="foto"
-            accept="image/*, .pdf" type="file" name="certidao_municipal_arquivo" hidden onChange={handleFileChange} />
+            <input id="certidao_municipal_arquivo" accept="image/*, .pdf" type="file" name="certidao_municipal_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("certidao_municipal_arquivo")}
           </label>
         </div>
-
+  
         <div className="linha-dupla-inscricao upload-inscricao">
-          <label className="label-inscricao">
+          <label className="label-inscricao" htmlFor="certidao_federal_arquivo">
             CERTIDÃO FEDERAL
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR DOCUMENTO
             </span>
-            <input id="foto"
-            accept="image/*, .pdf" type="file" name="certidao_federal_arquivo" hidden onChange={handleFileChange} />
+            <input id="certidao_federal_arquivo" accept="image/*, .pdf" type="file" name="certidao_federal_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("certidao_federal_arquivo")}
           </label>
-
-          <label className="label-inscricao">
+  
+          <label className="label-inscricao" htmlFor="comprovante_residencia_arquivo">
             COMPROVANTE DE RESIDÊNCIA
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR IMAGEM
             </span>
-            <input id="foto"
-            accept="image/*" type="file" name="comprovante_residencia_arquivo" hidden onChange={handleFileChange} />
+            <input id="comprovante_residencia_arquivo" accept="image/*" type="file" name="comprovante_residencia_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("comprovante_residencia_arquivo")}
           </label>
         </div>
-
+  
         <div className="linha-dupla-inscricao upload-inscricao">
-          <label className="label-inscricao">
+          <label className="label-inscricao" htmlFor="espelho_conta_bancaria_arquivo">
             ESPELHO DA CONTA BANCÁRIA
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR IMAGEM
             </span>
-            <input type="file"
-            id="foto"
-            accept="image/*"
-            name="espelho_conta_bancaria_arquivo" 
-            hidden onChange={handleFileChange} />
+            <input id="espelho_conta_bancaria_arquivo" accept="image/*" type="file" name="espelho_conta_bancaria_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("espelho_conta_bancaria_arquivo")}
           </label>
-
-          <label className="label-inscricao">
+  
+          <label className="label-inscricao" htmlFor="letra_musica_arquivo">
             ARQUIVO COM A LETRA DA MÚSICA
             <span className="upload-botao">
               <img src="/img/icones/upload.png" alt="upload" />
               ADICIONAR PDF
             </span>
-            <input type="file" id="letra" accept="image/*, .pdf" name="letra_musica_arquivo" hidden onChange={handleFileChange} />
+            <input id="letra_musica_arquivo" accept="image/*, .pdf" type="file" name="letra_musica_arquivo" hidden onChange={handleFileChange} />
             {renderPreview("letra_musica_arquivo")}
           </label>
         </div>
-
-
+  
         <div className="upload-final-inscricao">
           <label htmlFor="video-upload" className="label-envio-video">
             <img src="/img/icones/upload.png" alt="Ícone de vídeo" />
@@ -400,17 +390,17 @@ const FormularioInscricao = () => {
               hidden
               onChange={handleFileChange}
             />
-
           </label>
           {renderPreview("video")}
         </div>
-
+  
         <div className="botao-enviar-inscricao">
           <button type="submit" className="botao-enviar Btn">Enviar</button>
         </div>
       </form>
     </div>
   );
+  
 };
 
 export default FormularioInscricao;
