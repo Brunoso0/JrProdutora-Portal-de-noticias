@@ -141,9 +141,21 @@
     left: 10px;
     z-index: 2;
   }
+
+  .selo-etapa.eliminado {
+    background-color: crimson !important;
+  }
+  
   
   .card-candidato {
     position: relative;
+  }
+
+  .botoes-candidato {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: space-between;
   }
   
 

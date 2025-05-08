@@ -10,8 +10,8 @@ const LoginFestival = () => {
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
-    senha: "",
-    confirmarSenha: ""
+    cpf: "",
+    confirmarCpf: "",
   });
 
   const handleChange = (e) => {
@@ -27,25 +27,30 @@ const LoginFestival = () => {
 
     try {
       if (isLogin) {
-        const res = await axios.post(`${API_FESTIVAL}/api/jurados/login`, {
+        const res = await axios.post(`${API_FESTIVAL}/api/inscricoes/login`, {
           email: formData.email,
-          senha: formData.senha,
+          cpf: formData.cpf,
         });
 
-        alert("Login realizado com sucesso!");
-        localStorage.setItem("juradoLogado", "true");
-        localStorage.setItem("tipoUsuario", res.data.tipo || "jurado");
-        navigate("/candidatosfestivaldemusica");
-
-      } else {
-        if (formData.senha !== formData.confirmarSenha) {
-          return alert("As senhas não coincidem.");
+        const id = res.data?.candidato?.id;
+        if (!id) {
+          return alert("ID do candidato não recebido.");
         }
 
-        await axios.post(`${API_FESTIVAL}/api/jurados/cadastrar`, {
+        alert("Login realizado com sucesso!");
+        localStorage.setItem("candidatoLogado", "true");
+        localStorage.setItem("candidatoId", id);
+        navigate("/areadocandidato");
+
+      } else {
+        if (formData.cpf !== formData.confirmarCpf) {
+          return alert("Os CPFs não coincidem.");
+        }
+
+        await axios.post(`${API_FESTIVAL}/api/inscricoes/cadastrar`, {
           nome: formData.nome,
           email: formData.email,
-          senha: formData.senha,
+          cpf: formData.cpf,
         });
 
         alert("Cadastro realizado com sucesso!");
@@ -65,7 +70,7 @@ const LoginFestival = () => {
         </div>
         <div className="right-column2">
           <div className="right-column-content">
-            <h1>{isLogin ? "Login de Jurado" : "Cadastro de Jurado"}</h1>
+            <h1>{isLogin ? "Login de Candidato" : "Cadastro de Candidato"}</h1>
 
             <form onSubmit={handleSubmit} className="login-form">
               {!isLogin && (
@@ -89,20 +94,20 @@ const LoginFestival = () => {
               />
               <input
                 type="password"
-                name="senha"
-                placeholder="Senha"
+                name="cpf"
+                placeholder="CPF (será sua senha)"
                 required
-                value={formData.senha}
+                value={formData.cpf}
                 onChange={handleChange}
               />
 
               {!isLogin && (
                 <input
                   type="password"
-                  name="confirmarSenha"
-                  placeholder="Confirmar senha"
+                  name="confirmarCpf"
+                  placeholder="Confirmar CPF"
                   required
-                  value={formData.confirmarSenha}
+                  value={formData.confirmarCpf}
                   onChange={handleChange}
                 />
               )}
@@ -110,7 +115,7 @@ const LoginFestival = () => {
               <button type="submit">{isLogin ? "Entrar" : "Registrar"}</button>
             </form>
 
-            <p className="signup-text">
+            {/* <p className="signup-text">
               {isLogin ? (
                 <>
                   Não tem uma conta?{" "}
@@ -126,7 +131,7 @@ const LoginFestival = () => {
                   </button>
                 </>
               )}
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

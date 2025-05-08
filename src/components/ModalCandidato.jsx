@@ -114,14 +114,14 @@ const ModalCandidato = ({ candidato, onClose, onUpdate }) => {
           })}
         </div>
 
-        <div className="botoes-etapas">
+        {/* <div className="botoes-etapas">
           <button className="botao-etapa voltar" onClick={handleRetroceder}>
             ← Retroceder Etapa
           </button>
           <button className="botao-etapa avancar" onClick={handleAvancar}>
             Avançar Etapa →
           </button>
-        </div>
+        </div> */}
       </div>
 
       {zoomImagem && (

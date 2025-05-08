@@ -32,16 +32,17 @@ const LoginJurados = () => {
           senha: formData.senha,
         });
 
-        const { token, tipo } = res.data;
+        const { token, tipo, jurado } = res.data;
 
-        if (!tipo) {
-          alert("Tipo de usuário não definido.");
+        if (!tipo || !jurado?.id) {
+          alert("Informações do jurado não retornadas corretamente.");
           return;
         }
 
         localStorage.setItem("juradoLogado", "true");
         localStorage.setItem("tipoUsuario", tipo);
         localStorage.setItem("token", token);
+        localStorage.setItem("jurado_id", jurado.id); // ✅ Armazena corretamente
 
         alert("Login realizado com sucesso!");
 
