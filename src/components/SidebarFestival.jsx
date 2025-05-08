@@ -7,7 +7,7 @@ const SidebarFestival = ({ setPaginaSelecionada }) => {
       <h2>Admin Festival</h2>
       <ul>
         <li onClick={() => setPaginaSelecionada("candidatos")}>Candidatos</li>
-        <li onClick={() => setPaginaSelecionada("etapas")}>Etapas</li>
+        {/* <li onClick={() => setPaginaSelecionada("etapas")}>Etapas</li> */}
         {/* mais opções futuras */}
       </ul>
     </div>

@@ -11,6 +11,7 @@ const CandidatosFestivalAdmin = () => {
   const [etapas, setEtapas] = useState([]);
   const [busca, setBusca] = useState("");
   const [ordem, setOrdem] = useState("envio");
+  const [etapaSelecionada, setEtapaSelecionada] = useState("todas");
   const [candidatoSelecionado, setCandidatoSelecionado] = useState(null);
 
   const fetchData = async () => {
@@ -30,15 +31,51 @@ const CandidatosFestivalAdmin = () => {
     fetchData();
   }, []);
 
+  // 🔁 Etapas com inscritos (geradas dinamicamente)
+  const etapasPresentes = useMemo(() => {
+    const etapasUnicas = new Set();
+    let possuiEliminado = false;
+
+    candidatos.forEach((c) => {
+      if (c.eliminado === 1) {
+        possuiEliminado = true;
+      } else if (c.fase_atual) {
+        etapasUnicas.add(c.fase_atual);
+      }
+    });
+
+    const lista = Array.from(etapasUnicas);
+    if (possuiEliminado) lista.push("Eliminado");
+
+    return lista;
+  }, [candidatos]);
+
+  // 🔎 Filtro e ordenação
   const candidatosFiltrados = useMemo(() => {
     let lista = [...candidatos];
+
     if (busca.trim()) {
-      lista = lista.filter((c) => c.nome.toLowerCase().includes(busca.toLowerCase()));
+      lista = lista.filter((c) =>
+        c.nome.toLowerCase().includes(busca.toLowerCase())
+      );
     }
-    if (ordem === "asc") lista.sort((a, b) => a.nome.localeCompare(b.nome));
-    else if (ordem === "desc") lista.sort((a, b) => b.nome.localeCompare(a.nome));
+
+    if (etapaSelecionada !== "todas") {
+      if (etapaSelecionada === "Eliminado") {
+        lista = lista.filter((c) => c.eliminado === 1);
+      } else {
+        lista = lista.filter((c) => c.fase_atual === etapaSelecionada && c.eliminado !== 1);
+      }
+    }
+
+    if (ordem === "asc") {
+      lista.sort((a, b) => a.nome.localeCompare(b.nome));
+    } else if (ordem === "desc") {
+      lista.sort((a, b) => b.nome.localeCompare(a.nome));
+    }
+
     return lista;
-  }, [candidatos, busca, ordem]);
+  }, [candidatos, busca, ordem, etapaSelecionada]);
 
   return (
     <div className="candidatos-container">
@@ -52,6 +89,7 @@ const CandidatosFestivalAdmin = () => {
             placeholder="Pesquisar pelo nome"
           />
         </div>
+
         <select
           value={ordem}
           onChange={(e) => setOrdem(e.target.value)}
@@ -61,14 +99,35 @@ const CandidatosFestivalAdmin = () => {
           <option value="asc">Nome A → Z</option>
           <option value="desc">Nome Z → A</option>
         </select>
+
+        <select
+          value={etapaSelecionada}
+          onChange={(e) => setEtapaSelecionada(e.target.value)}
+          className="select-ordem-candidato"
+        >
+          <option value="todas">Todas as Etapas</option>
+          {etapasPresentes.map((etapa, index) => (
+            <option key={index} value={etapa}>
+              {etapa}
+            </option>
+          ))}
+        </select>
+
+        <div className="contador-candidatos">
+          Total: {candidatosFiltrados.length} candidato{candidatosFiltrados.length !== 1 ? "s" : ""}
+        </div>
+
       </div>
 
       <div className="grid-candidatos">
         {candidatosFiltrados.map((candidato) => (
           <div key={candidato.id} className="card-candidato">
-            <span className="selo-etapa">
-              {etapas.find((etapa) => etapa.id === candidato.etapa_id)?.nome || "Sem etapa"}
+            <span
+              className={`selo-etapa ${candidato.eliminado === 1 ? "eliminado" : ""}`}
+            >
+              {candidato.eliminado === 1 ? "Eliminado" : (candidato.fase_atual || "Sem etapa")}
             </span>
+
             <div className="imagem-candidato">
               {candidato.foto ? (
                 <img src={`${API_FESTIVAL}/${candidato.foto}`} alt={candidato.nome} />
@@ -76,19 +135,18 @@ const CandidatosFestivalAdmin = () => {
                 <div className="sem-foto">Sem foto</div>
               )}
             </div>
+
             <div className="rodape-candidato">
-              <div className="bolinha-candidato" />
               <span className="nome-candidato">{candidato.nome}</span>
               <button
                 className="botao-perfil"
                 onClick={() => {
-                    console.log("🧩 Candidato selecionado:", candidato); // ✅ Log de depuração
-                    setCandidatoSelecionado(candidato);
+                  console.log("🧩 Candidato selecionado:", candidato);
+                  setCandidatoSelecionado(candidato);
                 }}
-                >
+              >
                 Editar
-                </button>
-
+              </button>
             </div>
           </div>
         ))}

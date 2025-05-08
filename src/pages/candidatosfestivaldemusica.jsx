@@ -118,6 +118,11 @@ const CandidatosFestivalDeMusica = () => {
             </option>
           ))}
         </select>
+
+        <div className="contador-candidatos">
+          Total: {candidatosFiltrados.length} candidato{candidatosFiltrados.length !== 1 ? "s" : ""}
+        </div>
+
       </div>
 
       <div className="grid-candidatos">

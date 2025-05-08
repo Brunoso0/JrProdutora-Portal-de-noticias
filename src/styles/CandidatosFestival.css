@@ -12,7 +12,7 @@
     justify-content: center;
     margin: auto;
     gap: 1rem;
-    width: 20%;
+    width: 40%;
   }
 
   /* From Uiverse.io by alexruix */ 
@@ -145,6 +145,18 @@
   .selo-etapa.eliminado {
     background-color: crimson !important;
   }
+
+  .contador-candidatos {
+    color: #FFF;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    background-color: #f03e3e;
+    border-radius: 10px;
+    
+  }
+  
   
   
   .card-candidato {
@@ -191,15 +203,32 @@
 
   @media (max-width: 768px) {
     .filter-candidatos {
-      width: 90%;
+      width: 95%;
     }
 
     .grid-candidatos {
-      width: 90%;
+      width: 100%;
+    }
+
+    .card-candidato {
+      width: 100%;
+    }
+
+    .imagem-candidato {
+      height: 120px;
+    }
+
+    .nome-candidato {
+      font-size: 0.8rem;
+    }
+
+    .botao-perfil {
+      font-size: 0.7rem;
+      padding: 4px 6px;
     }
 
     .cacto-esquerda2 {
-        margin-left: -50% !important;
-        transform: translateX(-100%);
-      }
+      margin-left: -50% !important;
+      transform: translateX(-100%);
+    }
   }
