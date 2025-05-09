@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import FooterFestival from "../components/FooterFestival";
 import { API_FESTIVAL } from "../services/api";
@@ -10,54 +10,46 @@ const AreaDoCandidato = () => {
   const [etapaSelecionada, setEtapaSelecionada] = useState(null);
   const [notas, setNotas] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
+  const [votosBinarios, setVotosBinarios] = useState([]);
 
   const candidatoId = localStorage.getItem("candidatoId");
 
   useEffect(() => {
-    if (!candidatoId) {
-      console.warn("⚠️ Nenhum candidatoId encontrado no localStorage.");
-      return;
-    }
+    if (!candidatoId) return;
 
-    // Buscar dados do candidato
-    axios
-      .get(`${API_FESTIVAL}/api/inscricoes/${candidatoId}`)
-      .then((res) => {
-        console.log("✅ Candidato:", res.data);
+    axios.get(`${API_FESTIVAL}/api/inscricoes/${candidatoId}`)
+      .then(res => {
         setCandidato(res.data);
       })
-      .catch((err) => {
-        console.error("❌ Erro ao buscar candidato:", err);
-        setCandidato(null);
-      });
+      .catch(() => setCandidato(null));
 
-    // Buscar etapas (corrigido!)
-    axios
-      .get(`${API_FESTIVAL}/api/inscricoes/etapas`)
-      .then((res) => {
-        console.log("✅ Etapas:", res.data);
-        setEtapas(res.data);
-        if (res.data.length > 0) setEtapaSelecionada(res.data[0].id);
-      })
-      .catch((err) => {
-        console.error("❌ Erro ao buscar etapas:", err);
-        setEtapas([]);
-      });
+    axios.get(`${API_FESTIVAL}/api/inscricoes/etapas`)
+      .then(res => setEtapas(res.data))
+      .catch(() => setEtapas([]));
   }, [candidatoId]);
 
+  const etapasExibidas = useMemo(() => {
+    if (!candidato || !etapas.length) return [];
+    const indexAtual = etapas.findIndex(e => e.nome === candidato.fase_atual);
+    return etapas.slice(0, indexAtual + 1);
+  }, [etapas, candidato]);
+
   useEffect(() => {
-    if (etapaSelecionada && candidatoId) {
-      axios
-        .get(`${API_FESTIVAL}/api/inscricoes/notas/${candidatoId}/${etapaSelecionada}`)
-        .then((res) => {
-          console.log("📊 Notas:", res.data);
-          setNotas(res.data);
-        })
-        .catch((err) => {
-          console.error("❌ Erro ao carregar notas:", err);
-          setNotas(null);
-        });
+    if (etapasExibidas.length > 0 && !etapaSelecionada) {
+      setEtapaSelecionada(etapasExibidas[0].id);
     }
+  }, [etapasExibidas, etapaSelecionada]);
+
+  useEffect(() => {
+    if (!etapaSelecionada || !candidatoId) return;
+
+    axios.get(`${API_FESTIVAL}/api/inscricoes/notas/${candidatoId}/${etapaSelecionada}`)
+      .then(res => setNotas(res.data))
+      .catch(() => setNotas(null));
+
+    axios.get(`${API_FESTIVAL}/api/jurados/votos-binarios/${candidatoId}/${etapaSelecionada}`)
+      .then(res => setVotosBinarios(res.data))
+      .catch(() => setVotosBinarios([]));
   }, [etapaSelecionada, candidatoId]);
 
   const abrirModal = () => setModalAberto(true);
@@ -79,7 +71,7 @@ const AreaDoCandidato = () => {
           />
           <div>
             <h2>{candidato?.nome || "Nome do Candidato"}</h2>
-            <p>{candidato?.fase_atual || "Fase atual"}</p>
+            <p>{candidato?.eliminado ? "❌ Eliminado" : (candidato?.fase_atual || "Fase atual")}</p>
           </div>
         </div>
         <button className="botao-atualizar" onClick={abrirModal}>
@@ -89,52 +81,78 @@ const AreaDoCandidato = () => {
 
       <main className="area-candidato-main">
         <h3>Tabela de Notas</h3>
-        <p>Escolha a etapa para visualizar as notas:</p>
+        <p>Escolha a etapa para visualizar:</p>
         <select
           className="select-etapa"
           value={etapaSelecionada || ""}
           onChange={(e) => setEtapaSelecionada(e.target.value)}
         >
-          {etapas.length === 0 ? (
-            <option disabled>Carregando etapas...</option>
-          ) : (
-            etapas.map((etapa) => (
-              <option key={etapa.id} value={etapa.id}>
-                {etapa.nome}
-              </option>
-            ))
-          )}
+          {etapasExibidas.map((etapa) => (
+            <option key={etapa.id} value={etapa.id}>
+              {etapa.nome}
+            </option>
+          ))}
         </select>
 
         <div className="tabela-notas">
           {notas ? (
-            <>
-              {notas.jurados.map((nota, index) => (
-                <div key={index} className="linha-nota">
-                  <div className="jurado-info">
-                    <img
-                      src={`${API_FESTIVAL}/${nota.foto_jurado}`}
-                      alt="jurado"
-                      onError={(e) => (e.target.src = "/img/exemplo-perfil.jpg")}
-                    />
-                    <strong>{nota.nome_jurado}</strong>
+            notas.tipo === "criterios" ? (
+              <>
+                {notas.jurados.map((nota, index) => (
+                  <div key={index} className="linha-nota">
+                    <div className="jurado-info">
+                      <img
+                        src={`${API_FESTIVAL}/${nota.foto_jurado}`}
+                        alt="jurado"
+                        onError={(e) => (e.target.src = "/img/exemplo-perfil.jpg")}
+                      />
+                      <strong>{nota.nome_jurado}</strong>
+                    </div>
+                    <div className="nota-valores">
+                      {nota.criterios.map((c, i) => (
+                        <div key={i}>
+                          {c.criterio}: {c.nota} ({c.justificativa})
+                        </div>
+                      ))}
+                      <strong>Total: {nota.total}</strong>
+                    </div>
                   </div>
-                  <div className="nota-valores">
-                    Afin.: {nota.afinacao} | Palco: {nota.palco} | Harmonia: {nota.harmonia} | Ritmo: {nota.ritmo} | Autent.: {nota.autenticidade} | Dicção: {nota.diccao} |{" "}
-                    <strong>Total: {nota.total}</strong>
-                  </div>
+                ))}
+                <div className="linha-nota popular">
+                  <strong>Voto Popular:</strong> {notas.popular} votos
                 </div>
-              ))}
-              <div className="linha-nota popular">
-                <strong>Voto Popular:</strong> {notas.popular} votos
-              </div>
-            </>
+              </>
+            ) : (
+              <>
+                {notas.votos.map((voto, index) => (
+                  <div key={index} className="linha-nota">
+                    <div className="jurado-info">
+                      <img
+                        src={`${API_FESTIVAL}/${voto.foto_jurado}`}
+                        alt="jurado"
+                        onError={(e) => (e.target.src = "/img/exemplo-perfil.jpg")}
+                      />
+                      <strong>{voto.nome_jurado}</strong>
+                    </div>
+                    <div className="nota-valores">
+                      <strong>{voto.aprovado === "sim" ? "Aprovado" : "Reprovado"}</strong>
+                      {voto.aprovado === "nao" && (
+                        <div>
+                          <em>Justificativa:</em> {voto.justificativa}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </>
+            )
           ) : (
             <p style={{ padding: "2rem", textAlign: "center" }}>
               Notas ainda não disponíveis
             </p>
           )}
         </div>
+
       </main>
 
       {modalAberto && (

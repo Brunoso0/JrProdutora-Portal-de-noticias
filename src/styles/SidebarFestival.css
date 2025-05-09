@@ -1,7 +1,9 @@
 .sidebar-festival {
     width: 250px;
+    height: 100%;
     background-color: #5b4f8c;
     color: white;
+    position: fixed;
     padding: 20px;
   }
   .sidebar-festival ul {
