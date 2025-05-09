@@ -1,10 +1,15 @@
-// src/components/ProtectedRouteJurado.jsx
 import React from "react";
 import { Navigate } from "react-router-dom";
 
 const ProtectedRouteJurado = ({ children }) => {
-  const isJurado = localStorage.getItem("juradoLogado") === "true";
-  return isJurado ? children : <Navigate to="/loginfestival" />;
+  const isJuradoLogado = localStorage.getItem("juradoLogado") === "true";
+  const tipo = localStorage.getItem("tipoUsuario");
+
+  if (!isJuradoLogado || tipo !== "jurado") {
+    return <Navigate to="/loginjurados" replace />;
+  }
+
+  return children;
 };
 
 export default ProtectedRouteJurado;
