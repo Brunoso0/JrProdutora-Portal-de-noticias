@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/LoginFestival.css";
 import { API_FESTIVAL } from "../services/api";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginFestival = () => {
   const navigate = useNavigate();
@@ -34,17 +36,17 @@ const LoginFestival = () => {
 
         const id = res.data?.candidato?.id;
         if (!id) {
-          return alert("ID do candidato não recebido.");
+          return toast.error("ID do candidato não recebido.");
         }
 
-        alert("Login realizado com sucesso!");
+        toast.success("Login realizado com sucesso!");
         localStorage.setItem("candidatoLogado", "true");
         localStorage.setItem("candidatoId", id);
-        navigate("/areadocandidato");
+        setTimeout(() => navigate("/areadocandidato"), 1000);
 
       } else {
         if (formData.cpf !== formData.confirmarCpf) {
-          return alert("Os CPFs não coincidem.");
+          return toast.error("Os CPFs não coincidem.");
         }
 
         await axios.post(`${API_FESTIVAL}/api/inscricoes/cadastrar`, {
@@ -53,12 +55,12 @@ const LoginFestival = () => {
           cpf: formData.cpf,
         });
 
-        alert("Cadastro realizado com sucesso!");
+        toast.success("Cadastro realizado com sucesso!");
         setIsLogin(true);
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      alert(error.response?.data?.erro || "Erro na requisição.");
+      toast.error(error.response?.data?.erro || "Erro na requisição.");
     }
   };
 
@@ -114,24 +116,6 @@ const LoginFestival = () => {
 
               <button type="submit">{isLogin ? "Entrar" : "Registrar"}</button>
             </form>
-
-            {/* <p className="signup-text">
-              {isLogin ? (
-                <>
-                  Não tem uma conta?{" "}
-                  <button type="button" onClick={toggleForm} className="link-button">
-                    Cadastre-se
-                  </button>
-                </>
-              ) : (
-                <>
-                  Já tem uma conta?{" "}
-                  <button type="button" onClick={toggleForm} className="link-button">
-                    Fazer login
-                  </button>
-                </>
-              )}
-            </p> */}
           </div>
         </div>
       </div>
@@ -145,6 +129,15 @@ const LoginFestival = () => {
           <img src="/img/fundo-festival.png" alt="Decoração de corda no rodapé" />
         </div>
       </footer>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };

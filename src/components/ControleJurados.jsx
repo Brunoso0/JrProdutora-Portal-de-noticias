@@ -3,8 +3,6 @@ import axios from "axios";
 import { API_FESTIVAL } from "../services/api";
 import "../styles/ModalEditarJurado.css";
 
-
-
 const ControleJurados = () => {
   const [jurados, setJurados] = useState([]);
   const [juradoEditando, setJuradoEditando] = useState(null);
@@ -17,13 +15,12 @@ const ControleJurados = () => {
   });
 
   const formatarTelefoneBonito = (valor) => {
-  return valor
-    .replace(/\D/g, "")                      // Remove tudo que não for número
-    .slice(0, 11)                            // Limita a 11 dígitos
-    .replace(/^(\d{2})(\d)/, "($1) $2")      // (76) 9...
-    .replace(/(\d{1})(\d{4})(\d{4})$/, "$1 $2-$3"); // 9 9122-6010
-};
-
+    return valor
+      .replace(/\D/g, "")
+      .slice(0, 11)
+      .replace(/^(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{1})(\d{4})(\d{4})$/, "$1 $2-$3");
+  };
 
   useEffect(() => {
     carregarJurados();
@@ -59,7 +56,11 @@ const ControleJurados = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === "telefone") {
+      setFormData(prev => ({ ...prev, telefone: formatarTelefoneBonito(value) }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleFileChange = (e) => {
