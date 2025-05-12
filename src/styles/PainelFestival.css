@@ -3,6 +3,18 @@
     min-height: 100vh;
   }
   .conteudo-festival {
-    flex: 1;
+  flex: 1;
+  margin-left: 250px; /* mesma largura da sidebar */
+}
+
+  @media (max-width: 768px) {
+  .sidebar-festival {
+    position: relative;
+    width: 100%;
+    height: auto;
   }
-  
+
+  .conteudo-festival {
+    margin-left: 0;
+  }
+}

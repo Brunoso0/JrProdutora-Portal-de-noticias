@@ -1,0 +1,106 @@
+.controle-jurados {
+  padding: 2rem;
+  color: #333;
+}
+
+.lista-jurados {
+  list-style: none;
+  padding: 0;
+}
+
+.lista-jurados li {
+  background: #f4f4f4;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-editar {
+  background-color: #5b4f8c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-editar:hover {
+  background-color: #473e70;
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-editar-jurado {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.modal-editar-jurado h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.modal-editar-jurado form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-editar-jurado input,
+.modal-editar-jurado textarea {
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.modal-editar-jurado label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.botoes-modal {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.botoes-modal button {
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.botoes-modal button[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+}
+
+.botoes-modal button[type="button"] {
+  background-color: #d9534f;
+  color: white;
+}

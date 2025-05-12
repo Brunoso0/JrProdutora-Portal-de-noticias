@@ -1,0 +1,40 @@
+.controle-etapas {
+  padding: 2rem;
+}
+
+.controle-etapas h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  color: #243066;
+}
+
+.lista-etapas {
+  list-style: none;
+  padding: 0;
+}
+
+.lista-etapas li {
+  background-color: #fff4cc;
+  border-left: 5px solid #f5b700;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lista-etapas li button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.lista-etapas li button:hover {
+  background-color: #3e8e41;
+}
