@@ -40,6 +40,8 @@ const FormularioInscricao = () => {
   const [cpf, setCPF] = useState("");
   const [telefone, setTelefone] = useState("");
   const [rg, setRG] = useState("");
+  const inscricoesEncerradas = true; // ✅ troque para false se quiser reabrir depois
+
 
   const formRef = useRef(null); // AQUI você declara a referência pro formulário
 
@@ -207,7 +209,15 @@ const FormularioInscricao = () => {
   };
 
   return (
-    <div className="formulario-inscricao">
+  <div className="formulario-inscricao">
+    {inscricoesEncerradas ? (
+      <div className="mensagem-inscricoes-encerradas">
+        <h2>As inscrições foram encerradas.</h2>
+        <p>Fique atento às próximas fases do festival. Boa sorte a todos os inscritos!</p>
+      </div>
+    ) : (
+      <>
+        <div className="formulario-inscricao">
       <div className="foto-upload">
         <label htmlFor="foto" className="foto-upload-box">
           {arquivos.foto ? (
@@ -399,8 +409,15 @@ const FormularioInscricao = () => {
         </div>
       </form>
     </div>
-  );
+      </>
+    )}
+  </div>
+);
   
 };
 
 export default FormularioInscricao;
+
+
+
+
