@@ -586,6 +586,20 @@
 }
 
 
+.mensagem-inscricoes-encerradas {
+  padding: 3rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+  text-align: center;
+  color: #856404;
+  font-family: sans-serif;
+}
+
+.mensagem-inscricoes-encerradas h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
 
 
 /* ================= RESPONSIVO ================= */
