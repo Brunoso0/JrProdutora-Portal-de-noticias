@@ -263,6 +263,27 @@
   animation: pulse 1.5s infinite;
 }
 
+.atualizar-foto-container {
+  margin-bottom: 1rem;
+}
+
+.preview-foto-perfil {
+  margin: 0.5rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.foto-preview-atual {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+
+
 /* Pendências */
 .modal-content-usuario ul {
   margin-top: 0.8rem;

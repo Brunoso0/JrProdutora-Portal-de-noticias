@@ -17,6 +17,8 @@ const AreaDoCandidato = () => {
   const [pendencias, setPendencias] = useState([]);
   const [mostrarPendencias, setMostrarPendencias] = useState(false);
   const [formData, setFormData] = useState({});
+  const [previewFoto, setPreviewFoto] = useState(null);
+
 
   const candidatoId = localStorage.getItem("candidatoId");
 
@@ -95,8 +97,17 @@ const AreaDoCandidato = () => {
   };
 
   const handleFileChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.files[0] }));
-  };
+  const file = e.target.files[0];
+  const name = e.target.name;
+
+  setFormData((prev) => ({ ...prev, [name]: file }));
+
+  if (name === "foto" && file) {
+    const previewURL = URL.createObjectURL(file);
+    setPreviewFoto(previewURL);
+  }
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -265,6 +276,37 @@ const AreaDoCandidato = () => {
             <h3>Atualizar Meus Dados</h3>
 
             <form onSubmit={handleSubmit} encType="multipart/form-data">
+              {/* ✅ Atualizar imagem de perfil */}
+              <div className="atualizar-foto-container">
+                <label htmlFor="foto" className="label-foto-atual">
+                  Foto de Perfil Atual:
+                </label>
+                <div className="preview-foto-perfil">
+                  <img
+                    src={
+                      previewFoto
+                        ? previewFoto
+                        : candidato?.foto
+                        ? `${API_FESTIVAL}/${candidato.foto.replace(/^\/?uploads/, "uploads")}`
+                        : "/img/exemplo-perfil.jpg"
+                    }
+                    alt="Foto de perfil"
+                    className="foto-preview-atual"
+                  />
+
+                </div>
+
+                <label htmlFor="nova-foto" className="label-upload-nova-foto">
+                  Atualizar Foto de Perfil:
+                </label>
+                <input
+                  type="file"
+                  id="nova-foto"
+                  name="foto"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+              </div>
               <input name="nome" value={formData.nome} onChange={handleInputChange} placeholder="Nome" required />
               <input name="telefone" value={formData.telefone} onChange={handleInputChange} placeholder="Telefone" />
               <input name="nome_artistico" value={formData.nome_artistico} onChange={handleInputChange} placeholder="Nome Artístico" />
