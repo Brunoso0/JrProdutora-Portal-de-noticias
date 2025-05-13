@@ -335,7 +335,13 @@ const AreaDoCandidato = () => {
                   style={formData.cpf ? { cursor: "not-allowed", backgroundColor: "#f3f3f3", color: "#888" } : {}}
                 />
                
-              <input name="musica" value={formData.musica} onChange={handleInputChange} placeholder="Música" />
+              <input
+               name="musica"
+                value={formData.musica}
+                onChange={handleInputChange}
+                placeholder="Música"
+                style={formData.musica ? { cursor: "not-allowed", backgroundColor: "#f3f3f3", color: "#888" } : {}}
+                />
               <input name="tempo_atividade" value={formData.tempo_atividade} onChange={handleInputChange} placeholder="Tempo de Atividade" />
               
 
