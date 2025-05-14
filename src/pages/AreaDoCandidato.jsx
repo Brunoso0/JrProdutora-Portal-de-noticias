@@ -65,23 +65,26 @@ const AreaDoCandidato = () => {
     return etapas.slice(0, indexAtual + 1);
   }, [etapas, candidato]);
 
-  useEffect(() => {
-    if (etapasExibidas.length > 0 && !etapaSelecionada) {
-      setEtapaSelecionada(etapasExibidas[0].id);
-    }
-  }, [etapasExibidas, etapaSelecionada]);
+useEffect(() => {
+  if (!etapaSelecionada || !candidatoId) return;
 
-  useEffect(() => {
-    if (!etapaSelecionada || !candidatoId) return;
+  const etapaIdNum = Number(etapaSelecionada);
+  const candidatoIdNum = Number(candidatoId);
 
-    axios.get(`${API_FESTIVAL}/api/inscricoes/notas/${candidatoId}/${etapaSelecionada}`)
-      .then(res => setNotas(res.data))
-      .catch(() => setNotas(null));
+  console.log("🔍 Requisição:", { etapaIdNum, candidatoIdNum });
 
-    axios.get(`${API_FESTIVAL}/api/jurados/votos-binarios/${candidatoId}/${etapaSelecionada}`)
-      .then(res => setVotosBinarios(res.data))
-      .catch(() => setVotosBinarios([]));
-  }, [etapaSelecionada, candidatoId]);
+  axios
+    .get(`${API_FESTIVAL}/api/jurados/votos-binarios/${candidatoIdNum}/${etapaIdNum}`)
+    .then((res) => {
+      console.log("📥 VOTOS BINÁRIOS RECEBIDOS:", res.data);
+      setVotosBinarios(res.data);
+    })
+    .catch((err) => {
+      console.error("❌ Erro ao buscar votos binários:", err);
+      setVotosBinarios([]);
+    });
+}, [etapaSelecionada, candidatoId]);
+
 
   const abrirModal = () => setModalAberto(true);
   const fecharModal = () => {
@@ -89,7 +92,8 @@ const AreaDoCandidato = () => {
     setMostrarPendencias(false);
   };
 
-  const etapaSelecionadaNome = etapas.find(e => e.id == etapaSelecionada)?.nome;
+  const etapaSelecionadaNome = etapas.find(e => e.id === Number(etapaSelecionada))?.nome;
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -150,124 +154,138 @@ const AreaDoCandidato = () => {
         </button>
       </header>
 
-      <main className="area-candidato-main">
-        <h3>Tabela de Notas</h3>
+     <main className="area-candidato-main">
+  <h3>Tabela de Notas</h3>
 
-        {candidato?.fase_atual === "classificado" ? (
-          <div className="mensagem-avaliacao">
-            ✅ Sua inscrição foi classificada! Agora, aguarde o resultado da sua avaliação.
+  {candidato?.fase_atual === "classificado" ? (
+    <div className="mensagem-avaliacao">
+      ✅ Você foi Classificado para a Proxima Fase.
+    </div>
+  ) : (
+    <>
+      <p>Escolha a etapa para visualizar:</p>
+      <select
+        className="select-etapa"
+        value={etapaSelecionada || ""}
+        onChange={(e) => setEtapaSelecionada(e.target.value)}
+      >
+        {etapasExibidas
+          .filter(etapa => etapa.nome.toLowerCase() !== "classificado")
+          .map((etapa) => (
+            <option key={etapa.id} value={etapa.id}>{etapa.nome}</option>
+          ))}
+      </select>
+
+      {etapaSelecionadaNome?.toLowerCase() === "classificatória" ? (
+        <>
+          {["1", 1, true, "true"].includes(candidato?.eliminado) && votosBinarios.some(v => v.aprovado === "nao") ? (
+            <div style={{ marginTop: "2rem" }}>
+              <p style={{ fontWeight: "bold", fontSize: "1.1rem", color: "#c0392b" }}>
+                ❌ Você foi eliminado nesta etapa. Veja abaixo o motivo:
+              </p>
+              {votosBinarios
+                .filter(v => v.aprovado === "nao")
+                .map((voto, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      background: "#ffe6e6",
+                      border: "1px solid #f5c6cb",
+                      padding: "1rem",
+                      borderRadius: "10px",
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: "1rem",
+                      marginBottom: "1rem"
+                    }}
+                  >
+                    <img
+                      src={`${API_FESTIVAL}/${voto.foto_jurado}`}
+                      alt={voto.nome_jurado}
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                        border: "2px solid #c0392b"
+                      }}
+                    />
+                    <div>
+                      <strong style={{ fontSize: "1.05rem" }}>{voto.nome_jurado}</strong>
+                      <p style={{ margin: "0.3rem 0", color: "#c0392b" }}>❌ Reprovado</p>
+                      <p style={{ fontStyle: "italic", margin: 0 }}>{voto.justificativa || "Sem justificativa informada"}</p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          ) : votosBinarios.length > 0 ? (
+            <div className="tabela-notas" style={{ marginTop: "2rem" }}>
+              <div className="cabecalho-tabela">
+                <span>Jurado</span>
+                <span>Status</span>
+              </div>
+              {votosBinarios
+                .filter((v) => v.aprovado === "sim")
+                .map((voto, i) => (
+                  <div key={i} className="linha-criterio">
+                    <div className="bloco-jurado">
+                      <img src={`${API_FESTIVAL}/${voto.foto_jurado}`} alt="jurado" />
+                      <strong>{voto.nome_jurado}</strong>
+                    </div>
+                    <div className="notas-linha"><span>✅ Aprovado</span></div>
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <p style={{ marginTop: "2rem", fontWeight: "bold", color: "#7d27db" }}>
+              Você ainda está sendo avaliado, aguarde...
+            </p>
+          )}
+        </>
+      ) : (
+        notas?.jurados?.length > 0 ? (
+          <div className="tabela-notas">
+            <div className="cabecalho-tabela">
+              <span>Afinação</span>
+              <span>Presença de Palco</span>
+              <span>Melodia e Harmonia</span>
+              <span>Ritmo</span>
+              <span>Autenticidade</span>
+              <span>Dição/Pronúncia</span>
+              <span>Nota Total</span>
+            </div>
+            {notas.jurados.map((nota, i) => (
+              <div key={i} className={`linha-criterio jurado${i + 1}`}>
+                <div className="bloco-jurado">
+                  <img src={`${API_FESTIVAL}/${nota.foto_jurado}`} alt="jurado" />
+                  <strong>{nota.nome_jurado}</strong>
+                </div>
+                <div className="notas-linha">
+                  {nota.criterios.map((c, j) => (
+                    <span key={j}>{c.criterio}: {c.nota}</span>
+                  ))}
+                  <strong>{nota.total}</strong>
+                </div>
+              </div>
+            ))}
+            {notas.popular !== undefined && (
+              <div className="linha-criterio popular">
+                <div className="bloco-jurado"><strong>Voto Popular</strong></div>
+                <div className="notas-linha"><span>{notas.popular} votos</span></div>
+              </div>
+            )}
           </div>
         ) : (
-          <>
-            <p>Escolha a etapa para visualizar:</p>
-            <select
-              className="select-etapa"
-              value={etapaSelecionada || ""}
-              onChange={(e) => setEtapaSelecionada(e.target.value)}
-            >
-              {etapasExibidas
-                .filter(etapa => etapa.nome.toLowerCase() !== "classificado")
-                .map((etapa) => (
-                  <option key={etapa.id} value={etapa.id}>{etapa.nome}</option>
-                ))}
-            </select>
-
-            {etapaSelecionadaNome === "classificado" ? null : (
-              <>
-                {(votosBinarios.length === 0 && (!notas?.jurados || notas.jurados.length === 0)) ? (
-                  candidato?.eliminado ? (
-                    <div className="tabela-notas" style={{ marginTop: "2rem", backgroundColor: "#ffe0e0" }}>
-                      <div className="cabecalho-tabela">
-                        <span>Jurado</span>
-                        <span>Status</span>
-                        <span>Justificativa</span>
-                      </div>
-                      {votosBinarios.map((voto, index) => (
-                        <div key={index} className="linha-criterio">
-                          <div className="bloco-jurado">
-                            <img src={`${API_FESTIVAL}/${voto.foto_jurado}`} alt="jurado" />
-                            <strong>{voto.nome_jurado}</strong>
-                          </div>
-                          <div className="notas-linha" style={{ justifyContent: "center" }}>
-                            <span>{voto.aprovado === "sim" ? "✅ Aprovado" : "❌ Reprovado"}</span>
-                          </div>
-                          <div className="notas-linha" style={{ justifyContent: "center" }}>
-                            <span style={{ fontStyle: "italic" }}>
-                              {voto.aprovado === "nao" ? voto.justificativa || "Sem justificativa" : "-"}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p style={{ marginTop: "2rem", fontWeight: "bold", color: "#7d27db" }}>
-                      Você ainda está sendo avaliado, aguarde...
-                    </p>
-                  )
-                ) : (
-                  <div className="tabela-notas">
-                    <div className="cabecalho-tabela">
-                      <span>Afinação</span>
-                      <span>Presença de Palco</span>
-                      <span>Melodia e Harmonia</span>
-                      <span>Ritmo</span>
-                      <span>Autenticidade</span>
-                      <span>Dição/Pronúncia</span>
-                      <span>Nota Total</span>
-                    </div>
-
-                    {etapaSelecionadaNome === "classificatória" ? (
-                      votosBinarios.map((voto, index) => (
-                        <div key={index} className="linha-criterio binario">
-                          <div className="bloco-jurado binario">
-                            <img src={`${API_FESTIVAL}/${voto.foto_jurado}`} alt="jurado" />
-                            <strong>{voto.nome_jurado}</strong>
-                          </div>
-                          <div className="bloco-binario-texto">
-                            <p>{voto.aprovado === "sim" ? "✅ Aprovado" : "❌ Reprovado"}</p>
-                            {voto.aprovado === "nao" && voto.justificativa && (
-                              <small><em>{voto.justificativa}</em></small>
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <>
-                        {notas?.jurados?.map((nota, index) => (
-                          <div key={index} className={`linha-criterio jurado${index + 1}`}>
-                            <div className="bloco-jurado">
-                              <img src={`${API_FESTIVAL}/${nota.foto_jurado}`} alt="jurado" />
-                              <strong>{nota.nome_jurado}</strong>
-                            </div>
-                            <div className="notas-linha">
-                              {nota.criterios.map((c, i) => (
-                                <span key={i}>{c.criterio}: {c.nota}</span>
-                              ))}
-                              <strong>{nota.total}</strong>
-                            </div>
-                          </div>
-                        ))}
-                        {notas?.popular !== undefined && (
-                          <div className="linha-criterio popular">
-                            <div className="bloco-jurado"><strong>Voto Popular</strong></div>
-                            <div className="notas-linha"><span>{notas?.popular || 0} votos</span></div>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                )}
-              </>
-
-            )}
+          <p style={{ marginTop: "2rem", fontWeight: "bold", color: "#7d27db" }}>
+            Você ainda está sendo avaliado, aguarde...
+          </p>
+        )
+      )}
+    </>
+  )}
+</main>
 
 
-
-
-
-          </>
-        )}
-      </main>
 
       {modalAberto && (
         <div className="modal-overlay" onClick={fecharModal}>
@@ -405,7 +423,7 @@ const AreaDoCandidato = () => {
       )}
 
       <ToastContainer position="top-center" autoClose={3000} />
-  <FooterFestival />
+    <FooterFestival />
     </div>
   );
 };

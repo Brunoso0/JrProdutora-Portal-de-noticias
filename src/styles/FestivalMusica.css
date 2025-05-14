@@ -694,11 +694,6 @@
     display: none;
   }
 
-  .cacto-esquerda,
-  .cacto-direita {
-    width: 500px;
-  }
-
   .bandeirolas-festival img {
     max-height: 200px;
   }
