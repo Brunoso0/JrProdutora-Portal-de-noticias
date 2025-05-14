@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/LoginFestival.css";
 import { API_FESTIVAL } from "../services/api";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginJurados = () => {
   const navigate = useNavigate();
@@ -35,28 +37,30 @@ const LoginJurados = () => {
         const { token, tipo, jurado } = res.data;
 
         if (!tipo || !jurado?.id) {
-          alert("Informações do jurado não retornadas corretamente.");
+          toast.error("Informações do jurado não retornadas corretamente.");
           return;
         }
 
         localStorage.setItem("juradoLogado", "true");
         localStorage.setItem("tipoUsuario", tipo);
         localStorage.setItem("token", token);
-        localStorage.setItem("jurado_id", jurado.id); // ✅ Armazena corretamente
+        localStorage.setItem("jurado_id", jurado.id);
 
-        alert("Login realizado com sucesso!");
+        toast.success("Login realizado com sucesso!");
 
-        if (tipo === "jurado") {
-          navigate("/candidatosfestivaldemusica");
-        } else if (tipo === "admin") {
-          navigate("/painelcandidatos");
-        } else {
-          alert("Tipo de usuário inválido.");
-        }
+        setTimeout(() => {
+          if (tipo === "jurado") {
+            navigate("/candidatosfestivaldemusica");
+          } else if (tipo === "admin") {
+            navigate("/painelcandidatos");
+          } else {
+            toast.error("Tipo de usuário inválido.");
+          }
+        }, 1000);
 
       } else {
         if (formData.senha !== formData.confirmarSenha) {
-          return alert("As senhas não coincidem.");
+          return toast.error("As senhas não coincidem.");
         }
 
         await axios.post(`${API_FESTIVAL}/api/jurados/cadastrar`, {
@@ -65,12 +69,12 @@ const LoginJurados = () => {
           senha: formData.senha,
         });
 
-        alert("Cadastro realizado com sucesso!");
+        toast.success("Cadastro realizado com sucesso!");
         setIsLogin(true);
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      alert(error.response?.data?.erro || "Erro na requisição.");
+      toast.error(error.response?.data?.erro || "Erro na requisição.");
     }
   };
 
@@ -157,6 +161,8 @@ const LoginJurados = () => {
           <img src="/img/fundo-festival.png" alt="Decoração de corda no rodapé" />
         </div>
       </footer>
+
+      <ToastContainer position="top-center" autoClose={3000} />
     </div>
   );
 };

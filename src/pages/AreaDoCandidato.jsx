@@ -59,11 +59,32 @@ const AreaDoCandidato = () => {
   }, [candidatoId]);
 
   const etapasExibidas = useMemo(() => {
-    if (!candidato || !etapas.length) return [];
-    if (candidato.fase_atual === "classificado") return [];
-    const indexAtual = etapas.findIndex(e => e.nome === candidato.fase_atual);
-    return etapas.slice(0, indexAtual + 1);
-  }, [etapas, candidato]);
+  if (!candidato || !etapas.length) return [];
+
+  // Ordena as etapas por ID antes de filtrar
+  const etapasOrdenadas = [...etapas].sort((a, b) => a.id - b.id);
+
+  // Identifica a etapa atual no array ordenado
+  const indexAtual = etapasOrdenadas.findIndex(e => e.nome === candidato.fase_atual);
+
+  // Garante que só aparecem até a etapa atual
+  return etapasOrdenadas.slice(0, indexAtual + 1);
+}, [etapas, candidato]);
+
+
+useEffect(() => {
+  if (etapas.length && candidato) {
+    const etapasOrdenadas = [...etapas].sort((a, b) => a.id - b.id);
+    const indexAtual = etapasOrdenadas.findIndex(e => e.nome === candidato.fase_atual);
+
+    if (indexAtual >= 0) {
+      const ultimaEtapaId = etapasOrdenadas[Math.min(indexAtual, etapasOrdenadas.length - 1)].id;
+      setEtapaSelecionada(String(ultimaEtapaId));
+    }
+  }
+}, [etapas, candidato]);
+
+
 
 useEffect(() => {
   if (!etapaSelecionada || !candidatoId) return;
@@ -196,7 +217,12 @@ useEffect(() => {
                       display: "flex",
                       alignItems: "flex-start",
                       gap: "1rem",
-                      marginBottom: "1rem"
+                      marginBottom: "1rem",
+                      width: "15%",
+                      margin: "0 auto",
+                      justifycontent: "center",
+                      alignitems: "center",
+                      display: "flex"
                     }}
                   >
                     <img
