@@ -22,18 +22,21 @@ const ControleEtapas = () => {
     carregarEtapas();
   }, []);
 
-  const atualizarStatusVotacao = async (id, liberar) => {
-    try {
-      await axios.put(`${API_FESTIVAL}/api/etapas/liberar-votacao/${id}`, {
-        votacao_aberta: liberar,
-      });
-      toast.success(`Votação ${liberar ? "liberada" : "encerrada"} com sucesso.`);
-      carregarEtapas();
-    } catch (err) {
-      toast.error("Erro ao atualizar status da votação.");
-      console.error(err);
-    }
-  };
+ const atualizarStatusVotacao = async (id, liberar) => {
+  console.log("Enviando para o backend:", { id, liberada: liberar });
+  try {
+    await axios.put(`${API_FESTIVAL}/api/etapas/liberar-votacao/${id}`, {
+      liberada: liberar,
+    });
+    toast.success(`Votação ${liberar ? "liberada" : "encerrada"} com sucesso.`);
+    carregarEtapas();
+  } catch (err) {
+    toast.error(err.response?.data?.erro || "Erro ao atualizar status da votação.");
+    console.error(err);
+  }
+};
+
+
 
   return (
     <div className="controle-etapas">
