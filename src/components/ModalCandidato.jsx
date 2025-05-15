@@ -8,6 +8,8 @@ const ModalCandidato = ({ candidato, onClose, onUpdate }) => {
   const [zoomImagem, setZoomImagem] = useState(null);
   const [etapas, setEtapas] = useState([]);
 
+  const tipoUsuario = localStorage.getItem("tipoUsuario"); // 👈 jurado ou admin
+
   useEffect(() => {
     const fetchEtapas = async () => {
       try {
@@ -35,9 +37,9 @@ const ModalCandidato = ({ candidato, onClose, onUpdate }) => {
 
   const handleAvancar = async () => {
     try {
-      const res = await axios.put(`${API_FESTIVAL}/api/etapas/etapa/avancar/${candidato.id}`);
+      await axios.put(`${API_FESTIVAL}/api/etapas/etapa/avancar/${candidato.id}`);
       toast.success("Candidato avançado para a próxima etapa!");
-      if (onUpdate) onUpdate(); // logo após o toast.success
+      if (onUpdate) onUpdate();
       onClose();
     } catch (err) {
       toast.error(err.response?.data?.erro || "Erro ao avançar etapa.");
@@ -46,9 +48,9 @@ const ModalCandidato = ({ candidato, onClose, onUpdate }) => {
 
   const handleRetroceder = async () => {
     try {
-      const res = await axios.put(`${API_FESTIVAL}/api/etapas/etapa/retroceder/${candidato.id}`);
+      await axios.put(`${API_FESTIVAL}/api/etapas/etapa/retroceder/${candidato.id}`);
       toast.success("Candidato retornou para a etapa anterior.");
-      if (onUpdate) onUpdate(); // logo após o toast.success
+      if (onUpdate) onUpdate();
       onClose();
     } catch (err) {
       toast.error(err.response?.data?.erro || "Erro ao retroceder etapa.");
@@ -73,55 +75,69 @@ const ModalCandidato = ({ candidato, onClose, onUpdate }) => {
 
         <div className="dados-candidato">
           <p><strong>Nome:</strong> {candidato.nome}</p>
-          <p><strong>Nome Artístico:</strong> {candidato.nome_artistico}</p>
-          <p><strong>Etapa Atual:</strong> {candidato.nome_etapa || "Não definida"}</p>
-          <p><strong>CPF:</strong> {candidato.cpf}</p>
-          <p><strong>RG:</strong> {candidato.rg}</p>
-          <p><strong>Telefone:</strong> {candidato.telefone}</p>
           <p><strong>Música:</strong> {candidato.musica}</p>
-          <p><strong>Endereço:</strong> {candidato.endereco}</p>
         </div>
 
-        <h3>Documentos</h3>
-        <div className="carrossel-documentos">
-          {documentos.map((doc) => {
-            const arquivo = candidato[doc.campo];
-            if (!arquivo) return null;
+        {/* Exibir mais dados apenas para admin */}
+        {tipoUsuario === "admin" && (
+          <>
+            <div className="dados-candidato">
+              <p><strong>Nome Artístico:</strong> {candidato.nome_artistico}</p>
+              <p><strong>Etapa Atual:</strong> {candidato.nome_etapa || "Não definida"}</p>
+              <p><strong>CPF:</strong> {candidato.cpf}</p>
+              <p><strong>RG:</strong> {candidato.rg}</p>
+              <p><strong>Telefone:</strong> {candidato.telefone}</p>
+              <p><strong>Endereço:</strong> {candidato.endereco}</p>
+            </div>
 
-            const isPDF = arquivo.endsWith(".pdf");
+            <h3>Documentos</h3>
+            <div className="carrossel-documentos">
+              {documentos.map((doc) => {
+                const arquivo = candidato[doc.campo];
+                const isPDF = arquivo?.endsWith(".pdf");
+                const isMissing = !arquivo;
 
-            return (
-              <div className="item-documento" key={doc.campo}>
-                {isPDF ? (
-                  <a
-                    href={`${API_FESTIVAL}/${arquivo}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="pdf-preview-link"
+                return (
+                  <div
+                    className={`item-documento ${isMissing ? "missing" : ""}`}
+                    key={doc.campo}
                   >
-                    <img src="/img/icones/pdf-icon.png" alt="PDF" />
-                  </a>
-                ) : (
-                  <img
-                    src={`${API_FESTIVAL}/${arquivo}`}
-                    alt={doc.nome}
-                    onClick={() => setZoomImagem(`${API_FESTIVAL}/${arquivo}`)}
-                  />
-                )}
-                <span>{doc.nome}</span>
-              </div>
-            );
-          })}
-        </div>
+                    {isMissing ? (
+                      <img src="/img/icones/doc-faltando.png" alt="Documento faltando" />
+                    ) : isPDF ? (
+                      <a
+                        href={`${API_FESTIVAL}/${arquivo}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="pdf-preview-link"
+                      >
+                        <img src="/img/icones/pdf-icon.png" alt="PDF" />
+                      </a>
+                    ) : (
+                      <img
+                        src={`${API_FESTIVAL}/${arquivo}`}
+                        alt={doc.nome}
+                        onClick={() => setZoomImagem(`${API_FESTIVAL}/${arquivo}`)}
+                      />
+                    )}
+                    <span>{doc.nome}</span>
+                  </div>
+                );
+              })}
+            </div>
 
-        {/* <div className="botoes-etapas">
-          <button className="botao-etapa voltar" onClick={handleRetroceder}>
-            ← Retroceder Etapa
-          </button>
-          <button className="botao-etapa avancar" onClick={handleAvancar}>
-            Avançar Etapa →
-          </button>
-        </div> */}
+
+            {/* Botões apenas para admin */}
+            <div className="botoes-etapas">
+              <button className="botao-etapa voltar" onClick={handleRetroceder}>
+                ← Retroceder Etapa
+              </button>
+              <button className="botao-etapa avancar" onClick={handleAvancar}>
+                Avançar Etapa →
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       {zoomImagem && (
