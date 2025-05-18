@@ -180,6 +180,11 @@ const FormularioInscricao = () => {
     });
   
     try {
+      console.log("📦 Enviando para o backend:");
+      for (let [key, value] of data.entries()) {
+        console.log(`🔑 ${key}:`, value);
+      }
+
       await axios.post(`${API_FESTIVAL}/api/inscricoes/inscrever`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
