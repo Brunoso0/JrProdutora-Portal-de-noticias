@@ -11,8 +11,17 @@ module.exports = {
       assert: "assert",
       zlib: "browserify-zlib",
     },
-    configure: {
-      resolve: {
+    configure: (webpackConfig) => {
+      // Remover o CssMinimizerPlugin para evitar erro de barra
+      if (webpackConfig.optimization && webpackConfig.optimization.minimizer) {
+        webpackConfig.optimization.minimizer = webpackConfig.optimization.minimizer.filter(
+          (plugin) => plugin.constructor.name !== 'CssMinimizerPlugin'
+        );
+      }
+
+      // Adicionar seus fallbacks existentes
+      webpackConfig.resolve = {
+        ...(webpackConfig.resolve || {}),
         fallback: {
           stream: require.resolve("stream-browserify"),
           https: require.resolve("https-browserify"),
@@ -22,7 +31,9 @@ module.exports = {
           assert: require.resolve("assert/"),
           zlib: require.resolve("browserify-zlib"),
         },
-      },
+      };
+
+      return webpackConfig;
     },
   },
 };
