@@ -40,7 +40,7 @@ const FormularioInscricao = () => {
   const [cpf, setCPF] = useState("");
   const [telefone, setTelefone] = useState("");
   const [rg, setRG] = useState("");
-  const inscricoesEncerradas = true; // ✅ troque para false se quiser reabrir depois
+  const inscricoesEncerradas = false; // ✅ troque para false se quiser reabrir depois
 
 
   const formRef = useRef(null); // AQUI você declara a referência pro formulário
