@@ -2,8 +2,8 @@ import axios from "axios";
 
 const API_BASE_URL = "https://api.jrprodutora.com.br";
 // const API_BASE_URL = "http://localhost:5000";
-// const API_FESTIVAL = "https://festival.jrprodutora.com.br"
-const API_FESTIVAL = "http://168.90.147.242:5000"
+const API_FESTIVAL = "https://festival.jrprodutora.com.br"
+// const API_FESTIVAL = "http://168.90.147.242:5000"
 // const API_FESTIVAL = "http://localhost:3001"
 
 
