@@ -106,23 +106,12 @@ const FormularioInscricao = () => {
     const form = e.target;
   
     // Validação de campos obrigatórios de texto
-    const camposTexto = [
-      "nome",
-      "nome_artistico",
-      "endereco",
-      "musica",
-      "atividade_profissional_musica",
-      "faz_parte_grupo",
-      "experiencia"
-    ];
-    
-  
-    for (const campo of camposTexto) {
-      if (!form[campo].value) {
-        toast.error(`O campo "${campo.replace(/_/g, " ")}" é obrigatório.`);
-        return;
-      }
+    // ✅ Validação obrigatória apenas dos campos principais
+    if (!form.nome.value || !form.email.value || !cpf || !arquivos.foto || !arquivos["letra_musica_arquivo"]) {
+      toast.error("Preencha todos os campos obrigatórios: nome, email, CPF, foto e letra da música.");
+      return;
     }
+
   
     // Validação de RG, CPF e telefone formatados
     if (!telefone || telefone.length < 14) {
@@ -284,18 +273,18 @@ const FormularioInscricao = () => {
             />
           </div>
 
-          <input type="text" name="endereco" placeholder="ENDEREÇO" className="input-inscricao endereco" />
+          {/* <input type="text" name="endereco" placeholder="ENDEREÇO" className="input-inscricao endereco" /> */}
 
           <div className="linha-dupla-inscricao inscricao-selects">
             <input type="text" name="musica" placeholder="MÚSICA QUE PRETENDE CANTAR" className="input-inscricao musica-interesse" />
-            <select name="atividade_profissional_musica" className="input-inscricao atividade-musical">
+            {/* <select name="atividade_profissional_musica" className="input-inscricao atividade-musical">
               <option value="">ATIVIDADE PROFISSIONAL COM A MÚSICA?</option>
               <option value="true">Sim</option>
               <option value="false">Não</option>
-            </select>
+            </select> */}
           </div>
 
-          <div className="linha-dupla-inscricao">
+          {/* <div className="linha-dupla-inscricao">
             <select name="faz_parte_grupo" className="input-inscricao grupo-banda">
               <option value="">FAZ PARTE DE ALGUM GRUPO/BANDA?</option>
               <option value="true">Sim</option>
@@ -307,10 +296,10 @@ const FormularioInscricao = () => {
               <option value="2-4 anos">2 - 4 anos</option>
               <option value="5+ anos">5 anos ou mais</option>
             </select>
-          </div>
+          </div> */}
 
           {/* Uploads */}
-          <div className="linha-dupla-inscricao upload-inscricao">
+          {/* <div className="linha-dupla-inscricao upload-inscricao">
             <label className="label-inscricao" htmlFor="rg_arquivo">
               <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                 CÓPIA DO RG
@@ -406,7 +395,7 @@ const FormularioInscricao = () => {
               />
             </label>
             {renderPreview("video")}
-          </div>
+          </div> */}
 
           <div className="botao-enviar-inscricao">
             <button type="submit" className="botao-enviar Btn">Enviar</button>
