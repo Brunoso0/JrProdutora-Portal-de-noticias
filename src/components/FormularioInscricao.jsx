@@ -23,14 +23,16 @@ const formatarTelefone = (valor) => {
     .replace(/(\d{4})(\d)/, "$1-$2");
 };
 
-const formatarRG = (valor) => {
-  return valor
-    .replace(/\D/g, "")  // Remove qualquer coisa que não seja número
-    .slice(0, 10)  // Limita a 10 números
-    .replace(/^(\d{2})(\d)/, "$1.$2")  // Adiciona ponto após os dois primeiros números
-    .replace(/(\d{3})(\d)/, "$1.$2")  // Adiciona ponto após os próximos 3 números
-    .replace(/(\d{3})(\d{2})$/, "$1.$2");  // Adiciona ponto nos últimos 2 números
-};
+
+
+// const formatarRG = (valor) => {
+//   return valor
+//     .replace(/\D/g, "")  // Remove qualquer coisa que não seja número
+//     .slice(0, 10)  // Limita a 10 números
+//     .replace(/^(\d{2})(\d)/, "$1.$2")  // Adiciona ponto após os dois primeiros números
+//     .replace(/(\d{3})(\d)/, "$1.$2")  // Adiciona ponto após os próximos 3 números
+//     .replace(/(\d{3})(\d{2})$/, "$1.$2");  // Adiciona ponto nos últimos 2 números
+// };
 
 
 
@@ -39,7 +41,7 @@ const FormularioInscricao = () => {
   const [arquivosSelecionados, setArquivosSelecionados] = useState({});
   const [cpf, setCPF] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [rg, setRG] = useState("");
+  // const [rg, setRG] = useState("");
   const inscricoesEncerradas = false; // ✅ troque para false se quiser reabrir depois
 
 
@@ -107,10 +109,13 @@ const FormularioInscricao = () => {
   
     // Validação de campos obrigatórios de texto
     // ✅ Validação obrigatória apenas dos campos principais
-    if (!form.nome.value || !form.email.value || !cpf || !arquivos.foto || !arquivos["letra_musica_arquivo"]) {
-      toast.error("Preencha todos os campos obrigatórios: nome, email, CPF, foto e letra da música.");
+    if (!form.nome.value || !form.email.value || !cpf) {
+      toast.error("Preencha os campos obrigatórios: nome, email e CPF.");
       return;
     }
+
+
+
 
   
     // Validação de RG, CPF e telefone formatados
@@ -124,30 +129,30 @@ const FormularioInscricao = () => {
       return;
     }
   
-    if (!rg || rg.length < 12) {
-      toast.error("RG inválido ou não preenchido.");
-      return;
-    }
+    // if (!rg || rg.length < 12) {
+    //   toast.error("RG inválido ou não preenchido.");
+    //   return;
+    // }
   
     // Validação de todos os arquivos obrigatórios
-    const arquivosObrigatorios = [
-      "rg_arquivo",
-      "cpf_arquivo",
-      "certidao_municipal_arquivo",
-      "certidao_federal_arquivo",
-      "comprovante_residencia_arquivo",
-      "espelho_conta_bancaria_arquivo",
-      "letra_musica_arquivo"
-    ];
-    // ❌ removendo 'foto' e 'video'
+    // const arquivosObrigatorios = [
+    //   "rg_arquivo",
+    //   "cpf_arquivo",
+    //   "certidao_municipal_arquivo",
+    //   "certidao_federal_arquivo",
+    //   "comprovante_residencia_arquivo",
+    //   "espelho_conta_bancaria_arquivo",
+    //   "letra_musica_arquivo"
+    // ];
+    // // ❌ removendo 'foto' e 'video'
     
   
-    for (const nome of arquivosObrigatorios) {
-      if (!arquivos[nome]) {
-        toast.error(`O campo de arquivo "${nome.replace(/_/g, " ").toUpperCase()}" é obrigatório.`);
-        return;
-      }
-    }
+    // for (const nome of arquivosObrigatorios) {
+    //   if (!arquivos[nome]) {
+    //     toast.error(`O campo de arquivo "${nome.replace(/_/g, " ").toUpperCase()}" é obrigatório.`);
+    //     return;
+    //   }
+    // }
   
     // Se passou por todas as validações
     const data = new FormData();
@@ -155,14 +160,14 @@ const FormularioInscricao = () => {
     data.append("nome_artistico", form.nome_artistico.value);
     data.append("telefone", telefone);
     data.append("email", form.email.value);
-    data.append("endereco", form.endereco.value);
-    data.append("rg", rg);
+    // data.append("endereco", form.endereco.value);
+    // data.append("rg", rg);
     data.append("cpf", cpf);
     data.append("musica", form.musica.value);
-    data.append("atividade_profissional_musica", form.atividade_profissional_musica.value === "true");
-    data.append("tempo_atividade", form.tempo_atividade?.value || "");
-    data.append("faz_parte_grupo", form.faz_parte_grupo.value === "true");
-    data.append("experiencia", form.experiencia.value);
+    // data.append("atividade_profissional_musica", form.atividade_profissional_musica.value === "true");
+    // data.append("tempo_atividade", form.tempo_atividade?.value || "");
+    // data.append("faz_parte_grupo", form.faz_parte_grupo.value === "true");
+    // data.append("experiencia", form.experiencia.value);
   
     Object.entries(arquivos).forEach(([key, file]) => {
       if (file) data.append(key, file);
@@ -181,7 +186,7 @@ const FormularioInscricao = () => {
       toast.success("Inscrição enviada com sucesso!");
       formRef.current.reset();
       setCPF("");
-      setRG("");
+      // setRG("");
       setTelefone("");
       setArquivos({});
       setArquivosSelecionados({});
@@ -255,14 +260,14 @@ const FormularioInscricao = () => {
           </div>
 
           <div className="linha-dupla-inscricao">
-            <input
+            {/* <input
               type="text"
               name="rg"
               placeholder="RG"
               className="input-inscricao rg"
               value={rg}
               onChange={(e) => setRG(formatarRG(e.target.value))}
-            />
+            /> */}
             <input
               type="text"
               name="cpf"
@@ -271,12 +276,12 @@ const FormularioInscricao = () => {
               value={cpf}
               onChange={(e) => setCPF(formatarCPF(e.target.value))}
             />
+            <input type="text" name="musica" placeholder="MÚSICA" className="input-inscricao musica-interesse" />
           </div>
 
           {/* <input type="text" name="endereco" placeholder="ENDEREÇO" className="input-inscricao endereco" /> */}
 
           <div className="linha-dupla-inscricao inscricao-selects">
-            <input type="text" name="musica" placeholder="MÚSICA QUE PRETENDE CANTAR" className="input-inscricao musica-interesse" />
             {/* <select name="atividade_profissional_musica" className="input-inscricao atividade-musical">
               <option value="">ATIVIDADE PROFISSIONAL COM A MÚSICA?</option>
               <option value="true">Sim</option>
