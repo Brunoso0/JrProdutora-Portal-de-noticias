@@ -21,7 +21,7 @@ const ModalAvaliacao = ({ candidato, onClose, onUpdate }) => {
       if (!candidato?.etapa_id) return;
       try {
         const res = await axios.get(`${API_FESTIVAL}/api/etapas/${candidato.etapa_id}`);
-        setVotacaoLiberada(res.data.votacao_liberada === 1);
+        setVotacaoLiberada(parseInt(res.data.votacao_liberada) === 1);
       } catch (err) {
         console.error("Erro ao buscar etapa:", err);
       }
@@ -32,7 +32,7 @@ const ModalAvaliacao = ({ candidato, onClose, onUpdate }) => {
   // 🔍 Busca os critérios se não for a etapa classificatória
   useEffect(() => {
     if (etapaAtual !== "classificatória") {
-      axios.get(`${API_FESTIVAL}/api/etapas/listar`)
+      axios.get(`${API_FESTIVAL}/criterios/listar`)
         .then(res => {
           setCriterios(res.data);
           const notasIniciais = {};
