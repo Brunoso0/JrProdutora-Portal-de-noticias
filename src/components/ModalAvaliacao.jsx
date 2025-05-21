@@ -32,7 +32,7 @@ const ModalAvaliacao = ({ candidato, onClose, onUpdate }) => {
   // 🔍 Busca os critérios se não for a etapa classificatória
   useEffect(() => {
     if (etapaAtual !== "classificatória") {
-      axios.get(`${API_FESTIVAL}/api/criterios/listar`)
+      axios.get(`${API_FESTIVAL}/api/etapas/listar`)
         .then(res => {
           setCriterios(res.data);
           const notasIniciais = {};
