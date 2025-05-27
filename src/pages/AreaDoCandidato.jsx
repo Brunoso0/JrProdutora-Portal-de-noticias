@@ -18,6 +18,8 @@ const AreaDoCandidato = () => {
   const [mostrarPendencias, setMostrarPendencias] = useState(false);
   const [formData, setFormData] = useState({});
   const [previewFoto, setPreviewFoto] = useState(null);
+  const [dadosVotacao, setDadosVotacao] = useState(null);
+  const [etapa, setEtapa] = useState(null);
 
 
   const candidatoId = localStorage.getItem("candidatoId");
@@ -57,6 +59,28 @@ const AreaDoCandidato = () => {
       .then(res => setEtapas(res.data))
       .catch(() => setEtapas([]));
   }, [candidatoId]);
+
+
+  
+useEffect(() => {
+  if (!candidato?.id) return;
+
+  const etapaAtual = candidato.fase_atual?.toLowerCase();
+  setEtapa(etapaAtual);
+
+  if (etapaAtual === "classificado") {
+    setDadosVotacao(null); // limpa dados anteriores para mostrar só a mensagem
+    return;
+  }
+
+  axios
+    .get(`${API_FESTIVAL}/api/dashboard/notas/${candidato.id}/${etapaAtual}`)
+    .then((res) => setDadosVotacao(res.data))
+    .catch(() => setDadosVotacao(null));
+}, [candidato]);
+
+  
+  // ...existing code...
 
   const etapasExibidas = useMemo(() => {
   if (!candidato || !etapas.length) return [];
@@ -179,9 +203,31 @@ useEffect(() => {
   <h3>Tabela de Notas</h3>
 
   {candidato?.fase_atual === "classificado" ? (
-    <div className="mensagem-avaliacao">
-      ✅ Você foi Classificado para a Proxima Fase.
-    </div>
+    <>
+      <div className="mensagem-avaliacao">
+        ✅ Você foi classificado para a próxima fase.
+      </div>
+      {/* Display the classificatória table here if the candidate is "classificado" */}
+      {votosBinarios.length > 0 && (
+        <div className="tabela-notas" style={{ marginTop: "2rem" }}>
+          <div className="cabecalho-tabela">
+            <span>Jurado</span>
+            <span>Status</span>
+          </div>
+          {votosBinarios
+            .filter((v) => v.aprovado === "sim")
+            .map((voto, i) => (
+              <div key={i} className="linha-criterio">
+                <div className="bloco-jurado">
+                  <img src={`${API_FESTIVAL}/${voto.foto_jurado}`} alt="jurado" />
+                  <strong>{voto.nome_jurado}</strong>
+                </div>
+                <div className="notas-linha"><span>✅ Aprovado</span></div>
+              </div>
+            ))}
+        </div>
+      )}
+    </>
   ) : (
     <>
       <p>Escolha a etapa para visualizar:</p>
@@ -220,9 +266,8 @@ useEffect(() => {
                       marginBottom: "1rem",
                       width: "15%",
                       margin: "0 auto",
-                      justifycontent: "center",
-                      alignitems: "center",
-                      display: "flex"
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
                     <img
