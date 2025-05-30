@@ -1,0 +1,14 @@
+.dashboard-votos-publicos {
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.filtro-data {
+  margin-bottom: 20px;
+}
+
+.grafico-container {
+  width: 90%;
+  overflow-x: auto;
+}

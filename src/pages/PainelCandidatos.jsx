@@ -5,6 +5,8 @@ import ControleEtapas from "../components/ControleEtapas";
 import CandidatosFestivalAdmin from "./CandidatosFestivalAdmin";
 import ControleCandidatos from "../components/ControleCandidatos";
 import DashboardFestival from "../components/DashboardFestival";
+import DashboardVotosPublicos from "../components/DashboardVotosPublicos";
+import SelecionarVotacao from "../components/SelecionarVotacao";
 import "../styles/PainelFestival.css";
 
 const PainelCandidatos = () => {
@@ -22,6 +24,10 @@ const PainelCandidatos = () => {
         return <ControleCandidatos />;
       case "dashboard":
         return <DashboardFestival />;
+      case "DashboardVotosPublicos":
+        return <DashboardVotosPublicos />;
+      case "selecionarVotacao":
+        return <SelecionarVotacao />;
       default:
         return <div>Selecione uma opção no menu</div>;
     }
