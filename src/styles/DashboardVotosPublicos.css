@@ -12,3 +12,12 @@
   width: 90%;
   overflow-x: auto;
 }
+
+.grafico-container {
+  padding-bottom: 90px; /* espaço para nomes e fotos */
+}
+
+.dashboard-votos-publicos input[type="date"] {
+  margin-left: 10px;
+  padding: 5px;
+}
