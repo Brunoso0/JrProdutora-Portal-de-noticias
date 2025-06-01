@@ -4,6 +4,7 @@
 @font-face { font-family: Archivo; src: url(../src/fonts/Archivo-Regular.ttf); }
 @font-face { font-family: Archivo; src: url(../src/fonts/Archivo-SemiBold.ttf); }
 @font-face { font-family: HoghFish; src: url(../src/fonts/HogfishDEMO.otf); }
+@font-face { font-family: Thunderhouse; src: url(../src/fonts/thunderhouse.otf)}
 
 /* Adicionando largura e altura ao html e body */
 html, body {
