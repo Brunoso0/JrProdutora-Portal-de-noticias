@@ -1,28 +1,32 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // importa estilos
+import "react-toastify/dist/ReactToastify.css";
 import "../styles/FestivalMusicas.css";
 import FooterFestival from "../components/FooterFestival";
-
 import { API_FESTIVAL } from "../services/api";
+
+Modal.setAppElement("#root");
 
 const FestivalMusica = () => {
   const [candidatos, setCandidatos] = useState([]);
   const [etapaAtual, setEtapaAtual] = useState(null);
-  const [votosFeitos, setVotosFeitos] = useState(() => {
-    const armazenados = localStorage.getItem("votosFeitos");
-    return armazenados ? JSON.parse(armazenados) : [];
+  const [modalAberto, setModalAberto] = useState(false);
+  const [candidatoSelecionado, setCandidatoSelecionado] = useState(null);
+  const [cpf, setCpf] = useState("");
+  const [ultimoVoto, setUltimoVoto] = useState(() => {
+    const salvo = localStorage.getItem("ultimoVotoFestival");
+    return salvo ? Number(salvo) : null;
   });
 
-  // Carrega etapa liberada e candidatos aptos
   useEffect(() => {
     const carregarDados = async () => {
       try {
         const etapaRes = await axios.get(`${API_FESTIVAL}/api/etapas/listar`);
         const etapaLiberada = etapaRes.data.find(e => e.votacao_liberada === 1);
         if (!etapaLiberada) {
-          toast.error("Nenhuma etapa está com votação liberada no momento.");
+          toast.error("Nenhuma etapa está com votação liberada.");
           return;
         }
         setEtapaAtual(etapaLiberada.id);
@@ -30,50 +34,66 @@ const FestivalMusica = () => {
         const candidatosRes = await axios.get(`${API_FESTIVAL}/api/dashboard/aptos-votacao`);
         setCandidatos(candidatosRes.data);
       } catch (err) {
-        console.error("Erro ao carregar dados da votação:", err);
-        toast.error("Erro ao carregar dados. Tente novamente.");
+        toast.error("Erro ao carregar dados.");
       }
     };
 
     carregarDados();
   }, []);
 
-  const registrarVoto = async (candidatoId) => {
-    if (votosFeitos.includes(candidatoId)) {
-      toast.info("Você já votou neste candidato.");
+  const validarCPF = (cpf) => {
+    cpf = cpf.replace(/[^\d]+/g, "");
+    if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+    let soma = 0;
+    for (let i = 0; i < 9; i++) soma += parseInt(cpf.charAt(i)) * (10 - i);
+    let resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(cpf.charAt(9))) return false;
+    soma = 0;
+    for (let i = 0; i < 10; i++) soma += parseInt(cpf.charAt(i)) * (11 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    return resto === parseInt(cpf.charAt(10));
+  };
+
+  const abrirModal = (candidato) => {
+    setCandidatoSelecionado(candidato);
+    setCpf("");
+    setModalAberto(true);
+  };
+
+  const confirmarVoto = async () => {
+    if (!cpf || !validarCPF(cpf)) {
+      toast.warning("Informe um CPF válido.");
       return;
     }
 
-    if (votosFeitos.length >= 13) {
-      toast.warning("Você atingiu o limite de 13 votos por dia.");
+    const agora = Date.now();
+    if (ultimoVoto && agora - ultimoVoto < 30 * 1000) {
+      const restante = Math.ceil((30 * 1000 - (agora - ultimoVoto)) / 1000);
+      toast.info(`Aguarde ${restante}s para votar novamente.`);
       return;
     }
 
     try {
       await axios.post(`${API_FESTIVAL}/api/jurados/votos-populares`, {
-        candidato_id: candidatoId,
+        candidato_id: candidatoSelecionado.id,
         etapa_id: etapaAtual,
+        cpf_votante: cpf.replace(/\D/g, ""),
       });
 
-      const novosVotos = [...votosFeitos, candidatoId];
-      setVotosFeitos(novosVotos);
-      localStorage.setItem("votosFeitos", JSON.stringify(novosVotos));
+      localStorage.setItem("ultimoVotoFestival", agora.toString());
+      setUltimoVoto(agora);
+      setModalAberto(false);
       toast.success("✅ Voto registrado com sucesso!");
     } catch (err) {
-      if (err.response?.status === 429) {
-        toast.warning("Você já realizou os 3 votos permitidos nesta etapa.");
-      } else if (err.response?.status === 403) {
-        toast.error("A etapa ainda não está liberada para votação.");
-      } else {
-        toast.error("Erro ao registrar voto. Tente novamente.");
-      }
+      toast.error("Erro ao registrar voto.");
     }
   };
 
   return (
     <div className="festival-container">
-      <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
-
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
       <h1 className="titulo">VOTE NO SEU <br /> <span className="favorito">FAVORITO (A)</span></h1>
 
       <div className="grid-candidatos">
@@ -85,23 +105,50 @@ const FestivalMusica = () => {
                   ? `${API_FESTIVAL}/${candidato.foto}`
                   : "/img/cantor.png"
               }
-              alt={candidato.nome}
+              alt={candidato.nome_artistico}
               className="foto"
             />
             <h2>{candidato.nome_artistico}</h2>
             <p>{candidato.cidade}</p>
-            <button
-              className="btn-votar"
-              onClick={() => registrarVoto(candidato.id)}
-              disabled={votosFeitos.includes(candidato.id)}
-            >
-              {votosFeitos.includes(candidato.id) ? "✅ Votado" : "Votar"}
+            <button className="btn-votar" onClick={() => abrirModal(candidato)}>
+              Votar
             </button>
           </div>
         ))}
       </div>
 
       <FooterFestival />
+
+      <Modal
+        isOpen={modalAberto}
+        onRequestClose={() => setModalAberto(false)}
+        className="modal-voto"
+        overlayClassName="overlay-voto"
+      >
+        <h2>Confirmar voto em:</h2>
+        <p><strong>{candidatoSelecionado?.nome_artistico}</strong></p>
+
+        <label>Informe seu CPF:</label>
+        <input
+          type="text"
+          value={cpf}
+          placeholder="000.000.000-00"
+          maxLength={14}
+          onChange={(e) =>
+            setCpf(
+              e.target.value
+                .replace(/\D/g, "")
+                .replace(/(\d{3})(\d)/, "$1.$2")
+                .replace(/(\d{3})(\d)/, "$1.$2")
+                .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+            )
+          }
+        />
+        <div className="modal-botoes">
+          <button onClick={confirmarVoto}>Confirmar</button>
+          <button onClick={() => setModalAberto(false)}>Cancelar</button>
+        </div>
+      </Modal>
     </div>
   );
 };

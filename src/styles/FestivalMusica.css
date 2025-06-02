@@ -601,6 +601,67 @@
 }
 
 
+.input-cpf {
+  margin-bottom: 2rem;
+  color: white;
+  text-align: center;
+}
+
+.input-cpf input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+
+.modal-voto {
+  background: white;
+  padding: 2rem;
+  max-width: 400px;
+  margin: auto;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.overlay-voto {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-voto input {
+  margin: 1rem 0;
+  padding: 0.6rem;
+  width: 80%;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.modal-botoes {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+}
+
+.modal-botoes button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #f45c01;
+  color: white;
+  cursor: pointer;
+}
+
+
 /* ================= RESPONSIVO ================= */
 
 @media (min-width: 1920px) {
