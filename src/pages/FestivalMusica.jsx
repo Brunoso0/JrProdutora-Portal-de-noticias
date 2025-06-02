@@ -88,7 +88,7 @@ const FestivalMusica = () => {
               alt={candidato.nome}
               className="foto"
             />
-            <h2>{candidato.nome}</h2>
+            <h2>{candidato.nome_artistico}</h2>
             <p>{candidato.cidade}</p>
             <button
               className="btn-votar"
