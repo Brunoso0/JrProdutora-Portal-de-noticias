@@ -10,7 +10,7 @@
     padding: 2rem;
     display: flex;
     justify-content: center;
-    margin: auto;
+    margin: 0 auto;
     gap: 1rem;
     width: 40%;
   }
@@ -51,7 +51,7 @@
     color: #de21f3;
    }
   
-  .grid-candidatos {
+  .grid-candidatos-festival {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 2rem;

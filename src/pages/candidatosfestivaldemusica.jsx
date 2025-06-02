@@ -125,7 +125,7 @@ const CandidatosFestivalDeMusica = () => {
 
       </div>
 
-      <div className="grid-candidatos">
+      <div className="grid-candidatos-festival">
         {candidatosFiltrados.map((candidato, index) => (
           <div key={index} className="card-candidato">
             {/* Selo da etapa atual */}
