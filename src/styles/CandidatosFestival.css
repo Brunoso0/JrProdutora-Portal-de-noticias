@@ -279,7 +279,7 @@
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 2rem;
   justify-items: center;
-  width: 50%;
+  width: 80%;
   margin: auto;
   padding-bottom: 2rem;
   flex-grow: 1;
@@ -414,6 +414,10 @@
   .candidatos-festival-grid {
     width: 60%;
     max-width: 1600px;
+  }
+
+  .candidatos-festival-grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   }
 }
 
