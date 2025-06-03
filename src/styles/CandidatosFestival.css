@@ -1,163 +1,170 @@
+/* ==================== PADRÃO ANTIGO ==================== */
 .candidatos-container {
-    background-color: #4b0071;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-  }
+  background-color: #4b0071;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
 
-  .filter-candidatos {
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-    gap: 1rem;
-    width: 40%;
-  }
+.filter-candidatos {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  gap: 1rem;
+  width: 40%;
+}
 
-  /* From Uiverse.io by alexruix */ 
-    .input-group-candidatos {
-    position: relative;
-   }
-   
-   .input-candidatos {
-    border: solid 1.5px #9e9e9e;
-    border-radius: 1rem;
-    background: none;
-    padding: 1rem;
-    font-size: 1rem;
-    color: #f5f5f5;
-    transition: border 150ms cubic-bezier(0.4,0,0.2,1);
-   }
-   
-   .user-label {
-    position: absolute;
-    left: 15px;
-    color: #e8e8e8;
-    pointer-events: none;
-    transform: translateY(1rem);
-    transition: 150ms cubic-bezier(0.4,0,0.2,1);
-   }
-   
-   .input-candidatos:focus, input-candidatos:valid {
-    outline: none;
-    border: 1.5px solid #a31ae8;
-   }
-   
-   .input-candidatos:focus ~ label, input-candidatos:valid ~ label {
-    transform: translateY(-50%) scale(0.8);
-    background-color: #212121;
-    padding: 0 .2em;
-    color: #de21f3;
-   }
-  
-  .grid-candidatos-festival {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 2rem;
-    justify-items: center;
-    width: 50%;
-    margin: auto;
-    padding-bottom: 2rem;
-    flex-grow: 1; /* Faz com que o grid cresça para ocupar o espaço restante */
-  }
-  
-  .card-candidato {
-    background: transparent;
-    width: 220px;
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  
-  .imagem-candidato {
-    background-color: #f19c00;
-    height: 150px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-  }
+.input-group-candidatos {
+  position: relative;
+}
 
-  .imagem-candidato img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-  }
-  
-  
-  .rodape-candidato {
-    background-color: white;
-    padding: 0.5rem 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-  }
-  
-  .bolinha-candidato {
-    background-color: white;
-    border: 4px solid #fff;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-  }
-  
-  .nome-candidato {
-    flex-grow: 1;
-    font-weight: bold;
-    font-size: 0.9rem;
-  }
-  
-  .botao-perfil {
-    background-color: #f03e3e;
-    border: none;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    cursor: pointer;
-  }
-  
+.input-candidatos {
+  border: solid 1.5px #9e9e9e;
+  border-radius: 1rem;
+  background: none;
+  padding: 1rem;
+  font-size: 1rem;
+  color: #f5f5f5;
+  transition: border 150ms cubic-bezier(0.4,0,0.2,1);
+}
 
-  .footer-festival-candidatos {
-    position: relative;
-    width: 100%;
-    bottom: 0;
-  }
+.user-label {
+  position: absolute;
+  left: 15px;
+  color: #e8e8e8;
+  pointer-events: none;
+  transform: translateY(1rem);
+  transition: 150ms cubic-bezier(0.4,0,0.2,1);
+}
 
-  .selo-etapa {
-    background-color: #e76d6d;
-    color: #ffffff;
-    font-weight: bold;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 2;
-  }
+.input-candidatos:focus, .input-candidatos:valid {
+  outline: none;
+  border: 1.5px solid #a31ae8;
+}
 
-  .selo-etapa.eliminado {
-    background-color: crimson !important;
-  }
+.input-candidatos:focus ~ label, .input-candidatos:valid ~ label {
+  transform: translateY(-50%) scale(0.8);
+  background-color: #212121;
+  padding: 0 .2em;
+  color: #de21f3;
+}
 
-  .contador-candidatos {
-    color: #FFF;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    padding: 0.5rem 1rem;
-    background-color: #f03e3e;
-    border-radius: 10px;
-    
-  }
+.grid-candidatos-festival {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+  width: 50%;
+  margin: auto;
+  padding-bottom: 2rem;
+  flex-grow: 1;
+}
 
-  .documento-faltando {
+.card-candidato {
+  background: transparent;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  min-width: 0;
+  max-width: 98vw;
+}
+
+.imagem-candidato {
+  background-color: #f19c00;
+  height: 220px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.imagem-candidato img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.rodape-candidato {
+  background-color: white;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  flex-direction: column;
+}
+
+.bolinha-candidato {
+  background-color: white;
+  border: 4px solid #fff;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.nome-candidato {
+  flex-grow: 1;
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.botao-perfil {
+  background-color: #f03e3e;
+  border: none;
+  color: white;
+  padding: 7px 0;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 0.3rem;
+}
+
+.footer-festival-candidatos {
+  position: relative;
+  width: 100%;
+  bottom: 0;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.selo-etapa {
+  background-color: #e76d6d;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+}
+
+.selo-etapa.eliminado {
+  background-color: crimson !important;
+}
+
+.contador-candidatos {
+  color: #FFF;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background-color: #f03e3e;
+  border-radius: 10px;
+  margin: 0.5rem auto 0.5rem auto;
+}
+
+.documento-faltando {
   color: #c0392b;
   background-color: #fdecea;
   padding: 0.5rem 1rem;
@@ -165,8 +172,11 @@
   border-radius: 4px;
   margin-bottom: 0.5rem;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
-
 
 .preview-video {
   width: 100%;
@@ -176,7 +186,6 @@
   border-radius: 8px;
   margin: 1rem 0;
 }
-
 
 .link-pdf {
   display: flex;
@@ -190,6 +199,7 @@
   color: #2c3e50;
   font-weight: 500;
   margin-bottom: 0.5rem;
+  font-size: 0.95rem;
 }
 
 .link-pdf:hover {
@@ -202,79 +212,362 @@
   font-size: 1.2rem;
 }
 
-  
-  
-  
-  .card-candidato {
-    position: relative;
-  }
-
-  .botoes-candidato {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    justify-content: space-between;
-  }
-  
-
-
-
-@media (min-width: 769px) and (max-width: 1024px) {
-    .filter-candidatos {
-        width: 60%;
-    }
-
-    .grid-candidatos {
-        width: 70%;
-    }
-
-    .card-candidato {
-        width: 250px;
-    }
-
-    .imagem-candidato {
-        height: 180px;
-    }
-
-    .nome-candidato {
-        font-size: 1rem;
-    }
-
-    .botao-perfil {
-        font-size: 0.9rem;
-        padding: 6px 10px;
-    }
+.botoes-candidato {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: space-between;
+  width: 100%;
 }
 
+/* ==================== NOVO PADRÃO DE CLASSES ==================== */
+.candidatos-festival-container {
+  background-color: #4b0071;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
 
-  @media (max-width: 768px) {
-    .filter-candidatos {
-      width: 95%;
-    }
+.candidatos-festival-filter {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  gap: 1rem;
+  width: 40%;
+}
 
-    .grid-candidatos {
-      width: 100%;
-    }
+.candidatos-festival-input-group {
+  position: relative;
+}
 
-    .card-candidato {
-      width: 100%;
-    }
+.candidatos-festival-input {
+  border: solid 1.5px #9e9e9e;
+  border-radius: 1rem;
+  background: none;
+  padding: 1rem;
+  font-size: 1rem;
+  color: #f5f5f5;
+  transition: border 150ms cubic-bezier(0.4,0,0.2,1);
+}
 
-    .imagem-candidato {
-      height: 120px;
-    }
+.candidatos-festival-label {
+  position: absolute;
+  left: 15px;
+  color: #e8e8e8;
+  pointer-events: none;
+  transform: translateY(1rem);
+  transition: 150ms cubic-bezier(0.4,0,0.2,1);
+}
 
-    .nome-candidato {
-      font-size: 0.8rem;
-    }
+.candidatos-festival-input:focus, .candidatos-festival-input:valid {
+  outline: none;
+  border: 1.5px solid #a31ae8;
+}
 
-    .botao-perfil {
-      font-size: 0.7rem;
-      padding: 4px 6px;
-    }
+.candidatos-festival-input:focus ~ .candidatos-festival-label, 
+.candidatos-festival-input:valid ~ .candidatos-festival-label {
+  transform: translateY(-50%) scale(0.8);
+  background-color: #212121;
+  padding: 0 .2em;
+  color: #de21f3;
+}
 
-    .cacto-esquerda2 {
-      margin-left: -50% !important;
-      transform: translateX(-100%);
-    }
+.candidatos-festival-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+  width: 50%;
+  margin: auto;
+  padding-bottom: 2rem;
+  flex-grow: 1;
+}
+
+.candidatos-festival-card {
+  background: transparent;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  min-width: 0;
+  max-width: 98vw;
+}
+
+.candidatos-festival-imagem {
+  background-color: #f19c00;
+  height: 220px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.candidatos-festival-imagem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.candidatos-festival-rodape {
+  background-color: white;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  flex-direction: column;
+}
+
+.candidatos-festival-nome {
+  flex-grow: 1;
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.candidatos-festival-botoes {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.candidatos-festival-botao {
+  background-color: #f03e3e;
+  border: none;
+  color: white;
+  padding: 7px 0;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 0.3rem;
+}
+
+.candidatos-festival-footer {
+  position: relative;
+  width: 100%;
+  bottom: 0;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.candidatos-festival-selo-etapa {
+  background-color: #e76d6d;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+}
+
+.candidatos-festival-selo-etapa.eliminado {
+  background-color: crimson !important;
+}
+
+.candidatos-festival-contador {
+  color: #FFF;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background-color: #f03e3e;
+  border-radius: 10px;
+  margin: 0.5rem auto 0.5rem auto;
+}
+
+.candidatos-festival-sem-foto {
+  color: #c0392b;
+  background-color: #fdecea;
+  padding: 0.5rem 1rem;
+  border-left: 4px solid #e74c3c;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* ==================== RESPONSIVIDADE ==================== */
+
+/* Telas grandes */
+@media (min-width: 1200px) {
+  .filter-candidatos,
+  .candidatos-festival-filter {
+    width: 40%;
+    max-width: 700px;
   }
+  .grid-candidatos-festival,
+  .candidatos-festival-grid {
+    width: 60%;
+    max-width: 1600px;
+  }
+}
+
+/* Tablets e notebooks */
+@media (min-width: 769px) and (max-width: 1199px) {
+  .filter-candidatos,
+  .candidatos-festival-filter {
+    width: 60%;
+    max-width: 600px;
+  }
+  .grid-candidatos-festival,
+  .candidatos-festival-grid {
+    width: 80%;
+    max-width: 900px;
+  }
+  .card-candidato,
+  .candidatos-festival-card {
+    width: 300px;
+    min-width: 220px;
+  }
+  .imagem-candidato,
+  .candidatos-festival-imagem {
+    height: 180px;
+    min-height: 150px;
+  }
+  .nome-candidato,
+  .candidatos-festival-nome {
+    font-size: 1rem;
+  }
+  .botao-perfil,
+  .candidatos-festival-botao {
+    font-size: 0.9rem;
+    padding: 6px 10px;
+  }
+}
+
+/* Celulares e telas pequenas */
+@media (max-width: 768px) {
+  .filter-candidatos,
+  .candidatos-festival-filter {
+    width: 98%;
+    padding: 1rem 0.5rem;
+    flex-direction: column;
+    gap: 0.7rem;
+    min-width: 0;
+  }
+  .grid-candidatos-festival,
+  .candidatos-festival-grid {
+    width: 100%;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    max-width: 100vw;
+    min-width: 0;
+  }
+  .card-candidato,
+  .candidatos-festival-card {
+    width: 98vw;
+    max-width: 99vw;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 0.7rem 0.3rem 1rem 0.3rem;
+  }
+  .imagem-candidato,
+  .candidatos-festival-imagem {
+    height: 160px;
+    min-height: 120px;
+    border-radius: 10px 10px 0 0;
+  }
+  .rodape-candidato,
+  .candidatos-festival-rodape {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0.5rem;
+  }
+  .nome-candidato,
+  .candidatos-festival-nome {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  .botao-perfil,
+  .candidatos-festival-botao {
+    font-size: 0.85rem;
+    padding: 7px 0;
+    width: 100%;
+    margin-bottom: 0.3rem;
+  }
+  .botoes-candidato,
+  .candidatos-festival-botoes {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .selo-etapa,
+  .candidatos-festival-selo-etapa {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    top: 7px;
+    left: 7px;
+  }
+  .contador-candidatos,
+  .candidatos-festival-contador {
+    font-size: 1.1rem;
+    padding: 0.3rem 0.7rem;
+    margin: 0.5rem auto 0.5rem auto;
+  }
+}
+
+/* Ajustes extras para telas muito pequenas */
+@media (max-width: 480px) {
+  .filter-candidatos,
+  .candidatos-festival-filter {
+    padding: 0.5rem 0.2rem;
+    gap: 0.5rem;
+  }
+  .card-candidato,
+  .candidatos-festival-card {
+    padding: 0.5rem 0.1rem 0.7rem 0.1rem;
+  }
+  .imagem-candidato,
+  .candidatos-festival-imagem {
+    height: 110px;
+    min-height: 90px;
+  }
+  .nome-candidato,
+  .candidatos-festival-nome {
+    font-size: 0.8rem;
+  }
+  .botao-perfil,
+  .candidatos-festival-botao {
+    font-size: 0.8rem;
+    padding: 6px 0;
+  }
+}
+
+/* Responsividade para elementos utilitários */
+@media (max-width: 600px) {
+  .preview-video {
+    max-width: 98vw;
+    min-width: 0;
+  }
+  .link-pdf {
+    font-size: 0.95rem;
+    padding: 0.4rem;
+    gap: 5px;
+  }
+}
+
+/* Responsividade para rodapé */
+@media (max-width: 768px) {
+  .footer-festival-candidatos,
+  .candidatos-festival-footer {
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+  }
+}

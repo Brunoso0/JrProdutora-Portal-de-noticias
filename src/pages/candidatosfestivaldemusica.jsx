@@ -27,8 +27,12 @@ const CandidatosFestivalDeMusica = () => {
         axios.get(`${API_FESTIVAL}/api/inscricoes/listar`),
         axios.get(`${API_FESTIVAL}/api/etapas/listar`)
       ]);
-      setCandidatos(candidatosRes.data);
+
+      // Apenas os candidatos com votacao = 1
+      const apenasAptos = candidatosRes.data.filter(c => c.votacao === 1);
+      setCandidatos(apenasAptos);
       setEtapas(etapasRes.data);
+
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     }
@@ -81,9 +85,9 @@ const CandidatosFestivalDeMusica = () => {
   }, [candidatos, busca, ordem, etapaSelecionada]);
 
   return (
-    <div className="candidatos-container">
-      <div className="filter-candidatos">
-        <div className="input-group-candidatos">
+    <div className="candidatos-festival-container">
+      <div className="candidatos-festival-filter">
+        <div className="candidatos-festival-input-group">
           <input
             type="text"
             name="text"
@@ -91,15 +95,15 @@ const CandidatosFestivalDeMusica = () => {
             required=""
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="input-candidatos"
+            className="candidatos-festival-input"
           />
-          <label className="user-label">Pesquisar pelo Nome</label>
+          <label className="candidatos-festival-label">Pesquisar pelo Nome</label>
         </div>
 
         <select
           value={ordem}
           onChange={(e) => setOrdem(e.target.value)}
-          className="select-ordem-candidato"
+          className="candidatos-festival-select"
         >
           <option value="envio">Ordem de Envio</option>
           <option value="asc">Nome A → Z</option>
@@ -109,7 +113,7 @@ const CandidatosFestivalDeMusica = () => {
         <select
           value={etapaSelecionada}
           onChange={(e) => setEtapaSelecionada(e.target.value)}
-          className="select-ordem-candidato"
+          className="candidatos-festival-select"
         >
           <option value="todas">Todas as Etapas</option>
           {etapasPresentes.map((etapa, index) => (
@@ -119,39 +123,38 @@ const CandidatosFestivalDeMusica = () => {
           ))}
         </select>
 
-        <div className="contador-candidatos">
+        <div className="candidatos-festival-contador">
           Total: {candidatosFiltrados.length} candidato{candidatosFiltrados.length !== 1 ? "s" : ""}
         </div>
-
       </div>
 
-      <div className="grid-candidatos-festival">
+      <div className="candidatos-festival-grid">
         {candidatosFiltrados.map((candidato, index) => (
-          <div key={index} className="card-candidato">
+          <div key={index} className="candidatos-festival-card">
             {/* Selo da etapa atual */}
             <span
-              className={`selo-etapa ${candidato.eliminado === 1 ? "eliminado" : ""}`}
+              className={`candidatos-festival-selo-etapa ${candidato.eliminado === 1 ? "eliminado" : ""}`}
             >
               {candidato.eliminado === 1 ? "Eliminado" : (candidato.fase_atual || "Sem etapa")}
             </span>
 
             {/* Imagem do candidato */}
-            <div className="imagem-candidato">
+            <div className="candidatos-festival-imagem">
               {candidato.foto ? (
                 <img src={`${API_FESTIVAL}/${candidato.foto}`} alt={candidato.nome} />
               ) : (
-                <div className="sem-foto">Sem foto</div>
+                <div className="candidatos-festival-sem-foto">Sem foto</div>
               )}
             </div>
 
             {/* Rodapé do card */}
-            <div className="rodape-candidato">
-              <span className="nome-candidato">{candidato.nome}</span>
-              <div className="botoes-candidato">
-                <button className="botao-perfil" onClick={() => setCandidatoSelecionado(candidato)}>
+            <div className="candidatos-festival-rodape">
+              <span className="candidatos-festival-nome">{candidato.nome}</span>
+              <div className="candidatos-festival-botoes">
+                <button className="candidatos-festival-botao" onClick={() => setCandidatoSelecionado(candidato)}>
                   Ver Perfil
                 </button>
-                <button className="botao-perfil" onClick={() => setCandidatoParaAvaliar(candidato)}>
+                <button className="candidatos-festival-botao" onClick={() => setCandidatoParaAvaliar(candidato)}>
                   Avaliar
                 </button>
               </div>
@@ -160,7 +163,7 @@ const CandidatosFestivalDeMusica = () => {
         ))}
       </div>
 
-      <div className="footer-festival-candidatos">
+      <div className="candidatos-festival-footer">
         <FooterFestival />
       </div>
 

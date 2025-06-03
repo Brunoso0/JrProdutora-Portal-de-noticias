@@ -1,171 +1,152 @@
+/* Overlay do modal */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
-  .modal-candidato {
-    background: white;
-    padding: 2rem;
-    width: 90%;
-    max-width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
-    border-radius: 10px;
-    position: relative;
-  }
-  
-  .fechar-modal {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #f19c00;
-    border: none;
-    color: white;
-    font-size: 1.2rem;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
-  .video-preview {
-    margin-bottom: 1.5rem;
-  }
-  
-  .dados-candidato p {
-    margin: 0.4rem 0;
-  }
-  
-  .documentos {
-    margin-top: 1rem;
-  }
-  
-  .doc-link {
-    display: block;
-    margin-top: 5px;
-    color: #1a73e8;
-    font-weight: bold;
-    text-decoration: none;
-  }
-  
-  .botao-selecionar {
-    margin-top: 1.5rem;
-    background-color: #f19c00;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 0, 60, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
 
-  .carrossel-documentos {
-    display: flex;
-    overflow-x: auto;
-    gap: 1rem;
-    margin: 1.5rem 0;
-    padding-bottom: 0.5rem;
-  }
-  
-  .item-documento {
-    flex: 0 0 auto;
-    text-align: center;
-    max-width: 180px;
-  }
-  
-  .item-documento img {
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.3s;
-    border: 2px solid #f19c00;
-  }
-  
-  .pdf-preview-link img {
-    object-fit: contain;
-    padding: 0.5rem;
-    background-color: #fff;
-    border-radius: 8px;
-    height: 120px;
-    width: 100%;
-  }
-  
+/* Caixa principal do modal */
+.modal-candidato {
+  background: #fff;
+  padding: 2.2rem 1.5rem 1.5rem 1.5rem;
+  width: 95%;
+  max-width: 540px;
+  max-height: 92vh;
+  overflow-y: auto;
+  border-radius: 18px;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(80, 0, 120, 0.18);
+  animation: modalFadeIn 0.22s;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
 
-  .botoes-etapas {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
-  }
-  
-  .botao-etapa {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .botao-etapa.avancar {
-    background-color: #2e9f3e;
-    color: white;
-  }
-  
-  .botao-etapa.voltar {
-    background-color: #d62f2f;
-    color: white;
-  }
-  
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(30px);}
+  to { opacity: 1; transform: translateY(0);}
+}
 
-  .video-preview video {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
+/* Botão fechar */
+.fechar-modal {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #f19c00;
+  border: none;
+  color: white;
+  font-size: 1.3rem;
+  padding: 7px 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.18s;
+  z-index: 2;
+}
+.fechar-modal:hover {
+  background: #d17a00;
+}
+
+/* Vídeo do candidato adaptável ao tamanho original */
+.video-preview {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.video-preview video {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 320px;
+  object-fit: contain;
   border-radius: 10px;
   margin-bottom: 1rem;
+  background: #222;
+  display: block;
 }
 
+/* Dados do candidato */
+.dados-candidato p {
+  margin: 0.4rem 0;
+  color: #4b0071;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+/* Documentos */
+.documentos {
+  margin-top: 1.2rem;
+}
+
+.doc-link {
+  display: block;
+  margin-top: 5px;
+  color: #1a73e8;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.18s;
+}
+.doc-link:hover {
+  color: #0d47a1;
+  text-decoration: underline;
+}
+
+/* Carrossel de documentos */
 .carrossel-documentos {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: flex-start;
-  margin-top: 1rem;
+  overflow-x: auto;
+  gap: 1rem;
+  margin: 1.5rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #f19c00 #eee;
 }
-
-.item-documento {
-  width: 100px;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #444;
+.carrossel-documentos::-webkit-scrollbar {
+  height: 7px;
+  background: #eee;
 }
-
-.item-documento img {
-  width: 100%;
-  max-height: 100px;
+.carrossel-documentos::-webkit-scrollbar-thumb {
+  background: #f19c00;
   border-radius: 8px;
-  object-fit: cover;
-  cursor: pointer;
-  border: 2px solid #ddd;
-  transition: transform 0.2s ease;
 }
 
-.item-documento img:hover {
-  transform: scale(1.05);
-}
-
-.item-documento.missing {
+/* Item de documento */
+.item-documento {
+  flex: 0 0 auto;
+  text-align: center;
+  max-width: 140px;
+  width: 100px;
+  font-size: 0.93rem;
+  color: #444;
   position: relative;
 }
+.item-documento img,
+.pdf-preview-link img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid #f19c00;
+  background: #faf7ff;
+  transition: transform 0.2s, border 0.2s;
+}
+.item-documento img:hover,
+.pdf-preview-link img:hover {
+  transform: scale(1.06);
+  border: 2px solid #7d27db;
+}
+.item-documento span {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.92rem;
+  color: #333;
+  font-weight: bold;
+}
 
+/* Documento faltando */
 .item-documento.missing::after {
   content: "Faltando";
   position: absolute;
@@ -178,43 +159,138 @@
   font-size: 0.7rem;
 }
 
+/* PDF preview */
 .pdf-preview-link img {
-  width: 100%;
-  max-height: 100px;
   object-fit: contain;
-  background-color: #f4f4f4;
+  padding: 0.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  height: 100px;
+  width: 100%;
   border: 2px solid #999;
-  border-radius: 6px;
 }
 
-  
-  .item-documento img:hover {
-    transform: scale(1.05);
+/* Botão selecionar */
+.botao-selecionar {
+  margin-top: 1.5rem;
+  background-color: #f19c00;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 7px;
+  font-size: 1.08rem;
+  transition: background 0.18s;
+  box-shadow: 0 2px 8px rgba(241,156,0,0.08);
+}
+.botao-selecionar:hover {
+  background: #d17a00;
+} 
+
+/* Botões de etapa */
+.botoes-etapas {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.2rem;
+  gap: 1rem;
+}
+.botao-etapa {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.18s;
+}
+.botao-etapa.avancar {
+  background-color: #2e9f3e;
+  color: white;
+}
+.botao-etapa.voltar {
+  background-color: #d62f2f;
+  color: white;
+}
+.botao-etapa:hover {
+  filter: brightness(1.08);
+}
+
+/* Zoom da imagem */
+.zoom-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.zoom-imagem {
+  max-width: 95vw;
+  max-height: 90vh;
+  border: 4px solid white;
+  border-radius: 10px;
+  background: #fff;
+}
+
+/* Responsividade */
+@media (max-width: 700px) {
+  .modal-candidato {
+    padding: 1.2rem 0.5rem 1rem 0.5rem;
+    max-width: 99vw;
   }
-  
-  .item-documento span {
-    display: block;
-    margin-top: 0.4rem;
-    font-size: 0.9rem;
-    color: #333;
-    font-weight: bold;
+  .video-preview video {
+    max-height: 200px;
   }
-  
-  /* Zoom da imagem */
-  .zoom-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
+  .carrossel-documentos {
+    gap: 0.7rem;
   }
-  
-  .zoom-imagem {
-    max-width: 90vw;
-    max-height: 90vh;
-    border: 4px solid white;
+  .item-documento,
+  .pdf-preview-link {
+    max-width: 90px;
+    width: 90px;
+  }
+  .item-documento img,
+  .pdf-preview-link img {
+    height: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-candidato {
+    padding: 0.7rem 0.2rem 0.7rem 0.2rem;
     border-radius: 10px;
   }
-  
+  .fechar-modal {
+    top: 6px;
+    right: 6px;
+    font-size: 1.1rem;
+    padding: 5px 10px;
+  }
+  .video-preview video {
+    max-height: 120px;
+  }
+  .item-documento,
+  .pdf-preview-link {
+    max-width: 60px;
+    width: 60px;
+  }
+  .item-documento img,
+  .pdf-preview-link img {
+    height: 40px;
+  }
+  .botao-selecionar {
+    font-size: 0.98rem;
+    padding: 10px 0;
+  }
+  .botoes-etapas {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .botao-etapa {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 10px 0;
+  }
+}

@@ -123,7 +123,7 @@ const ModalAvaliacao = ({ candidato, onClose, onUpdate }) => {
   return (
     <div className="modal-avaliacao-overlay">
   <div className="modal-avaliacao-box">
-    <h2>Avaliar {candidato.nome}</h2>
+    <h2>Avaliar {candidato.nome_artistico}</h2>
     <p className="etapa-info">Etapa: <strong>{candidato.fase_atual}</strong></p>
 
     <form className="criterios-form">
