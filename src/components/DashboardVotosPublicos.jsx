@@ -35,7 +35,7 @@ const DashboardVotosPublicos = () => {
 
   return (
     <div className="dashboard-votos-publicos">
-      <h2>📊 Votação Popular - {format(new Date(dataSelecionada), "dd/MM/yyyy")}</h2>
+      <h2>📊 Votação Popular</h2>
 
       <div className="filtro-data">
         <label>Data da votação: </label>
