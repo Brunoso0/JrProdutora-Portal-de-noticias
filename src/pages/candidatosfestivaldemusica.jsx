@@ -141,7 +141,7 @@ const CandidatosFestivalDeMusica = () => {
             {/* Imagem do candidato */}
             <div className="candidatos-festival-imagem">
               {candidato.foto ? (
-                <img src={`${API_FESTIVAL}/${candidato.foto}`} alt={candidato.nome} />
+                <img src={`${API_FESTIVAL}/${candidato.foto}`} alt={candidato.nome_artistico} />
               ) : (
                 <div className="candidatos-festival-sem-foto">Sem foto</div>
               )}
@@ -149,7 +149,7 @@ const CandidatosFestivalDeMusica = () => {
 
             {/* Rodapé do card */}
             <div className="candidatos-festival-rodape">
-              <span className="candidatos-festival-nome">{candidato.nome}</span>
+              <span className="candidatos-festival-nome">{candidato.nome_artistico}</span>
               <div className="candidatos-festival-botoes">
                 <button className="candidatos-festival-botao" onClick={() => setCandidatoSelecionado(candidato)}>
                   Ver Perfil
