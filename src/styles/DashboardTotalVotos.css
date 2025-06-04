@@ -1,0 +1,192 @@
+.dashboard-total-votos {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3.5rem 1.5rem;
+  background: #fafdff;
+  border-radius: 22px;
+  box-shadow: 0 4px 32px #0077ff11;
+  min-height: 100vh;
+}
+
+.dashboard-total-votos h2 {
+  text-align: center;
+  font-size: 2.2rem;
+  margin-bottom: 2.5rem;
+  color: #1a1a1a;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.filtros-votacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  background: #f6f8fa;
+  padding: 1.1rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px #0077ff08;
+}
+
+.filtros-votacao label {
+  font-weight: 600;
+  color: #0077ff;
+  font-size: 1.08rem;
+  margin-right: 0.3rem;
+}
+
+.filtros-votacao input,
+.filtros-votacao select {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1.5px solid #b3c6e0;
+  font-size: 1.08rem;
+  background: #fafdff;
+  transition: border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px #0001;
+}
+.filtros-votacao input:focus,
+.filtros-votacao select:focus {
+  border: 2px solid #0077ff;
+  outline: none;
+  box-shadow: 0 2px 8px #0077ff22;
+}
+
+.box-total {
+  background: linear-gradient(90deg, #e3f0ff 60%, #fafdff 100%);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px #0077ff11;
+  padding: 1.5rem 1rem 1.2rem 1rem;
+  margin: 0 auto 2.2rem auto;
+  max-width: 340px;
+  text-align: center;
+}
+
+.box-total h3 {
+  color: #0077ff;
+  font-size: 1.18rem;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  letter-spacing: 0.5px;
+}
+
+.total-votos-numero {
+  font-size: 2.8rem;
+  color: #1a1a1a;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.grafico-votos-minuto {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px #0077ff11;
+  padding: 1.5rem 1rem 1.2rem 1rem;
+  margin: 0 auto 2.2rem auto;
+  max-width: 700px;
+  text-align: center;
+}
+
+.grafico-votos-minuto h3 {
+  color: #0077ff;
+  font-size: 1.18rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
+.mais-votado-minuto {
+  background: linear-gradient(120deg, #fffbe6 60%, #fff7c2 100%);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px #ffb30022;
+  padding: 1.5rem 1rem 1.2rem 1rem;
+  margin: 0 auto 2.2rem auto;
+  max-width: 400px;
+  text-align: center;
+}
+
+.mais-votado-minuto h3 {
+  color: #ffb300;
+  font-size: 1.18rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
+.card-candidato {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  justify-content: center;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0077ff11;
+  padding: 0.8rem 1rem;
+  margin: 0.7rem auto 0 auto;
+  max-width: 340px;
+}
+
+.card-candidato img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #b3c6e0;
+  background: #f8fafd;
+  box-shadow: 0 2px 8px #b3c6e033;
+}
+
+.card-candidato strong {
+  font-size: 1.13rem;
+  color: #1a1a1a;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.card-candidato p {
+  margin: 0;
+  color: #3a3a3a;
+  font-size: 1.01rem;
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .grafico-votos-minuto {
+    max-width: 98vw;
+    padding: 1rem 0.2rem;
+  }
+  .box-total,
+  .mais-votado-minuto {
+    max-width: 98vw;
+    padding: 1rem 0.2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-total-votos {
+    padding: 1.2rem 0.2rem 2rem 0.2rem;
+  }
+  .filtros-votacao {
+    gap: 0.7rem;
+    padding: 0.7rem 0.2rem;
+  }
+  .box-total,
+  .grafico-votos-minuto,
+  .mais-votado-minuto {
+    padding: 0.8rem 0.2rem;
+    font-size: 0.98rem;
+  }
+  .card-candidato {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.7rem 0.2rem;
+  }
+  .card-candidato img {
+    width: 48px;
+    height: 48px;
+  }
+}

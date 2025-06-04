@@ -13,6 +13,8 @@ const SidebarFestival = ({ setPaginaSelecionada }) => {
         <li onClick={() => setPaginaSelecionada("dashboard")}>Tabela do Candidato</li>
         <li onClick={() => setPaginaSelecionada("DashboardVotosPublicos")}>Votos Publicos</li>
         <li onClick={() => setPaginaSelecionada("selecionarVotacao")}>Liberar Votação publica</li>
+        <li onClick={() => setPaginaSelecionada("AvancosDoDia")}>Avanços do dia</li>
+        <li onClick={() => setPaginaSelecionada("DashboardTotalVotos")}>Resultado do dia </li>
       </ul>
     </div>
   );

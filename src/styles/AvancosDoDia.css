@@ -1,0 +1,133 @@
+.avancos-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2.5rem 1rem;
+  background: #fafdff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px #0001;
+}
+
+.avancos-container h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2.2rem;
+  color: #1a1a1a;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.filtros-avancos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2.2rem;
+  flex-wrap: wrap;
+}
+
+.filtros-avancos label {
+  font-weight: 600;
+  color: #222;
+  font-size: 1.08rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filtros-avancos input,
+.filtros-avancos select {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1.5px solid #b3c6e0;
+  font-size: 1.08rem;
+  background: #fafdff;
+  transition: border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px #0001;
+}
+.filtros-avancos input:focus,
+.filtros-avancos select:focus {
+  border: 2px solid #0077ff;
+  outline: none;
+  box-shadow: 0 2px 8px #0077ff22;
+}
+
+.grid-candidatos-avancos {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card-avanco {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px #0077ff11;
+  padding: 1.2rem 1rem 1rem 1rem;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: 1.5px solid #e3eafc;
+  text-align: center;
+  position: relative;
+}
+
+.card-avanco:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 8px 32px #0077ff22;
+  border-color: #b3c6e0;
+}
+
+.foto-candidato {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  border: 3px solid #b3c6e0;
+  background: #f8fafd;
+  box-shadow: 0 2px 8px #b3c6e033;
+}
+
+.info-candidato {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.info-candidato strong {
+  font-size: 1.12rem;
+  color: #1a1a1a;
+  margin-bottom: 0.2rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.info-candidato p {
+  margin: 0;
+  color: #3a3a3a;
+  font-size: 1.01rem;
+  font-weight: 500;
+}
+
+@media (max-width: 700px) {
+  .avancos-container {
+    padding: 1.2rem 0.2rem;
+  }
+  .grid-candidatos-avancos {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+  }
+  .card-avanco {
+    width: 95vw;
+    max-width: 320px;
+    padding: 1rem 0.5rem;
+  }
+  .foto-candidato {
+    width: 60px;
+    height: 60px;
+  }
+}

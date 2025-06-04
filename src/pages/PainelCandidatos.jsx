@@ -6,7 +6,9 @@ import CandidatosFestivalAdmin from "./CandidatosFestivalAdmin";
 import ControleCandidatos from "../components/ControleCandidatos";
 import DashboardFestival from "../components/DashboardFestival";
 import DashboardVotosPublicos from "../components/DashboardVotosPublicos";
+import DashboardTotalVotos from "../components/DashboardTotalVotos";
 import SelecionarVotacao from "../components/SelecionarVotacao";
+import AvancosDoDia from "../components/AvancosDoDia";
 import "../styles/PainelFestival.css";
 
 const PainelCandidatos = () => {
@@ -28,6 +30,10 @@ const PainelCandidatos = () => {
         return <DashboardVotosPublicos />;
       case "selecionarVotacao":
         return <SelecionarVotacao />;
+      case "AvancosDoDia":
+        return <AvancosDoDia />;
+      case "DashboardTotalVotos":
+        return <DashboardTotalVotos />;
       default:
         return <div>Selecione uma opção no menu</div>;
     }
