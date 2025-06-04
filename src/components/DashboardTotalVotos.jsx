@@ -61,9 +61,10 @@ const DashboardTotalVotos = () => {
 
   useEffect(() => {
     fetchData();
-    const intervalo = setInterval(fetchData, 10000);
-    return () => clearInterval(intervalo);
   }, [etapaSelecionada, dataSelecionada]);
+
+  // Calcula o valor máximo para o eixo Y
+  const maxY = Math.max(...votosPorMinuto.map(item => item.total), 0);
 
   const chartData = {
     labels: votosPorMinuto.map(item => item.hora_minuto),
@@ -74,6 +75,41 @@ const DashboardTotalVotos = () => {
         backgroundColor: "rgba(54, 162, 235, 0.7)",
       },
     ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: { display: false },
+      tooltip: { mode: "index", intersect: false },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        min: 0,
+        max: maxY < 5 ? 5 : undefined,
+        ticks: {
+          stepSize: maxY > 10 ? Math.ceil(maxY / 10) : 1,
+          color: "#222", // <-- cor dos números do eixo Y
+        },
+        title: {
+          display: true,
+          text: "Votos",
+          color: "#222", // cor do título do eixo Y
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Horário (minuto)",
+          color: "#222", // cor do título do eixo X
+        },
+        ticks: {
+          color: "#222", // cor dos números do eixo X
+        },
+      },
+    },
   };
 
   return (
@@ -114,7 +150,7 @@ const DashboardTotalVotos = () => {
           <div className="grafico-votos-minuto">
             <h3>⏱️ Votos por Minuto</h3>
             {votosPorMinuto.length > 0 ? (
-              <Bar data={chartData} />
+              <Bar data={chartData} options={chartOptions} />
             ) : (
               <p>Nenhum voto registrado no intervalo.</p>
             )}

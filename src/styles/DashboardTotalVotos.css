@@ -1,5 +1,5 @@
 .dashboard-total-votos {
-  max-width: 1100px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 2.5rem 1.5rem 3.5rem 1.5rem;
   background: #fafdff;
@@ -19,6 +19,8 @@
 
 .filtros-votacao {
   display: flex;
+  width: 30%;
+  margin: 0 auto;
   align-items: center;
   justify-content: center;
   gap: 1.5rem;
@@ -86,7 +88,7 @@
   box-shadow: 0 2px 12px #0077ff11;
   padding: 1.5rem 1rem 1.2rem 1rem;
   margin: 0 auto 2.2rem auto;
-  max-width: 700px;
+  max-width: 1200px;
   text-align: center;
 }
 

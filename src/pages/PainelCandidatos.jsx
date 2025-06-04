@@ -9,6 +9,7 @@ import DashboardVotosPublicos from "../components/DashboardVotosPublicos";
 import DashboardTotalVotos from "../components/DashboardTotalVotos";
 import SelecionarVotacao from "../components/SelecionarVotacao";
 import AvancosDoDia from "../components/AvancosDoDia";
+import RankingVotos from "../components/RankingVotos";
 import "../styles/PainelFestival.css";
 
 const PainelCandidatos = () => {
@@ -34,6 +35,8 @@ const PainelCandidatos = () => {
         return <AvancosDoDia />;
       case "DashboardTotalVotos":
         return <DashboardTotalVotos />;
+      case "RankingVotos":
+        return <RankingVotos />;
       default:
         return <div>Selecione uma opção no menu</div>;
     }

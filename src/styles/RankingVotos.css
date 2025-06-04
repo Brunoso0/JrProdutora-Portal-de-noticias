@@ -1,0 +1,144 @@
+.ranking-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem 1rem;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.07);
+}
+
+.ranking-container h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #7d27db;
+  font-size: 2rem;
+  letter-spacing: 1px;
+}
+
+.filtros-ranking {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.filtros-ranking label {
+  font-weight: 500;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filtros-ranking select,
+.filtros-ranking input[type="date"] {
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background: #faf8ff;
+  color: #333;
+}
+
+.filtros-ranking button {
+  background: #7d27db;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.filtros-ranking button:hover {
+  background: #5a1fa1;
+}
+
+.grid-ranking {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.card-ranking {
+  background: linear-gradient(135deg, #f3e9ff 0%, #e9e4ff 100%);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px 0 rgba(125,39,219,0.08);
+  padding: 1.5rem 1rem 1rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: box-shadow 0.2s, transform 0.2s;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.card-ranking:hover {
+  box-shadow: 0 6px 24px 0 rgba(125,39,219,0.15);
+  transform: translateY(-4px) scale(1.03);
+}
+
+.numero-ranking {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  background: #7d27db;
+  color: #fff;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px 0 rgba(125,39,219,0.10);
+  z-index: 2;
+}
+
+.card-ranking img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0.7rem 0 0.5rem 0;
+  border: 3px solid #7d27db;
+  background: #fff;
+}
+
+.card-ranking strong {
+  font-size: 1.15rem;
+  color: #5a1fa1;
+  margin-bottom: 0.2rem;
+  display: block;
+}
+
+.card-ranking p {
+  margin: 0.2rem 0;
+  color: #444;
+  font-size: 1rem;
+}
+
+.card-ranking .texto-suspense {
+  color: #b7b7b7;
+  font-size: 1.1rem;
+  font-style: italic;
+  margin-top: 2.5rem;
+}
+
+.card-ranking.revelado {
+  background: linear-gradient(135deg, #fff 0%, #e9e4ff 100%);
+  box-shadow: 0 4px 24px 0 rgba(125,39,219,0.13);
+  cursor: default;
+  animation: fadeIn 0.7s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97);}
+  to { opacity: 1; transform: scale(1);}
+}

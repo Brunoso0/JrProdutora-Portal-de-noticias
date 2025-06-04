@@ -129,13 +129,13 @@ const DashboardFestival = () => {
         })}
 
         {/* Voto Popular */}
-        <div className="linha-jurado voto-popular" style={{ backgroundColor: cores[4] }}>
+        {/* <div className="linha-jurado voto-popular" style={{ backgroundColor: cores[4] }}>
           <div className="celula jurado-nome"><span>Voto Popular</span></div>
           {[...Array(criteriosUnicos.length)].map((_, i) => (
             <div className="celula" key={i}>–</div>
           ))}
           <div className="celula media-final">{dadosVotacao.popular}</div>
-        </div>
+        </div> */}
 
         {/* Média Geral */}
         <div className="linha-titulo media-geral">
@@ -175,13 +175,28 @@ const DashboardFestival = () => {
               <option value="">Selecione um candidato</option>
               {candidatos.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.nome}
+                  {c.nome_artistico || c.nome}
                 </option>
               ))}
             </select>
           </label>
 
-          <button onClick={() => setModoTransmissao(true)}>Modo Transmissão</button>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button onClick={() => setModoTransmissao(true)}>Modo Transmissão</button>
+            <button
+              onClick={() => {
+                // Atualiza os dados manualmente
+                if (etapaSelecionada && candidatoSelecionado) {
+                  axios
+                    .get(`${API_FESTIVAL}/api/dashboard/notas/${candidatoSelecionado}/${etapaSelecionada}`)
+                    .then((res) => setDadosVotacao(res.data));
+                }
+              }}
+              title="Atualizar dados"
+            >
+              🔄 Atualizar
+            </button>
+          </div>
         </div>
       )}
 
