@@ -87,6 +87,20 @@ const DashboardFestival = () => {
     }
   }, [modoTransmissao]);
 
+  // Filtro para corrigir ortografia dos critérios
+  const corrigirCriterio = (criterio) => {
+    const mapa = {
+      afinacao: "Afinação",
+      ritmo: "Ritmo",
+      interpretacao: "Interpretação",
+      autenticidade: "Autenticidade",
+      "diccao/pronuncia": "Dicção/Pronúncia",
+      "presenca de palco": "Presença de Palco",
+      // Adicione outros critérios conforme necessário
+    };
+    return mapa[criterio?.toLowerCase()] || criterio.charAt(0).toUpperCase() + criterio.slice(1);
+  };
+
   const renderBlocosDeVoto = () => {
     if (!dadosVotacao || dadosVotacao.tipo !== "criterios") return null;
 
@@ -102,7 +116,7 @@ const DashboardFestival = () => {
         <div className="linha-titulo">
           <div className="celula jurado-nome">Jurado</div>
           {criteriosUnicos.map((nome, i) => (
-            <div key={i} className="celula">{nome}</div>
+            <div key={i} className="celula">{corrigirCriterio(nome)}</div>
           ))}
           <div className="celula media-final">Média</div>
         </div>

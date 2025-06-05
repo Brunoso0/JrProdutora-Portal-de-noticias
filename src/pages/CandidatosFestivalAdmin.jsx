@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import "../styles/CandidatosFestival.css";
+import "../styles/CandidatosFestivalAdmin.css";
 import ModalEditarCandidato from "../components/ModalEditarCandidato";
 import axios from "axios";
 import { API_FESTIVAL } from "../services/api";
@@ -78,14 +79,14 @@ const CandidatosFestivalAdmin = () => {
   }, [candidatos, busca, ordem, etapaSelecionada]);
 
   return (
-    <div className="candidatos-container">
-      <div className="filter-candidatos">
-        <div className="input-group-candidatos">
+    <div className="candidatos-admin-container">
+      <div className="filter-candidatos-admin">
+        <div className="input-group-candidatos-admin">
           <input
             type="text"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="input-candidatos"
+            className="input-candidatos-admin"
             placeholder="Pesquisar pelo nome"
           />
         </div>
@@ -93,7 +94,7 @@ const CandidatosFestivalAdmin = () => {
         <select
           value={ordem}
           onChange={(e) => setOrdem(e.target.value)}
-          className="select-ordem-candidato"
+          className="select-ordem-candidato-admin"
         >
           <option value="envio">Ordem de Envio</option>
           <option value="asc">Nome A → Z</option>
@@ -103,7 +104,7 @@ const CandidatosFestivalAdmin = () => {
         <select
           value={etapaSelecionada}
           onChange={(e) => setEtapaSelecionada(e.target.value)}
-          className="select-ordem-candidato"
+          className="select-ordem-candidato-admin"
         >
           <option value="todas">Todas as Etapas</option>
           {etapasPresentes.map((etapa, index) => (
@@ -113,33 +114,32 @@ const CandidatosFestivalAdmin = () => {
           ))}
         </select>
 
-        <div className="contador-candidatos">
+        <div className="contador-candidatos-admin">
           Total: {candidatosFiltrados.length} candidato{candidatosFiltrados.length !== 1 ? "s" : ""}
         </div>
-
       </div>
 
-      <div className="grid-candidatos">
+      <div className="grid-candidatos-admin">
         {candidatosFiltrados.map((candidato) => (
-          <div key={candidato.id} className="card-candidato">
+          <div key={candidato.id} className="card-candidato-admin">
             <span
-              className={`selo-etapa ${candidato.eliminado === 1 ? "eliminado" : ""}`}
+              className={`selo-etapa-admin ${candidato.eliminado === 1 ? "eliminado-admin" : ""}`}
             >
               {candidato.eliminado === 1 ? "Eliminado" : (candidato.fase_atual || "Sem etapa")}
             </span>
 
-            <div className="imagem-candidato">
+            <div className="imagem-candidato-admin">
               {candidato.foto ? (
                 <img src={`${API_FESTIVAL}/${candidato.foto}`} alt={candidato.nome} />
               ) : (
-                <div className="sem-foto">Sem foto</div>
+                <div className="sem-foto-admin">Sem foto</div>
               )}
             </div>
 
-            <div className="rodape-candidato">
-              <span className="nome-candidato">{candidato.nome}</span>
+            <div className="rodape-candidato-admin">
+              <span className="nome-candidato-admin">{candidato.nome}</span>
               <button
-                className="botao-perfil"
+                className="botao-perfil-admin"
                 onClick={() => {
                   console.log("🧩 Candidato selecionado:", candidato);
                   setCandidatoSelecionado(candidato);

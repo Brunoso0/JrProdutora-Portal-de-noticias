@@ -1,5 +1,4 @@
 import React from "react";
-import "../styles/LoginFestival.css"; // ou outro CSS compartilhado
 import "../styles/FestivalMusica.css";
 
 const FooterFestival = () => (

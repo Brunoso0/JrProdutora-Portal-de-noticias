@@ -92,13 +92,15 @@ const FestivalMusica = () => {
   };
 
   return (
-    <div className="festival-container">
+    <div className="festival-musica-container">
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
-      <h1 className="titulo">VOTE NO SEU <br /> <span className="favorito">FAVORITO (A)</span></h1>
+      <h1 className="festival-musica-titulo">
+        VOTE NO SEU <br /> <span className="festival-musica-favorito">FAVORITO (A)</span>
+      </h1>
 
-      <div className="grid-candidatos">
+      <div className="festival-musica-grid-candidatos">
         {candidatos.map((candidato) => (
-          <div className="card-candidato" key={candidato.id}>
+          <div className="festival-musica-card-candidato" key={candidato.id}>
             <img
               src={
                 candidato.foto
@@ -106,27 +108,28 @@ const FestivalMusica = () => {
                   : "/img/cantor.png"
               }
               alt={candidato.nome_artistico}
-              className="foto"
+              className="festival-musica-foto"
             />
             <h2>{candidato.nome_artistico}</h2>
             <p>{candidato.cidade}</p>
-            <button className="btn-votar" onClick={() => abrirModal(candidato)}>
+            <button className="festival-musica-btn-votar" onClick={() => abrirModal(candidato)}>
               Votar
             </button>
           </div>
         ))}
       </div>
 
-      <FooterFestival />
 
       <Modal
         isOpen={modalAberto}
         onRequestClose={() => setModalAberto(false)}
-        className="modal-voto"
-        overlayClassName="overlay-voto"
+        className="festival-musica-modal-voto"
+        overlayClassName="festival-musica-overlay-voto"
       >
         <h2>Confirmar voto em:</h2>
-        <p><strong>{candidatoSelecionado?.nome_artistico}</strong></p>
+        <p>
+          <strong>{candidatoSelecionado?.nome_artistico}</strong>
+        </p>
 
         <label>Informe seu CPF:</label>
         <input
@@ -137,18 +140,27 @@ const FestivalMusica = () => {
           onChange={(e) =>
             setCpf(
               e.target.value
-                .replace(/\D/g, "")
-                .replace(/(\d{3})(\d)/, "$1.$2")
-                .replace(/(\d{3})(\d)/, "$1.$2")
-                .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+              .replace(/\D/g, "")
+              .replace(/(\d{3})(\d)/, "$1.$2")
+              .replace(/(\d{3})(\d)/, "$1.$2")
+              .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
             )
           }
         />
-        <div className="modal-botoes">
+        <div className="festival-musica-modal-botoes">
           <button onClick={confirmarVoto}>Confirmar</button>
           <button onClick={() => setModalAberto(false)}>Cancelar</button>
         </div>
       </Modal>
+        <footer className="footer-festival-cand">
+        <div className="cactus-img cactus-candidatos">
+          <img src="/img/cacto-direita.png" className="cacto-direita cacto-direita2" alt="Cacto à direita" />
+          <img src="/img/cacto-esquerda.png" className="cacto-esquerda cacto-esquerda2" alt="Cacto à esquerda" />
+        </div>
+        <div className="footer-festival-logo-cand">
+          <img src="/img/fundo-festival.png" alt="Decoração de corda no rodapé" />
+        </div>
+      </footer>
     </div>
   );
 };

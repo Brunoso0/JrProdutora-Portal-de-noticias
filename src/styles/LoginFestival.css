@@ -210,6 +210,7 @@
   .cactus-img {
     flex-direction: column;
     gap: 1rem;
+    display: none;
   }
 
   .cacto-direita,

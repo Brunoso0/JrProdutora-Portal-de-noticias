@@ -5,6 +5,7 @@
   min-height: 100vh;
   color: #fff;
   font-family: 'Segoe UI', sans-serif;
+  font-size: 1.12rem;
 }
 
 /* 🧭 Título e subtítulo */
@@ -61,6 +62,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: 0.2s ease;
+  font-size: 1.08rem;
 }
 
 .filtros-dashboard button:hover {
@@ -93,6 +95,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 1.18rem;
 }
 
 .janela-flutuante .barra-titulo button {
@@ -107,15 +110,15 @@
   padding: 1rem;
   max-height: calc(90vh - 50px);
   overflow-y: auto;
+  font-size: 1.08rem;
 }
-
-
 
 .blocos-votacao {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   margin-top: 2rem;
+  font-size: 1.08rem;
 }
 
 .bloco-jurado {
@@ -135,6 +138,7 @@
   min-width: 150px;
   font-weight: bold;
   color: white;
+  font-size: 1.13rem;
 }
 
 .jurado-info img {
@@ -150,6 +154,7 @@
   padding: 1rem;
   gap: 1rem;
   justify-content: space-evenly;
+  font-size: 1.08rem;
 }
 
 .nota {
@@ -158,7 +163,7 @@
   border-radius: 6px;
   text-align: center;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   color: white;
   padding: 0.5rem 0;
 }
@@ -166,7 +171,6 @@
 .voto-popular .jurado-info {
   justify-content: center;
 }
-
 
 .tabela-votos {
   display: flex;
@@ -180,6 +184,7 @@
   border-radius: 8px;
   margin-bottom: 0.5rem;
   overflow: hidden;
+  font-size: 1.13rem;
 }
 
 .linha-titulo {
@@ -204,6 +209,7 @@
   background-color: rgba(255,255,255,0.15);
   color: white;
   font-weight: 500;
+  font-size: 1.13rem;
 }
 
 .jurado-nome {
@@ -211,6 +217,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  font-size: 1.13rem;
 }
 
 .jurado-nome img {
@@ -223,4 +230,5 @@
 .media-final {
   font-weight: bold;
   background-color: rgba(0, 0, 0, 0.2);
+  font-size: 1.15rem;
 }
