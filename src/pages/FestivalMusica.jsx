@@ -19,6 +19,7 @@ const FestivalMusica = () => {
     const salvo = localStorage.getItem("ultimoVotoFestival");
     return salvo ? Number(salvo) : null;
   });
+  const [votacaoLiberada, setVotacaoLiberada] = useState(true);
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -26,14 +27,19 @@ const FestivalMusica = () => {
         const etapaRes = await axios.get(`${API_FESTIVAL}/api/etapas/listar`);
         const etapaLiberada = etapaRes.data.find(e => e.votacao_liberada === 1);
         if (!etapaLiberada) {
-          toast.error("Nenhuma etapa está com votação liberada.");
+          setVotacaoLiberada(false);
+          setEtapaAtual(null);
+          setCandidatos([]);
+          toast.error("Aguarde a votação ser liberada.");
           return;
         }
+        setVotacaoLiberada(true);
         setEtapaAtual(etapaLiberada.id);
 
         const candidatosRes = await axios.get(`${API_FESTIVAL}/api/dashboard/aptos-votacao`);
         setCandidatos(candidatosRes.data);
       } catch (err) {
+        setVotacaoLiberada(false);
         toast.error("Erro ao carregar dados.");
       }
     };
@@ -94,31 +100,38 @@ const FestivalMusica = () => {
   return (
     <div className="festival-musica-container">
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
-      <h1 className="festival-musica-titulo">
-        VOTE NO SEU <br /> <span className="festival-musica-favorito">FAVORITO (A)</span>
-      </h1>
+      <div className="festival-musica-content">
+        <h1 className="festival-musica-titulo">
+          VOTE NO SEU <br /> <span className="festival-musica-favorito">FAVORITO (A)</span>
+        </h1>
 
-      <div className="festival-musica-grid-candidatos">
-        {candidatos.map((candidato) => (
-          <div className="festival-musica-card-candidato" key={candidato.id}>
-            <img
-              src={
-                candidato.foto
-                  ? `${API_FESTIVAL}/${candidato.foto}`
-                  : "/img/cantor.png"
-              }
-              alt={candidato.nome_artistico}
-              className="festival-musica-foto"
-            />
-            <h2>{candidato.nome_artistico}</h2>
-            <p>{candidato.cidade}</p>
-            <button className="festival-musica-btn-votar" onClick={() => abrirModal(candidato)}>
-              Votar
-            </button>
+        {!votacaoLiberada ? (
+          <div style={{ textAlign: "center", margin: "2rem 0", fontWeight: "bold", fontSize: "1.2rem", color: "#c0392b" }}>
+            A votação se encontra fechada no momento, tente novamente mais tarde.
           </div>
-        ))}
+        ) : (
+          <div className="festival-musica-grid-candidatos">
+            {candidatos.map((candidato) => (
+              <div className="festival-musica-card-candidato" key={candidato.id}>
+                <img
+                  src={
+                    candidato.foto
+                      ? `${API_FESTIVAL}/${candidato.foto}`
+                      : "/img/cantor.png"
+                  }
+                  alt={candidato.nome_artistico}
+                  className="festival-musica-foto"
+                />
+                <h2>{candidato.nome_artistico}</h2>
+                <p>{candidato.cidade}</p>
+                <button className="festival-musica-btn-votar" onClick={() => abrirModal(candidato)}>
+                  Votar
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-
 
       <Modal
         isOpen={modalAberto}
@@ -140,10 +153,10 @@ const FestivalMusica = () => {
           onChange={(e) =>
             setCpf(
               e.target.value
-              .replace(/\D/g, "")
-              .replace(/(\d{3})(\d)/, "$1.$2")
-              .replace(/(\d{3})(\d)/, "$1.$2")
-              .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+                .replace(/\D/g, "")
+                .replace(/(\d{3})(\d)/, "$1.$2")
+                .replace(/(\d{3})(\d)/, "$1.$2")
+                .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
             )
           }
         />
@@ -152,7 +165,7 @@ const FestivalMusica = () => {
           <button onClick={() => setModalAberto(false)}>Cancelar</button>
         </div>
       </Modal>
-        <footer className="footer-festival-cand">
+      <footer className="footer-festival-cand">
         <div className="cactus-img cactus-candidatos">
           <img src="/img/cacto-direita.png" className="cacto-direita cacto-direita2" alt="Cacto à direita" />
           <img src="/img/cacto-esquerda.png" className="cacto-esquerda cacto-esquerda2" alt="Cacto à esquerda" />

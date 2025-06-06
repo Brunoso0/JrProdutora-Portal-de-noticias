@@ -315,36 +315,55 @@ useEffect(() => {
         </>
       ) : (
         notas?.jurados?.length > 0 ? (
-          <div className="tabela-notas">
-            <div className="cabecalho-tabela">
-              <span>Afinação</span>
-              <span>Presença de Palco</span>
-              <span>Melodia e Harmonia</span>
-              <span>Ritmo</span>
-              <span>Autenticidade</span>
-              <span>Dição/Pronúncia</span>
-              <span>Nota Total</span>
+          <div className="tabela-votos">
+            <div className="linha-titulo">
+              <div className="celula jurado-nome">Jurado</div>
+              {notas.jurados[0]?.criterios.map((c, i) => (
+                <div key={i} className="celula">
+                  {c.criterio.charAt(0).toUpperCase() + c.criterio.slice(1)}
+                </div>
+              ))}
+              <div className="celula media-final">Média</div>
             </div>
-            {notas.jurados.map((nota, i) => (
-              <div key={i} className={`linha-criterio jurado${i + 1}`}>
-                <div className="bloco-jurado">
-                  <img src={`${API_FESTIVAL}/${nota.foto_jurado}`} alt="jurado" />
-                  <strong>{nota.nome_jurado}</strong>
-                </div>
-                <div className="notas-linha">
-                  {nota.criterios.map((c, j) => (
-                    <span key={j}>{c.criterio}: {c.nota}</span>
+
+            {notas.jurados.map((jurado, i) => {
+              const total = jurado.criterios.reduce((soma, c) => soma + Number(c.nota || 0), 0);
+              const media = total / jurado.criterios.length;
+
+              return (
+                <div key={i} className="linha-jurado">
+                  <div className="celula jurado-nome">
+                    <img
+                      src={`${API_FESTIVAL}/${jurado.foto_jurado}`}
+                      alt="jurado"
+                      style={{ width: "40px", borderRadius: "50%", marginRight: "8px" }}
+                    />
+                    <span>{jurado.nome_jurado}</span>
+                  </div>
+                  {jurado.criterios.map((c, j) => (
+                    <div key={j} className="celula">{c.nota ?? "--"}</div>
                   ))}
-                  <strong>{nota.total}</strong>
+                  <div className="celula media-final">{media.toFixed(1)}</div>
                 </div>
+              );
+            })}
+
+            <div className="linha-titulo media-geral">
+              <div className="celula jurado-nome"><strong>MÉDIA GERAL</strong></div>
+              {[...Array(notas.jurados[0]?.criterios.length || 0)].map((_, i) => (
+                <div className="celula" key={i}>–</div>
+              ))}
+              <div className="celula media-final">
+                <strong>
+                  {(
+                    notas.jurados.reduce((soma, jurado) =>
+                      soma + jurado.criterios.reduce((s, c) => s + Number(c.nota || 0), 0) / jurado.criterios.length,
+                      0
+                    ) / notas.jurados.length
+                  ).toFixed(1)}
+                </strong>
               </div>
-            ))}
-            {notas.popular !== undefined && (
-              <div className="linha-criterio popular">
-                <div className="bloco-jurado"><strong>Voto Popular</strong></div>
-                <div className="notas-linha"><span>{notas.popular} votos</span></div>
-              </div>
-            )}
+            </div>
           </div>
         ) : (
           <p style={{ marginTop: "2rem", fontWeight: "bold", color: "#7d27db" }}>
