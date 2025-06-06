@@ -27,7 +27,7 @@ const SelecionarVotacao = () => {
   if (valor === 1) {
     if (liberadosAtuais.includes(id)) return; // já está liberado
 
-    if (liberadosAtuais.length >= 13) {
+    if (liberadosAtuais.length >= 16) {
       toast.error("Limite máximo de 13 candidatos liberados para votação por dia atingido.");
       return;
     }
