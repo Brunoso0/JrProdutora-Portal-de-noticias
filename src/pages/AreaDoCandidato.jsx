@@ -21,6 +21,7 @@ const AreaDoCandidato = () => {
   const [dadosVotacao, setDadosVotacao] = useState(null);
   const [etapa, setEtapa] = useState(null);
 
+  const coresJurados = ["#9B5DE5", "#F15BB5", "#FBB13C", "#00BBF9", "#46BFDB"];
 
   const candidatoId = localStorage.getItem("candidatoId");
 
@@ -97,14 +98,31 @@ useEffect(() => {
 
 
 useEffect(() => {
-  if (etapas.length && candidato) {
-    const etapasOrdenadas = [...etapas].sort((a, b) => a.id - b.id);
-    const indexAtual = etapasOrdenadas.findIndex(e => e.nome === candidato.fase_atual);
+  if (!etapas.length || !candidato) return;
 
-    if (indexAtual >= 0) {
-      const ultimaEtapaId = etapasOrdenadas[Math.min(indexAtual, etapasOrdenadas.length - 1)].id;
-      setEtapaSelecionada(String(ultimaEtapaId));
+  // Ordena as etapas por ID
+  const etapasOrdenadas = [...etapas].sort((a, b) => a.id - b.id);
+  const etapaFinal = etapasOrdenadas[etapasOrdenadas.length - 1];
+
+  if (
+    etapaFinal &&
+    candidato.fase_atual &&
+    etapaFinal.nome.toLowerCase() === candidato.fase_atual.toLowerCase()
+  ) {
+    // Se existir "segunda etapa", seleciona ela
+    const segundaEtapa = etapasOrdenadas.find(e => e.nome.toLowerCase().includes("segunda etapa"));
+    if (segundaEtapa) {
+      setEtapaSelecionada(String(segundaEtapa.id));
+      return;
     }
+  }
+
+  // Caso contrário, seleciona a etapa atual normalmente
+  const etapaAtual = etapasOrdenadas.find(e => e.nome === candidato.fase_atual);
+  if (etapaAtual) {
+    setEtapaSelecionada(String(etapaAtual.id));
+  } else if (etapasOrdenadas.length > 0) {
+    setEtapaSelecionada(String(etapasOrdenadas[0].id));
   }
 }, [etapas, candidato]);
 
@@ -130,6 +148,25 @@ useEffect(() => {
     });
 }, [etapaSelecionada, candidatoId]);
 
+useEffect(() => {
+  if (!etapaSelecionada || !candidatoId) return;
+
+  const etapaIdNum = Number(etapaSelecionada);
+  const candidatoIdNum = Number(candidatoId);
+
+  axios
+    .get(`${API_FESTIVAL}/api/dashboard/notas/${candidatoIdNum}/${etapaIdNum}`)
+    .then((res) => {
+      console.log("📊 VOTOS DOS JURADOS (CRITÉRIOS):", res.data);
+      setNotas(res.data);
+    })
+    .catch((err) => {
+      console.error("❌ Erro ao buscar votos dos jurados:", err);
+      setNotas(null);
+    });
+}, [etapaSelecionada, candidatoId]);
+
+
 
   const abrirModal = () => setModalAberto(true);
   const fecharModal = () => {
@@ -138,6 +175,23 @@ useEffect(() => {
   };
 
   const etapaSelecionadaNome = etapas.find(e => e.id === Number(etapaSelecionada))?.nome;
+
+  const corrigirCriterio = (criterio) => {
+  const mapa = {
+    afinacao: "Afinação",
+    ritmo: "Ritmo",
+    interpretacao: "Interpretação",
+    autenticidade: "Autenticidade",
+    "diccao/pronuncia": "Dicção/Pronúncia",
+    "presenca de palco": "Presença de Palco",
+    // Adicione mais se necessário
+  };
+
+  if (!criterio) return "";
+  const chave = criterio.toLowerCase();
+  return mapa[chave] || criterio.charAt(0).toUpperCase() + criterio.slice(1);
+};
+
 
 
   const handleInputChange = (e) => {
@@ -237,7 +291,9 @@ useEffect(() => {
         onChange={(e) => setEtapaSelecionada(e.target.value)}
       >
         {etapasExibidas
-          .filter(etapa => etapa.nome.toLowerCase() !== "classificado")
+          .filter(etapa =>
+            !["classificatoria", "classificados", "primeira fase"].includes(etapa.nome.toLowerCase())
+          )
           .map((etapa) => (
             <option key={etapa.id} value={etapa.id}>{etapa.nome}</option>
           ))}
@@ -309,21 +365,22 @@ useEffect(() => {
             </div>
           ) : (
             <p style={{ marginTop: "2rem", fontWeight: "bold", color: "#7d27db" }}>
-              Você ainda está sendo avaliado, aguarde...
+              Você ainda será avaliado, aguarde...
             </p>
           )}
         </>
       ) : (
         notas?.jurados?.length > 0 ? (
-          <div className="tabela-votos">
-            <div className="linha-titulo">
-              <div className="celula jurado-nome">Jurado</div>
+          <div className="tabela-candidato-votos">
+            <div className="tabela-candidato-linha-titulo">
+              <div className="tabela-candidato-celula tabela-candidato-jurado-nome">Jurado</div>
               {notas.jurados[0]?.criterios.map((c, i) => (
-                <div key={i} className="celula">
-                  {c.criterio.charAt(0).toUpperCase() + c.criterio.slice(1)}
+                <div key={i} className="tabela-candidato-celula">
+                  {corrigirCriterio(c.criterio)}
+
                 </div>
               ))}
-              <div className="celula media-final">Média</div>
+              <div className="tabela-candidato-celula tabela-candidato-media-final">Média</div>
             </div>
 
             {notas.jurados.map((jurado, i) => {
@@ -331,29 +388,43 @@ useEffect(() => {
               const media = total / jurado.criterios.length;
 
               return (
-                <div key={i} className="linha-jurado">
-                  <div className="celula jurado-nome">
-                    <img
+                <div
+                  key={i}
+                  className="tabela-candidato-linha-jurado"
+                  style={{ backgroundColor: coresJurados[i % coresJurados.length] }}
+                >
+
+                  <div className="tabela-candidato-celula tabela-candidato-jurado-nome">
+                    {/* <img
                       src={`${API_FESTIVAL}/${jurado.foto_jurado}`}
                       alt="jurado"
                       style={{ width: "40px", borderRadius: "50%", marginRight: "8px" }}
-                    />
+                    /> */}
                     <span>{jurado.nome_jurado}</span>
                   </div>
                   {jurado.criterios.map((c, j) => (
-                    <div key={j} className="celula">{c.nota ?? "--"}</div>
+                    <div key={j} className="tabela-candidato-celula" style={{ position: "relative" }}>
+                    {c.nota ?? "--"}
+                    {c.justificativa?.trim() && (
+                      <span className="tooltip-icone">
+                        ⓘ
+                        <div className="tooltip-conteudo">{c.justificativa}</div>
+                      </span>
+                    )}
+                  </div>
+
                   ))}
-                  <div className="celula media-final">{media.toFixed(1)}</div>
+                  <div className="tabela-candidato-celula tabela-candidato-media-final">{media.toFixed(1)}</div>
                 </div>
               );
             })}
 
-            <div className="linha-titulo media-geral">
-              <div className="celula jurado-nome"><strong>MÉDIA GERAL</strong></div>
+            <div className="tabela-candidato-linha-titulo tabela-candidato-media-geral">
+              <div className="tabela-candidato-celula tabela-candidato-jurado-nome"><strong>MÉDIA GERAL</strong></div>
               {[...Array(notas.jurados[0]?.criterios.length || 0)].map((_, i) => (
-                <div className="celula" key={i}>–</div>
+                <div className="tabela-candidato-celula" key={i}>–</div>
               ))}
-              <div className="celula media-final">
+              <div className="tabela-candidato-celula tabela-candidato-media-final">
                 <strong>
                   {(
                     notas.jurados.reduce((soma, jurado) =>
@@ -367,9 +438,11 @@ useEffect(() => {
           </div>
         ) : (
           <p style={{ marginTop: "2rem", fontWeight: "bold", color: "#7d27db" }}>
-            Você ainda está sendo avaliado, aguarde...
+            Você ainda será avaliado(a), aguarde...
           </p>
         )
+
+
       )}
     </>
   )}

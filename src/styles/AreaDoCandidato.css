@@ -1,96 +1,102 @@
+/* ====== GERAL ====== */
 .area-candidato-container {
-    background-color: #fce9db;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .area-candidato-header {
-    background: linear-gradient(to right, #a640d6, #7d27db);
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2rem 4rem;
-    border-bottom-left-radius: 30px;
-    border-bottom-right-radius: 30px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  .perfil {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  
-  .foto-perfil {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid white;
-  }
-  
-  .perfil h2 {
-    font-size: 1.8rem;
-    margin: 0;
-  }
-  
-  .perfil p {
-    font-size: 1rem;
-    margin: 0;
-    opacity: 0.9;
-  }
-  
-  .botao-atualizar {
-    background: #66aaff;
-    border: none;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 15px;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    transition: 0.3s ease;
-  }
-  
-  .botao-atualizar:hover {
-    background: #4b93e6;
-  }
-  
-  .area-candidato-main {
-    padding: 3rem 2rem;
-    text-align: center;
-  }
-  
-  .area-candidato-main h3 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .select-etapa {
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    font-size: 1rem;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    background-color: white;
-    width: 300px;  
-  }
-  
-  .tabela-notas {
-    margin-top: 2rem;
-    background: #e2c4f7;
-    border-radius: 20px;
-    padding: 2rem;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  }
-  
+  background-color: #fce9db;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-  .cabecalho-tabela {
+.area-candidato-header {
+  background: linear-gradient(to right, #a640d6, #7d27db);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 4rem;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.perfil {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.foto-perfil {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid white;
+}
+
+.perfil h2 {
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.perfil p {
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.botao-atualizar {
+  background: #66aaff;
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 15px;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.botao-atualizar:hover {
+  background: #4b93e6;
+}
+
+.alerta-pendencia {
+  background-color: #ff6961 !important;
+  animation: pulse 1.5s infinite;
+}
+
+.area-candidato-main {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.area-candidato-main h3 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.select-etapa {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: white;
+  width: 300px;
+}
+
+/* ====== TABELA NOTAS BINÁRIAS ====== */
+.tabela-notas {
+  margin-top: 2rem;
+  background: #e2c4f7;
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.cabecalho-tabela {
   display: flex;
   justify-content: space-between;
   font-weight: bold;
@@ -167,7 +173,7 @@
   font-weight: bold;
 }
 
-/* Modal Overlay */
+/* ====== MODAL ====== */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -181,7 +187,6 @@
   z-index: 999;
 }
 
-/* Modal Container */
 .modal-content-usuario {
   background-color: #fff;
   padding: 2rem;
@@ -258,11 +263,6 @@
   margin-top: 0.5rem;
 }
 
-.alerta-pendencia {
-  background-color: #ff6961 !important;
-  animation: pulse 1.5s infinite;
-}
-
 .atualizar-foto-container {
   margin-bottom: 1rem;
 }
@@ -282,9 +282,7 @@
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
 
-
-
-/* Pendências */
+/* ====== PENDÊNCIAS ====== */
 .modal-content-usuario ul {
   margin-top: 0.8rem;
   padding-left: 1.2rem;
@@ -301,7 +299,123 @@
   font-weight: bold;
 }
 
-/* Animações */
+/* ====== TABELA DETALHADA ====== */
+.tabela-candidato-votos {
+    display: flex;
+    flex-direction: column;
+    margin: 2rem auto;
+    width: 100%;
+    min-width: 320px;
+    max-width: 1200px;
+    background: none;
+    box-shadow: none;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.tabela-candidato-linha-titulo,
+.tabela-candidato-linha-jurado {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  position: relative;
+  font-size: 1.13rem;
+  z-index: 1;
+}
+
+.tabela-candidato-linha-titulo {
+  background: #333;
+  color: white;
+  font-weight: bold;
+}
+
+.tabela-candidato-media-geral {
+  background-color: #000;
+  color: white;
+}
+
+.tabela-candidato-celula {
+  flex: 1;
+  text-align: center;
+  padding: 0.6rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-weight: 500;
+  font-size: 1.13rem;
+  word-break: break-word;
+  min-width: 70px;
+}
+
+.tabela-candidato-jurado-nome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.13rem;
+}
+
+.tabela-candidato-jurado-nome img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.tabela-candidato-media-final {
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.2);
+  font-size: 1.15rem;
+}
+
+/* ====== TOOLTIP ====== */
+.tooltip-icone {
+  position: relative;
+  display: inline-block;
+  margin-left: 6px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.tooltip-conteudo {
+  visibility: hidden;
+  opacity: 0;
+  min-width: 180px;
+  max-width: 260px;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  border-radius: 8px;
+  padding: 0.6rem;
+  position: absolute;
+  z-index: 9999;
+  bottom: 140%;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.2s ease;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.tooltip-icone:hover .tooltip-conteudo {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* ====== SCROLLBAR ====== */
+.tabela-candidato-votos::-webkit-scrollbar {
+  height: 8px;
+}
+.tabela-candidato-votos::-webkit-scrollbar-thumb {
+  background: #d1baff;
+  border-radius: 8px;
+}
+
+/* ====== ANIMAÇÕES ====== */
 @keyframes fadeIn {
   from {
     transform: scale(0.95);
@@ -325,125 +439,144 @@
   }
 }
 
-/* Responsivo */
-@media (max-width: 500px) {
-  .modal-content-usuario {
-    padding: 1rem;
-    border-radius: 15px;
-  }
+/* ====== RESPONSIVIDADE ====== */
 
-  .modal-content-usuario h3 {
-    font-size: 1.3rem;
+@media (max-width: 1600px) {
+  .tabela-candidato-votos {
+    width: 80%;
   }
-
-  .modal-content-usuario input,
-  .modal-content-usuario textarea {
-    font-size: 0.95rem;
+  .tabela-candidato-linha-titulo,
+  .tabela-candidato-linha-jurado {
+    min-width: 1400px; /* Mantém largura horizontal para scroll */
   }
 }
 
-
-
-
-
-
-/* Responsividade geral */
+/* Tablets e telas médias */
 @media (max-width: 1024px) {
   .area-candidato-header {
     flex-direction: column;
     text-align: center;
     padding: 2rem;
   }
+  .tabela-candidato-linha-titulo,
+  .tabela-candidato-linha-jurado {
+    min-width: 1400px; /* Mantém largura horizontal para scroll */
+  }
 
+  
   .perfil {
     flex-direction: column;
     gap: 1rem;
   }
-
   .foto-perfil {
     width: 70px;
     height: 70px;
   }
-
   .botao-atualizar {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
   }
-
   .area-candidato-main {
-    padding: 2rem 1rem;
+    padding: 2rem 0.2rem;
   }
-
   .select-etapa {
     width: 100%;
   }
-
   .tabela-notas {
     padding: 1.5rem;
   }
-
   .bloco-jurado {
     flex-direction: column;
     text-align: center;
     gap: 5px;
   }
-
   .bloco-jurado img {
     width: 50px;
     height: 50px;
   }
-
   .notas-linha {
     font-size: 0.8rem;
   }
 }
 
+/* Telas menores */
+@media (max-width: 900px) {
+  .tabela-candidato-votos {
+    width: 98vw;
+    min-width: 0;
+    max-width: 100vw;
+    padding: 0 0.5rem;
+    overflow-x: auto;
+  }
+  .tabela-candidato-linha-titulo,
+  .tabela-candidato-linha-jurado {
+    min-width: 1400px; /* Mantém largura horizontal para scroll */
+  }
+  .tabela-candidato-celula {
+    font-size: 1rem;
+    padding: 0.5rem 0.2rem;
+    min-width: 110px;
+  }
+  .tabela-candidato-jurado-nome img {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Telas pequenas */
 @media (max-width: 768px) {
   .area-candidato-header {
     padding: 1.5rem;
   }
-
+  .tabela-candidato-linha-titulo,
+  .tabela-candidato-linha-jurado {
+    min-width: 1400px; /* Mantém largura horizontal para scroll */
+  }
   .perfil h2 {
     font-size: 1.5rem;
   }
-
   .perfil p {
     font-size: 0.9rem;
   }
-
   .tabela-notas {
     padding: 1rem;
   }
-
   .cabecalho-tabela span {
     font-size: 0.75rem;
   }
-
   .notas-linha {
     font-size: 0.7rem;
   }
-
   .bloco-jurado {
     min-width: 150px;
   }
-
   .bloco-jurado.binario {
     width: 150px;
     padding: 0.5rem;
   }
-
   .bloco-binario-texto {
     padding: 0.5rem;
     font-size: 0.9rem;
   }
-
   .select-etapa {
     width: 50%;
     font-size: 0.9rem;
   }
 }
 
+/* Mobile */
 @media (max-width: 600px) {
+  .tabela-candidato-votos {
+    min-width: 0;
+    max-width: 100vw;
+    padding: 0;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+  .tabela-candidato-linha-titulo,
+  .tabela-candidato-linha-jurado {
+    min-width: 1400px; /* Mantém largura horizontal para scroll */
+  }
   .tabela-notas {
     display: flex;
     flex-direction: column;
@@ -452,11 +585,9 @@
     background-color: transparent;
     box-shadow: none;
   }
-
   .cabecalho-tabela {
     display: none; /* Esconde o cabeçalho horizontal em mobile */
   }
-
   .linha-criterio {
     flex-direction: column;
     align-items: center;
@@ -466,7 +597,6 @@
     padding: 1rem;
     width: 100%;
   }
-
   .bloco-jurado {
     flex-direction: column;
     align-items: center;
@@ -474,12 +604,10 @@
     width: 100%;
     gap: 0.5rem;
   }
-
   .bloco-jurado img {
     width: 60px;
     height: 60px;
   }
-
   .notas-linha {
     width: 100%;
     display: flex;
@@ -488,7 +616,6 @@
     gap: 0.5rem;
     margin-top: 1rem;
   }
-
   .notas-linha span {
     width: 100%;
     background: #eee;
@@ -498,25 +625,21 @@
     font-weight: 500;
     text-align: center;
   }
-
   .linha-criterio.popular .notas-linha span {
     background: #a4f4ff;
     font-weight: bold;
   }
-
   .bloco-binario-texto {
     margin-top: 1rem;
     font-size: 0.9rem;
     text-align: center;
   }
-
   .linha-criterio.binario {
     flex-direction: column;
     background-color: #d1baff;
     border-radius: 12px;
     padding: 1rem;
   }
-
   .bloco-jurado.binario {
     background-color: #8c52ff;
     color: white;
@@ -527,56 +650,59 @@
   }
 }
 
+/* Mobile extra pequeno */
+@media (max-width: 500px) {
+  .modal-content-usuario {
+    padding: 1rem;
+    border-radius: 15px;
+  }
+  .modal-content-usuario h3 {
+    font-size: 1.3rem;
+  }
+  .modal-content-usuario input,
+  .modal-content-usuario textarea {
+    font-size: 0.95rem;
+  }
+}
 
-
+/* Mobile muito pequeno */
 @media (max-width: 480px) {
   .area-candidato-header {
     padding: 1rem;
   }
-
   .perfil h2 {
     font-size: 1.2rem;
   }
-
   .perfil p {
     font-size: 0.8rem;
   }
-
   .botao-atualizar {
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
   }
-
   .tabela-notas {
     padding: 0.5rem;
   }
-
   .cabecalho-tabela {
     flex-direction: column;
     align-items: center;
   }
-
   .cabecalho-tabela span {
     font-size: 0.7rem;
   }
-
   .linha-criterio {
     flex-direction: column;
   }
-
   .bloco-jurado {
     width: 100%;
   }
-
   .notas-linha {
     flex-direction: column;
     font-size: 0.6rem;
   }
-
   .bloco-jurado.binario {
     width: 100%;
   }
-
   .bloco-binario-texto {
     font-size: 0.8rem;
   }
