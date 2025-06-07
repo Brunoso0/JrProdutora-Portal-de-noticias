@@ -6,6 +6,15 @@
   flex-direction: column;
 }
 
+.area-candidato-main {
+  flex: 1;
+  padding: 3rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+
 .area-candidato-header {
   background: linear-gradient(to right, #a640d6, #7d27db);
   color: white;
@@ -75,7 +84,7 @@
 }
 
 .select-etapa {
-  margin-top: 0.5rem;
+  margin: 0.5rem auto;
   padding: 0.5rem;
   font-size: 1rem;
   border-radius: 10px;
