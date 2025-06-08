@@ -377,6 +377,13 @@
   font-size: 1.15rem;
 }
 
+.tabela-candidato-linha-jurado.popular {
+  background-color: #26a12d98;
+  color: #000;
+  font-weight: bold;
+}
+
+
 /* ====== TOOLTIP ====== */
 .tooltip-icone {
   position: relative;

@@ -76,7 +76,10 @@ useEffect(() => {
 
   axios
     .get(`${API_FESTIVAL}/api/dashboard/notas/${candidato.id}/${etapaAtual}`)
-    .then((res) => setDadosVotacao(res.data))
+    .then((res) => {
+      console.log("📊 DADOS VOTAÇÃO:", res.data); // <-- Veja aqui se existe o campo 'popular'
+      setDadosVotacao(res.data);
+    })
     .catch(() => setDadosVotacao(null));
 }, [candidato]);
 
@@ -157,7 +160,7 @@ useEffect(() => {
   axios
     .get(`${API_FESTIVAL}/api/dashboard/notas/${candidatoIdNum}/${etapaIdNum}`)
     .then((res) => {
-      console.log("📊 VOTOS DOS JURADOS (CRITÉRIOS):", res.data);
+      console.log("📊 VOTOS DOS JURADOS (CRITÉRIOS):", res.data); // <-- Veja aqui se existe o campo 'popular'
       setNotas(res.data);
     })
     .catch((err) => {
@@ -418,6 +421,18 @@ useEffect(() => {
                 </div>
               );
             })}
+            <div className="tabela-candidato-linha-jurado popular">
+  <div className="tabela-candidato-celula tabela-candidato-jurado-nome">
+    <strong>Voto Popular</strong>
+  </div>
+  {[...Array(notas.jurados[0]?.criterios.length || 0)].map((_, i) => (
+    <div className="tabela-candidato-celula" key={i}>–</div>
+  ))}
+  <div className="tabela-candidato-celula tabela-candidato-media-final">
+    <strong>{notas?.popular ?? "--"}</strong>
+  </div>
+</div>
+
 
             <div className="tabela-candidato-linha-titulo tabela-candidato-media-geral">
               <div className="tabela-candidato-celula tabela-candidato-jurado-nome"><strong>MÉDIA GERAL</strong></div>
