@@ -62,8 +62,9 @@
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 2px 12px #0077ff11;
-  padding: 1.2rem 1rem 1rem 1rem;
-  width: 220px;
+  padding: 2rem 1.5rem 1.5rem 1.5rem; /* aumente o padding */
+  width: 320px; /* aumente a largura */
+  min-height: 260px; /* aumente a altura mínima */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -80,11 +81,11 @@
 }
 
 .foto-candidato {
-  width: 80px;
-  height: 80px;
+  width: 120px;   /* aumente o tamanho da foto */
+  height: 120px;
   object-fit: cover;
   border-radius: 50%;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
   border: 3px solid #b3c6e0;
   background: #f8fafd;
   box-shadow: 0 2px 8px #b3c6e033;
@@ -122,12 +123,13 @@
     gap: 1.2rem;
   }
   .card-avanco {
-    width: 95vw;
-    max-width: 320px;
-    padding: 1rem 0.5rem;
+    width: 98vw;
+    max-width: 380px;
+    padding: 1.5rem 0.5rem;
+    min-height: 180px;
   }
   .foto-candidato {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
   }
 }
