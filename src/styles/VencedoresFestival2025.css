@@ -1,0 +1,233 @@
+/* ====== CONTAINER E TÍTULO ====== */
+.vencedores-container {
+  background: linear-gradient(135deg, #18122b 0%, #2d0b2d 100%);
+  color: #fff;
+  min-height: 100vh;
+  text-align: center;
+  padding: 2.5rem 1rem 3rem 1rem;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+}
+
+.vencedores-titulo {
+  font-size: 2.6rem;
+  margin-bottom: 2.2rem;
+  font-family: "Thunderhouse", 'Montserrat', sans-serif;
+  color: #ffe066;
+  letter-spacing: 2px;
+  text-shadow: 0 4px 24px #000, 0 0px 2px #ffe066;
+  filter: drop-shadow(0 0 8px #ffe06688);
+}
+
+/* ====== SELETOR DE DATA ====== */
+.vencedores-select-data {
+  margin-bottom: 2.2rem;
+}
+
+.vencedores-select-data input[type="date"] {
+  padding: 0.7rem 1.2rem;
+  border-radius: 12px;
+  border: none;
+  font-size: 1.08rem;
+  background: #fffbe6;
+  color: #7d27db;
+  font-weight: 600;
+  box-shadow: 0 2px 12px #ffe06633;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+
+.vencedores-select-data input[type="date"]:focus {
+  outline: none;
+  border: 2px solid #ffe066;
+  box-shadow: 0 0 0 3px #ffe06655;
+}
+
+/* ====== BOTÃO REVELAR ====== */
+.botao-revelar {
+  position: relative;
+  background: linear-gradient(135deg, #ffb300 0%, #ff6600 100%);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 90px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: 0 8px 32px #000a, 0 2px 8px #ffd70055;
+  transition: box-shadow 0.2s, transform 0.2s;
+  filter: drop-shadow(0 0 16px #ffd70088);
+}
+
+.botao-revelar:hover {
+  box-shadow: 0 12px 40px #000c, 0 4px 16px #ffd70088;
+  transform: scale(1.04);
+}
+
+.botao-revelar::before {
+  content: "";
+  position: absolute;
+  top: -18px;
+  left: -18px;
+  width: calc(100% + 36px);
+  height: calc(100% + 36px);
+  border-radius: 50%;
+  border: 8px solid transparent;
+  border-top: 8px solid #ffe066;
+  border-right: 8px solid #ff6600;
+  border-bottom: 8px solid #ffb300;
+  border-left: 8px solid #fff700;
+  animation: girar 1.2s linear infinite;
+  z-index: 3;
+  pointer-events: none;
+  box-shadow: 0 0 32px #ffe06655, 0 0 12px #fff70033;
+}
+
+.botao-revelar span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  font-size: 1.25rem;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #000a, 0 0px 2px #ffe066;
+}
+
+.botao-revelar .luz-efeito {
+  position: absolute;
+  width: 250%;
+  height: 250%;
+  background: radial-gradient(circle, rgba(255,255,255,0.13) 10%, transparent 70%);
+  animation: pulsar 2s infinite;
+  border-radius: 50%;
+  top: -75%;
+  left: -75%;
+  z-index: 0;
+}
+
+/* ====== LISTA DE VENCEDORES ====== */
+.vencedores-lista {
+  list-style: none;
+  padding: 0;
+  margin-top: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem;
+  align-items: center;
+}
+
+.vencedor-item {
+  opacity: 0;
+  transform: scale(0.8) translateY(40px);
+  transition: all 1s cubic-bezier(.23,1.02,.64,1);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  box-shadow: 0 4px 24px #0005, 0 1px 4px #ffe06633;
+  padding: 2.2rem 2.5rem 2rem 2.5rem;
+  min-width: 320px;
+  max-width: 420px;
+  margin: 0 auto;
+  border: 2px solid #ffe06655;
+  backdrop-filter: blur(6px);
+  position: relative;
+}
+
+.vencedor-item.visivel {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.vencedor-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  pointer-events: none;
+  box-shadow: 0 0 32px #ffe06633 inset;
+  z-index: 0;
+}
+
+.vencedor-item img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #ffe066;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 12px #ffe06644, 0 0 0 8px #fff70022;
+  background: #fff;
+  z-index: 1;
+  position: relative;
+}
+
+.vencedor-info h2 {
+  margin: 0.3rem 0 0.2rem 0;
+  font-size: 1.5rem;
+  color: #ffe066;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #000a, 0 0px 2px #ffe066;
+}
+
+.vencedor-info p {
+  font-size: 1.08rem;
+  color: #fffbe6;
+  margin: 0.2rem 0 0 0;
+  text-shadow: 0 1px 4px #0008;
+}
+
+.vencedor-info .vencedor-etapa {
+  font-size: 1.02rem;
+  color: #ffb300;
+  margin-top: 0.2rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ====== ANIMAÇÕES ====== */
+@keyframes girar {
+  from { transform: rotate(0deg);}
+  to { transform: rotate(360deg);}
+}
+
+@keyframes pulsar {
+  0%, 100% { opacity: 0.3; transform: scale(1);}
+  50% { opacity: 0.6; transform: scale(1.2);}
+}
+
+/* ====== RESPONSIVO ====== */
+@media (max-width: 600px) {
+  .vencedores-titulo {
+    font-size: 1.5rem;
+  }
+  .botao-revelar {
+    padding: 48px;
+    font-size: 1rem;
+  }
+  .botao-revelar span {
+    font-size: 0.95rem;
+  }
+  .vencedor-item {
+    padding: 1.2rem 0.5rem 1rem 0.5rem;
+    min-width: 0;
+    max-width: 98vw;
+  }
+  .vencedor-item img {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+@media (max-width: 400px) {
+  .vencedores-titulo {
+    font-size: 1.1rem;
+  }
+  .vencedor-item {
+    padding: 0.7rem 0.2rem 0.7rem 0.2rem;
+  }
+  .vencedor-item img {
+    width: 48px;
+    height: 48px;
+  }
+}

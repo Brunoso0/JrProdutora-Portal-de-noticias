@@ -16,6 +16,7 @@ const SidebarFestival = ({ setPaginaSelecionada }) => {
         <li onClick={() => setPaginaSelecionada("AvancosDoDia")}>Avanços do dia</li>
         <li onClick={() => setPaginaSelecionada("DashboardTotalVotos")}>Total de Votos </li>
         <li onClick={() => setPaginaSelecionada("RankingVotos")}>Ranking do Dia</li>
+        {/* <li onClick={() => setPaginaSelecionada("VencedoresFestival2025")}>Vencedores 2025</li> */}
       </ul>
     </div>
   );

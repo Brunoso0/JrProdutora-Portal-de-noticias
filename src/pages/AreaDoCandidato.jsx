@@ -422,16 +422,16 @@ useEffect(() => {
               );
             })}
             <div className="tabela-candidato-linha-jurado popular">
-  <div className="tabela-candidato-celula tabela-candidato-jurado-nome">
-    <strong>Voto Popular</strong>
-  </div>
-  {[...Array(notas.jurados[0]?.criterios.length || 0)].map((_, i) => (
-    <div className="tabela-candidato-celula" key={i}>–</div>
-  ))}
-  <div className="tabela-candidato-celula tabela-candidato-media-final">
-    <strong>{notas?.popular ?? "--"}</strong>
-  </div>
-</div>
+            <div className="tabela-candidato-celula tabela-candidato-jurado-nome">
+              <strong>Voto Popular</strong>
+            </div>
+            {[...Array(notas.jurados[0]?.criterios.length || 0)].map((_, i) => (
+              <div className="tabela-candidato-celula" key={i}>–</div>
+            ))}
+            <div className="tabela-candidato-celula tabela-candidato-media-final">
+              <strong>{notas?.popular ?? "--"}</strong>
+            </div>
+          </div>
 
 
             <div className="tabela-candidato-linha-titulo tabela-candidato-media-geral">

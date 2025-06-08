@@ -136,6 +136,17 @@ const DashboardTotalVotos = () => {
             setDataSelecionada(dataISO);
           }}
         />
+
+        <button
+          className="botao-atualizar-dashboard"
+          type="button" // <-- ESSENCIAL! Não use "submit"
+          onClick={fetchData}
+          style={{ marginLeft: 16, padding: "0.5rem 1.2rem", borderRadius: 8, background: "#7d27db", color: "#fff", border: "none", fontWeight: "bold", cursor: "pointer" }}
+          disabled={loading || !etapaSelecionada || !dataSelecionada}
+          title="Atualizar dados"
+        >
+          🔄 Atualizar
+        </button>
       </div>
 
       {loading ? (

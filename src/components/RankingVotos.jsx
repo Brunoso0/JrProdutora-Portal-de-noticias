@@ -44,7 +44,7 @@ const RankingVotos = () => {
 
   return (
     <div className="ranking-container">
-      <h2>🏆 Ranking de Vencedores</h2>
+      <h2>🏆 Ranking de Votos dos Jurados</h2>
 
       <div className="filtros-ranking">
         <label>
