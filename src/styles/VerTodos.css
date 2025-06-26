@@ -34,6 +34,7 @@
 .ultima-postada h3 {
   margin-top: 12px;
   font-size: 22px;
+  font-weight: 400;
 }
 
 .ultima-postada h3, .ultima-postada p {
@@ -42,6 +43,8 @@
 
 .ultima-postada p {
   width: 90%;
+  font-weight: 200;
+  color: #383838;
 }
 
 /* Propaganda horizontal */
@@ -109,11 +112,13 @@
 .noticia-linha-esquerda h3 {
   margin: 0 0 4px;
   font-size: 18px;
+  font-weight: 300;
 }
 
 .noticia-linha-esquerda p {
   margin: 0 0 6px;
   font-size: 14px;
+  font-weight: 300;
   color: #555;
 }
 

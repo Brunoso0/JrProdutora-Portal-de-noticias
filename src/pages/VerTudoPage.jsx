@@ -103,6 +103,21 @@ const VerTodos = () => {
     fetchNoticias();
   }, [tipo]);
 
+  // Remove tags HTML
+const stripHtml = (html) => {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || div.innerText || "";
+};
+
+// Decodifica entidades HTML (&nbsp; -> espaço, etc)
+const decodeHtml = (html) => {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+};
+
+
   return (
     <>
       <Header />
@@ -118,8 +133,8 @@ const VerTodos = () => {
             {/* Notícia principal */}
             <Link to={`/noticia/${noticias[0].slug}`} className="ultima-postada">
               <img src={noticias[0].imagem} alt={noticias[0].titulo} />
-              <h3>{noticias[0].titulo}</h3>
-              <p>{noticias[0].subtitulo}</p>
+                <h3>{noticias[0].titulo}</h3>
+                <p>{decodeHtml(stripHtml(noticias[0].subtitulo))}</p>
             </Link>
 
             {/* Propaganda fixa abaixo da principal */}
@@ -136,7 +151,7 @@ const VerTodos = () => {
                     </div>
                     <div className="info">
                       <h3>{n.titulo}</h3>
-                      <p>{n.subtitulo}</p>
+                      <p>{decodeHtml(stripHtml(n.subtitulo))}</p>
                       <span>{new Date(n.data).toLocaleDateString("pt-BR")} - {n.categoria}</span>
                     </div>
                   </Link>

@@ -102,6 +102,14 @@ const ThirdGrid = ({ link }) => {
             console.error("Erro ao contabilizar visualização:", error);
         }
     };
+
+    const stripHtml = (html) => html.replace(/<[^>]+>/g, '');
+    const decodeHtml = (html) => {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+    };
+
   
 
     const renderNoticias = (noticias, limit) => {
@@ -117,7 +125,11 @@ const ThirdGrid = ({ link }) => {
                             <span className="tag">{article.categoria}</span>
                         </div>
                             <h3 className="title">{truncateText(article.titulo, isMobile ? 40 : 70)}</h3>
-                            <p className="subtitle">{truncateText(article.subtitulo, isMobile ? 60 : 190)}</p>
+                            <p className="subtitle">
+                                {truncateText(decodeHtml(stripHtml(article.subtitulo)), isMobile ? 60 : 190)
+}
+                            </p>
+
 
                     </div>
                     <div className="image-wrapper left-image">
