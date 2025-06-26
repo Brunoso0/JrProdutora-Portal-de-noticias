@@ -118,7 +118,7 @@
 
 .content .title {
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: 300;
     text-align: left;
     margin: 0;
 
@@ -126,6 +126,7 @@
 
 .content .subtitle {
     font-size: 0.9rem;
+    font-weight: 300;
     color: #555;
     padding-left: 5px;
     margin: 0;

@@ -75,28 +75,22 @@ const UserProfile = () => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setNewProfileImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const file = e.target.files[0];
+  if (file) {
+    setNewProfileImage(file); // ✅ objeto File
+  }
+};
+
   
   const handleDrop = (e) => {
-    e.preventDefault();
-    setDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setNewProfileImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  e.preventDefault();
+  setDragging(false);
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    setNewProfileImage(file); // ✅ objeto File
+  }
+};
+
   
   const handleDragOver = (e) => {
     e.preventDefault();
