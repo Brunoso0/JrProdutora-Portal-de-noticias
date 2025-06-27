@@ -3,6 +3,10 @@ body {
   padding: 0;
 }
 
+.header-body {
+  padding-top: 70px;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -10,8 +14,13 @@ body {
   padding: 1rem 2rem;
   background-color: #f8f8f8;
   border-bottom: 1px solid #616161;
-  position: relative;
+  position: fixed; /* 🔄 TROCA AQUI */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 }
+
 
 .menu,
 .search-bar {
@@ -253,6 +262,10 @@ input:not(:placeholder-shown) ~ .reset {
 
 /* Responsividade - Tablet */
 @media (max-width: 1024px) {
+  .header-body {
+    padding-top: 68px;
+  }
+
   .header {
     padding: 1rem;
   }
@@ -278,6 +291,10 @@ input:not(:placeholder-shown) ~ .reset {
 
 /* Responsividade - Mobile */
 @media (max-width: 768px) {
+  .header-body {
+    padding-top: 45px;
+  }
+
   .header {
     padding: 0.5rem;
   }

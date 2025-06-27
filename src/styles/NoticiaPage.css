@@ -118,6 +118,10 @@
 
 /* Responsividade */
 @media (max-width: 1024px) {
+
+    .noticia-page h1 {
+        font-size: 2em;
+    }
     .noticia-page-wrapper {
         flex-direction: column;
         align-items: center;
@@ -138,5 +142,36 @@
 
     .noticia-page {
         max-width: 90%;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .noticia-page h1 {
+        font-size: 1.5em;
+    }
+
+    .noticia-page .autor  {
+        font-size: 0.8em;
+    }
+
+    .noticia-page-wrapper {
+        padding: 10px;
+    }
+
+    .anuncios-verticais {
+        flex-direction: column;
+        width: 100%;
+        position: static;
+    }
+
+    .propaganda-google, .propaganda-banner {
+        width: 100%;
+        margin: 15px auto;
+    }
+
+    .noticia-page {
+        max-width: 95%;
     }
 }

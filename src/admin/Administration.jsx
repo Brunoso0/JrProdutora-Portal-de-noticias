@@ -53,6 +53,9 @@ const Administration = () => {
   const [anuncioEditando, setAnuncioEditando] = useState(null);
   const [imagemEditada, setImagemEditada] = useState(null);
   const [contratoEditado, setContratoEditado] = useState(null);
+  const [imagemSelecionada, setImagemSelecionada] = useState(null);
+  const [contratoSelecionado, setContratoSelecionado] = useState(null);
+  
 
 
   
@@ -240,9 +243,62 @@ const handleEditarAnuncio = async () => {
   }
 };
 
+const handleCadastrarAnuncio = async () => {
+  try {
+    const formData = new FormData();
 
+    const formatDateForMySQL = (date) => {
+      if (!date) return "";
+      return new Date(date).toISOString().split("T")[0];
+    };
 
+    // 🔐 Garante campos obrigatórios com fallback confiável
+    formData.append("espaco_id", novoAnuncio.espaco_id || "1"); // coloca 1 como fallback de teste
+    formData.append("nome_empresa", novoAnuncio.nome_empresa || "Sem nome");
+    formData.append("tipo", novoAnuncio.tipo || "banner"); // define um valor padrão
+    formData.append("valor", novoAnuncio.valor || "0.00");
+    formData.append("inicio_contrato", formatDateForMySQL(novoAnuncio.inicio_contrato));
+    formData.append("fim_contrato", formatDateForMySQL(novoAnuncio.fim_contrato));
 
+    // 🧠 Campos dinâmicos baseados no tipo
+    formData.append("link", novoAnuncio.tipo === "banner" ? novoAnuncio.link || "" : "");
+    formData.append("google_client_id", novoAnuncio.tipo === "google" ? novoAnuncio.google_client_id || "" : "");
+    formData.append("google_slot", novoAnuncio.tipo === "google" ? novoAnuncio.google_slot || "" : "");
+
+    // 🖼️ Arquivos
+    if (imagemSelecionada) formData.append("imagem", imagemSelecionada);
+    if (contratoSelecionado) formData.append("contrato", contratoSelecionado);
+
+    // ✅ Verificação opcional
+    // for (let pair of formData.entries()) {
+    //   console.log(pair[0], pair[1]);
+    // }
+
+    const response = await axios.post(`${API_BASE_URL}/anuncios`, formData);
+    toast.success("✅ Anúncio cadastrado com sucesso!");
+
+    // Limpa formulário
+    setNovoAnuncio({
+      espaco_id: "",
+      nome_empresa: "",
+      tipo: "banner",
+      imagem: "",
+      link: "",
+      google_client_id: "",
+      google_slot: "",
+      valor: "",
+      contrato: "",
+      inicio_contrato: "",
+      fim_contrato: "",
+    });
+    setImagemSelecionada(null);
+    setContratoSelecionado(null);
+    fetchAnuncios();
+  } catch (error) {
+    console.error("❌ Erro ao cadastrar anúncio:", error.response?.data || error.message);
+    toast.error("❌ Erro ao cadastrar anúncio. Verifique os campos e tente novamente.");
+  }
+};
 
 
 
@@ -1196,7 +1252,7 @@ const confirmDelete = (id, type) => {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => setImagemEditada(e.target.files[0])}
+                    onChange={(e) => setImagemSelecionada(e.target.files[0])}
                   />
                 </>
               )}
@@ -1211,8 +1267,8 @@ const confirmDelete = (id, type) => {
               <label>Substituir Contrato (PDF):</label>
               <input
                 type="file"
-                accept="application/pdf"
-                onChange={(e) => setContratoEditado(e.target.files[0])}
+                accept=".pdf"
+                onChange={(e) => setContratoSelecionado(e.target.files[0])}
               />
 
 
@@ -1320,7 +1376,7 @@ const confirmDelete = (id, type) => {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setNovoAnuncio({ ...novoAnuncio, imagemFile: e.target.files[0] })}
+                  onChange={e => setImagemSelecionada(e.target.files[0])}
                 />
 
                 <label>Link ao clicar no banner:</label>
@@ -1361,7 +1417,7 @@ const confirmDelete = (id, type) => {
             <input
               type="file"
               accept="application/pdf"
-              onChange={(e) => setNovoAnuncio({ ...novoAnuncio, contratoFile: e.target.files[0] })}
+              onChange={e => setContratoSelecionado(e.target.files[0])}
             />
 
             <label>Início do Contrato:</label>
@@ -1380,56 +1436,7 @@ const confirmDelete = (id, type) => {
 
             <button
               className="button"
-              onClick={async () => {
-                try {
-                  const formData = new FormData();
-                  formData.append("espaco_id", novoAnuncio.espaco_id);
-                  formData.append("nome_empresa", novoAnuncio.nome_empresa);
-                  formData.append("tipo", novoAnuncio.tipo);
-                  formData.append("valor", novoAnuncio.valor);
-                  formData.append("inicio_contrato", novoAnuncio.inicio_contrato);
-                  formData.append("fim_contrato", novoAnuncio.fim_contrato);
-
-                  if (novoAnuncio.tipo === "banner") {
-                    formData.append("imagem", novoAnuncio.imagemFile);
-                    formData.append("link", novoAnuncio.link || "");
-                  }
-
-                  if (novoAnuncio.tipo === "google") {
-                    formData.append("google_client_id", novoAnuncio.google_client_id);
-                    formData.append("google_slot", novoAnuncio.google_slot);
-                  }
-
-                  if (novoAnuncio.contratoFile) {
-                    formData.append("contrato", novoAnuncio.contratoFile);
-                  }
-
-                  await axios.post(`${API_BASE_URL}/anuncios`, formData, {
-                    headers: {
-                      "Content-Type": "multipart/form-data",
-                    },
-                  });
-
-                  toast.success("✅ Anúncio cadastrado com sucesso!");
-
-                  setNovoAnuncio({
-                    espaco_id: "",
-                    nome_empresa: "",
-                    tipo: "banner",
-                    imagemFile: null,
-                    link: "",
-                    google_client_id: "",
-                    google_slot: "",
-                    valor: "",
-                    contratoFile: null,
-                    inicio_contrato: "",
-                    fim_contrato: "",
-                  });
-                } catch (err) {
-                  console.error(err);
-                  toast.error("❌ Erro ao cadastrar anúncio");
-                }
-              }}
+              onClick={handleCadastrarAnuncio}
             >
               Cadastrar
             </button>
