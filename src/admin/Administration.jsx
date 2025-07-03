@@ -225,11 +225,7 @@ const handleEditarAnuncio = async () => {
     }
 
     // Envia a requisição PUT
-    await axios.put(`${API_BASE_URL}/anuncios/${anuncioEditando.id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    await axios.put(`${API_BASE_URL}/anuncios/${anuncioEditando.id}`, formData);
 
     toast.success("✅ Anúncio atualizado com sucesso!");
     setAnuncioEditando(null);
@@ -243,41 +239,55 @@ const handleEditarAnuncio = async () => {
   }
 };
 
+// Função utilitária para formatar datas no padrão MySQL (YYYY-MM-DD)
+function formatDate(date) {
+  if (!date) return "";
+  return new Date(date).toISOString().split("T")[0];
+}
+
 const handleCadastrarAnuncio = async () => {
   try {
     const formData = new FormData();
 
-    const formatDateForMySQL = (date) => {
-      if (!date) return "";
-      return new Date(date).toISOString().split("T")[0];
-    };
+    // Validação básica (exemplo)
+    if (!novoAnuncio.espaco_id || !novoAnuncio.nome_empresa || !novoAnuncio.tipo || !novoAnuncio.valor) {
+      toast.warn("Preencha todos os campos obrigatórios!");
+      return;
+    }
 
-    // 🔐 Garante campos obrigatórios com fallback confiável
-    formData.append("espaco_id", novoAnuncio.espaco_id || "1"); // coloca 1 como fallback de teste
-    formData.append("nome_empresa", novoAnuncio.nome_empresa || "Sem nome");
-    formData.append("tipo", novoAnuncio.tipo || "banner"); // define um valor padrão
-    formData.append("valor", novoAnuncio.valor || "0.00");
-    formData.append("inicio_contrato", formatDateForMySQL(novoAnuncio.inicio_contrato));
-    formData.append("fim_contrato", formatDateForMySQL(novoAnuncio.fim_contrato));
+    // Campos obrigatórios
+    formData.append("espaco_id", novoAnuncio.espaco_id);
+    formData.append("nome_empresa", novoAnuncio.nome_empresa);
+    formData.append("tipo", novoAnuncio.tipo);
+    formData.append("valor", novoAnuncio.valor);
+    formData.append("inicio_contrato", formatDate(novoAnuncio.inicio_contrato));
+    formData.append("fim_contrato", formatDate(novoAnuncio.fim_contrato));
 
-    // 🧠 Campos dinâmicos baseados no tipo
-    formData.append("link", novoAnuncio.tipo === "banner" ? novoAnuncio.link || "" : "");
-    formData.append("google_client_id", novoAnuncio.tipo === "google" ? novoAnuncio.google_client_id || "" : "");
-    formData.append("google_slot", novoAnuncio.tipo === "google" ? novoAnuncio.google_slot || "" : "");
+    // Campos opcionais
+    if (novoAnuncio.tipo === "banner") {
+      formData.append("link", novoAnuncio.link || "");
+    }
+    if (novoAnuncio.tipo === "google") {
+      formData.append("google_client_id", novoAnuncio.google_client_id || "");
+      formData.append("google_slot", novoAnuncio.google_slot || "");
+    }
 
-    // 🖼️ Arquivos
-    if (imagemSelecionada) formData.append("imagem", imagemSelecionada);
-    if (contratoSelecionado) formData.append("contrato", contratoSelecionado);
+    // Arquivos
+    if (imagemSelecionada instanceof File) {
+      formData.append("imagem", imagemSelecionada);
+    }
+    if (contratoSelecionado instanceof File) {
+      formData.append("contrato", contratoSelecionado);
+    }
 
-    // ✅ Verificação opcional
-    // for (let pair of formData.entries()) {
-    //   console.log(pair[0], pair[1]);
-    // }
+    // LOG PARA DEPURAÇÃO
+    for (let pair of formData.entries()) {
+      console.log(pair[0]+ ':', pair[1]);
+    }
 
-    const response = await axios.post(`${API_BASE_URL}/anuncios`, formData);
+    await axios.post(`${API_BASE_URL}/anuncios`, formData);
+
     toast.success("✅ Anúncio cadastrado com sucesso!");
-
-    // Limpa formulário
     setNovoAnuncio({
       espaco_id: "",
       nome_empresa: "",
@@ -294,11 +304,15 @@ const handleCadastrarAnuncio = async () => {
     setImagemSelecionada(null);
     setContratoSelecionado(null);
     fetchAnuncios();
+
   } catch (error) {
-    console.error("❌ Erro ao cadastrar anúncio:", error.response?.data || error.message);
-    toast.error("❌ Erro ao cadastrar anúncio. Verifique os campos e tente novamente.");
+    console.error("❌ Erro ao cadastrar anúncio:", error);
+    toast.error("Erro ao cadastrar anúncio. Tente novamente.");
   }
 };
+
+
+
 
 
 
@@ -692,7 +706,7 @@ const confirmDelete = (id, type) => {
     // 🔒 Log de auditoria: aprovação
     try {
       await axios.post(
-        `${API_BASE_URL}/auth/drag-drop-auditoria"```,
+        `${API_BASE_URL}/auth/drag-drop-auditoria"`,
         {
           acao: `Aprovou o usuário ID ${user.id} via drag and drop.`,
           ip_origem: ipOrigem,
@@ -1259,7 +1273,7 @@ const confirmDelete = (id, type) => {
 
               <label>Contrato atual:</label>
               {anuncioEditando.contrato ? (
-                <a href={`${API_BASE_URL}/${anuncioEditando.contrato}`} target="_blank" rel="noopener noreferrer">Ver Contrato</a>
+                <a href={`${API_BASE_URL}${anuncioEditando.contrato}`} target="_blank" rel="noopener noreferrer">Ver Contrato</a>
               ) : (
                 <p>Nenhum contrato</p>
               )}
