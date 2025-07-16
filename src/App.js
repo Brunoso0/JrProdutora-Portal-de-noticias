@@ -66,7 +66,7 @@ const App = () => {
         sessionStorage.setItem("visitTracked", "true");
 
         // Enviar os dados para o servidor
-        await axios.post(`${API_BASE_URL}/admin/track-visit`, {
+        await axios.post(`${API_BASE_URL}/visits/track-visit`, {
           visitorId,
           ip: ipData.ip,
           cidade: ipData.city || "Desconhecido",
