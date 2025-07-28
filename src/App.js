@@ -7,7 +7,6 @@ import LoginFestival from "./pages/LoginFestival";
 import LoginJurados from "./pages/LoginJurados";
 import PainelCandidatos from "./pages/PainelCandidatos"; // novo import
 import ProtectedRouteAdminFestival from "./components/ProtectedRouteAdminFestival"; // 👈 novo import
-
 import CandidatosFestivalDeMusica from "./pages/candidatosfestivaldemusica";
 import AreaDoCandidato from "./pages/AreaDoCandidato";
 import ProtectedRouteCandidato from "./components/ProtectedRouteCandidato";
@@ -18,9 +17,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ProtectedRouteJurado from "./components/ProtectedRouteJurado";
 import PublicLayout from "./layouts/PublicLayout";
 import FestivalMusica from "./pages/FestivalMusica";
+import InscricaoFestival from "./pages/InscricaoFestival"; // Importando a página de inscrição do festival
 import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-
 import { API_BASE_URL } from './services/api'; // Importando o arquivo de configuração do Axios
 
 
@@ -102,6 +101,7 @@ const App = () => {
           <Route path="/areadocandidato" element={<ProtectedRouteCandidato><AreaDoCandidato /></ProtectedRouteCandidato>} />
           <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
           <Route path="/painelcandidatos" element={<ProtectedRouteAdminFestival><PainelCandidatos /></ProtectedRouteAdminFestival>} />
+          <Route path="/inscricao-festival" element={<InscricaoFestival />} />
           <Route path="/festivaldemusica" element={<FestivalMusica />} />
           <Route path="/noticia/:slug" element={<NoticiaPage />} />
           <Route path="/ver-todos/:tipo" element={<VerTodos />} />

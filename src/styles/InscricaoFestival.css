@@ -1,0 +1,586 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+.inscricao-festival {
+  background: #1C001F;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* === HERO SECTION === */
+.hero-section {
+  background: url('/public/img/bg-festival.png') no-repeat center center/cover;
+  padding: 100px 200px 400px 20px;
+  text-align: center;
+  position: relative;
+}
+
+.logo-title {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  width: 30%;
+}
+
+.logo-title img {
+    width: 500px;
+    max-width: 100%;
+    height: auto;
+}
+
+.logo-title h1 {
+  font-size: 64px;
+  font-family: 'sanlouis', serif;
+  font-weight: 100;
+  color: #f2e0aa;
+  text-shadow: 2px 2px 10px #000;
+}
+
+.logo-title span {
+  display: block;
+  font-size: 32px;
+  margin-top: -20px;
+  color: #fff;
+}
+
+.logo-title p {
+  font-size: 18px;
+  font-family: 'A750', serif;
+  font-weight: 300;
+  color: #E8CDB4;
+  max-width: 400px;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-inscreva {
+  margin-top: 30px;
+  padding: 12px 32px;
+  border: 2px solid;
+  border-image: linear-gradient(0deg, #B00B39, #6D1137) 1;
+  border-radius: 10px;
+  background: transparent;
+  color: #f2e0aa;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+  animation: alternate 2s infinite;
+  display: inline-block;
+}
+
+
+.btn-inscreva:hover {
+  background: linear-gradient(to top, #B00B39, #6D1137);
+  color: #f2e0aa;
+}
+
+/* === MID SECTION === */
+.mid-section {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 80px 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.mid-left {
+  display: flex;
+  gap: 20px;
+  width: 400px;
+  height: 300px;
+}
+
+.mid-left img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.video-thumb {
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  position: relative;
+}
+
+.mid-right {
+  max-width: 400px;
+}
+
+.mid-right h2 {
+  font-size: 28px;
+  color: #f2e0aa;
+  margin-bottom: 10px;
+}
+
+.mid-right p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+/* === PREMIAÇÃO === */
+
+
+
+
+.premiacao-section {
+  text-align: center;
+  padding: 100px 20px;
+  position: relative; /* Importante */
+  z-index: 0;
+  overflow: hidden;
+}
+
+.smoke-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  width: 100%;
+  max-width: 1300px;
+  pointer-events: none;
+}
+
+.smoke-bg img {
+  width: 100%;
+  display: block;
+}
+
+.trofeus {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1; /* Para ficar acima da smoke-bg */
+}
+
+.premiacao-title {
+  position: relative;
+  z-index: 2;
+}
+
+.premiacao-title img {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 600px;
+  padding-bottom: 50px;
+}
+
+
+.trofeu1 {
+  width: 300px;
+  height: auto;
+}
+
+.trofeu2 {
+  width: 300px;
+  height: auto;
+}
+
+
+
+.premiacao-section p {
+  max-width: 600px;
+  font-family: 'A750', serif;
+  font-weight: 200;
+  color: #CDAFA1;
+  margin: 0 auto;
+  font-size: 19px;
+}
+
+/* === FORMULÁRIO === */
+.formulario-section {
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.campos-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 1020px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.form-row input {
+  flex: 1;
+  min-width: 300px;
+  max-width: 100%;
+  padding: 16px 20px;
+  background: #d2ac64;
+  color: #1F0021;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.form-row input::placeholder {
+  color: #1F0021;
+  font-weight: 600;
+}
+
+.form-row input[type="file"] {
+  color: #1F0021;
+  font-weight: normal;
+  background: #d2ac64;
+  padding: 14px;
+  cursor: pointer;
+}
+
+/* Foto e vídeo com preview */
+.file-input-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 300px;
+  max-width: 100%;
+}
+
+.preview-img {
+  margin-top: 10px;
+  max-width: 100%;
+  max-height: 160px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.preview-nome {
+  margin-top: 10px;
+  color: #f2e0aa;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Botão */
+.formulario-section button {
+  margin-top: 20px;
+  background: #f2e0aa;
+  color: #1F0021;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.formulario-section button:hover {
+  background: #fff1c2;
+}
+
+.file-card {
+  background: #f7e0b7;
+  border-radius: 16px;
+  padding: 20px;
+  width: 420px;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.file-card:hover {
+  transform: scale(1.02);
+}
+
+.file-preview {
+  width: 100%;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.file-card input[type="file"] {
+  display: none;
+}
+
+.placeholder-icon {
+  width: 64px;
+  height: 64px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.preview-nome {
+  font-size: 13px;
+  color: #6a4c2d;
+  font-weight: 600;
+  text-align: center;
+  word-break: break-word;
+  max-width: 90%;
+}
+
+
+
+/* === FOOTER === */
+footer {
+  background-color: #741238;
+  padding: 30px 0;
+  text-align: center;
+  font-size: 18px;
+  font-family: 'Playfair Display', serif;
+  color: #fff;
+  border-top: 2px solid gradient(0deg, #ffffff, #6D1137);
+}
+
+
+
+/* Responsividade para InscricaoFestival.jsx */
+
+/* --- HERO SECTION --- */
+@media (max-width: 1200px) {
+  .hero-section {
+    padding: 60px 10vw 200px 10vw;
+  }
+  .logo-title {
+    width: 60%;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-section {
+    padding: 40px 5vw 120px 5vw;
+  }
+  .logo-title {
+    width: 90%;
+  }
+  .logo-title img {
+    width: 90vw;
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-section {
+    padding: 30px 2vw 60px 2vw;
+  }
+  .logo-title img {
+    width: 100%;
+    max-width: 250px;
+  }
+  .logo-title p {
+    font-size: 15px;
+    max-width: 95vw;
+    text-align: center;
+  }
+  .btn-inscreva {
+    font-size: 15px;
+    padding: 10px 18px;
+  }
+}
+
+/* --- MID SECTION --- */
+@media (max-width: 900px) {
+  .mid-section {
+    flex-direction: column;
+    gap: 24px;
+    padding: 40px 5vw;
+  }
+  .mid-left, .mid-right {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .mid-section {
+    padding: 20px 2vw;
+    gap: 16px;
+  }
+  .mid-left {
+    height: auto;
+    min-width: 0;
+    width: 100%;
+  }
+  .mid-left img {
+    border-radius: 8px;
+  }
+  .mid-right h2 {
+    font-size: 22px;
+  }
+  .mid-right p {
+    font-size: 14px;
+  }
+}
+
+/* --- PREMIAÇÃO --- */
+@media (max-width: 900px) {
+  .premiacao-section {
+    padding: 60px 5vw;
+  }
+  .premiacao-title img {
+    max-width: 350px;
+    padding-bottom: 20px;
+  }
+  .trofeus {
+    gap: 10px;
+  }
+  .trofeu1, .trofeu2 {
+    width: 120px;
+  }
+  .premiacao-section p {
+    font-size: 16px;
+    max-width: 95vw;
+  }
+}
+
+@media (max-width: 600px) {
+  .premiacao-section {
+    padding: 30px 2vw;
+  }
+  .premiacao-title img {
+    max-width: 220px;
+    padding-bottom: 10px;
+  }
+  .trofeu1, .trofeu2 {
+    width: 80px;
+  }
+  .premiacao-section p {
+    font-size: 13px;
+  }
+}
+
+/* --- FORMULÁRIO --- */
+@media (max-width: 1020px) {
+  .campos-form {
+    max-width: 98vw;
+  }
+}
+
+@media (max-width: 900px) {
+  .formulario-section {
+    padding: 40px 5vw;
+    gap: 16px;
+  }
+  .campos-form {
+    gap: 16px;
+  }
+  .form-row {
+    gap: 12px;
+  }
+  .form-row input {
+    min-width: 180px;
+    padding: 12px 10px;
+    font-size: 15px;
+  }
+  .file-card {
+    width: 100%;
+    max-width: 320px;
+    height: 180px;
+    padding: 12px;
+  }
+  .preview-img {
+    max-height: 100px;
+  }
+}
+
+@media (max-width: 600px) {
+  .formulario-section {
+    padding: 20px 2vw;
+    gap: 10px;
+  }
+  .campos-form {
+    gap: 10px;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .form-row input {
+    min-width: 0;
+    width: 100%;
+    padding: 10px 8px;
+    font-size: 14px;
+  }
+  .file-card {
+    width: 100%;
+    max-width: 98vw;
+    height: 120px;
+    padding: 8px;
+  }
+  .preview-img {
+    max-height: 60px;
+  }
+  .preview-nome {
+    font-size: 12px;
+  }
+  .formulario-section button {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+}
+
+/* --- FOOTER --- */
+@media (max-width: 900px) {
+  footer img {
+    max-width: 70vw;
+  }
+  footer {
+    font-size: 15px;
+    padding: 18px 0;
+  }
+}
+
+@media (max-width: 600px) {
+  footer img {
+    max-width: 58vw;
+  }
+  footer {
+    font-size: 13px;
+    padding: 10px 0;
+  }
+}
+
+/* --- Toast responsivo --- */
+@media (max-width: 600px) {
+  .Toastify__toast-container {
+    width: 98vw !important;
+    left: 1vw !important;
+    right: 1vw !important;
+    font-size: 14px !important;
+  }
+}
