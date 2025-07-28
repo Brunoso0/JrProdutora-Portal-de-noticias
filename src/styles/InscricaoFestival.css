@@ -15,7 +15,7 @@
 /* === HERO SECTION === */
 .hero-section {
   background: url('/public/img/bg-festival.png') no-repeat center center/cover;
-  padding: 100px 200px 400px 20px;
+  padding: 100px 200px 400px 100px;
   text-align: center;
   position: relative;
 }
@@ -385,6 +385,7 @@ footer {
   }
   .logo-title {
     width: 90%;
+    margin: 0 auto;
   }
   .logo-title img {
     width: 90vw;
@@ -395,10 +396,12 @@ footer {
 @media (max-width: 600px) {
   .hero-section {
     padding: 30px 2vw 60px 2vw;
+    background: url('/public/img/bg-festival-mobile.png') no-repeat top center/cover;
   }
   .logo-title img {
     width: 100%;
     max-width: 250px;
+    margin-left: 30px;
   }
   .logo-title p {
     font-size: 15px;
@@ -437,12 +440,24 @@ footer {
   }
   .mid-left img {
     border-radius: 8px;
+    padding-right: 30px;
   }
   .mid-right h2 {
-    font-size: 22px;
+    font-size: 32px;
+    font-weight: 300;
+    color: #E7CBB5;
+    text-align: center;
   }
   .mid-right p {
-    font-size: 14px;
+    font-size: 16px;
+    color: #E8CDB4;
+    width: 85%;
+    margin: 0 auto;
+  }
+
+  .mid-section .btn-inscreva {
+    display: block;
+    margin: 20px auto;
   }
 }
 
@@ -472,11 +487,20 @@ footer {
     padding: 30px 2vw;
   }
   .premiacao-title img {
-    max-width: 220px;
+    max-width: 320px;
     padding-bottom: 10px;
   }
+  .trofeus {
+    gap: 10px;
+  }
   .trofeu1, .trofeu2 {
-    width: 80px;
+    width: 110px;
+  }
+  .trofeu2 {
+    filter: blur(1.2px);
+  }
+  .smoke-bg {
+    top: 60%;
   }
   .premiacao-section p {
     font-size: 13px;
@@ -519,7 +543,7 @@ footer {
 
 @media (max-width: 600px) {
   .formulario-section {
-    padding: 20px 2vw;
+    padding: 20px 8vw;
     gap: 10px;
   }
   .campos-form {
@@ -533,7 +557,7 @@ footer {
   .form-row input {
     min-width: 0;
     width: 100%;
-    padding: 10px 8px;
+    padding: 15px 8px;
     font-size: 14px;
   }
   .file-card {
