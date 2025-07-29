@@ -507,6 +507,13 @@ footer {
   }
 }
 
+@media (max-width: 500px) {
+  .trofeu1, .trofeu2 {
+    width: 100px;
+  }
+  
+}
+
 /* --- FORMULÁRIO --- */
 @media (max-width: 1020px) {
   .campos-form {
