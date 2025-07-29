@@ -123,8 +123,9 @@ const scrollToForm = () => {
         </div>
         <div className="mid-right">
           <h2>INSCREVA-SE</h2>
-          <p>Participe do maior festival de música gospel da região e mostre o talento que Deus te deu. Inscreva-se agora e venha fazer parte desse mover!</p>
-          <button className="btn-inscreva" type="button" onClick={scrollToForm}>INSCREVA-SE</button>
+          <p><b>As inscrições já começaram e vão <br /> até  15 de agosto!</b></p>
+          <p><i>Não perca a chance de viver esse momento único. Mostre seu talento e faça parte do</i> <b>Gospel Talent 2025!</b> </p>
+          <button className="btn-inscreva-mid" type="button" onClick={scrollToForm}>INSCREVA-SE</button>
         </div>
       </section>
 
@@ -140,10 +141,10 @@ const scrollToForm = () => {
           <img className='trofeu1' src="/img/trofeu1.png" alt="1º Lugar" />
           <img className='trofeu2' src="/img/trofeu2.png" alt="3º Lugar" />
         </div>
+        <h4>Preencha seus dados com atenção</h4>
         <p>
-          Participe e tenha a chance de mostrar o dom que Deus te deu! <br />
-          Além de abençoar vidas com a sua música, você ainda pode ser premiado!
-        </p>
+          Em breve entraremos em contato com mais detalhes sobre o festival. Que seu talento seja instrumento de adoração! 
+          </p>
       </section>
 
 
