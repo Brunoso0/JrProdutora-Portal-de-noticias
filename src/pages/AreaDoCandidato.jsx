@@ -46,10 +46,12 @@ const AreaDoCandidato = () => {
         });
 
         const camposObrigatorios = [
-          "telefone", "rg", "cpf", "musica", "video",
-          "rg_arquivo", "cpf_arquivo", "certidao_municipal_arquivo",
-          "certidao_federal_arquivo", "comprovante_residencia_arquivo",
-          "espelho_conta_bancaria_arquivo", "letra_musica_arquivo"
+          // "telefone", "rg", "cpf", "musica", "video",
+          // "rg_arquivo", "cpf_arquivo", "certidao_municipal_arquivo",
+          // "certidao_federal_arquivo", "comprovante_residencia_arquivo",
+          // "espelho_conta_bancaria_arquivo", "letra_musica_arquivo"
+
+          "telefone", "cpf", "musica", "video",
         ];
         const pend = camposObrigatorios.filter(c => !res.data[c]);
         setPendencias(pend);
@@ -504,9 +506,9 @@ useEffect(() => {
                 />
               </div>
               <input name="nome" value={formData.nome} onChange={handleInputChange} placeholder="Nome" required />
-              <input name="telefone" value={formData.telefone} onChange={handleInputChange} placeholder="Telefone" />
               <input name="nome_artistico" value={formData.nome_artistico} onChange={handleInputChange} placeholder="Nome Artístico" />
-              <input name="endereco" value={formData.endereco} onChange={handleInputChange} placeholder="Endereço" />
+              <input name="telefone" value={formData.telefone} onChange={handleInputChange} placeholder="Telefone" />
+              {/* <input name="endereco" value={formData.endereco} onChange={handleInputChange} placeholder="Endereço" /> */}
                <input
                   name="email"
                   value={candidato?.email || ""}
@@ -514,14 +516,14 @@ useEffect(() => {
                   readOnly
                   style={{ cursor: "not-allowed", backgroundColor: "#f3f3f3", color: "#888" }}
                 />
-                <input
+                {/* <input
                   name="rg"
                   value={formData.rg}
                   placeholder="RG"
                   readOnly={!!formData.rg}
                   onChange={handleInputChange}
                   style={formData.rg ? { cursor: "not-allowed", backgroundColor: "#f3f3f3", color: "#888" } : {}}
-                />
+                /> */}
                 <input
                   name="cpf"
                   value={formData.cpf}
@@ -535,10 +537,11 @@ useEffect(() => {
                name="musica"
                 value={formData.musica}
                 onChange={handleInputChange}
-                placeholder="Música"
+                placeholder="Informe a Música que irá cantar!"
                 style={formData.musica ? { cursor: "not-allowed", backgroundColor: "#f3f3f3", color: "#888" } : {}}
                 />
-              <input name="tempo_atividade" value={formData.tempo_atividade} onChange={handleInputChange} placeholder="Tempo de Atividade" />
+
+              {/* <input name="tempo_atividade" value={formData.tempo_atividade} onChange={handleInputChange} placeholder="Tempo de Atividade" /> */}
               
 
               {mostrarPendencias && (
@@ -555,7 +558,7 @@ useEffect(() => {
                       {pendencias.includes("video") && (
                         <label>Vídeo: <input type="file" name="video" onChange={handleFileChange} /></label>
                       )}
-                      {pendencias.includes("rg_arquivo") && (
+                      {/* {pendencias.includes("rg_arquivo") && (
                         <label>RG: <input type="file" name="rg_arquivo" onChange={handleFileChange} /></label>
                       )}
                       {pendencias.includes("cpf_arquivo") && (
@@ -575,7 +578,7 @@ useEffect(() => {
                       )}
                       {pendencias.includes("letra_musica_arquivo") && (
                         <label>Letra da Música: <input type="file" name="letra_musica_arquivo" onChange={handleFileChange} /></label>
-                      )}
+                      )} */}
                     </>
                   )}
                 </>
@@ -585,31 +588,22 @@ useEffect(() => {
             </form>
 
 
-            <button onClick={(  ) => setMostrarPendencias(p => !p)} style={{ marginTop: "1rem" }}>
+            {/* <button onClick={(  ) => setMostrarPendencias(p => !p)} style={{ marginTop: "1rem" }}>
               {mostrarPendencias ? "Ocultar Pendências" : "Ver Pendências"}
-            </button>
+            </button> */}
 
-            {mostrarPendencias && (
+            {/* {mostrarPendencias && (
               <ul style={{ textAlign: "left", marginTop: "0.5rem" }}>
                 {pendencias.length === 0
                   ? <li>✅ Você não possui pendências.</li>
                   : pendencias.map((p, i) => <li key={i}>⚠ Documento faltando: {p.replace(/_/g, " ")}</li>)}
               </ul>
-            )}
+            )} */}
           </div>
         </div>
       )}
 
       <ToastContainer position="top-center" autoClose={3000} />
-    <footer className="footer-festival-cand">
-        <div className="cactus-img cactus-candidatos">
-          <img src="/img/cacto-direita.png" className="cacto-direita cacto-direita2" alt="Cacto à direita" />
-          <img src="/img/cacto-esquerda.png" className="cacto-esquerda cacto-esquerda2" alt="Cacto à esquerda" />
-        </div>
-        <div className="footer-festival-logo-cand">
-          <img src="/img/fundo-festival.png" alt="Decoração de corda no rodapé" />
-        </div>
-      </footer>
     </div>
   );
 };

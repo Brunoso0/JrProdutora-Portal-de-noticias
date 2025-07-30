@@ -14,10 +14,14 @@ const ModalAvaliacao = ({ candidato, onClose, onUpdate }) => {
   const [criterioAtual, setCriterioAtual] = useState(0);
 
   const jurado_id = parseInt(localStorage.getItem("jurado_id"));
+  const token = localStorage.getItem("token"); // Passo 1: Capture o token
 
   const etapaAtual = candidato?.fase_atual
     ? candidato.fase_atual.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
     : "";
+
+  // Adicione o console.log logo após definir etapaAtual
+  console.log("DEBUG: Etapa Atual", etapaAtual);
 
   const buscarEtapaStatus = useCallback(async () => {
     if (!candidato?.etapa_id) return setVotacaoLiberada(false);
@@ -60,19 +64,39 @@ const ModalAvaliacao = ({ candidato, onClose, onUpdate }) => {
     if (aprovado === "nao" && justificativa.trim() === "") {
       return toast.error("Justificativa obrigatória ao reprovar.");
     }
+
+    if (!token) {
+      console.error("Token ausente");
+      return toast.error("Sessão expirada. Faça login novamente.");
+    }
+
     try {
-      await axios.post(`${API_FESTIVAL}/api/jurados/votos-binarios`, {
-        inscricao_id: candidato.id,
-        etapa_id: candidato.etapa_id,
-        jurado_id,
-        aprovado,
-        justificativa,
-      });
+      const response = await axios.post(
+        `${API_FESTIVAL}/api/jurados/votos-binarios`,
+        {
+          inscricao_id: candidato.id,
+          etapa_id: candidato.etapa_id,
+          aprovado,
+          justificativa,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+
       toast.success("Voto registrado com sucesso!");
       onClose();
       onUpdate();
-    } catch {
-      toast.error("Erro ao registrar voto.");
+    } catch (error) {
+      console.error("Erro ao registrar voto binário:", error.response || error);
+      if (error.response?.status === 403) {
+        toast.error("Acesso negado. Verifique suas permissões.");
+      } else {
+        toast.error("Erro ao registrar voto.");
+      }
     }
   };
 
@@ -97,6 +121,10 @@ const ModalAvaliacao = ({ candidato, onClose, onUpdate }) => {
         inscricao_id: candidato.id,
         etapa_id: candidato.etapa_id,
         votos: payload
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}` // Passo 2: Envie o token no cabeçalho
+        }
       });
       toast.success("Voto registrado com sucesso!");
       onClose();
@@ -122,54 +150,94 @@ const ModalAvaliacao = ({ candidato, onClose, onUpdate }) => {
 
   return (
     <div className="modal-avaliacao-overlay">
-  <div className="modal-avaliacao-box">
-    <h2>Avaliar {candidato.nome_artistico}</h2>
-    <p className="etapa-info">Etapa: <strong>{candidato.fase_atual}</strong></p>
+      <div className="modal-avaliacao-box">
+        <h2>Avaliar {candidato.nome_artistico}</h2>
+        <p className="etapa-info">Etapa: <strong>{candidato.fase_atual}</strong></p>
 
-    <form className="criterios-form">
-      {criterios.map((criterio) => (
-        <div key={criterio.id} className="criterio-bloco">
-          <label className="criterio-label">{formatarNomeCriterio(criterio.nome)}</label>
-          <div className="nota-justificativa">
-            <input
-              type="number"
-              min="0"
-              max="10"
-              step="1"
-              className="input-nota"
-              value={notas[criterio.id] || ""}
-              onChange={(e) => {
-                const valor = parseFloat(e.target.value);
-                if (!isNaN(valor) && valor > 0 && valor <= 10) {
-                  setNotas({ ...notas, [criterio.id]: valor });
-                } else if (e.target.value === "") {
-                  setNotas({ ...notas, [criterio.id]: "" });
-                }
-              }}
-            />
-            <textarea
-              placeholder="Justificativa (opcional)"
-              className="input-justificativa"
-              value={justificativasCriterios[criterio.id] || ""}
-              onChange={(e) =>
-                setJustificativasCriterios({
-                  ...justificativasCriterios,
-                  [criterio.id]: e.target.value,
-                })
-              }
-            />
-          </div>
-        </div>
-      ))}
-    </form>
+        {etapaAtual === "classificatoria" ? (
+          <>
+            <div className="voto-binario-opcoes">
+              <p>Deseja aprovar este candidato para a próxima fase?</p>
+              <div className="botoes-binarios">
+                <button
+                  className={aprovado === "sim" ? "ativo" : ""}
+                  onClick={() => setAprovado("sim")}
+                  type="button"
+                >
+                  Sim
+                </button>
+                <button
+                  className={aprovado === "nao" ? "ativo" : ""}
+                  onClick={() => setAprovado("nao")}
+                  type="button"
+                >
+                  Não
+                </button>
+              </div>
 
-    <div className="botoes-modal-avaliacao">
-      <button className="btn-cancelar" onClick={onClose}>Cancelar</button>
-      <button className="btn-confirmar" onClick={handleVotoComCriterios}>Enviar Voto</button>
+              {aprovado === "nao" && (
+                <textarea
+                  className="input-justificativa"
+                  placeholder="Justificativa obrigatória ao reprovar"
+                  value={justificativa}
+                  onChange={(e) => setJustificativa(e.target.value)}
+                />
+              )}
+            </div>
+
+            <div className="botoes-modal-avaliacao">
+              <button className="btn-cancelar" onClick={onClose}>Cancelar</button>
+              <button className="btn-confirmar" onClick={handleVotoBinario}>Enviar Voto</button>
+            </div>
+          </>
+        ) : (
+          <>
+            <form className="criterios-form">
+              {criterios.map((criterio) => (
+                <div key={criterio.id} className="criterio-bloco">
+                  <label className="criterio-label">{formatarNomeCriterio(criterio.nome)}</label>
+                  <div className="nota-justificativa">
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      step="1"
+                      className="input-nota"
+                      value={notas[criterio.id] || ""}
+                      onChange={(e) => {
+                        const valor = parseFloat(e.target.value);
+                        if (!isNaN(valor) && valor > 0 && valor <= 10) {
+                          setNotas({ ...notas, [criterio.id]: valor });
+                        } else if (e.target.value === "") {
+                          setNotas({ ...notas, [criterio.id]: "" });
+                        }
+                      }}
+                    />
+                    <textarea
+                      placeholder="Justificativa (opcional)"
+                      className="input-justificativa"
+                      value={justificativasCriterios[criterio.id] || ""}
+                      onChange={(e) =>
+                        setJustificativasCriterios({
+                          ...justificativasCriterios,
+                          [criterio.id]: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              ))}
+            </form>
+
+            <div className="botoes-modal-avaliacao">
+              <button className="btn-cancelar" onClick={onClose}>Cancelar</button>
+              <button className="btn-confirmar" onClick={handleVotoComCriterios}>Enviar Voto</button>
+            </div>
+          </>
+        )}
+
+      </div>
     </div>
-  </div>
-</div>
-
   );
 };
 

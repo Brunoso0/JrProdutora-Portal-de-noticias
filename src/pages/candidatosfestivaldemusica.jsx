@@ -28,17 +28,14 @@ const CandidatosFestivalDeMusica = () => {
         axios.get(`${API_FESTIVAL}/api/etapas/listar`)
       ]);
 
-      // Apenas os candidatos com votacao = 1
       const apenasAptos = candidatosRes.data.filter(c => c.votacao === 1);
       setCandidatos(apenasAptos);
       setEtapas(etapasRes.data);
-
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     }
   };
 
-  // 🔁 Etapas com inscritos (geradas dinamicamente)
   const etapasPresentes = useMemo(() => {
     const etapasUnicas = new Set();
     let possuiEliminado = false;
@@ -57,7 +54,6 @@ const CandidatosFestivalDeMusica = () => {
     return lista;
   }, [candidatos]);
 
-  // 🔎 Filtro e ordenação
   const candidatosFiltrados = useMemo(() => {
     let lista = [...candidatos];
 
@@ -83,6 +79,9 @@ const CandidatosFestivalDeMusica = () => {
 
     return lista;
   }, [candidatos, busca, ordem, etapaSelecionada]);
+
+  const removerAcentos = (str) =>
+    str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
 
   return (
     <div className="candidatos-festival-container">
@@ -131,14 +130,12 @@ const CandidatosFestivalDeMusica = () => {
       <div className="candidatos-festival-grid">
         {candidatosFiltrados.map((candidato, index) => (
           <div key={index} className="candidatos-festival-card">
-            {/* Selo da etapa atual */}
             <span
               className={`candidatos-festival-selo-etapa ${candidato.eliminado === 1 ? "eliminado" : ""}`}
             >
               {candidato.eliminado === 1 ? "Eliminado" : (candidato.fase_atual || "Sem etapa")}
             </span>
 
-            {/* Imagem do candidato */}
             <div className="candidatos-festival-imagem">
               {candidato.foto ? (
                 <img src={`${API_FESTIVAL}/${candidato.foto}`} alt={candidato.nome_artistico} />
@@ -147,7 +144,6 @@ const CandidatosFestivalDeMusica = () => {
               )}
             </div>
 
-            {/* Rodapé do card */}
             <div className="candidatos-festival-rodape">
               <span className="candidatos-festival-nome">{candidato.nome_artistico}</span>
               <div className="candidatos-festival-botoes">
@@ -176,6 +172,7 @@ const CandidatosFestivalDeMusica = () => {
         candidato={candidatoParaAvaliar}
         onClose={() => setCandidatoParaAvaliar(null)}
         onUpdate={fetchData}
+        removerAcentos={removerAcentos} // Passamos essa função para uso interno
       />
 
       <ToastContainer
