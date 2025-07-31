@@ -230,7 +230,7 @@
 }
 
 .trofeu2 {
-  width: 300px;
+  width: 200px;
   height: auto;
 }
 
@@ -516,8 +516,12 @@ footer {
   .trofeus {
     gap: 10px;
   }
-  .trofeu1, .trofeu2 {
-    width: 190px;
+  .trofeu1 {
+    width: 200px;
+  }
+
+  .trofeu2 {
+    width: 150px;
   }
   .premiacao-section p {
     font-size: 16px;
@@ -551,8 +555,12 @@ footer {
 }
 
 @media (max-width: 500px) {
-  .trofeu1, .trofeu2 {
+  .trofeu1 {
     width: 100px;
+  }
+
+  .trofeu2 {
+    width: 80px;
   }
   
 }

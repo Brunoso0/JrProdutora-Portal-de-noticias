@@ -139,7 +139,7 @@ const scrollToForm = () => {
         <div className="trofeus">
           <img className='trofeu2' src="/img/trofeu2.png" alt="2º Lugar" />
           <img className='trofeu1' src="/img/trofeu1.png" alt="1º Lugar" />
-          <img className='trofeu2' src="/img/trofeu2.png" alt="3º Lugar" />
+          <img className='trofeu2' src="/img/trofeu3.png" alt="3º Lugar" />
         </div>
         <h4>Preencha seus dados com atenção</h4>
         <p>

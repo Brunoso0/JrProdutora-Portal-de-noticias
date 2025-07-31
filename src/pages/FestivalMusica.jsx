@@ -165,15 +165,6 @@ const FestivalMusica = () => {
           <button onClick={() => setModalAberto(false)}>Cancelar</button>
         </div>
       </Modal>
-      <footer className="footer-festival-cand">
-        <div className="cactus-img cactus-candidatos">
-          <img src="/img/cacto-direita.png" className="cacto-direita cacto-direita2" alt="Cacto à direita" />
-          <img src="/img/cacto-esquerda.png" className="cacto-esquerda cacto-esquerda2" alt="Cacto à esquerda" />
-        </div>
-        <div className="footer-festival-logo-cand">
-          <img src="/img/fundo-festival.png" alt="Decoração de corda no rodapé" />
-        </div>
-      </footer>
     </div>
   );
 };

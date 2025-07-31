@@ -5,6 +5,7 @@ import "../styles/LoginFestival.css";
 import { API_FESTIVAL } from "../services/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import footer from './InscricaoFestival';
 
 const LoginJurados = () => {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ const LoginJurados = () => {
     <div className="login-festival-container">
       <div className="login-festival-content">
         <div className="left-column2">
-          <img src="/img/festival-inscricoes.png" alt="Imagem Festival Inscrições" />
+          <img src="/img/loginjurados.png" alt="Imagem Festival Inscrições" />
         </div>
         <div className="right-column2">
           <div className="right-column-content">
@@ -152,15 +153,7 @@ const LoginJurados = () => {
         </div>
       </div>
 
-      <footer className="footer-festival">
-        <div className="cactus-img">
-          <img src="/img/cacto-direita.png" className="cacto-direita cacto-direita2" alt="Cacto à direita" />
-          <img src="/img/cacto-esquerda.png" className="cacto-esquerda cacto-esquerda2" alt="Cacto à esquerda" />
-        </div>
-        <div className="footer-festival-logo">
-          <img src="/img/fundo-festival.png" alt="Decoração de corda no rodapé" />
-        </div>
-      </footer>
+      
 
       <ToastContainer position="top-center" autoClose={3000} />
     </div>

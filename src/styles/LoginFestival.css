@@ -4,7 +4,11 @@
   justify-content: center; /* ALINHAR VERTICALMENTE */
   align-items: center;
   height: 100dvh; /* 100% da área visível de verdade */
-  background: radial-gradient(circle, #e8a9ec 0%, #8805bc 18%, #a146eb 59%);
+  background-color: #1C001F;
+  background-image: url('../../public/img/bg-festival.png');
+  background-repeat: no-repeat;
+  background-size: cover; /* Preenche toda a área */
+  background-position: center;
   overflow: hidden; /* Garante que nada estoure a tela */
 }
 
@@ -23,7 +27,7 @@
 
   /* CENTRALIZAÇÃO */
   position: absolute;
-  top: 35%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -177,7 +181,7 @@
 @media (max-width: 768px) {
   .login-festival-content {
     flex-direction: column; /* Empilha as colunas */
-    padding: 1.5rem;
+    padding: 0;
     gap: 2rem;
     margin-top: 5rem;
   }
