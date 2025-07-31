@@ -74,6 +74,7 @@ const ModalAvaliacao = ({ candidato, onClose, onUpdate }) => {
       const response = await axios.post(
         `${API_FESTIVAL}/api/jurados/votos-binarios`,
         {
+          jurado_id: jurado_id,
           inscricao_id: candidato.id,
           etapa_id: candidato.etapa_id,
           aprovado,
