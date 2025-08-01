@@ -1,355 +1,250 @@
-/* Paleta:
-   Roxo escuro: #4b0082
-   Roxo médio:  #7b1fa2
-   Lilás claro: #ede7f6
-   Rosa suave:  #f8bbd0
-*/
-
 .festival-musica-container {
+  background: #1C001F;
+  background-image: url(../../public/img/bg-vote.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(135deg, #4b0082 0%, #7b1fa2 100%);
-  padding-bottom: 0;
+  padding: 2rem;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
 }
 
+
 .festival-musica-titulo {
-  color: #ede7f6;
-  font-size: clamp(2.5rem, 7vw, 4.5rem);
-  font-family: 'Thunderhouse', 'Poppins', sans-serif;
-  font-weight: 900;
-  margin: 2.5rem 0 1.2rem 0;
-  letter-spacing: 2px;
-  text-align: center;
-  text-shadow: 0 4px 24px #7b1fa2, 0 1px 0 #f8bbd0;
-  background: linear-gradient(90deg, #7b1fa2 30%, #f8bbd0 100%);
-  border-radius: 2rem;
-  padding: 1.2rem 0.5rem;
-  width: 90vw;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
+  font-size: 2.5rem;
+  color: #fff;
+  margin-bottom: 2rem;
 }
 
 .festival-musica-favorito {
-  color: #f8bbd0;
-  font-size: 2.2rem;
-  letter-spacing: 2px;
-  margin-bottom: 1.5rem;
-  text-shadow: 0 2px 10px #4b0082;
-  text-align: center;
+  color: #ffdf8c;
 }
 
-/* Filtro de datas */
-.festival-musica-select-data {
-  margin: 0 auto 2.5rem auto;
-  color: #4b0082;
-  font-size: 1.1rem;
-  max-width: 420px;
-  background: #ede7f6;
-  border-radius: 18px;
-  padding: 1.2rem 1.5rem 1rem 1.5rem;
-  box-shadow: 0 4px 24px #7b1fa2;
-  border: 2px solid #f8bbd0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.festival-musica-select-data select {
-  margin-top: 0.7rem;
-  padding: 0.7rem 1rem;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  border: 2px solid #7b1fa2;
-  background: #fff;
-  color: #4b0082;
-  font-weight: 600;
-  outline: none;
-  transition: border 0.2s;
-  width: 100%;
-  max-width: 320px;
-}
-.festival-musica-select-data select:focus {
-  border: 2px solid #4b0082;
-}
-
-/* Grid responsivo de candidatos */
 .festival-musica-grid-candidatos {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-  gap: 2.5rem;
-  padding: 2rem 2vw 3rem 2vw;
-  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+  align-items: stretch;
   max-width: 1200px;
   margin: 0 auto;
-  box-sizing: border-box;
+  width: 100%;
+  padding: 0 1rem;
 }
 
-/* Card do candidato */
+
+
 .festival-musica-card-candidato {
-  background: linear-gradient(135deg, #ede7f6 70%, #f8bbd0 100%);
-  border-radius: 2.5rem 0.5rem 2.5rem 0.5rem;
-  padding: 2.2rem 1.2rem 2.5rem 1.2rem;
-  box-shadow: 0 8px 32px #4b008244, 0 1.5px 0 #ede7f6;
-  width: 100%;
-  max-width: 350px;
-  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(6px);
+  border-radius: 20px;
+  padding: 1.5rem;
+  width: 240px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 3px solid #7b1fa2;
+  transition: background 0.3s ease, transform 0.3s ease;
   position: relative;
-  transition: box-shadow 0.2s, transform 0.2s, border 0.2s;
   overflow: hidden;
 }
-.festival-musica-card-candidato::before {
-  content: "";
-  position: absolute;
-  top: -60px; left: -60px;
-  width: 120px; height: 120px;
-  background: radial-gradient(circle, #7b1fa2 0%, transparent 70%);
-  opacity: 0.18;
-  z-index: 0;
-}
+
 .festival-musica-card-candidato:hover {
-  box-shadow: 0 16px 48px #4b008288, 0 1.5px 0 #f8bbd0;
-  transform: translateY(-8px) scale(1.04) rotate(-1deg);
-  border: 3px solid #4b0082;
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.03);
 }
 
-/* Foto do candidato */
 .festival-musica-foto {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
+  width: 100%;
+  height: 260px;
   object-fit: cover;
-  object-position: center;
-  margin-bottom: 1.1rem;
-  border: 5px solid #f8bbd0;
-  background: #fff;
-  box-shadow: 0 2px 16px #7b1fa2;
-  z-index: 1;
-  transition: border 0.2s, box-shadow 0.2s;
-}
-.festival-musica-card-candidato:hover .festival-musica-foto {
-  border: 5px solid #7b1fa2;
-  box-shadow: 0 4px 24px #4b008244;
+  border-radius: 10px;
+  margin-bottom: 1rem;
 }
 
-/* Nome e cidade */
 .festival-musica-card-candidato h2 {
-  font-size: 1.25rem;
-  margin: 0.2rem 0 0.3rem 0;
-  color: #4b0082;
-  font-family: inherit;
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: 1px;
-  z-index: 1;
-}
-.festival-musica-card-candidato p {
-  font-size: 1.08rem;
-  margin-bottom: 0.7rem;
-  color: #7b1fa2;
-  text-align: center;
-  font-weight: 500;
-  z-index: 1;
+  font-size: 1.2rem;
+  margin: 0.5rem 0 0.3rem;
+  color: #fff;
 }
 
-/* Botão votar */
+.festival-musica-card-candidato p {
+  font-size: 0.9rem;
+  color: #ddd;
+  margin-bottom: 1rem;
+}
+
 .festival-musica-btn-votar {
-  margin-top: 1.1rem;
-  padding: 0.9rem 2.2rem;
-  background: linear-gradient(90deg, #7b1fa2 60%, #f8bbd0 100%);
+  background-color: #ff6868;
   color: #fff;
   border: none;
-  border-radius: 2rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 10px #ede7f6;
-  transition: background 0.2s, transform 0.1s;
-  z-index: 1;
-}
-.festival-musica-btn-votar:hover:not([disabled]) {
-  background: linear-gradient(90deg, #4b0082 60%, #7b1fa2 100%);
-  transform: scale(1.09);
-}
-.festival-musica-btn-votar[disabled] {
-  background: #b39ddb;
-  cursor: not-allowed;
-  opacity: 0.7;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+  margin-top: 1rem;
 }
 
-/* MODAL */
-.festival-musica-modal-voto {
-  background: #ede7f6;
-  padding: 2.2rem 1.2rem;
-  max-width: 95vw;
-  margin: auto;
-  border-radius: 2rem;
-  text-align: center;
-  box-shadow: 0 4px 24px #7b1fa244;
-  border: 2px solid #7b1fa2;
+.festival-musica-card-candidato:hover .festival-musica-btn-votar {
+  opacity: 1;
+  pointer-events: all;
 }
+/* Fundo escuro semi-transparente */
 .festival-musica-overlay-voto {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(75, 0, 130, 0.18);
+  position: fixed; /* ESSENCIAL */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8); /* escurece fundo */
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 1000; /* acima de tudo */
 }
-.festival-musica-modal-voto input {
-  margin: 1rem 0;
-  padding: 0.7rem;
+
+
+/* Container do modal */
+.festival-musica-modal-voto {
+  background: #1a0022;
+  color: #fff;
+  border-radius: 20px;
+  padding: 2rem;
   width: 90%;
-  font-size: 1.1rem;
+  max-width: 400px;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
   text-align: center;
-  border-radius: 8px;
-  border: 1.5px solid #7b1fa2;
-  background: #fff;
-  color: #4b0082;
+  position: relative; /* precisa ter */
+  z-index: 1001; /* acima do overlay */
+    animation: fadeInModal 0.3s ease-in-out;
 }
+
+
+/* Animação de entrada */
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.festival-musica-modal-voto h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #ffd2ff;
+}
+
+.festival-musica-modal-voto p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.festival-musica-modal-voto label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: #fff;
+}
+
+.festival-musica-modal-voto input {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 10px;
+  border: none;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  background: #fff;
+  color: #000;
+}
+
 .festival-musica-modal-botoes {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  margin-top: 1.2rem;
 }
+
 .festival-musica-modal-botoes button {
   flex: 1;
-  padding: 0.8rem 0;
+  padding: 0.75rem;
+  font-weight: bold;
   border: none;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #7b1fa2 60%, #f8bbd0 100%);
-  color: #fff;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 1.08rem;
-  font-weight: 700;
-  margin: 0 0.2rem;
-  transition: background 0.2s;
-}
-.festival-musica-modal-botoes button:hover {
-  background: linear-gradient(90deg, #4b0082 60%, #7b1fa2 100%);
+  font-size: 1rem;
+  transition: background 0.2s ease;
 }
 
-/* Footer */
-.footer-festival-logo-cand img {
-  width: 100%;
-  max-height: 100%;
-  object-fit: cover;
-  display: block;
-  margin: 0px auto;
-}
-.footer-festival-logo-cand {
-  padding-top: 8%;
-}
-.footer-festival-cand {
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
+.festival-musica-modal-botoes button:first-child {
+  background-color: #3be07d;
+  color: #000;
 }
 
-/* Responsividade */
-@media (max-width: 900px) {
+.festival-musica-modal-botoes button:first-child:hover {
+  background-color: #2ad16a;
+}
+
+.festival-musica-modal-botoes button:last-child {
+  background-color: #d94e4e;
+  color: #fff;
+}
+
+.festival-musica-modal-botoes button:last-child:hover {
+  background-color: #c03838;
+}
+
+
+
+
+
+
+/* Responsividade da pagina */
+
+/* Telas até 1200px – reduz gap e limita tamanho */
+@media (max-width: 1200px) {
   .festival-musica-grid-candidatos {
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 1.2rem;
-    padding: 1rem 0.5rem;
-    max-width: 99vw;
+    gap: 1.5rem;
   }
+
   .festival-musica-card-candidato {
-    max-width: 99vw;
-    padding: 1rem 0.5rem 1.2rem 0.5rem;
-  }
-  .festival-musica-foto {
-    max-width: 100px;
-    height: 100px;
+    max-width: 300px;
   }
 }
 
-@media (max-width: 600px) {
-  .festival-musica-titulo {
-    font-size: 1.5rem;
-    margin-bottom: 0.7rem;
-    padding-top: 1rem;
-    line-height: 1;
-    word-break: break-word;
-    border-radius: 1rem;
-    padding: 0.7rem 0.2rem;
-  }
-  .festival-musica-favorito {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-  }
+/* Telas até 768px – 2 colunas */
+@media (max-width: 768px) {
   .festival-musica-grid-candidatos {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
-    padding: 0.5rem;
-    max-width: 100vw;
-    overflow-y: visible;
   }
+
+  .festival-musica-titulo {
+    font-size: 2rem;
+  }
+}
+
+/* Telas até 480px – 1 coluna */
+@media (max-width: 488px) {
+  .festival-musica-grid-candidatos {
+    grid-template-columns: 1fr;
+  }
+
   .festival-musica-card-candidato {
-    max-width: 95vw;
-    margin: 0 auto;
-    padding: 0.7rem 0.3rem 1rem 0.3rem;
-    border-radius: 1.2rem 0.4rem 1.2rem 0.4rem;
-  }
-  .festival-musica-foto {
     width: 100%;
-    max-width: 70px;
-    height: 70px;
-    margin: 0 auto 0.7rem auto;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-    border-width: 2px;
+    max-width: 90%;
   }
-  .festival-musica-card-candidato h2 {
-    font-size: 0.95rem;
-  }
-  .festival-musica-card-candidato p {
-    font-size: 0.85rem;
-  }
-  .festival-musica-btn-votar {
-    width: 100%;
-    padding: 0.7rem 0;
-    font-size: 0.95rem;
-    margin-top: 0.7rem;
-    border-radius: 1.2rem;
-  }
-  .festival-musica-select-data {
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    max-width: 99vw;
-    padding: 0.7rem 0.5rem 0.5rem 0.5rem;
-  }
-  .festival-musica-select-data select {
-    width: 100%;
-    font-size: 1rem;
-    margin-top: 0.3rem;
-  }
-  .festival-musica-modal-voto {
-    padding: 1.2rem 0.2rem;
-    max-width: 99vw;
-    border-radius: 1rem;
-  }
-  .festival-musica-modal-voto input {
-    width: 98%;
-    font-size: 1rem;
-    padding: 0.6rem;
-  }
-  .festival-musica-modal-botoes {
-    flex-direction: column;
-    gap: 0.7rem;
-  }
-  .festival-musica-modal-botoes button {
-    font-size: 1rem;
-    padding: 0.7rem 0;
+
+  .festival-musica-titulo {
+    font-size: 1.6rem;
   }
 }

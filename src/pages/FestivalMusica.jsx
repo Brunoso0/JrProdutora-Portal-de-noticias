@@ -122,7 +122,7 @@ const FestivalMusica = () => {
                   alt={candidato.nome_artistico}
                   className="festival-musica-foto"
                 />
-                <h2>{candidato.nome_artistico}</h2>
+                <h2>{candidato.nome_artistico || candidato.nome}</h2>
                 <p>{candidato.cidade}</p>
                 <button className="festival-musica-btn-votar" onClick={() => abrirModal(candidato)}>
                   Votar
