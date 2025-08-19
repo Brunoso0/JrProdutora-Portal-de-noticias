@@ -148,7 +148,7 @@ const scrollToForm = () => {
       </section>
 
 
-      {/* <form className="formulario-section" ref={formularioRef} id="formulario" onSubmit={handleSubmit}>
+      <form className="formulario-section" ref={formularioRef} id="formulario" onSubmit={handleSubmit}>
         <div className="campos-form">
           <div className="form-row">
             <input
@@ -227,12 +227,12 @@ const scrollToForm = () => {
         </div>
 
         <button type="submit">ENVIAR INSCRIÇÃO</button>
-      </form> */}
+      </form>
 
 
-      <div className="prazo-encerrado-msg" style={{ textAlign: "center", fontSize: "1.5rem", color: "#c0392b", margin: "3rem 0" }}>
+      {/* <div className="prazo-encerrado-msg" style={{ textAlign: "center", fontSize: "1.5rem", color: "#c0392b", margin: "3rem 0" }}>
         Prazo encerrado para inscrições
-      </div>
+      </div> */}
 
 
       <footer>
