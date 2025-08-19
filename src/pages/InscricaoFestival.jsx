@@ -143,7 +143,7 @@ const scrollToForm = () => {
         </div>
         <h4>Preencha seus dados com atenção</h4>
         <p>
-          Em breve entraremos em contato com mais detalhes sobre o festival.Que seu talento seja instrumento de adoração! 
+          Em breve entraremos em contato com mais detalhes sobre o festival. <br />Que seu talento seja instrumento de adoração! 
           </p>
       </section>
 
