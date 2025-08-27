@@ -33,24 +33,23 @@ Focado em performance, SEO básico e integração com backend Node.js (API próp
 
 ## 📂 Estrutura do projeto
 
+```
 .
-├─ public/ # index.html, ícones e assets públicos
+├─ public/                 # index.html, ícones e assets públicos
 ├─ src/
-│ ├─ assets/ # imagens, logos, ícones
-│ ├─ components/ # componentes reutilizáveis
-│ ├─ pages/ # páginas (Home, VerTodos, Detalhe, etc.)
-│ ├─ services/ # configuração do Axios
-│ ├─ styles/ # CSS adicionais
-│ ├─ App.jsx
-│ └─ index.jsx
-├─ scripts/ # utilitários de build/deploy
+│  ├─ assets/              # imagens, logos, ícones
+│  ├─ components/          # componentes reutilizáveis
+│  ├─ pages/               # páginas (Home, VerTodos, Detalhe, etc.)
+│  ├─ services/            # configuração do Axios
+│  ├─ styles/              # CSS adicionais
+│  ├─ App.jsx
+│  └─ index.jsx
+├─ scripts/                # utilitários de build/deploy
 ├─ craco.config.js
 ├─ tailwind.config.js
 ├─ package.json
 └─ README.md
-
-yaml
-Copiar código
+```
 
 ---
 
@@ -75,86 +74,98 @@ yarn
 npm start
 # ou
 yarn start
-Aplicação disponível em: http://localhost:3000
+```
 
-🔐 Variáveis de ambiente
-Crie um arquivo .env na raiz:
+Aplicação disponível em: **http://localhost:3000**
 
-bash
-Copiar código
+---
+
+## 🔐 Variáveis de ambiente
+
+Crie um arquivo `.env` na raiz:
+
+```bash
 # URL da API (produção ou dev)
 REACT_APP_API_URL=https://api.seudominio.com.br
 
 # (opcional)
 REACT_APP_GOOGLE_TAG=G-XXXXXXX
 REACT_APP_ENABLE_MOCKS=false
-Exemplo (services/api.js):
+```
 
-js
-Copiar código
+Exemplo (`services/api.js`):
+
+```js
 import axios from "axios";
 
 export const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
 });
-🧩 Scripts disponíveis
-npm start — desenvolvimento (hot reload)
+```
 
-npm run build — build otimizado para produção
+---
 
-npm test — testes (quando configurados)
+## 🧩 Scripts disponíveis
 
-🧭 Rotas principais
-/ — Home (destaques + últimas notícias)
+- `npm start` — desenvolvimento (hot reload)  
+- `npm run build` — build otimizado para produção  
+- `npm test` — testes (quando configurados)  
 
-/ver-todos — Listagem com filtros
+---
 
-/noticia/:slug — Página de detalhe
+## 🧭 Rotas principais
 
-/categoria/:slug — Notícias por categoria
+- `/` — Home (destaques + últimas notícias)  
+- `/ver-todos` — Listagem com filtros  
+- `/noticia/:slug` — Página de detalhe  
+- `/categoria/:slug` — Notícias por categoria  
+- `/programa/:slug` — Notícias por programa  
+- `/admin` — Dashboard administrativo  
 
-/programa/:slug — Notícias por programa
+---
 
-/admin — Dashboard administrativo
+## 🗃️ Modelo de dados esperado (frontend)
 
-🗃️ Modelo de dados esperado (frontend)
-Notícias → título, subtítulo, imagem, slug, conteúdo, autor, programa, categoria, destaque, datas
+- **Notícias** → título, subtítulo, imagem, slug, conteúdo, autor, programa, categoria, destaque, datas  
+- **Categorias / Programas** → nome, slug  
+- **Anúncios** → posição, tipo (horizontal/vertical/google), prioridade, imagem/HTML, link  
+- **Relatórios** → métricas (visitas únicas, votos/engajamento, etc.)  
 
-Categorias / Programas → nome, slug
+---
 
-Anúncios → posição, tipo (horizontal/vertical/google), prioridade, imagem/HTML, link
+## 📐 Convenções de código
 
-Relatórios → métricas (visitas únicas, votos/engajamento, etc.)
+- Componentes em **JSX**  
+- Estilização com **Tailwind CSS** (preferência)  
+- Pastas organizadas por responsabilidade  
+- Componentes → **PascalCase**, arquivos → **kebab-case**  
 
-📐 Convenções de código
-Componentes em JSX
+---
 
-Estilização com Tailwind CSS (preferência)
+## 🗺️ Roadmap
 
-Pastas organizadas por responsabilidade
+- [ ] Notícias da semana e da região  
+- [ ] Melhorias de SEO (sitemap.xml, robots.txt)  
+- [ ] Página de anunciantes (venda de espaços)  
+- [ ] Relatórios reais via API (gráficos)  
+- [ ] Testes automatizados  
+- [ ] Suporte a i18n (pt-BR default)  
 
-Componentes → PascalCase, arquivos → kebab-case
+---
 
-🗺️ Roadmap
- Notícias da semana e da região
+## 🤝 Como contribuir
 
- Melhorias de SEO (sitemap.xml, robots.txt)
+1. Faça um **fork**  
+2. Crie sua branch: `git checkout -b feature/minha-feature`  
+3. Commit: `git commit -m "feat: minha feature"`  
+4. Push: `git push origin feature/minha-feature`  
+5. Abra um Pull Request 🎉  
 
- Página de anunciantes (venda de espaços)
+---
 
- Relatórios reais via API (gráficos)
+## 📄 Licença
 
- Testes automatizados
+Defina a licença aqui (ex.: MIT).  
+Se nada for definido, o projeto será considerado **sem licença explícita**.
 
- Suporte a i18n (pt-BR default)
-
-🤝 Como contribuir
-Faça um fork
-
-Crie sua branch: git checkout -b feature/minha-feature
-
-Commit: git commit -m "feat: minha feature"
-
-Push: git push origin feature/minha-feature
-
-Abra um Pull Request 🎉
+---
