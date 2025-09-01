@@ -123,7 +123,7 @@ const scrollToForm = () => {
         </div>
         <div className="mid-right">
           <h2>INSCREVA-SE</h2>
-          <p><b>As inscrições já começaram e vão <br /> até  15 de agosto!</b></p>
+          <p><b>As inscrições já começaram e vão <br /> até  31 de agosto!</b></p>
           <p><i>Não perca a chance de viver esse momento único. Mostre seu talento e faça parte do</i> <b>Gospel Talent 2025!</b> </p>
           <button className="btn-inscreva-mid" type="button" onClick={scrollToForm}>INSCREVA-SE</button>
         </div>
@@ -148,7 +148,7 @@ const scrollToForm = () => {
       </section>
 
 
-      <form className="formulario-section" ref={formularioRef} id="formulario" onSubmit={handleSubmit}>
+      {/* <form className="formulario-section" ref={formularioRef} id="formulario" onSubmit={handleSubmit}>
         <div className="campos-form">
           <div className="form-row">
             <input
@@ -227,12 +227,12 @@ const scrollToForm = () => {
         </div>
 
         <button type="submit">ENVIAR INSCRIÇÃO</button>
-      </form>
+      </form> */}
 
 
-      {/* <div className="prazo-encerrado-msg" style={{ textAlign: "center", fontSize: "1.5rem", color: "#c0392b", margin: "3rem 0" }}>
+      <div className="prazo-encerrado-msg" style={{ textAlign: "center", fontSize: "1.5rem", color: "#c0392b", margin: "3rem 0" }}>
         Prazo encerrado para inscrições
-      </div> */}
+      </div>
 
 
       <footer>
