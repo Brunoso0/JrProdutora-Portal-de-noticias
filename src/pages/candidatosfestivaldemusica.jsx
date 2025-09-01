@@ -29,7 +29,7 @@ const CandidatosFestivalDeMusica = () => {
       ]);
 
       const apenasAptos = candidatosRes.data.filter(c => c.votacao === 1);
-      setCandidatos(apenasAptos);
+      setCandidatos(candidatosRes.data);
       setEtapas(etapasRes.data);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
@@ -129,7 +129,7 @@ const CandidatosFestivalDeMusica = () => {
 
       <div className="candidatos-festival-grid">
         {candidatosFiltrados.map((candidato, index) => (
-          <div key={index} className="candidatos-festival-card">
+          <div key={index} className={`candidatos-festival-card ${candidato.votacao !== 1 ? "nao-aptos" : ""}`}>
             <span
               className={`candidatos-festival-selo-etapa ${candidato.eliminado === 1 ? "eliminado" : ""}`}
             >
@@ -150,18 +150,15 @@ const CandidatosFestivalDeMusica = () => {
                 <button className="candidatos-festival-botao" onClick={() => setCandidatoSelecionado(candidato)}>
                   Ver Perfil
                 </button>
-                <button className="candidatos-festival-botao" onClick={() => setCandidatoParaAvaliar(candidato)}>
+                {/* <button className="candidatos-festival-botao" onClick={() => setCandidatoParaAvaliar(candidato)}>
                   Avaliar
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="candidatos-festival-footer">
-        <FooterFestival />
-      </div>
 
       <ModalCandidato
         candidato={candidatoSelecionado}

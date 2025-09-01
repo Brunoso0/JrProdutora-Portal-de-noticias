@@ -401,6 +401,12 @@
   height: 100%;
 }
 
+.candidatos-festival-card.nao-aptos {
+  opacity: 0.6;
+  filter: grayscale(30%);
+}
+
+
 /* ==================== RESPONSIVIDADE ==================== */
 
 /* Telas grandes */
