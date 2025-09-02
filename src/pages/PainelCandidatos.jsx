@@ -4,6 +4,7 @@ import ControleJurados from "../components/ControleJurados";
 import ControleEtapas from "../components/ControleEtapas";
 import CandidatosFestivalAdmin from "./CandidatosFestivalAdmin";
 import ControleCandidatos from "../components/ControleCandidatos";
+import Classificatoria from "../components/Classificatoria";
 import DashboardFestival from "../components/DashboardFestival";
 import DashboardVotosPublicos from "../components/DashboardVotosPublicos";
 import DashboardTotalVotos from "../components/DashboardTotalVotos";
@@ -20,26 +21,40 @@ const PainelCandidatos = () => {
     switch (paginaSelecionada) {
       case "candidatos":
         return <CandidatosFestivalAdmin />;
+
       case "jurados":
         return <ControleJurados />;
+
       case "etapas":
         return <ControleEtapas />;
+
       case "controleCandidatos":
         return <ControleCandidatos />;
+      
+      case "classificatoria":
+        return <Classificatoria />;
+
       case "dashboard":
         return <DashboardFestival />;
+
       case "DashboardVotosPublicos":
         return <DashboardVotosPublicos />;
+
       case "selecionarVotacao":
         return <SelecionarVotacao />;
+        
       case "AvancosDoDia":
         return <AvancosDoDia />;
+
       case "DashboardTotalVotos":
         return <DashboardTotalVotos />;
+
       case "RankingVotos":
         return <RankingVotos />;
+
       case "VencedoresFestival2025":
         return <VencedoresFestival2025 />;
+
       default:
         return <div>Selecione uma opção no menu</div>;
     }

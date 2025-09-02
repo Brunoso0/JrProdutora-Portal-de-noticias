@@ -1,0 +1,112 @@
+.classificatoria-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.classificatoria-container h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.filtros-classificatoria {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.filtros-classificatoria label {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.filtros-classificatoria select {
+  margin-left: 10px;
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.tabela-binaria {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.linha-titulo,
+.linha-voto {
+  display: grid;
+  grid-template-columns: 80px 1fr 100px;
+  align-items: center;
+  padding: 10px 15px;
+}
+
+.linha-titulo {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}
+
+.linha-voto {
+  border-top: 1px solid #eee;
+}
+
+.celula {
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.celulajurado {
+    color: #333 !important;
+}
+
+
+.foto-jurado {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+/* Destaque visual para o voto binário */
+.voto-bool.sim {
+  color: green;
+  font-weight: bold;
+  background-color: #e7fbe7;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.voto-bool.nao {
+  color: red;
+  font-weight: bold;
+  background-color: #fde4e4;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+/* Responsividade simples */
+@media (max-width: 600px) {
+  .linha-titulo,
+  .linha-voto {
+    grid-template-columns: 60px 1fr 80px;
+    font-size: 14px;
+  }
+
+  .filtros-classificatoria select {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+}

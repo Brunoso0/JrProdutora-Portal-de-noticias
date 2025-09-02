@@ -22,9 +22,10 @@ const SidebarFestival = ({ setPaginaSelecionada, modoJurado = false }) => {
         {!modoJurado && (
           <>
             <li onClick={() => setPaginaSelecionada("candidatos")}>Editar Candidatos</li>
-            <li onClick={() => setPaginaSelecionada("jurados")}>Controle de Jurados</li>
-            <li onClick={() => setPaginaSelecionada("etapas")}>Controle de Etapas</li>
-            <li onClick={() => setPaginaSelecionada("dashboard")}>Tabela do Candidato</li>
+            <li onClick={() => setPaginaSelecionada("jurados")}>Ver Jurados</li>
+            <li onClick={() => setPaginaSelecionada("etapas")}>Ver Etapas</li>
+            <li onClick={() => setPaginaSelecionada("classificatoria")}>Classificatoria</li>
+            <li onClick={() => setPaginaSelecionada("dashboard")}>Tabela de Notas</li>
             <li onClick={() => setPaginaSelecionada("DashboardVotosPublicos")}>Votos Públicos</li>
             <li onClick={() => setPaginaSelecionada("selecionarVotacao")}>Liberar Votação Pública</li>
             <li onClick={() => setPaginaSelecionada("AvancosDoDia")}>Avanços do Dia</li>
