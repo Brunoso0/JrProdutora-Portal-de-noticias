@@ -5,7 +5,6 @@ import { API_FESTIVAL } from "../services/api";
 import { toast } from "react-toastify";
 
 const ModalClassificatoria = ({ candidato, onClose, onUpdate }) => {
-  const [aprovado, setAprovado] = useState("");
   const [justificativa, setJustificativa] = useState("");
   const [votacaoLiberada, setVotacaoLiberada] = useState(false);
 
@@ -26,8 +25,8 @@ const ModalClassificatoria = ({ candidato, onClose, onUpdate }) => {
     buscarEtapaStatus();
   }, [buscarEtapaStatus]);
 
-  const handleVotoBinario = async () => {
-    if (!aprovado) return toast.error("Selecione se deseja aprovar ou reprovar.");
+  const handleVotoBinario = async (decisao) => {
+    if (!decisao) return toast.error("Selecione se deseja aprovar ou reprovar.");
 
     try {
       await axios.post(
@@ -36,7 +35,7 @@ const ModalClassificatoria = ({ candidato, onClose, onUpdate }) => {
           jurado_id,
           inscricao_id: candidato.id,
           etapa_id: candidato.etapa_id,
-          aprovado,
+          aprovado: decisao,
           justificativa,
         },
         {
@@ -62,25 +61,20 @@ const ModalClassificatoria = ({ candidato, onClose, onUpdate }) => {
 
         <button
           className="botao-sim"
-          onClick={() => {
-            setAprovado("sim");
-            handleVotoBinario();
-          }}
+          onClick={() => handleVotoBinario("sim")}
         >
           SIM
         </button>
 
         <button
           className="botao-nao"
-          onClick={() => {
-            setAprovado("nao");
-            handleVotoBinario();
-          }}
+          onClick={() => handleVotoBinario("nao")}
         >
           NÃO
         </button>
 
         {/* 
+        Se quiser reativar justificativa quando for "não", descomente e ajuste a lógica
         {aprovado === "nao" && (
           <textarea
             className="input-justificativa"

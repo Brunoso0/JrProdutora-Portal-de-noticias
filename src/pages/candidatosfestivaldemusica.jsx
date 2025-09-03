@@ -159,8 +159,6 @@ const CandidatosFestivalDeMusica = () => {
         ))}
       </div>
 
-{/* apenas force */}
-
       <ModalCandidato
         candidato={candidatoSelecionado}
         onClose={() => setCandidatoSelecionado(null)}
