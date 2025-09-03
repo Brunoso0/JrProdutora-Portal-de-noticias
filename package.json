@@ -109,6 +109,7 @@
     "react-simple-maps": "^3.0.0",
     "react-toastify": "^11.0.2",
     "recharts": "^2.15.1",
+    "socket.io-client": "^4.8.1",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "styled-components": "^6.1.15",
@@ -124,7 +125,6 @@
     "build": "craco build && node scripts/copy-htaccess.js",
     "test": "craco test"
   },
-
   "eslintConfig": {
     "extends": [
       "react-app",
