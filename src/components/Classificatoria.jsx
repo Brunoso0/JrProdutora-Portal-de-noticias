@@ -1,13 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "../styles/Classificatoria.css";
 import { API_FESTIVAL } from "../services/api";
+import io from "socket.io-client";
+
+const socket = io(API_FESTIVAL); // Ex: https://festival.jrprodutora.com.br
 
 const Classificatoria = () => {
   const [candidatos, setCandidatos] = useState([]);
   const [candidatoSelecionado, setCandidatoSelecionado] = useState("");
   const [etapaClassificatoria, setEtapaClassificatoria] = useState(null);
   const [votos, setVotos] = useState([]);
+
+  // 🔄 Função para buscar votos
+  const fetchVotos = useCallback(async () => {
+    if (!candidatoSelecionado || !etapaClassificatoria?.id) return;
+    try {
+      const res = await axios.get(
+        `${API_FESTIVAL}/api/jurados/votos-binarios/${candidatoSelecionado}/${etapaClassificatoria.id}`
+      );
+      setVotos(res.data);
+    } catch (err) {
+      console.error("Erro ao buscar votos:", err);
+      setVotos([]);
+    }
+  }, [candidatoSelecionado, etapaClassificatoria]);
 
   // Buscar etapa classificatória
   useEffect(() => {
@@ -30,25 +47,26 @@ const Classificatoria = () => {
     }
   }, [etapaClassificatoria]);
 
-  // Buscar votos binários
+  // Buscar votos inicialmente e escutar eventos socket
   useEffect(() => {
     if (!candidatoSelecionado || !etapaClassificatoria?.id) return;
 
-    const fetchVotos = async () => {
-      try {
-        const res = await axios.get(
-          `${API_FESTIVAL}/api/jurados/votos-binarios/${candidatoSelecionado}/${etapaClassificatoria.id}`
-        );
-        setVotos(res.data);
-      } catch (err) {
-        setVotos([]);
-      }
-    };
+    fetchVotos(); // primeira busca
 
-    fetchVotos();
-    const interval = setInterval(fetchVotos, 3000); // Atualização periódica (pode trocar por socket depois)
-    return () => clearInterval(interval);
-  }, [candidatoSelecionado, etapaClassificatoria]);
+    socket.on("novo-voto-binario", (data) => {
+      if (
+        data.inscricao_id === parseInt(candidatoSelecionado) &&
+        data.etapa_id === etapaClassificatoria.id
+      ) {
+        console.log("🟢 Novo voto recebido via socket:", data);
+        fetchVotos(); // atualiza votos
+      }
+    });
+
+    return () => {
+      socket.off("novo-voto-binario");
+    };
+  }, [candidatoSelecionado, etapaClassificatoria, fetchVotos]);
 
   return (
     <div className="classificatoria-container">

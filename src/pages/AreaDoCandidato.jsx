@@ -250,6 +250,16 @@ useEffect(() => {
             <p>{candidato?.eliminado ? "❌ Eliminado" : (candidato?.fase_atual || "Fase atual")}</p>
           </div>
         </div>
+        <a
+          className="RegulamentoButton"
+          href="/docs/GospelTalentRegulamento.pdf"
+          download
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: "none" }}
+        >
+          Regulamento do Festival
+        </a>
         <button
           className={`botao-atualizar ${pendencias.length > 0 ? "alerta-pendencia" : ""}`}
           onClick={abrirModal}
