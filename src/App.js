@@ -18,6 +18,7 @@ import ProtectedRouteJurado from "./components/ProtectedRouteJurado";
 import PublicLayout from "./layouts/PublicLayout";
 import FestivalMusica from "./pages/FestivalMusica";
 import InscricaoFestival from "./pages/InscricaoFestival"; // Importando a página de inscrição do festival
+import PopupClassificatoria from "./components/PopupClassificatoria";
 import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { API_BASE_URL } from './services/api'; // Importando o arquivo de configuração do Axios
@@ -105,6 +106,7 @@ const App = () => {
           <Route path="/festivaldemusica" element={<FestivalMusica />} />
           <Route path="/noticia/:slug" element={<NoticiaPage />} />
           <Route path="/ver-todos/:tipo" element={<VerTodos />} />
+          <Route path="/popup-classificatoria" element={<PopupClassificatoria />} />
           <Route path="/" element={<PublicLayout />} />
         </Routes>
         </Router>

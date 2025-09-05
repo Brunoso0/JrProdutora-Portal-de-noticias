@@ -150,9 +150,9 @@ const CandidatosFestivalDeMusica = () => {
                 <button className="candidatos-festival-botao" onClick={() => setCandidatoSelecionado(candidato)}>
                   Ver Perfil
                 </button>
-                {/* <button className="candidatos-festival-botao" onClick={() => setCandidatoParaAvaliar(candidato)}>
+                <button className="candidatos-festival-botao" onClick={() => setCandidatoParaAvaliar(candidato)}>
                   Avaliar
-                </button> */}
+                </button>
               </div>
             </div>
           </div>
