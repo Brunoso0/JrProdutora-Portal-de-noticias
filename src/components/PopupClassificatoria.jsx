@@ -6,7 +6,7 @@ import { API_FESTIVAL } from "../services/api";
 import "../styles/PopupClassificatoria.css";
 
 // IDs fixos dos jurados e ordem desejada
-const JURADOS_FIXOS = [18, 2, 20, 24];
+const JURADOS_FIXOS = [22, 2, 23, 21];
 
 // Mapeamento: jurado_id => imagem PNG do nome
 const JURADO_NOME_IMG = {
