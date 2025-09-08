@@ -81,7 +81,7 @@
 /* coluna (cartaz vertical) */
 .coluna-voto {
   position: relative;
-  height: 72vh; /* coluna bem alta como no mock */
+  height: 95dvh; /* coluna bem alta como no mock */
   min-height: 420px;
   border-radius: 10px;
   overflow: hidden;
@@ -94,32 +94,43 @@
 
 /* gradientes por estado: SIM (verde) / NÃO (vermelho) / pendente (cinza) */
 .coluna-voto.sim {
-  background: linear-gradient(180deg, #21c957 0%, rgba(33, 201, 87, 0.12) 100%);
+  background: linear-gradient(180deg, #02ef4db5 0%, rgba(33, 201, 87, 0.12) 100%);
 }
 .coluna-voto.nao {
-  background: linear-gradient(180deg, #d22b2b 0%, rgba(210, 43, 43, 0.12) 100%);
+  background: linear-gradient(180deg, #eb07079f 0%, rgba(210, 43, 43, 0.12) 100%);
 }
 .coluna-voto.pendente {
-  background: linear-gradient(180deg, #6b6b6b 0%, rgba(107, 107, 107, 0.12) 100%);
+  background: linear-gradient(180deg, #686968b5 0%, rgba(107, 107, 107, 0.12) 100%);
 }
+
+
 
 /* foto circular do jurado */
 .jurado-foto {
-  width: 120px;
-  height: 120px;
+  width: 180px;
+  height: 180px;
   border-radius: 999px;
   overflow: hidden;
-  background: rgba(255,255,255,0.9);
   display: grid;
   place-items: center;
-  box-shadow: 0 6px 30px rgba(0,0,0,0.25);
 }
 
 .jurado-foto img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.25);
+  transition: filter 0.3s ease;
 }
+
+
+
+/* Foto cinza enquanto não votou */
+.jurado-foto img.foto-pendente {
+  filter: grayscale(100%);
+  opacity: 0.7; /* deixa mais apagado */
+}
+
 
 .jurado-foto--placeholder {
   width: 100%;
@@ -147,3 +158,5 @@
   font-size: 16px;
   opacity: 0.9;
 }
+
+

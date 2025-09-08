@@ -1,8 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import io from "socket.io-client";
 import { API_FESTIVAL } from "../services/api";
 import "../styles/PopupClassificatoria.css";
+
+// IDs fixos dos jurados e ordem desejada
+const JURADOS_FIXOS = [18, 2, 20, 24];
+
+// Mapeamento: jurado_id => imagem PNG do nome
+const JURADO_NOME_IMG = {
+  18: "/img/jurados/nome-jurado-18.png",
+  2: "/img/jurados/raquele.png",
+  20: "/img/jurados/alex.png",
+  24: "/img/jurados/nome-jurado-24.png",
+};
+
+const buildFotoUrl = (raw) => {
+  if (!raw) return null;
+  let p = String(raw).trim().replace(/\\/g, "/").replace(/^\.\/+/, "");
+  if (/^https?:\/\//i.test(p)) return p;
+  if (p.startsWith("/uploads")) return `${API_FESTIVAL}${p}`;
+  if (p.startsWith("uploads/")) return `${API_FESTIVAL}/${p}`;
+  return `${API_FESTIVAL}/${p}`;
+};
 
 const PopupClassificatoria = () => {
   const [searchParams] = useSearchParams();
@@ -10,86 +31,156 @@ const PopupClassificatoria = () => {
   const etapaId = searchParams.get("etapa_id");
 
   const [votos, setVotos] = useState([]);
-  const [candidato, setCandidato] = useState(null);
+  const [juradosInfo, setJuradosInfo] = useState({});
+  const [loading, setLoading] = useState(true); // <-- evita “Sem votos” no carregamento
 
-  // Dados do candidato (nome/foto no topo)
+  // socket memoizado
+  const socket = useMemo(
+    () =>
+      io(API_FESTIVAL, {
+        transports: ["websocket"], // força websocket (evita long-polling lento)
+      }),
+    []
+  );
+
+  // Busca infos dos jurados (nome/foto) para exibir mesmo sem voto
   useEffect(() => {
-    const fetchCandidato = async () => {
-      if (!etapaId || !candidatoId) return;
+    let cancel = false;
+    const fetchJurados = async () => {
       try {
-        const res = await axios.get(`${API_FESTIVAL}/api/dashboard/candidatos/${etapaId}`);
-        const found = (res.data || []).find((c) => String(c.id) === String(candidatoId));
-        if (found) setCandidato(found);
-      } catch {
-        /* silencioso */
+        const pairs = await Promise.all(
+          JURADOS_FIXOS.map((id) =>
+            axios
+              .get(`${API_FESTIVAL}/api/jurados/listar/${id}`)
+              .then((r) => [id, r.data])
+              .catch(() => [id, null])
+          )
+        );
+        if (cancel) return;
+        const map = {};
+        pairs.forEach(([id, data]) => {
+          if (data) map[id] = data; // { id, nome, foto }
+        });
+        setJuradosInfo(map);
+      } finally {
+        // nada
       }
     };
-    fetchCandidato();
-  }, [candidatoId, etapaId]);
+    fetchJurados();
+    return () => {
+      cancel = true;
+    };
+  }, []);
 
-  // Votos (polling)
+  // Primeira carga de votos + polling leve (backup) + listener de socket
   useEffect(() => {
     if (!candidatoId || !etapaId) return;
+    let cancel = false;
 
     const fetchVotos = async () => {
       try {
         const res = await axios.get(
           `${API_FESTIVAL}/api/jurados/votos-binarios/${candidatoId}/${etapaId}`
         );
-        setVotos(res.data || []);
-      } catch {
-        setVotos([]);
+        if (!cancel) setVotos(res.data || []);
+      } finally {
+        if (!cancel) setLoading(false);
       }
     };
 
+    // 1ª carga imediata
     fetchVotos();
-    const interval = setInterval(fetchVotos, 2000);
-    return () => clearInterval(interval);
-  }, [candidatoId, etapaId]);
 
-  // Ordena votos por jurado_id crescente
-  const votosOrdenados = [...votos].sort((a, b) => Number(a.jurado_id) - Number(b.jurado_id));
+    // Socket: aplica atualização instantânea
+    const onNovoVoto = (payload) => {
+      const { inscricao_id, etapa_id } = payload || {};
+      if (
+        String(inscricao_id) === String(candidatoId) &&
+        String(etapa_id) === String(etapaId)
+      ) {
+        // substitui/insere o voto desse jurado localmente
+        setVotos((prev) => {
+          const semEsse = prev.filter(
+            (v) => Number(v.jurado_id) !== Number(payload.jurado_id)
+          );
+          return [...semEsse, payload];
+        });
+      }
+    };
+    socket.on("novo-voto-binario", onNovoVoto);
+
+    // Polling leve (fallback) a cada 5s — opcional, mas bom pra “garantir”
+    const id = setInterval(fetchVotos, 5000);
+
+    return () => {
+      cancel = true;
+      clearInterval(id);
+      socket.off("novo-voto-binario", onNovoVoto);
+    };
+  }, [candidatoId, etapaId, socket]);
+
+  // Monta as 4 colunas fixas
+  const colunas = useMemo(() => {
+    return JURADOS_FIXOS.map((jid) => {
+      const voto = votos.find((v) => Number(v.jurado_id) === Number(jid));
+      const base = juradosInfo[jid] || {};
+      const nome = voto?.nome_jurado || base.nome || `Jurado ${jid}`;
+      const fotoPath = voto?.foto_jurado || base.foto || null;
+      const fotoUrl = buildFotoUrl(fotoPath);
+      const estado = voto
+        ? voto.aprovado === "sim"
+          ? "sim"
+          : voto.aprovado === "nao"
+            ? "nao"
+            : "pendente"
+        : "pendente";
+      const nomeImg = JURADO_NOME_IMG[jid];
+      return { jid, nome, fotoUrl, estado, nomeImg };
+    });
+  }, [votos, juradosInfo]);
+
+  const handleImgError = (e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = "";
+    e.currentTarget.style.display = "none";
+  };
+
+  const hasAlgumVoto = votos && votos.length > 0;
 
   return (
     <div className="popup-classificatoria">
-      {/* <header className="popup-header">
-        <div className="popup-candidato">
-          <div className="popup-candidato-foto">
-            {candidato?.foto ? (
-              <img
-                src={`${API_FESTIVAL}/${candidato.foto}`}
-                alt={candidato?.nome_artistico || candidato?.nome}
-              />
-            ) : (
-              <div className="popup-candidato-foto--placeholder">Sem foto</div>
-            )}
+      <div className="colunas-votos">
+        {colunas.map(({ jid, nome, fotoUrl, estado, nomeImg }) => (
+          <div className={`coluna-voto ${estado}`} key={jid}>
+            <div className="jurado-nome">
+              {nomeImg ? (
+                <img
+                  src={nomeImg}
+                  alt={`Nome do jurado ${jid}`}
+                  style={{ maxWidth: "140px", width: "100%", height: "auto", display: "block", margin: "0 auto" }}
+                />
+              ) : (
+                nome
+              )}
+            </div>
+            <div className="jurado-foto">
+              {fotoUrl ? (
+                <img
+                  src={fotoUrl}
+                  alt={nome}
+                  onError={handleImgError}
+                  className={estado === "pendente" ? "foto-pendente" : ""}
+                />
+              ) : (
+                <div className="jurado-foto--placeholder">Jurado {jid}</div>
+              )}
+            </div>
           </div>
-          <div className="popup-candidato-info">
-            <h1>{candidato?.nome_artistico || candidato?.nome || `Candidato #${candidatoId}`}</h1>
-            <span className="badge">Classificatória</span>
-          </div>
-        </div>
-      </header> */}
+        ))}
+      </div>
 
-      {votosOrdenados.length > 0 ? (
-        <div className="colunas-votos">
-          {votosOrdenados.map((v, i) => {
-            const estado = v.aprovado === "sim" ? "sim" : v.aprovado === "nao" ? "nao" : "pendente";
-            return (
-              <div className={`coluna-voto ${estado}`} key={`${v.jurado_id}-${i}`}>
-                <div className="jurado-foto">
-                  {v.foto_jurado ? (
-                    <img src={`${API_FESTIVAL}/${v.foto_jurado}`} alt={v.nome_jurado} />
-                  ) : (
-                    <div className="jurado-foto--placeholder">foto jurado</div>
-                  )}
-                </div>
-                <div className="jurado-nome">{v.nome_jurado}</div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
+      {/* Só mostra a mensagem se já terminou o loading E realmente não tem nenhum voto */}
+      {!loading && !hasAlgumVoto && (
         <div className="mensagem-vazia">Sem votos até o momento.</div>
       )}
     </div>
