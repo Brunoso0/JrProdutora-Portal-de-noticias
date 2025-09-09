@@ -104,7 +104,6 @@ const DashboardFestival = () => {
   const renderBlocosDeVoto = () => {
     if (!dadosVotacao || dadosVotacao.tipo !== "criterios") return null;
 
-    const criteriosUnicos = dadosVotacao.jurados[0]?.criterios.map(c => c.criterio) || [];
     const mediasJurados = dadosVotacao.jurados.map(j =>
       j.criterios.reduce((soma, c) => soma + (Number(c.nota) || 0), 0) / j.criterios.length
     );
@@ -115,9 +114,6 @@ const DashboardFestival = () => {
         {/* Cabeçalho */}
         <div className="linha-titulo">
           <div className="celula jurado-nome">Jurado</div>
-          {criteriosUnicos.map((nome, i) => (
-            <div key={i} className="celula">{corrigirCriterio(nome)}</div>
-          ))}
           <div className="celula media-final">Média</div>
         </div>
 
@@ -128,35 +124,20 @@ const DashboardFestival = () => {
 
           return (
             <div key={i} className="linha-jurado" style={{ backgroundColor: cores[i % cores.length] }}>
-              <div className="celula jurado-nome">
+              <div className="celula jurado-nome-">
                 {jurado.foto_jurado && (
                   <img src={`${API_FESTIVAL}/${jurado.foto_jurado}`} alt="Jurado" />
                 )}
                 <span>{jurado.nome_jurado}</span>
               </div>
-              {jurado.criterios.map((c, j) => (
-                <div key={j} className="celula">{c.nota ?? "--"}</div>
-              ))}
               <div className="celula media-final">{media.toFixed(1)}</div>
             </div>
           );
         })}
 
-        {/* Voto Popular */}
-        {/* <div className="linha-jurado voto-popular" style={{ backgroundColor: cores[4] }}>
-          <div className="celula jurado-nome"><span>Voto Popular</span></div>
-          {[...Array(criteriosUnicos.length)].map((_, i) => (
-            <div className="celula" key={i}>–</div>
-          ))}
-          <div className="celula media-final">{dadosVotacao.popular}</div>
-        </div> */}
-
         {/* Média Geral */}
         <div className="linha-titulo media-geral">
           <div className="celula jurado-nome"><strong>MÉDIA GERAL</strong></div>
-          {[...Array(criteriosUnicos.length)].map((_, i) => (
-            <div className="celula" key={i}>–</div>
-          ))}
           <div className="celula media-final"><strong>{mediaGeral.toFixed(1)}</strong></div>
         </div>
       </div>

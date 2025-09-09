@@ -212,18 +212,18 @@
   font-size: 1.13rem;
 }
 
-.jurado-nome {
+.jurado-nome- {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-size: 1.13rem;
+  font-size: 1.63rem;
 }
 
-.jurado-nome img {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+.jurado-nome- img {
+  width: 100px;
+  height: 100px;
+  border-radius: 15%;
   object-fit: cover;
 }
 
