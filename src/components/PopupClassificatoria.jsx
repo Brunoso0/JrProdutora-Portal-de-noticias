@@ -6,14 +6,14 @@ import { API_FESTIVAL } from "../services/api";
 import "../styles/PopupClassificatoria.css";
 
 // IDs fixos dos jurados e ordem desejada
-const JURADOS_FIXOS = [18, 19, 20, 24];
+const JURADOS_FIXOS = [2, 21, 22, 23];
 
 // Mapeamento: jurado_id => imagem PNG do nome
 const JURADO_NOME_IMG = {
-  18: "/img/jurados/joão.png",
-  19: "/img/jurados/raquele.png",
-  20: "/img/jurados/alex.png",
-  24: "/img/jurados/Rubecleiton.png",
+  2: "/img/jurados/joão.png",
+  21: "/img/jurados/raquele.png",
+  22: "/img/jurados/alex.png",
+  23: "/img/jurados/Rubecleiton.png",
 };
 
 const buildFotoUrl = (raw) => {
