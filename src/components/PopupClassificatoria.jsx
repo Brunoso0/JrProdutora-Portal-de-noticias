@@ -6,14 +6,14 @@ import { API_FESTIVAL } from "../services/api";
 import "../styles/PopupClassificatoria.css";
 
 // IDs fixos dos jurados e ordem desejada
-const JURADOS_FIXOS = [22, 2, 23, 21];
+const JURADOS_FIXOS = [18, 19, 20, 24];
 
 // Mapeamento: jurado_id => imagem PNG do nome
 const JURADO_NOME_IMG = {
-  18: "/img/jurados/nome-jurado-18.png",
-  2: "/img/jurados/raquele.png",
+  18: "/img/jurados/joão.png",
+  19: "/img/jurados/raquele.png",
   20: "/img/jurados/alex.png",
-  24: "/img/jurados/nome-jurado-24.png",
+  24: "/img/jurados/Rubecleiton.png",
 };
 
 const buildFotoUrl = (raw) => {
@@ -180,9 +180,9 @@ const PopupClassificatoria = () => {
       </div>
 
       {/* Só mostra a mensagem se já terminou o loading E realmente não tem nenhum voto */}
-      {!loading && !hasAlgumVoto && (
+      {/* {!loading && !hasAlgumVoto && (
         <div className="mensagem-vazia">Sem votos até o momento.</div>
-      )}
+      )} */}
     </div>
   );
 };
