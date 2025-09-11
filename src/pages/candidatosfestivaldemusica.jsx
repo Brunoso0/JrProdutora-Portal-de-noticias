@@ -28,8 +28,8 @@ const CandidatosFestivalDeMusica = () => {
         axios.get(`${API_FESTIVAL}/api/etapas/listar`)
       ]);
 
-      const apenasAptos = candidatosRes.data.filter(c => c.votacao === 1);
-      setCandidatos(candidatosRes.data);
+      // Mostra apenas os candidatos aptos a serem votados (votacao === 1)
+      setCandidatos(candidatosRes.data.filter(c => c.votacao === 1));
       setEtapas(etapasRes.data);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
