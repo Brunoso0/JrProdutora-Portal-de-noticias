@@ -94,9 +94,9 @@
   --col2: rgba(239,68,68,0.12);
   --wash: rgba(239,68,68,0.18);
 }
-
+ 
 .coluna-voto.pendente {
-  --col: #9ca3af;
+  --col: #ad56be1c;
   --col2: rgba(156,163,175,0.12);
   --wash: rgba(156,163,175,0.18);
 }
