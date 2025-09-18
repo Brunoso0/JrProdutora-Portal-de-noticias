@@ -140,7 +140,7 @@ const NoticiaPage = () => {
           <p className="autor">Por {noticia.autor}, publicado em {new Date(noticia.data_hora_publicacao).toLocaleString("pt-BR")}</p>
 
           {/* 🔝 Propaganda topo */}
-          {adsTopo && (
+          {/* {adsTopo && (
             <Propaganda
               tipo={adsTopo.tipo}
               imagem={adsTopo.imagem}
@@ -148,7 +148,7 @@ const NoticiaPage = () => {
               id={adsTopo.google_client_id}
               slot={adsTopo.google_slot}
             />
-          )}
+          )} */}
 
           <div className="conteudo" dangerouslySetInnerHTML={{ __html: renderContentFromEditorJS(noticia.conteudo) }} />
         </div>

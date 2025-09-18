@@ -164,36 +164,40 @@ const ThirdGrid = ({ link }) => {
     };
 
     const renderNoticiasRegiao = (noticias, limit) => {
-        return noticias.slice(0, limit).map((article, index) => {
-          if (
-            !article || 
-            !article.slug || 
-            !article.titulo || 
-            !article.categoria || 
-            !article.imagem
-          ) return null;
-      
-          return (
-            <Link 
-              to={`/noticia/${article.slug}`} 
-              className="grid-item2"
-              onClick={() => handleView(article.slug)}
-              key={index}
-            >
-              <div className="content">
-                <div className="tagdiv">
-                  <span className="tag">{article.categoria}</span>
-                </div>
-                <h3 className="title">{truncateText(article.titulo, isMobile ? 60 : 90)}</h3>
+                // Filtra apenas notícias cuja categoria contém "Região"
+                return noticias
+                    .filter(article => article && article.categoria && article.categoria.toLowerCase().includes('região'))
+                    .slice(0, limit)
+                    .map((article, index) => {
+                        if (
+                            !article || 
+                            !article.slug || 
+                            !article.titulo || 
+                            !article.categoria || 
+                            !article.imagem
+                        ) return null;
+        
+                        return (
+                            <Link 
+                                to={`/noticia/${article.slug}`} 
+                                className="grid-item2"
+                                onClick={() => handleView(article.slug)}
+                                key={index}
+                            >
+                                <div className="content">
+                                    <div className="tagdiv">
+                                        <span className="tag">{article.categoria}</span>
+                                    </div>
+                                    <h3 className="title">{truncateText(article.titulo, isMobile ? 60 : 90)}</h3>
 
-              </div>
-              <div className="image-wrapper left-image">
-                <img src={article.imagem} alt={article.titulo} />
-              </div>
-            </Link>
-          );
-        });
-      };
+                                </div>
+                                <div className="image-wrapper left-image">
+                                    <img src={article.imagem} alt={article.titulo} />
+                                </div>
+                            </Link>
+                        );
+                    });
+            };
       
     
 
@@ -202,7 +206,7 @@ const ThirdGrid = ({ link }) => {
             <div className="left-column">
             <SectionHeader 
                 title="Últimas Notícias do Brasil e do Mundo" 
-                linkText="Ver todas" 
+                linkText="Ver todas"
                 linkTo="/ver-todos/ultimas"
                 className="section-header2"
             />
