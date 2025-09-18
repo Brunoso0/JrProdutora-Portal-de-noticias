@@ -15,6 +15,7 @@ const NoticiaPage = () => {
   const [adsTopo, setAdsTopo] = useState(null);
   const [adsCorpo, setAdsCorpo] = useState([]);
   const [adsVertical, setAdsVertical] = useState([]);
+  const [recomendadas, setRecomendadas] = useState([]);
   
 
   useEffect(() => {
@@ -22,21 +23,34 @@ const NoticiaPage = () => {
       try {
         const res = await axios.get(`${API_BASE_URL}/noticias/slug/${slug}`);
         setNoticia(res.data);
-  
+
         if (!sessionStorage.getItem(`viewed_${slug}`)) {
           await axios.post(`${API_BASE_URL}/noticias/view/${slug}`);
           sessionStorage.setItem(`viewed_${slug}`, "true");
         }
-  
+
         const [adsTopoRes, adsCorpoRes, adsVerticalRes] = await Promise.all([
           axios.get(`${API_BASE_URL}/anuncios/espaco/horizontal-1/todos`),
           axios.get(`${API_BASE_URL}/anuncios/espaco/horizontal-2/todos`),
           axios.get(`${API_BASE_URL}/anuncios/espaco/vertical-1/todos`),
         ]);
-  
+
         setAdsTopo(adsTopoRes.data.sort((a, b) => b.valor - a.valor)[0]);
         setAdsCorpo(adsCorpoRes.data.sort((a, b) => b.valor - a.valor));
         setAdsVertical(adsVerticalRes.data.sort((a, b) => b.valor - a.valor));
+
+        // Verifica se a categoria contém "Região"
+        if (
+          res.data.categoria &&
+          typeof res.data.categoria.nome === "string" &&
+          res.data.categoria.nome.includes("Região")
+        ) {
+          // Busca recomendadas da região
+          const recomendadasRes = await axios.get(`${API_BASE_URL}/noticias/regiao/recomendadas`);
+          setRecomendadas(recomendadasRes.data.filter(n => n.slug !== slug));
+        } else {
+          setRecomendadas([]); // Ou outra lógica para recomendadas gerais
+        }
       } catch (error) {
         setNoticia(null);
       } finally {
@@ -167,10 +181,19 @@ const NoticiaPage = () => {
         </div>
       </div>
 
-
-
-
-
+      {/* Exemplo de exibição das recomendadas */}
+      {recomendadas.length > 0 && (
+        <div className="noticias-recomendadas">
+          <h3>Notícias da Região</h3>
+          <ul>
+            {recomendadas.map((rec) => (
+              <li key={rec.id}>
+                <a href={`/noticia/${rec.slug}`}>{rec.slug}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </>
   );
 };
