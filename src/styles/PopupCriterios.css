@@ -1,0 +1,130 @@
+/* Área base do popup */
+.pc-popup {
+  --pad: 20px;               /* padding vertical do container */
+  /* --headerH vem do JSX */
+  position: relative;
+  min-height: 100vh;
+  padding: var(--pad);
+  background: radial-gradient(1200px 600px at 50% 110%, #0b0216 0%, #090313 45%, #07010f 100%);
+  color: #fff;
+  overflow: hidden;          /* sem scroll, cards colam no rodapé */
+}
+
+/* Header com nome do candidato (opcional) */
+.pc-header { margin: 6px 0 14px; font-weight: 700; font-size: 20px; opacity: .9; }
+
+/* Centro (loading/empty) */
+.pc-center {
+  height: 50vh;
+  display: grid;
+  place-items: center;
+  opacity: .8;
+}
+
+/* Média geral central (igual ao seu layout) */
+.pc-media-geral{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; }
+.pc-media-geral span{ display:block; font-weight:700; font-size:14px; letter-spacing:.6px; opacity:.9; }
+.pc-media-geral strong{ display:block; margin-top:2px; font-size:28px; }
+
+/* GRID ocupa o ALTO inteiro do viewport (menos header e paddings) */
+.pc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 20px;
+  height: calc(100vh - (var(--pad) * 2) - var(--headerH)); /* AQUI */
+  align-items: stretch;   /* garante esticar */
+}
+
+/* Card do jurado com gradiente animado */
+.pc-card {
+  height: 100%;            /* AQUI */
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  padding: 14px 16px 18px;
+  box-shadow: 0 14px 30px rgba(0,0,0,.35);
+  border: 1px solid rgba(255,255,255,.08);
+  isolation: isolate;
+}
+
+/* Camada de gradiente animado (muda de tonalidade) */
+.gradient-anim::before{
+  content:"";
+  position:absolute; inset:0; z-index:-1;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.12) 70%),
+    linear-gradient(135deg, #7c3aed, #ec4899, #f59e0b, #22c55e, #0ea5e9, #7c3aed);
+  background-size:100% 100%, 300% 300%;
+  animation:hueCycle 16s linear infinite, moveGradient 8s ease-in-out infinite alternate;
+  border-radius:inherit;
+  box-shadow: inset 0 -120px 140px rgba(0,0,0,.45); /* fade mais forte no rodapé */
+}
+
+/* Animação que "muda de tonalidade" girando o matiz */
+@keyframes hueCycle {
+  0%   { filter: hue-rotate(0deg)   saturate(115%); }
+  50%  { filter: hue-rotate(180deg) saturate(115%); }
+  100% { filter: hue-rotate(360deg) saturate(115%); }
+}
+
+/* Movimento suave do gradiente para dar vida */
+@keyframes moveGradient {
+  0%   { background-position: 0% 0%, 0% 0%; }
+  50%  { background-position: 0% 0%, 100% 50%; }
+  100% { background-position: 0% 0%, 0% 100%; }
+}
+
+/* Topo do card (nome do jurado) */
+.pc-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.pc-jurado-nome {
+  font-weight: 700;
+  font-size: 16px;
+  text-shadow: 0 1px 2px rgba(0,0,0,.25);
+}
+
+/* Foto circular do jurado */
+.pc-jurado-foto {
+  display: grid;
+  place-items: center;
+  margin: 8px 0 12px;
+}
+.pc-jurado-foto img,
+.pc-foto-placeholder {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.18);
+  border: 2px solid rgba(255,255,255,.35);
+  box-shadow: 0 6px 14px rgba(0,0,0,.35);
+  object-fit: cover;
+  color: rgba(255,255,255,.9);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+}
+
+/* Linha "Média:" */
+.pc-media {
+  margin-top: 6px;
+  text-align: center;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,.25);
+}
+.pc-media span { opacity: .95; margin-right: 4px; }
+.pc-media b { font-size: 18px; }
+
+/* Responsivo */
+@media (max-width: 1100px) {
+  .pc-grid{ grid-template-columns:repeat(3, minmax(220px,1fr)); }
+}
+@media (max-width: 800px) {
+  .pc-grid{ grid-template-columns:repeat(2, minmax(220px,1fr)); }
+}
+@media (max-width: 520px) {
+  .pc-grid{ grid-template-columns:1fr; }
+}

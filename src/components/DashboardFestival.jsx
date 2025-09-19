@@ -1,217 +1,122 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import "../styles/DashboardFestival.css";
 import { API_FESTIVAL } from "../services/api";
 
-const cores = [
-  "#9B5DE5", "#F15BB5", "#FBB13C", "#00BBF9", "#46BFDB"
-];
-
 const DashboardFestival = () => {
   const [etapas, setEtapas] = useState([]);
-  const [candidatos, setCandidatos] = useState([]);
   const [etapaSelecionada, setEtapaSelecionada] = useState("");
-  const [candidatoSelecionado, setCandidatoSelecionado] = useState("");
-  const [dadosVotacao, setDadosVotacao] = useState(null);
-  const [modoTransmissao, setModoTransmissao] = useState(false);
-  const containerRef = useRef();
-  const intervalRef = useRef(null);
+  const [candidatos, setCandidatos] = useState([]);
+  const [busca, setBusca] = useState("");
 
   useEffect(() => {
     axios.get(`${API_FESTIVAL}/api/dashboard/etapas`).then((res) => setEtapas(res.data));
   }, []);
 
   useEffect(() => {
-    if (etapaSelecionada) {
-      axios
-        .get(`${API_FESTIVAL}/api/dashboard/candidatos/${etapaSelecionada}`)
-        .then((res) => setCandidatos(res.data));
-    }
+    if (!etapaSelecionada) return setCandidatos([]);
+    axios
+      .get(`${API_FESTIVAL}/api/dashboard/candidatos/${etapaSelecionada}`)
+      .then((res) => setCandidatos(res.data || []));
   }, [etapaSelecionada]);
 
-  // Atualização em tempo real dos dados de votação
-  useEffect(() => {
-    if (!etapaSelecionada || !candidatoSelecionado) return;
-
-    let cancel = false;
-
-    const fetchDados = async () => {
-      try {
-        const res = await axios.get(
-          `${API_FESTIVAL}/api/dashboard/notas/${candidatoSelecionado}/${etapaSelecionada}`
-        );
-        if (!cancel) setDadosVotacao(res.data);
-      } catch (err) {
-        // opcional: tratar erro
-      }
-    };
-
-    fetchDados();
-    intervalRef.current = setInterval(fetchDados, 3000);
-
-    return () => {
-      cancel = true;
-      clearInterval(intervalRef.current);
-    };
-  }, [candidatoSelecionado, etapaSelecionada]);
-
-  useEffect(() => {
-    const el = document.getElementById("transmissao-votos");
-    const barra = el?.querySelector(".barra-titulo");
-    if (barra) {
-      let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-      barra.onmousedown = dragMouseDown;
-
-      function dragMouseDown(e) {
-        e.preventDefault();
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
-      }
-
-      function elementDrag(e) {
-        e.preventDefault();
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        el.style.top = (el.offsetTop - pos2) + "px";
-        el.style.left = (el.offsetLeft - pos1) + "px";
-      }
-
-      function closeDragElement() {
-        document.onmouseup = null;
-        document.onmousemove = null;
-      }
-    }
-  }, [modoTransmissao]);
-
-  // Filtro para corrigir ortografia dos critérios
-  const corrigirCriterio = (criterio) => {
-    const mapa = {
-      afinacao: "Afinação",
-      ritmo: "Ritmo",
-      interpretacao: "Interpretação",
-      autenticidade: "Autenticidade",
-      "diccao/pronuncia": "Dicção/Pronúncia",
-      "presenca de palco": "Presença de Palco",
-      // Adicione outros critérios conforme necessário
-    };
-    return mapa[criterio?.toLowerCase()] || criterio.charAt(0).toUpperCase() + criterio.slice(1);
+  const fotoUrl = (c) => {
+    const f = c?.foto;
+    if (!f) return null;
+    if (String(f).startsWith("http")) return f;
+    const base = API_FESTIVAL.replace(/\/+$/, "");
+    const path = String(f).replace(/\\/g, "/").replace(/^\/+/, "");
+    return `${base}/${path}`;
   };
 
-  const renderBlocosDeVoto = () => {
-    if (!dadosVotacao || dadosVotacao.tipo !== "criterios") return null;
-
-    const mediasJurados = dadosVotacao.jurados.map(j =>
-      j.criterios.reduce((soma, c) => soma + (Number(c.nota) || 0), 0) / j.criterios.length
-    );
-    const mediaGeral = mediasJurados.reduce((acc, m) => acc + m, 0) / mediasJurados.length || 0;
-
-    return (
-      <div className="tabela-votos">
-        {/* Cabeçalho */}
-        <div className="linha-titulo">
-          <div className="celula jurado-nome">Jurado</div>
-          <div className="celula media-final">Média</div>
-        </div>
-
-        {/* Jurados */}
-        {dadosVotacao.jurados.map((jurado, i) => {
-          const totalNotas = jurado.criterios.reduce((soma, c) => soma + (Number(c.nota) || 0), 0);
-          const media = totalNotas / jurado.criterios.length;
-
-          return (
-            <div key={i} className="linha-jurado" style={{ backgroundColor: cores[i % cores.length] }}>
-              <div className="celula jurado-nome-">
-                {jurado.foto_jurado && (
-                  <img src={`${API_FESTIVAL}/${jurado.foto_jurado}`} alt="Jurado" />
-                )}
-                <span>{jurado.nome_jurado}</span>
-              </div>
-              <div className="celula media-final">{media.toFixed(1)}</div>
-            </div>
-          );
-        })}
-
-        {/* Média Geral */}
-        <div className="linha-titulo media-geral">
-          <div className="celula jurado-nome"><strong>MÉDIA GERAL</strong></div>
-          <div className="celula media-final"><strong>{mediaGeral.toFixed(1)}</strong></div>
-        </div>
-      </div>
+  const abrirPopupNotas = (candidatoId) => {
+    if (!etapaSelecionada) return;
+    const url = `${window.location.origin}/popup-criterios?id=${encodeURIComponent(
+      candidatoId
+    )}&etapa_id=${encodeURIComponent(etapaSelecionada)}`;
+    window.open(
+      url,
+      "_blank",
+      "noopener,noreferrer,width=980,height=720,menubar=no,toolbar=no,location=no,status=no"
     );
   };
+
+  const candidatosFiltrados = useMemo(() => {
+    const t = busca.trim().toLowerCase();
+    if (!t) return candidatos;
+    return candidatos.filter((c) => {
+      const n1 = (c.nome || "").toLowerCase();
+      const n2 = (c.nome_artistico || "").toLowerCase();
+      return n1.includes(t) || n2.includes(t);
+    });
+  }, [candidatos, busca]);
 
   return (
-    <div className="dashboard-festival-container" ref={containerRef}>
-      {!modoTransmissao && (
-        <div className="filtros-dashboard">
-          <label>
-            Etapa:
-            <select value={etapaSelecionada} onChange={(e) => setEtapaSelecionada(e.target.value)}>
-              <option value="">Selecione uma etapa</option>
-              {etapas.map((etapa) => (
-                <option key={etapa.id} value={etapa.id}>
-                  {etapa.nome}
-                </option>
-              ))}
-            </select>
-          </label>
+    <div className="dashboard-festival-container">
+      <h1>Notas por Critérios — Candidatos</h1>
 
-          <label>
-            Candidato:
-            <select
-              value={candidatoSelecionado}
-              onChange={(e) => setCandidatoSelecionado(e.target.value)}
-              disabled={!etapaSelecionada}
-            >
-              <option value="">Selecione um candidato</option>
-              {candidatos.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nome_artistico || c.nome}
-                </option>
-              ))}
-            </select>
-          </label>
+      <div className="filtros-dashboard">
+        <label>
+          Etapa:
+          <select
+            value={etapaSelecionada}
+            onChange={(e) => setEtapaSelecionada(e.target.value)}
+          >
+            <option value="">Selecione uma etapa</option>
+            {etapas.map((etapa) => (
+              <option key={etapa.id} value={etapa.id}>
+                {etapa.nome}
+              </option>
+            ))}
+          </select>
+        </label>
 
-          <div style={{ display: "flex", gap: "0.5rem" }}>
-            <button onClick={() => setModoTransmissao(true)}>Modo Transmissão</button>
-            <button
-              onClick={() => {
-                // Atualiza os dados manualmente
-                if (etapaSelecionada && candidatoSelecionado) {
-                  axios
-                    .get(`${API_FESTIVAL}/api/dashboard/notas/${candidatoSelecionado}/${etapaSelecionada}`)
-                    .then((res) => setDadosVotacao(res.data));
-                }
-              }}
-              title="Atualizar dados"
-            >
-              🔄 Atualizar
-            </button>
-          </div>
+        <div className="busca-classificatoria">
+          <input
+            type="text"
+            placeholder="Pesquisar candidato por nome..."
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
         </div>
-      )}
-
-      {/* Blocos sempre visíveis na tela principal */}
-      <div className="blocos-votacao">
-        {renderBlocosDeVoto()}
       </div>
 
-      {/* Janela flutuante com mesmo conteúdo */}
-      {modoTransmissao && dadosVotacao && (
-        <div className="janela-flutuante" id="transmissao-votos">
-          <div className="barra-titulo">
-            Votos do Candidato
-            <button style={{ float: "right" }} onClick={() => setModoTransmissao(false)}>✖</button>
-          </div>
-          <div className="conteudo-votos">
-            {renderBlocosDeVoto()}
-          </div>
-        </div>
-      )}
+      <div className="grid-candidatos-classificatoria">
+        {candidatosFiltrados.map((c) => {
+          const src = fotoUrl(c);
+          return (
+            <button
+              key={c.id}
+              className="card-candidato-classificatoria"
+              onClick={() => abrirPopupNotas(c.id)}
+              title="Ver notas em tempo real"
+            >
+              <div className="thumb">
+                {src ? (
+                  <img
+                    src={src}
+                    alt={c.nome_artistico || c.nome}
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                      e.currentTarget.parentElement.innerHTML =
+                        '<div class="sem-foto">Sem foto</div>';
+                    }}
+                  />
+                ) : (
+                  <div className="sem-foto">Sem foto</div>
+                )}
+              </div>
+              <div className="info">
+                <div className="nome">{c.nome_artistico || c.nome || "Sem nome"}</div>
+                <div className="etapa-badge">Clique para ver notas</div>
+              </div>
+            </button>
+          );
+        })}
+        {etapaSelecionada && candidatosFiltrados.length === 0 && (
+          <div className="mensagem-vazia">Nenhum candidato encontrado.</div>
+        )}
+      </div>
     </div>
   );
 };

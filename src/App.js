@@ -1,28 +1,33 @@
 import { useEffect } from "react";
+import axios from "axios";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
+import { API_BASE_URL } from './services/api'; // Configuração do Axios
+
 import { AuthProvider } from "./context/AuthContext";
 import { UserProvider } from "./context/UserContext";
+
 import LoginPage from "./pages/LoginPage";
 import LoginFestival from "./pages/LoginFestival";
 import LoginJurados from "./pages/LoginJurados";
-import PainelCandidatos from "./pages/PainelCandidatos"; // novo import
-import ProtectedRouteAdminFestival from "./components/ProtectedRouteAdminFestival"; // 👈 novo import
+import PainelCandidatos from "./pages/PainelCandidatos";
 import CandidatosFestivalDeMusica from "./pages/candidatosfestivaldemusica";
 import AreaDoCandidato from "./pages/AreaDoCandidato";
-import ProtectedRouteCandidato from "./components/ProtectedRouteCandidato";
 import AdminPage from "./pages/AdminPage";
 import NoticiaPage from "./pages/NoticiaPage";
-import VerTodos from "./pages/VerTudoPage"
+import VerTodos from "./pages/VerTudoPage";
+import FestivalMusica from "./pages/FestivalMusica";
+import InscricaoFestival from "./pages/InscricaoFestival";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProtectedRouteJurado from "./components/ProtectedRouteJurado";
-import PublicLayout from "./layouts/PublicLayout";
-import FestivalMusica from "./pages/FestivalMusica";
-import InscricaoFestival from "./pages/InscricaoFestival"; // Importando a página de inscrição do festival
+import ProtectedRouteCandidato from "./components/ProtectedRouteCandidato";
+import ProtectedRouteAdminFestival from "./components/ProtectedRouteAdminFestival";
 import PopupClassificatoria from "./components/PopupClassificatoria";
-import axios from "axios";
-import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import { API_BASE_URL } from './services/api'; // Importando o arquivo de configuração do Axios
+import PopupCriterios from "./components/PopupCriterios";
 
+import PublicLayout from "./layouts/PublicLayout";
 
 
 import "./index.css";
@@ -107,6 +112,7 @@ const App = () => {
           <Route path="/noticia/:slug" element={<NoticiaPage />} />
           <Route path="/ver-todos/:tipo" element={<VerTodos />} />
           <Route path="/popup-classificatoria" element={<PopupClassificatoria />} />
+          <Route path="/popup-criterios" element={<PopupCriterios />} />
           <Route path="/" element={<PublicLayout />} />
         </Routes>
         </Router>
