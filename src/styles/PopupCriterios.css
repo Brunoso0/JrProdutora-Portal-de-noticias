@@ -5,13 +5,14 @@
   position: relative;
   min-height: 100vh;
   padding: var(--pad);
-  background: radial-gradient(1200px 600px at 50% 110%, #0b0216 0%, #090313 45%, #07010f 100%);
+  /* Fundo com tons de roxo */
+  background: radial-gradient(1200px 600px at 50% 110%, #2a1447 0%, #1a0c2e 45%, #120825 100%);
   color: #fff;
   overflow: hidden;          /* sem scroll, cards colam no rodapé */
 }
 
 /* Header com nome do candidato (opcional) */
-.pc-header { margin: 6px 0 14px; font-weight: 700; font-size: 20px; opacity: .9; }
+.pc-header { margin: 6px 0 14px; font-weight: 700; font-size: 20px; opacity: .9; color: #c4b5fd; }
 
 /* Centro (loading/empty) */
 .pc-center {
@@ -42,22 +43,48 @@
   border-radius: 14px;
   overflow: hidden;
   padding: 14px 16px 18px;
-  box-shadow: 0 14px 30px rgba(0,0,0,.35);
-  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 14px 30px rgba(124,58,237,.25);
+  border: 1px solid rgba(167,139,250,.18);
   isolation: isolate;
 }
 
-/* Camada de gradiente animado (muda de tonalidade) */
+/* ESTADOS: SIM / NÃO / PENDENTE (cores roxo/azul escuro) */
+.pc-card.sim {
+  /* Roxo vibrante */
+  --col: #a78bfa;
+  --col2: rgba(167,139,250,0.18);
+  --wash: rgba(167,139,250,0.28);
+  border: 2px solid #a78bfa;
+  box-shadow: 0 0 24px 0 rgba(167,139,250,0.18);
+}
+.pc-card.nao {
+  /* Azul escuro */
+  --col: #312e81;
+  --col2: rgba(49,46,129,0.18);
+  --wash: rgba(49,46,129,0.28);
+  border: 2px solid #312e81;
+  box-shadow: 0 0 24px 0 rgba(49,46,129,0.18);
+}
+.pc-card.pendente {
+  /* Roxo acinzentado */
+  --col: #6d28d9;
+  --col2: rgba(109,40,217,0.13);
+  --wash: rgba(109,40,217,0.18);
+  border: 2px dashed #6d28d9;
+  box-shadow: 0 0 18px 0 rgba(109,40,217,0.10);
+}
+
+/* Camada de gradiente animado (muda de tonalidade para tons de roxo) */
 .gradient-anim::before{
   content:"";
   position:absolute; inset:0; z-index:-1;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.12) 70%),
-    linear-gradient(135deg, #7c3aed, #ec4899, #f59e0b, #22c55e, #0ea5e9, #7c3aed);
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(60,16,83,.18) 70%),
+    linear-gradient(135deg, #a78bfa, #7c3aed, #c026d3, #6d28d9, #a21caf, #a78bfa);
   background-size:100% 100%, 300% 300%;
   animation:hueCycle 16s linear infinite, moveGradient 8s ease-in-out infinite alternate;
   border-radius:inherit;
-  box-shadow: inset 0 -120px 140px rgba(0,0,0,.45); /* fade mais forte no rodapé */
+  box-shadow: inset 0 -120px 140px rgba(40,0,60,.45); /* fade mais forte no rodapé */
 }
 
 /* Animação que "muda de tonalidade" girando o matiz */
@@ -85,6 +112,7 @@
   font-weight: 700;
   font-size: 16px;
   text-shadow: 0 1px 2px rgba(0,0,0,.25);
+  color: #a78bfa;
 }
 
 /* Foto circular do jurado */
@@ -98,9 +126,9 @@
   width: 88px;
   height: 88px;
   border-radius: 50%;
-  background: rgba(255,255,255,.18);
-  border: 2px solid rgba(255,255,255,.35);
-  box-shadow: 0 6px 14px rgba(0,0,0,.35);
+  background: rgba(167,139,250,.18); /* lilás claro */
+  border: 2px solid rgba(124,58,237,.35); /* roxo médio */
+  box-shadow: 0 6px 14px rgba(124,58,237,.25);
   object-fit: cover;
   color: rgba(255,255,255,.9);
   display: grid;
@@ -114,6 +142,7 @@
   text-align: center;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(0,0,0,.25);
+  color: #c4b5fd;
 }
 .pc-media span { opacity: .95; margin-right: 4px; }
 .pc-media b { font-size: 18px; }

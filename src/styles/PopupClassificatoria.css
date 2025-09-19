@@ -1,172 +1,103 @@
-/* container geral */
-.popup-classificatoria {
+/* Container do popup */
+.pc-popup {
+  --pad: 20px;
+  position: relative;
   min-height: 100vh;
+  padding: var(--pad);
   background: radial-gradient(ellipse at bottom, #23001f 0%, #140013 60%, #0b0010 100%);
   color: #fff;
-  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  padding: 16px 20px 32px;
-}
-
-/* grid de colunas (cada jurado é uma coluna) */
-.colunas-votos {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
-  gap: 18px;
-}
-
-/* responsivo */
-@media (max-width: 1100px) { .colunas-votos { grid-template-columns: repeat(3, minmax(160px, 1fr)); } }
-@media (max-width: 800px)  { .colunas-votos { grid-template-columns: repeat(2, minmax(150px, 1fr)); } }
-@media (max-width: 520px)  { .colunas-votos { grid-template-columns: 1fr; } }
-
-/* =========================
-   COLUNA / ESTADOS / ANIMAÇÕES
-   ========================= */
-.coluna-voto {
-  --bg-top: rgba(255,255,255,0.04);
-  --col: #9ca3af;
-  --col2: rgba(156,163,175,0.12);   /* cor de base mais clara (ajustado) */
-  --wash: rgba(156,163,175,0.18);
-
-  position: relative;
-  height: 95dvh;
-  min-height: 420px;
-  border-radius: 10px;
+  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   overflow: hidden;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(255,255,255,0.04);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 28px;
-
-  background: linear-gradient(180deg, var(--col) 0%, var(--col2) 100%);
-  background-size: 100% 180%;
-  animation: bgFloat 18s ease-in-out infinite; /* mais lento/sutil */
-
-  transition: background 300ms ease, box-shadow 300ms ease;
 }
 
-/* halo super suave descendo */
-.coluna-voto::before {
-  content: "";
-  position: absolute;
-  left: -10%;
-  right: -10%;
-  top: -40%;
-  height: 180%;
-  background: radial-gradient(
-      120% 50% at 50% 0%,
-      rgba(255,255,255,0.14) 0%,
-      rgba(255,255,255,0.08) 20%,
-      rgba(255,255,255,0.03) 40%,
-      rgba(255,255,255,0.00) 60%
-  );
-  mix-blend-mode: soft-light;
-  filter: blur(18px);
-  opacity: .55;
-  animation: glowDrop 9s ease-in-out infinite;
-  pointer-events: none;
-}
-
-/* leve vinheta para profundidade */
-.coluna-voto::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(120% 90% at 50% 10%,
-    rgba(0,0,0,0) 0%,
-    rgba(0,0,0,0.04) 60%,
-    rgba(0,0,0,0.10) 100%
-  );
-}
-
-/* estados: SIM / NÃO / PENDENTE (seta as variáveis de cor) */
-.coluna-voto.sim {
-  --col: #22c55e;
-  --col2: rgba(34,197,94,0.12);
-  --wash: rgba(34,197,94,0.18);
-}
-
-.coluna-voto.nao {
-  --col: #ef4444;
-  --col2: rgba(239,68,68,0.12);
-  --wash: rgba(239,68,68,0.18);
-}
- 
-.coluna-voto.pendente {
-  --col: #ad56be1c;
-  --col2: rgba(156,163,175,0.12);
-  --wash: rgba(156,163,175,0.18);
-}
-
-/* animações */
-@keyframes bgFloat {
-  0%, 100% { background-position: 50% 0%; }
-  50%      { background-position: 50% 100%; }
-}
-
-@keyframes glowDrop {
-  0%   { transform: translateY(-18%); opacity: .45; }
-  50%  { transform: translateY(18%);  opacity: .60; }
-  100% { transform: translateY(-18%); opacity: .45; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .coluna-voto,
-  .coluna-voto::before { animation: none !important; }
-}
-
-/* =========================
-   CONTEÚDO DO CARD
-   ========================= */
-
-.jurado-nome {
-  margin-top: 14px;
+/* Cabeçalho com nome do candidato */
+.pc-header {
+  font-weight: 700;
   font-size: 20px;
-  font-weight: 600;
-  text-align: center;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.22);
+  margin: 6px 0 14px;
+  opacity: .9;
 }
 
-.jurado-foto {
-  width: 250px;
-  height: 250px;
-  border-radius: 999px;
+/* Média Geral central */
+.pc-media-geral {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+.pc-media-geral span { display:block; font-weight:700; font-size:14px; opacity:.95; }
+.pc-media-geral strong { display:block; font-size:28px; margin-top:2px; }
+
+/* GRID com 4 colunas de altura total */
+.pc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 18px;
+  height: calc(100vh - (var(--pad) * 2) - 44px); /* 44px ~ header */
+  align-items: stretch;
+}
+
+/* Card base (altura total da coluna) */
+.pc-card {
+  height: 100%;
+  position: relative;
+  border-radius: 12px;
+  padding: 14px 16px 18px;
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
   overflow: hidden;
-  display: grid;
-  place-items: center;
+  isolation: isolate;
 }
 
-.jurado-foto img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.13);
-  transition: filter 0.3s ease, opacity 0.3s ease;
+/* Gradiente animado (camada de fundo) */
+.gradient-anim::before {
+  content:"";
+  position:absolute; inset:0; z-index:-1;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.12) 70%),
+    linear-gradient(135deg, var(--c1), var(--c2));
+  background-size: 100% 100%, 200% 200%;
+  animation: moveGrad 10s ease-in-out infinite alternate;
+  box-shadow: inset 0 -120px 140px rgba(0,0,0,.45); /* vinheta inferior */
 }
 
-.jurado-foto img.foto-pendente {
-  filter: grayscale(100%);
-  opacity: 0.75;
+/* Estados por faixa de nota */
+.pc-card.pendente { --c1: #9ca3af33; --c2: #9ca3af22; filter: grayscale(25%); opacity: .85; }
+.pc-card.nota-baixa { --c1: #dc2626; --c2: #ef4444; }
+.pc-card.nota-media { --c1: #f59e0b; --c2: #fbbf24; }
+.pc-card.nota-alta  { --c1: #16a34a; --c2: #22c55e; }
+
+/* movimento do gradiente */
+@keyframes moveGrad {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
 }
 
-.jurado-foto--placeholder {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
-  font-size: 14px;
-  color: #444;
+/* Topo do card (nome → pode ser imagem) */
+.pc-card-top { margin-bottom: 12px; }
+.pc-jurado-nome { text-align:center; font-weight:700; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+
+/* Foto circular */
+.pc-jurado-foto {
+  display: grid; place-items: center;
+  margin: 8px 0 12px;
+}
+.pc-jurado-foto img, .pc-foto-placeholder {
+  width: 110px; height: 110px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.35);
+  background: rgba(255,255,255,.16);
+  box-shadow: 0 6px 14px rgba(0,0,0,.35);
+  object-fit: cover; color: rgba(255,255,255,.9);
+  display: grid; place-items: center; font-size: 13px;
 }
 
-.mensagem-vazia {
-  margin: 28px auto 0;
-  text-align: center;
-  color: #d4d4d8;
-  font-size: 16px;
-  opacity: 0.9;
-}
+/* Linha "Média:" */
+.pc-media { text-align:center; font-weight:700; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.pc-media span { opacity:.95; margin-right:4px; }
+.pc-media b { font-size: 18px; }
 
-
+/* Responsivo */
+@media (max-width: 1100px) { .pc-grid { grid-template-columns: repeat(3, minmax(220px, 1fr)); } }
+@media (max-width: 800px)  { .pc-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); } }
+@media (max-width: 520px)  { .pc-grid { grid-template-columns: 1fr; } }
