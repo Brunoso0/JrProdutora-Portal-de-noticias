@@ -22,11 +22,6 @@
   opacity: .8;
 }
 
-/* Média geral central (igual ao seu layout) */
-.pc-media-geral{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; }
-.pc-media-geral span{ display:block; font-weight:700; font-size:14px; letter-spacing:.6px; opacity:.9; }
-.pc-media-geral strong{ display:block; margin-top:2px; font-size:28px; }
-
 /* GRID ocupa o ALTO inteiro do viewport (menos header e paddings) */
 .pc-grid {
   display: grid;
@@ -36,9 +31,18 @@
   align-items: stretch;   /* garante esticar */
 }
 
+/* GRID MEDIA CENTRAL - usada para 2 jurados, média, 2 jurados */
+.pc-grid-media-central {
+  display: grid;
+  grid-template-columns: 1fr 1fr minmax(80px, 160px) 1fr 1fr; /* coluna central mais fina, jurados flexíveis */
+  gap: 20px;
+  height: calc(100vh - (var(--pad) * 2) - var(--headerH));
+  align-items: stretch;
+}
+
 /* Card do jurado com gradiente animado */
 .pc-card {
-  height: 100%;            /* AQUI */
+  height: 96dvh;            /* AQUI */
   position: relative;
   border-radius: 14px;
   overflow: hidden;
@@ -48,57 +52,60 @@
   isolation: isolate;
 }
 
-/* ESTADOS: SIM / NÃO / PENDENTE (cores roxo/azul escuro) */
-.pc-card.sim {
-  /* Roxo vibrante */
-  --col: #a78bfa;
-  --col2: rgba(167,139,250,0.18);
-  --wash: rgba(167,139,250,0.28);
-  border: 2px solid #a78bfa;
-  box-shadow: 0 0 24px 0 rgba(167,139,250,0.18);
-}
-.pc-card.nao {
-  /* Azul escuro */
-  --col: #312e81;
-  --col2: rgba(49,46,129,0.18);
-  --wash: rgba(49,46,129,0.28);
-  border: 2px solid #312e81;
-  box-shadow: 0 0 24px 0 rgba(49,46,129,0.18);
-}
-.pc-card.pendente {
-  /* Roxo acinzentado */
-  --col: #6d28d9;
-  --col2: rgba(109,40,217,0.13);
-  --wash: rgba(109,40,217,0.18);
-  border: 2px dashed #6d28d9;
-  box-shadow: 0 0 18px 0 rgba(109,40,217,0.10);
+/* ====== CORES POR FAIXA DE NOTA ====== */
+/* defaults (caso falte classe) */
+.pc-card { --c1: #7e4dd3; --c2: #a78bfa; }
+
+/* Nota < 4  -> vermelho */
+.pc-card.nota-baixa {
+  --c1: #b91c1c;
+  --c2: #ef4444;
+  border-color: rgba(239,68,68,.45);
+  box-shadow: 0 14px 30px rgba(239,68,68,.28);
 }
 
-/* Camada de gradiente animado (muda de tonalidade para tons de roxo) */
-.gradient-anim::before{
-  content:"";
-  position:absolute; inset:0; z-index:-1;
+/* 4 <= nota < 7 -> amarelo/âmbar */
+.pc-card.nota-media {
+  --c1: #b45309;
+  --c2: #f59e0b;
+  border-color: rgba(245,158,11,.45);
+  box-shadow: 0 14px 30px rgba(245,158,11,.28);
+}
+
+/* nota >= 7 -> verde */
+.pc-card.nota-alta {
+  --c1: #15803d;
+  --c2: #22c55e;
+  border-color: rgba(34,197,94,.45);
+  box-shadow: 0 14px 30px rgba(34,197,94,.28);
+}
+
+/* PENDENTE já está correto – não recebe .gradient-anim no JSX. 
+   Mas, se quiser garantir o roxo estático: */
+.pc-card.pendente::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, #6415e4 30%, #c5b051 100%);
+  border-radius: inherit;
+}
+
+/* Gradiente animado (camada de fundo) com animação igual ao exemplo */
+.gradient-anim::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.06), rgba(60,16,83,.18) 70%),
-    linear-gradient(135deg, #a78bfa, #7c3aed, #c026d3, #6d28d9, #a21caf, #a78bfa);
-  background-size:100% 100%, 300% 300%;
-  animation:hueCycle 16s linear infinite, moveGradient 8s ease-in-out infinite alternate;
-  border-radius:inherit;
-  box-shadow: inset 0 -120px 140px rgba(40,0,60,.45); /* fade mais forte no rodapé */
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.12) 70%),
+    linear-gradient(135deg, var(--c1), var(--c2));
+  background-size: 100% 100%, 200% 200%;
+  animation: moveGrad 10s ease-in-out infinite alternate;
+  border-radius: inherit;
+  box-shadow: inset 0 -120px 140px rgba(0,0,0,.45);
 }
 
-/* Animação que "muda de tonalidade" girando o matiz */
-@keyframes hueCycle {
-  0%   { filter: hue-rotate(0deg)   saturate(115%); }
-  50%  { filter: hue-rotate(180deg) saturate(115%); }
-  100% { filter: hue-rotate(360deg) saturate(115%); }
-}
-
-/* Movimento suave do gradiente para dar vida */
-@keyframes moveGradient {
-  0%   { background-position: 0% 0%, 0% 0%; }
-  50%  { background-position: 0% 0%, 100% 50%; }
-  100% { background-position: 0% 0%, 0% 100%; }
+/* movimento do gradiente */
+@keyframes moveGrad {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
 }
 
 /* Topo do card (nome do jurado) */
@@ -113,22 +120,20 @@
   font-size: 16px;
   text-shadow: 0 1px 2px rgba(0,0,0,.25);
   color: #a78bfa;
+  margin: auto;
+  padding-top: 150px;
 }
 
 /* Foto circular do jurado */
-.pc-jurado-foto {
+.pc-jurado-foto-criterios {
   display: grid;
   place-items: center;
   margin: 8px 0 12px;
 }
-.pc-jurado-foto img,
+.pc-jurado-foto-criterios img,
 .pc-foto-placeholder {
-  width: 88px;
-  height: 88px;
-  border-radius: 50%;
-  background: rgba(167,139,250,.18); /* lilás claro */
-  border: 2px solid rgba(124,58,237,.35); /* roxo médio */
-  box-shadow: 0 6px 14px rgba(124,58,237,.25);
+  width: 208px;
+  height: 208px;
   object-fit: cover;
   color: rgba(255,255,255,.9);
   display: grid;
@@ -146,6 +151,108 @@
 }
 .pc-media span { opacity: .95; margin-right: 4px; }
 .pc-media b { font-size: 18px; }
+
+/* Novos estilos para a seção central da grade */
+.pc-media-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(124,58,237,0.12);
+  border: 2px solid #a78bfa;
+  box-shadow: 0 0 32px #a78bfa33;
+  min-height: 220px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.pc-media-central-label {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #a78bfa;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #000a;
+}
+
+.pc-media-central-value {
+  font-size: 2.3rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 2px 8px #7c3aed, 0 0px 2px #fff;
+}
+
+/* ===== animação de gradiente para cards COM nota (baixa/média/alta) ===== */
+.pc-card.gradient-anim::before{
+  content:"";
+  position:absolute; inset:0; z-index:-1;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.12) 70%),
+    /* usa as variáveis por faixa: --c1 e --c2 já definidas nas classes nota-* */
+    linear-gradient(135deg, var(--c1), var(--c2), var(--c1));
+  background-size:100% 100%, 230% 230%;
+  border-radius:inherit;
+  box-shadow: inset 0 -120px 140px rgba(0,0,0,.45);
+  /* 2 animações: deslocamento do gradiente + leve oscilação de matiz */
+  animation: pc-bg-pan 9s ease-in-out infinite alternate,
+             pc-hue-wobble 16s ease-in-out infinite alternate;
+}
+
+@keyframes pc-bg-pan {
+  0%   { background-position: 0% 0%,   0%   0%; }
+  100% { background-position: 0% 0%, 100% 100%; }
+}
+
+@keyframes pc-hue-wobble {
+  0%   { filter: hue-rotate(-6deg) saturate(108%); }
+  100% { filter: hue-rotate( 6deg) saturate(108%); }
+}
+
+/* ===== animação no NÚMERO da média (texto com gradient clip) ===== */
+.pc-card:not(.pendente) .pc-media b {
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+          background-clip: text;
+  animation: pc-text-shift 4.8s ease-in-out infinite;
+}
+
+.pc-media b {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+@keyframes pc-text-shift {
+  0%   { background-position:   0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position:   0% 50%; }
+}
+
+/* pendente: mantém estático (sem animação nem gradient no texto) */
+.pc-card.pendente .pc-media b {
+  -webkit-text-fill-color: currentColor;
+  background: none;
+  animation: none;
+}
+
+/* ===== média GERAL (card central) com texto animado ===== */
+.pc-media-card .pc-media-central-value {
+  background: linear-gradient(90deg, #a78bfa, #7c3aed, #c026d3, #a78bfa);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+          background-clip: text;
+  animation: pc-text-shift 6s linear infinite;
+}
+
+/* acessibilidade: respeitar “reduzir movimentos” do sistema */
+@media (prefers-reduced-motion: reduce) {
+  .pc-card.gradient-anim::before,
+  .pc-card:not(.pendente) .pc-media b,
+  .pc-media-card .pc-media-central-value {
+    animation: none !important;
+  }
+}
 
 /* Responsivo */
 @media (max-width: 1100px) {
