@@ -1,0 +1,193 @@
+/* ====== Fundo com gradiente roxo (como no protótipo) ====== */
+.podioV2 {
+  --bg1: #1a0f2b;
+  --bg2: #4f2a7f;
+  --txt: #ffffff;
+  --muted: #c7bfe0;
+  --line: rgba(255,255,255,.12);
+
+  /* anéis das posições */
+  --gold: #f4c21f;
+  --silver: #cfd5df;
+  --bronze: #d9843b;
+  --popular: #ff5fa3;
+
+  min-height: 100vh;
+  background-color: var(--bg1);
+  background-image: radial-gradient(1200px 600px at 80% 0%, var(--bg2) 0%, var(--bg1) 60%);
+  color: var(--txt);
+  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+
+/* ====== Header ====== */
+.podioV2__header {
+  position: relative;
+  padding: 32px 28px 12px;
+  text-align: center;
+}
+
+.podioV2__header h1 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 800;
+  letter-spacing: .2px;
+  text-shadow: 0 0 15px rgba(255,255,255,.18);
+}
+
+.podioV2__header .badges {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.badge {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.badge.data {
+  background: rgba(120, 95, 200, .18);
+  border-color: rgba(120, 95, 200, .4);
+}
+
+.btn-close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.btn-close:hover { background: rgba(255,255,255,.12); }
+
+/* ====== Mensagens ====== */
+.msg {
+  margin: 12px auto 0;
+  max-width: 1080px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.06);
+  color: var(--muted);
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-align: center;
+}
+.msg.erro {
+  color: #ffd3d3;
+  border-color: rgba(255, 140, 140, .6);
+  background: rgba(255, 50, 50, .12);
+}
+
+/* ====== Grid 4 colunas ====== */
+.podioV2__grid {
+  max-width: 1280px;
+  margin: 24px auto 40px;
+  padding: 0 24px;
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+  .podioV2__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .podioV2__grid { grid-template-columns: 1fr; }
+}
+
+/* ====== Card “glassmorphism” ====== */
+.glassCard {
+  position: relative;
+  border-radius: 20px;
+  padding: 24px 22px 18px;
+  background: rgba(47, 28, 75, 0.55);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 18px 40px rgba(0,0,0,.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.glassCard:hover { transform: translateY(-6px); box-shadow: 0 22px 50px rgba(0,0,0,.45); }
+.glassCard.placeholder { opacity: .55; }
+
+/* ====== Avatar circular com anel colorido ====== */
+.avatar {
+  margin-top: -56px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.avatar__img,
+.avatar__ph {
+  width: 128px; height: 128px;
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+  background: rgba(255,255,255,.06);
+  border: 4px solid transparent; /* base, o anel vem via box-shadow */
+  box-shadow: 0 0 0 4px rgba(255,255,255,.08);
+}
+
+/* Placeholders de foto */
+.avatar__ph {
+  display: grid;
+  place-items: center;
+  color: #d2c7f0;
+  font-weight: 700;
+}
+
+/* Cores do anel (igual ao protótipo: amarelo, cinza, laranja, rosa) */
+.ring-gold   { box-shadow: 0 0 0 4px #f4c21f, 0 10px 24px rgba(244,194,31,.25); border-color: #f4c21f; }
+.ring-silver { box-shadow: 0 0 0 4px #cfd5df, 0 10px 24px rgba(207,213,223,.18); border-color: #cfd5df; }
+.ring-bronze { box-shadow: 0 0 0 4px #d9843b, 0 10px 24px rgba(217,132,59,.22); border-color: #d9843b; }
+.ring-popular{ box-shadow: 0 0 0 4px #ff5fa3, 0 10px 24px rgba(255,95,163,.22); border-color: #ff5fa3; }
+.ring-neutral{ box-shadow: 0 0 0 4px rgba(255,255,255,.12); }
+
+/* ====== Textos ====== */
+.nome {
+  margin: 6px 0 2px;
+  font-size: 20px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.subtitle {
+  margin: 2px 0 12px;
+  font-weight: 700;
+  text-align: center;
+  color: #cfd5df;
+}
+
+/* matiz do subtítulo conforme anel */
+.subtitle.ring-gold   { color: #ffd452; }
+.subtitle.ring-silver { color: #dfe5ee; }
+.subtitle.ring-bronze { color: #ffb070; }
+.subtitle.ring-popular{ color: #ff8fbe; }
+
+/* ====== Métrica ====== */
+.metric {
+  margin-top: 8px;
+  text-align: center;
+}
+.metric__label {
+  display: block;
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.metric__value {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: .5px;
+}

@@ -26,6 +26,7 @@ import ProtectedRouteCandidato from "./components/ProtectedRouteCandidato";
 import ProtectedRouteAdminFestival from "./components/ProtectedRouteAdminFestival";
 import PopupClassificatoria from "./components/PopupClassificatoria";
 import PopupCriterios from "./components/PopupCriterios";
+import PopupAvancosPodio from "./components/PopupAvancosPodio";
 
 import PublicLayout from "./layouts/PublicLayout";
 
@@ -113,6 +114,7 @@ const App = () => {
           <Route path="/ver-todos/:tipo" element={<VerTodos />} />
           <Route path="/popup-classificatoria" element={<PopupClassificatoria />} />
           <Route path="/popup-criterios" element={<PopupCriterios />} />
+          <Route path="/popup-avancos-dia" element={<PopupAvancosPodio />} />
           <Route path="/" element={<PublicLayout />} />
         </Routes>
         </Router>
