@@ -25,21 +25,10 @@ const AvancosDoDia = () => {
     const carregarAvancos = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${API_FESTIVAL}/api/dashboard/avancos-dia`, {
-          params: {
-            etapa_id: etapaSelecionada,
-            data: dataSelecionada
-          }
+        const { data } = await axios.get(`${API_FESTIVAL}/api/dashboard/avancos-dia`, {
+          params: { etapa_id: etapaSelecionada, data: dataSelecionada }
         });
-
-        // ✅ Mostrar apenas se houver voto popular
-        const houveVotoPopular = res.data.some(c => c.total_votos && c.total_votos > 0);
-        if (!houveVotoPopular) {
-          setResultados([]);
-        } else {
-          setResultados(res.data);
-        }
-
+        setResultados(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Erro ao buscar avanços do dia", err);
         setResultados([]);
@@ -95,8 +84,10 @@ const AvancosDoDia = () => {
               />
               <div className="info-candidato">
                 <strong>{c.nome_artistico || c.nome}</strong>
-                {c.media && <p>Média dos jurados: {c.media}</p>}
-                {c.total_votos && <p>{c.total_votos} votos ({c.porcentagem}%)</p>}
+                <p>Média: {c.media ?? "N/A"}</p>
+                {typeof c.total_votos === "number" && (
+                  <p>{c.total_votos} votos ({c.porcentagem ?? "0"}%)</p>
+                )}
               </div>
             </div>
           ))}
