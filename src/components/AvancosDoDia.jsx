@@ -84,9 +84,32 @@ const AvancosDoDia = () => {
               />
               <div className="info-candidato">
                 <strong>{c.nome_artistico || c.nome}</strong>
-                <p>Média: {c.media ?? "N/A"}</p>
+                <p>
+                  Média:{" "}
+                  {Array.isArray(c.jurados) && c.jurados.length > 0
+                    ? (() => {
+                        // Calcula média das médias dos jurados
+                        const mediasJurados = c.jurados.map(
+                          (j) =>
+                            (Array.isArray(j.criterios) && j.criterios.length > 0
+                              ? j.criterios.reduce((soma, crit) => soma + Number(crit.nota || 0), 0) /
+                                j.criterios.length
+                              : 0)
+                        );
+                        const mediaGeral =
+                          mediasJurados.reduce((acc, m) => acc + m, 0) / (mediasJurados.length || 1);
+                        return Number.isFinite(mediaGeral)
+                          ? mediaGeral.toFixed(1).replace(".", ",")
+                          : "N/A";
+                      })()
+                    : c.media != null
+                    ? Number(c.media).toFixed(1).replace(".", ",")
+                    : "N/A"}
+                </p>
                 {typeof c.total_votos === "number" && (
-                  <p>{c.total_votos} votos ({c.porcentagem ?? "0"}%)</p>
+                  <p>
+                    {c.total_votos} votos ({c.porcentagem ?? "0"}%)
+                  </p>
                 )}
               </div>
             </div>
