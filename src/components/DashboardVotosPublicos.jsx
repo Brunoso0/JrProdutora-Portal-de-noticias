@@ -5,7 +5,9 @@ import { API_FESTIVAL } from "../services/api";
 import { format } from "date-fns";
 
 const DashboardVotosPublicos = () => {
-  const [dataSelecionada, setDataSelecionada] = useState(format(new Date(), "yyyy-MM-dd"));
+  const [dataSelecionada, setDataSelecionada] = useState(
+    format(new Date(), "yyyy-MM-dd")
+  );
   const [votos, setVotos] = useState([]);
   const [loading, setLoading] = useState(false);
   const intervalRef = useRef(null);
@@ -13,10 +15,13 @@ const DashboardVotosPublicos = () => {
   const carregarVotos = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_FESTIVAL}/api/dashboard/votos-publicos?data=${dataSelecionada}`);
-      setVotos(res.data);
+      const res = await axios.get(
+        `${API_FESTIVAL}/api/dashboard/votos-publicos?data=${dataSelecionada}`
+      );
+      setVotos(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Erro ao carregar votos públicos", err);
+      setVotos([]);
     } finally {
       setLoading(false);
     }
@@ -24,52 +29,118 @@ const DashboardVotosPublicos = () => {
 
   useEffect(() => {
     carregarVotos();
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(() => {
-      carregarVotos();
-    }, 10000);
-    return () => clearInterval(intervalRef.current);
+    // Removido o setInterval e o clearInterval
   }, [dataSelecionada]);
 
-  const totalVotos = votos.reduce((acc, v) => acc + v.total_votos, 0);
+  const totalVotos = votos.reduce((acc, v) => acc + (Number(v.total_votos) || 0), 0);
+
+  // Ordena por número de votos (desc)
+  const listaOrdenada = [...votos].sort(
+    (a, b) => (Number(b.total_votos) || 0) - (Number(a.total_votos) || 0)
+  );
+
+  const fotoUrl = (f) => {
+    if (!f) return null;
+    if (String(f).startsWith("http")) return f;
+    const base = API_FESTIVAL.replace(/\/+$/, "");
+    const path = String(f).replace(/\\/g, "/").replace(/^\/+/, "");
+    return `${base}/${path}`;
+  };
+
+  const iniciais = (nome) => {
+    if (!nome) return "—";
+    const partes = String(nome).trim().split(/\s+/);
+    const [p1, p2] = [partes[0], partes[partes.length - 1]];
+    return (p1?.[0] || "") + (p2 && p2 !== p1 ? p2[0] : "");
+  };
 
   return (
-    <div className="dashboard-votos-publicos">
-      <h2>📊 Votação Popular</h2>
+    <div className="vp-wrap">
+      <div className="vp-container">
+        {/* Header */}
+        <header className="vp-header">
+          <div className="vp-header-top">
+            <h1>VOTAÇÃO POPULAR</h1>
+            <div className="vp-date">
+              <label>Data:</label>
+              <input
+                type="date"
+                value={dataSelecionada}
+                onChange={(e) => setDataSelecionada(e.target.value)}
+              />
+            </div>
+          </div>
+        </header>
 
-      <div className="filtro-data">
-        <label>Data da votação: </label>
-        <input
-          type="date"
-          value={dataSelecionada}
-          onChange={(e) => setDataSelecionada(e.target.value)}
-        />
+        {/* Total de votos */}
+        <section className="vp-total card">
+          <span className="vp-total-label">Total de votos do dia</span>
+          <div className="vp-total-value">
+            {totalVotos.toLocaleString("pt-BR")}
+          </div>
+        </section>
+
+        {/* Lista */}
+        {loading ? (
+          <p className="vp-loading">Carregando votos…</p>
+        ) : (
+          <main className="vp-list">
+            {listaOrdenada.map((v, idx) => {
+              const nome = v.nome_artistico || v.nome || "Candidato";
+              const votosCandidato = Number(v.total_votos) || 0;
+              const percentual =
+                totalVotos > 0 ? (votosCandidato / totalVotos) * 100 : 0;
+
+              const img = fotoUrl(v.foto);
+
+              return (
+                <article className="vp-item card" key={v.id || idx}>
+                  <div className="vp-rank">{idx + 1}º</div>
+
+                  <div className="vp-avatar">
+                    {img ? (
+                      <img
+                        src={img}
+                        alt={nome}
+                        onError={(e) => (e.currentTarget.style.display = "none")}
+                      />
+                    ) : (
+                      <div className="vp-avatar-ph">{iniciais(nome)}</div>
+                    )}
+                  </div>
+
+                  <div className="vp-info">
+                    <div className="vp-toprow">
+                      <h3 className="vp-name">{nome}</h3>
+                      <div className="vp-perc">
+                        {percentual.toFixed(2)}%
+                        <span className="vp-small">
+                          {votosCandidato.toLocaleString("pt-BR")} votos
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="vp-bar">
+                      <div
+                        className="vp-bar-fill"
+                        style={{ width: `${percentual}%` }}
+                      />
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+
+            {listaOrdenada.length === 0 && (
+              <p className="vp-empty">Sem votos para esta data.</p>
+            )}
+          </main>
+        )}
+
+        <footer className="vp-foot">
+          Os votos são atualizados em tempo real.
+        </footer>
       </div>
-
-      {loading ? (
-        <p>Carregando votos...</p>
-      ) : (
-        <div className="cards-container">
-          {votos.map((v, idx) => {
-            const caminho = v.foto
-              ? `${API_FESTIVAL}${v.foto.startsWith("/") ? "" : "/"}${v.foto}`
-              : "/default-user.png";
-
-            const porcentagem = totalVotos > 0 ? ((v.total_votos / totalVotos) * 100).toFixed(1) : "0.0";
-
-            return (
-              <div className="card-voto" key={v.id || idx}>
-                <img src={caminho} alt={v.nome_artistico || v.nome} className="foto-candidato" />
-                <div className="info-candidato">
-                  <strong>{v.nome_artistico || v.nome}</strong>
-                  <span>{porcentagem}% dos votos</span>
-                  <span>{v.total_votos} votos</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 };

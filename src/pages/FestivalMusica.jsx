@@ -4,7 +4,6 @@ import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/FestivalMusicas.css";
-import FooterFestival from "../components/FooterFestival";
 import { API_FESTIVAL } from "../services/api";
 
 Modal.setAppElement("#root");
@@ -25,7 +24,7 @@ const FestivalMusica = () => {
     const carregarDados = async () => {
       try {
         const etapaRes = await axios.get(`${API_FESTIVAL}/api/etapas/listar`);
-        const etapaLiberada = etapaRes.data.find(e => e.votacao_liberada === 1);
+        const etapaLiberada = etapaRes.data.find((e) => e.votacao_liberada === 1);
         if (!etapaLiberada) {
           setVotacaoLiberada(false);
           setEtapaAtual(null);
@@ -98,54 +97,65 @@ const FestivalMusica = () => {
   };
 
   return (
-    <div className="festival-musica-container">
+    <div className="fm-wrap">
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar />
-      <div className="festival-musica-content">
-        <h1 className="festival-musica-titulo">
-          VOTE NO SEU <br /> <span className="festival-musica-favorito">FAVORITO (A)</span>
-        </h1>
+      <div className="fm-container">
+        {/* Cabeçalho */}
+        <header className="fm-header">
+          <h1 className="fm-title"><img className="logo-gospel" src="/img/GospelTalent.png" alt="" /></h1>
+          <p className="fm-subtitle">Escolha o artista que você quer ver na Grande Final!</p>
+        </header>
 
         {!votacaoLiberada ? (
-          <div style={{ textAlign: "center", margin: "2rem 0", fontWeight: "bold", fontSize: "1.2rem", color: "#c0392b" }}>
-            A votação se encontra fechada no momento, tente novamente mais tarde.
-          </div>
+          <div className="fm-closed">A votação se encontra fechada no momento, tente novamente mais tarde.</div>
         ) : (
-          <div className="festival-musica-grid-candidatos">
+          <main className="fm-grid">
             {candidatos.map((candidato) => (
-              <div className="festival-musica-card-candidato" key={candidato.id}>
-                <img
-                  src={
-                    candidato.foto
-                      ? `${API_FESTIVAL}/${candidato.foto}`
-                      : "/img/cantor.png"
-                  }
-                  alt={candidato.nome_artistico}
-                  className="festival-musica-foto"
-                />
-                <h2>{candidato.nome_artistico || candidato.nome}</h2>
-                <p>{candidato.cidade}</p>
-                <button className="festival-musica-btn-votar" onClick={() => abrirModal(candidato)}>
+              <article className="fm-card" key={candidato.id}>
+                <div className="fm-avatar">
+                  {candidato.foto ? (
+                    <img
+                      src={`${API_FESTIVAL}/${candidato.foto}`}
+                      alt={candidato.nome_artistico || candidato.nome}
+                      onError={(e) => (e.currentTarget.style.display = "none")}
+                    />
+                  ) : (
+                    <div className="fm-avatar-ph">
+                      {(candidato.nome_artistico || "Artista").split(" ")[0]}
+                    </div>
+                  )}
+                </div>
+
+                <h2 className="fm-name">{candidato.nome_artistico || candidato.nome}</h2>
+                <p className="fm-muted">{candidato.cidade || "—"}</p>
+
+                <button className="fm-vote-btn" onClick={() => abrirModal(candidato)}>
                   Votar
                 </button>
-              </div>
+              </article>
             ))}
-          </div>
+          </main>
         )}
       </div>
 
+      {/* Modal de voto – mantém sua lógica, troca só o visual */}
       <Modal
         isOpen={modalAberto}
         onRequestClose={() => setModalAberto(false)}
-        className="festival-musica-modal-voto"
-        overlayClassName="festival-musica-overlay-voto"
+        className="fm-modal"
+        overlayClassName="fm-overlay"
       >
-        <h2>Confirmar voto em:</h2>
-        <p>
-          <strong>{candidatoSelecionado?.nome_artistico}</strong>
-        </p>
+        <div className="fm-modal-head">
+          <h2>Confirmar Voto</h2>
+          <button className="fm-close" onClick={() => setModalAberto(false)}>✕</button>
+        </div>
 
-        <label>Informe seu CPF:</label>
+        <p className="fm-modal-caption">Você está votando em:</p>
+        <p className="fm-candidate-chip">{candidatoSelecionado?.nome_artistico || candidatoSelecionado?.nome}</p>
+
+        <label className="fm-label">Digite seu CPF para confirmar:</label>
         <input
+          className="fm-input"
           type="text"
           value={cpf}
           placeholder="000.000.000-00"
@@ -160,11 +170,13 @@ const FestivalMusica = () => {
             )
           }
         />
-        <div className="festival-musica-modal-botoes">
-          <button onClick={confirmarVoto}>Confirmar</button>
-          <button onClick={() => setModalAberto(false)}>Cancelar</button>
-        </div>
+        <small className="fm-help">Seu CPF é usado apenas para garantir um voto por pessoa.</small>
+
+        <button className="fm-confirm" onClick={confirmarVoto}>
+          Confirmar Meu Voto
+        </button>
       </Modal>
+
     </div>
   );
 };

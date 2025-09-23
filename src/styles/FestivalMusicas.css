@@ -12,6 +12,10 @@
   text-align: center;
 }
 
+.logo-gospel {
+  width: 380px;
+}
+
 
 .festival-musica-titulo {
   font-size: 2.5rem;
@@ -203,48 +207,231 @@
   background-color: #c03838;
 }
 
-
-
-
-
-
-/* Responsividade da pagina */
-
-/* Telas até 1200px – reduz gap e limita tamanho */
-@media (max-width: 1200px) {
-  .festival-musica-grid-candidatos {
-    gap: 1.5rem;
-  }
-
-  .festival-musica-card-candidato {
-    max-width: 300px;
-  }
+/* ===== Fundo gradiente roxo (como o protótipo) ===== */
+.fm-wrap {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #4c1d95 0%, #a78bfa 50%, #f472b6 100%);
+  color: #fff;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px;
 }
 
-/* Telas até 768px – 2 colunas */
-@media (max-width: 768px) {
-  .festival-musica-grid-candidatos {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .festival-musica-titulo {
-    font-size: 2rem;
-  }
+/* Container central com largura máxima */
+.fm-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* Telas até 480px – 1 coluna */
-@media (max-width: 488px) {
-  .festival-musica-grid-candidatos {
-    grid-template-columns: 1fr;
+/* Cabeçalho */
+.fm-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.fm-title {
+  font-weight: 800;
+  font-size: clamp(32px, 5vw, 64px);
+  line-height: 1.1;
+  text-shadow: 0 0 15px rgba(255,255,255,.18);
+  margin: 0;
+}
+.fm-subtitle {
+  font-size: clamp(16px, 2vw, 22px);
+  color: rgba(255,255,255,.85);
+}
+
+/* Mensagem quando fechado */
+.fm-closed {
+  text-align: center;
+  margin: 2rem auto;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #ffd3d3;
+  background: rgba(0,0,0,.15);
+  border: 1px solid rgba(255,255,255,.15);
+  padding: 12px 16px;
+  border-radius: 12px;
+}
+
+/* Grid responsivo */
+.fm-grid {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (max-width: 1100px) {
+  .fm-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .fm-grid { grid-template-columns: 1fr; }
+}
+
+/* Card “glass” */
+.fm-card {
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 20px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.fm-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 50px rgba(0,0,0,.35);
+}
+
+/* Avatar circular com anel */
+.fm-avatar {
+  width: 128px;
+  height: 128px;
+  border-radius: 999px;
+  border: 6px solid rgba(255,255,255,.6);
+  background: rgba(255,255,255,.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: -36px;        /* “salta” do topo do card */
+  margin-bottom: 14px;
+  box-shadow: 0 10px 26px rgba(0,0,0,.25);
+}
+.fm-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.fm-avatar-ph {
+  color: #fff;
+  font-weight: 700;
+  font-size: 22px;
+  opacity: .95;
+}
+
+/* Textos do card */
+.fm-name {
+  font-weight: 800;
+  font-size: 22px;
+  text-align: center;
+  margin: 6px 0 2px;
+}
+.fm-muted {
+  color: rgba(255,255,255,.85);
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+/* Botão “Votar” */
+.fm-vote-btn {
+  width: 100%;
+  background: #ffffff;
+  color: #4c1d95;
+  font-weight: 800;
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.2);
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.fm-vote-btn:hover {
+  background: #f3f0ff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0,0,0,.28);
+}
+
+/* ===== Modal (react-modal) ===== */
+.fm-overlay {
+  position: fixed !important;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+.fm-modal {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  color: #2b1f43;
+  border-radius: 18px;
+  border: 1px solid #eee;
+  padding: 22px;
+  transform: scale(.96);
+  opacity: 1;
+  transition: transform .2s ease, opacity .2s ease;
+  outline: none;
+  box-shadow: 0 22px 60px rgba(0,0,0,.35);
+}
+.ReactModal__Overlay--after-open .fm-modal { transform: scale(1); opacity: 1; }
+
+.fm-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.fm-close {
+  border: 1px solid #eee;
+  background: #fff;
+  color: #7a6ea3;
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.fm-close:hover { background: #f7f7fb; }
+
+.fm-modal-caption { margin: 6px 0; color: #6b5e94; }
+.fm-candidate-chip {
+  text-align: center;
+  background: #efe9ff;
+  color: #3d2a78;
+  border: 1px solid #e0d5ff;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.fm-label { display: block; font-weight: 700; margin-bottom: 6px; color: #3d2a78; }
+.fm-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  outline: none;
+}
+.fm-input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124,58,237,.14);
+}
+.fm-help { display: block; color: #8f84b8; margin-top: 6px; }
+
+.fm-confirm {
+  width: 100%;
+  margin-top: 16px;
+  background: #7c3aed;
+  color: #fff;
+  font-weight: 800;
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.fm-confirm:hover { background: #6d28d9; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(124,58,237,.35); }
+
+
+
+@media (max-width: 600px) {
+  .fm-modal { 
+    padding: 16px;
   }
 
-  .festival-musica-card-candidato {
-    width: 100%;
-    max-width: 90%;
-  }
-
-  .festival-musica-titulo {
-    font-size: 1.6rem;
+  .logo-gospel {
+    width: 250px;
   }
 }
