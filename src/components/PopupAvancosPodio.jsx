@@ -38,6 +38,14 @@ export default function PopupAvancosPodio() {
 
         let arr = Array.isArray(data) ? data : [];
 
+        // Calcule posições manualmente para júri, se não vierem da API
+        const arrJuri = arr
+          .filter(x => x.origem !== "popular" && x.tipo !== "popular")
+          .sort((a, b) => Number(b.media ?? -1) - Number(a.media ?? -1));
+        arrJuri.forEach((item, idx) => {
+          if (idx < 3) item.posicao = idx + 1;
+        });
+
         // Se vierem mais que 4, mantemos 1º, 2º, 3º e 1 Popular (sem duplicar candidato)
         // Caso a sua API já devolva só os 4 certos, isso aqui apenas garante a ordem visual.
         const podium = [];
