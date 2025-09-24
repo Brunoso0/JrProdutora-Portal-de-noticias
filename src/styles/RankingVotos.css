@@ -1,144 +1,169 @@
-.ranking-container {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 2rem 1rem;
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.07);
-}
-
-.ranking-container h2 {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #7d27db;
-  font-size: 2rem;
-  letter-spacing: 1px;
-}
-
-.filtros-ranking {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.filtros-ranking label {
-  font-weight: 500;
-  color: #444;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.filtros-ranking select,
-.filtros-ranking input[type="date"] {
-  padding: 0.4rem 0.7rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  background: #faf8ff;
-  color: #333;
-}
-
-.filtros-ranking button {
-  background: #7d27db;
+/* ===== Fundo roxo com gradiente animado ===== */
+.rv-wrap {
+  min-height: 100vh;
+  padding: 28px 16px 40px;
   color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.5rem 1.2rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.filtros-ranking button:hover {
-  background: #5a1fa1;
+
+  --bg1: #1a0b2e;
+  --bg2: #2a0f4a;
+  --bg3: #4a1c7c;
+  --bg4: #2c0b4d;
+
+  background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3), var(--bg4));
+  background-size: 400% 400%;
+  animation: rvGrad 16s ease infinite;
 }
 
-.grid-ranking {
+@keyframes rvGrad {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.rv-container {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+/* ===== Header ===== */
+.rv-header { text-align: center; margin-bottom: 18px; }
+.rv-header h1 {
+  margin: 0;
+  font-size: clamp(28px, 4.8vw, 56px);
+  font-weight: 900;
+  letter-spacing: .4px;
+  text-shadow: 0 6px 24px rgba(0,0,0,.35), 0 0 20px rgba(255,255,255,.12);
+}
+.rv-sub { margin-top: 4px; color: #cbb6ff; }
+
+/* ===== Card base (glass) ===== */
+.card {
+  background: rgba(0,0,0,.25);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 18px 40px rgba(0,0,0,.35);
+}
+
+/* ===== Filtros ===== */
+.rv-filtros { margin: 12px 0 18px; padding: 16px; }
+.rv-f-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+  grid-template-columns: 1fr 1fr 180px;
+  gap: 14px;
+  align-items: end;
 }
-
-.card-ranking {
-  background: linear-gradient(135deg, #f3e9ff 0%, #e9e4ff 100%);
-  border-radius: 14px;
-  box-shadow: 0 2px 12px 0 rgba(125,39,219,0.08);
-  padding: 1.5rem 1rem 1rem 1rem;
-  text-align: center;
-  cursor: pointer;
-  position: relative;
-  transition: box-shadow 0.2s, transform 0.2s;
-  min-height: 260px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.card-ranking:hover {
-  box-shadow: 0 6px 24px 0 rgba(125,39,219,0.15);
-  transform: translateY(-4px) scale(1.03);
-}
-
-.numero-ranking {
-  position: absolute;
-  top: 12px;
-  left: 16px;
-  background: #7d27db;
-  color: #fff;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.1rem;
-  box-shadow: 0 2px 8px 0 rgba(125,39,219,0.10);
-  z-index: 2;
-}
-
-.card-ranking img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0.7rem 0 0.5rem 0;
-  border: 3px solid #7d27db;
-  background: #fff;
-}
-
-.card-ranking strong {
-  font-size: 1.15rem;
-  color: #5a1fa1;
-  margin-bottom: 0.2rem;
+.rv-field label {
   display: block;
+  font-size: 13px;
+  color: #d7cfff;
+  margin-bottom: 6px;
+}
+.rv-field select,
+.rv-field input[type="date"] {
+  width: 100%;
+  background: rgba(0,0,0,.25);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 12px;
+  padding: 10px 12px;
+  outline: none;
+}
+.rv-field input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+
+.rv-buscar {
+  width: 100%;
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: #7c3aed;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.rv-buscar:hover { background: #6d28d9; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(124,58,237,.35); }
+
+@media (max-width: 760px) {
+  .rv-f-grid { grid-template-columns: 1fr; }
 }
 
-.card-ranking p {
-  margin: 0.2rem 0;
-  color: #444;
-  font-size: 1rem;
+/* ===== Lista ===== */
+.rv-list { display: grid; gap: 14px; }
+.rv-loading, .rv-empty { text-align: center; color: #d1c5ff; }
+
+/* Item da lista */
+.rv-item {
+  display: grid;
+  grid-template-columns: 64px 56px 1fr 100px;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  transition: background .2s ease, border-color .2s ease;
+}
+.rv-item:hover { background: rgba(255,255,255,.06); border-color: rgba(168,85,247,.6); }
+
+/* Posição */
+.rv-pos {
+  font-size: 28px;
+  font-weight: 900;
+  text-align: center;
+  color: #e3d9ff;
+  line-height: 1;
 }
 
-.card-ranking .texto-suspense {
-  color: #b7b7b7;
-  font-size: 1.1rem;
-  font-style: italic;
-  margin-top: 2.5rem;
+/* Destaques Top 3 (barrinha/cores) */
+.rank-1 { border-left: 4px solid #facc15; }
+.rank-2 { border-left: 4px solid #d1d5db; }
+.rank-3 { border-left: 4px solid #fb923c; }
+.rv-pos.rank-1 { color: #fde68a; }
+.rv-pos.rank-2 { color: #e5e7eb; }
+.rv-pos.rank-3 { color: #fdba74; }
+
+/* Avatar */
+.rv-avatar, .rv-avatar-ph {
+  width: 56px; height: 56px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #4c1d95;
+  border: 2px solid #c8a4ff;
+  color: #fff;
+  font-weight: 800;
+}
+.rv-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Info */
+.rv-info { min-width: 0; }
+.rv-name {
+  margin: 0;
+  font-weight: 800;
+  color: #ffffff;
+  font-size: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rv-origin { margin: 2px 0 0; color: #a48bff; font-size: 13px; }
+
+/* Score */
+.rv-score { text-align: right; }
+.rv-score-value {
+  font-size: 22px;
+  font-weight: 900;
+  color: #4ade80; /* verde vivo */
+}
+.rv-score-label {
+  display: block;
+  font-size: 11px;
+  color: #cbb6ff;
 }
 
-.card-ranking.revelado {
-  background: linear-gradient(135deg, #fff 0%, #e9e4ff 100%);
-  box-shadow: 0 4px 24px 0 rgba(125,39,219,0.13);
-  cursor: default;
-  animation: fadeIn 0.7s;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.97);}
-  to { opacity: 1; transform: scale(1);}
+/* Responsivo */
+@media (max-width: 560px) {
+  .rv-item { grid-template-columns: 44px 48px 1fr 80px; padding: 12px; }
+  .rv-score-value { font-size: 20px; }
 }
