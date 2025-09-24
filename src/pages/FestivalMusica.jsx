@@ -170,7 +170,7 @@ const FestivalMusica = () => {
             )
           }
         />
-        <small className="fm-help">Seu CPF é usado apenas para garantir um voto por pessoa.</small>
+        {/* <small className="fm-help">Seu CPF é usado apenas para garantir um voto por pessoa.</small> */}
 
         <button className="fm-confirm" onClick={confirmarVoto}>
           Confirmar Meu Voto
