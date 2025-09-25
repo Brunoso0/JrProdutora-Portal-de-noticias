@@ -36,7 +36,12 @@ const FestivalMusica = () => {
         setEtapaAtual(etapaLiberada.id);
 
         const candidatosRes = await axios.get(`${API_FESTIVAL}/api/dashboard/aptos-votacao`);
-        setCandidatos(candidatosRes.data);
+        const candidatosOrdenados = candidatosRes.data.sort((a, b) => {
+          const nomeA = (a.nome_artistico || a.nome || "").toLowerCase();
+          const nomeB = (b.nome_artistico || b.nome || "").toLowerCase();
+          return nomeA.localeCompare(nomeB);   
+        });
+        setCandidatos(candidatosOrdenados);
       } catch (err) {
         setVotacaoLiberada(false);
         toast.error("Erro ao carregar dados.");

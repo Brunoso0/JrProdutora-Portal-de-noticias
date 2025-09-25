@@ -1,740 +1,292 @@
-/* ====== GERAL ====== */
-.area-candidato-container {
-  background-color: #fce9db;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+/* ===== Base e fundo ===== */
+.areaC-wrap{
+  min-height:100vh;
+  color:#fff;
+  background:#111827; /* gray-900 */
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  padding:18px 16px 40px;
 }
 
-.area-candidato-main {
-  flex: 1;
-  padding: 3rem 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
+/* ===== Header com gradiente animado ===== */
+.areaC-header{
+  max-width:1100px;margin:0 auto 22px;padding:16px 18px;border-radius:18px;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  background:linear-gradient(90deg,#7c3aed,#4f46e5,#7c3aed);
+  background-size:200% 200%;box-shadow:0 16px 40px rgba(0,0,0,.35);
+}
+.gradient-anim{ animation:grad 10s ease infinite; }
+@keyframes grad{ 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+.areaC-head-left{display:flex;align-items:center;gap:12px;}
+.areaC-avatar{width:48px;height:48px;border-radius:999px;object-fit:cover;border:2px solid #fde68a;}
+.areaC-ident h2{margin:0 0 4px;font-size:clamp(16px,2.8vw,22px);font-weight:800;}
+.areaC-pill{display:inline-block;padding:3px 9px;font-size:12px;border-radius:999px;background:rgba(0,0,0,.25);color:#fde68a;font-weight:700}
+
+/* Ações header */
+.areaC-head-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-regulamento{
+  background:#facc15; color:#0b0b0b; font-weight:700;
+  padding:9px 12px; border-radius:12px; border:0; cursor:pointer;
+  box-shadow:0 8px 18px rgba(250,204,21,.25);
+  text-decoration:none;
+  transition:transform .2s ease, box-shadow .2s ease, background .15s ease;
+}
+.btn-regulamento:hover{ transform:translateY(-1px); box-shadow:0 12px 26px rgba(250,204,21,.35); }
+
+/* Botão Atualizar: normal (glass) + estado de alerta pulsando */
+.btn-atualizar{
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.25);
+  color:#fff; font-weight:800; border-radius:12px; padding:9px 12px;
+  backdrop-filter: blur(8px);
+  cursor:pointer; transition:transform .2s, background .2s, box-shadow .2s;
+}
+.btn-atualizar:hover{ transform:translateY(-1px); background:rgba(255,255,255,.18); box-shadow:0 10px 24px rgba(255,255,255,.08); }
+
+/* ALERTA: vermelho + pulso quando há pendências */
+.btn-atualizar--alert{
+  background:#ef4444 !important;  /* red-500 */
+  border-color:#ef4444 !important;
+  color:#fff;
+  animation:pulseAlert 1.5s infinite;
+  box-shadow:0 12px 28px rgba(239,68,68,.35);
+}
+@keyframes pulseAlert{
+  0%{ box-shadow:0 0 0 0 rgba(239,68,68,.55); }
+  70%{ box-shadow:0 0 0 14px rgba(239,68,68,0); }
+  100%{ box-shadow:0 0 0 0 rgba(239,68,68,0); }
 }
 
+/* ===== Main / Card ===== */
+.areaC-main{ max-width:1100px; margin:0 auto; }
+.areaC-card{
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  backdrop-filter: blur(10px);
+  padding:16px 14px;
+  box-shadow:0 18px 40px rgba(0,0,0,.35);
+}
+@media (min-width:640px){ .areaC-card{padding:20px} }
+@media (min-width:1024px){ .areaC-card{padding:22px} }
 
-.area-candidato-header {
-  background: linear-gradient(to right, #a640d6, #7d27db);
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2rem 4rem;
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.areaC-card-head{text-align:center;margin-bottom:14px}
+.areaC-card-head h3{
+  margin:0;font-size:clamp(22px,4.2vw,36px);font-weight:900;
+  background:linear-gradient(90deg,#c084fc,#818cf8);-webkit-background-clip:text;background-clip:text;color:transparent
+}
+.areaC-card-head p{color:#c7c7ff;margin:6px 0 10px}
+
+/* Select estilizado */
+.areaC-select-wrap{position:relative;width:min(230px,80%);margin:6px auto 0}
+.areaC-select{
+  width:100%;appearance:none;outline:none;background:#1f2937;color:#fff;border:1px solid #4b5563;
+  padding:10px 32px 10px 12px;border-radius:10px}
+.areaC-select:focus{border-color:#8b5cf6;box-shadow:0 0 0 2px rgba(139,92,246,.35)}
+.areaC-select-wrap .chev{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#cbd5e1;pointer-events:none}
+
+/* aviso de scroll (aparece só em telas < md) */
+.areaC-scroll-hint{display:block;text-align:center;color:#9aa4ff;font-size:12px;margin:-4px 0 10px;opacity:.85}
+@media (min-width:768px){ .areaC-scroll-hint{display:none} }
+
+/* ===== Estado aguarde ===== */
+.areaC-wait{ text-align:center; color:#cbb6ff; font-weight:600; }
+
+/* ===== Binário ===== */
+.areaC-tableBin{ margin-top:14px; }
+.areaC-tableBin .tHead{display:grid;grid-template-columns:1fr 150px;gap:10px;background:rgba(255,255,255,.06);
+  padding:10px 12px;border-radius:10px;color:#cbb6ff;font-weight:700}
+.areaC-tableBin .tRow{display:grid;grid-template-columns:1fr 150px;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.areaC-tableBin .jurado{display:flex;align-items:center;gap:10px}
+.areaC-tableBin .jurado img{width:40px;height:40px;border-radius:8px;object-fit:cover}
+.areaC-tableBin .status.ok{display:flex;align-items:center;justify-content:center;font-weight:800;color:#10b981;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);border-radius:999px}
+
+@media (max-width:480px){
+  .areaC-tableBin .tHead,
+  .areaC-tableBin .tRow{grid-template-columns:1fr 120px}
 }
 
-.perfil {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
+/* Eliminado */
+.areaC-alert-eliminado{margin-top:12px;background:#ffeded;border:1px solid #ffc7c7;color:#7a1c1c;border-radius:16px;padding:14px}
+.areaC-elim-item{display:flex;gap:12px;align-items:center;background:#fff;border-radius:12px;padding:10px 12px;margin-top:12px;color:#111}
+.areaC-elim-item img{width:52px;height:52px;border-radius:8px;object-fit:cover;border:2px solid #ef4444}
+@media (max-width:480px){
+  .areaC-elim-item{flex-direction:column;align-items:flex-start}
 }
 
-.foto-perfil {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid white;
+/* ===== Tabela de notas (critérios) ===== */
+.notaTable-wrap{overflow-x:auto}
+.notaTable-wrap::-webkit-scrollbar{height:8px}
+.notaTable-wrap::-webkit-scrollbar-thumb{background:#4f46e5;border-radius:4px}
+
+/* cabeçalho/linhas como grade; a grade precisa de uma largura mínima para gerar scroll em telas pequenas */
+.notaTable.head,
+.notaTable.row,
+.notaTable.foot{
+  display:grid;align-items:center;
+  grid-template-columns: 220px repeat(4, minmax(90px,1fr)) 110px; /* jurado + 4 critérios + média */
+  min-width: 700px; /* força scroll em telas estreitas (igual ao min-w do exemplo) */
 }
 
-.perfil h2 {
-  font-size: 1.8rem;
-  margin: 0;
-}
-
-.perfil p {
-  font-size: 1rem;
-  margin: 0;
-  opacity: 0.9;
-}
-
-.RegulamentoButton {
-  background: #ffcc00;
-  border: none;
-  color: #333;
-  padding: 0.75rem 1.5rem;
-  border-radius: 15px;
-  font-weight: bold;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: 0.3s ease;
-  text-decoration: none;
-}
-
-.botao-atualizar {
-  background: #66aaff;
-  border: none;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 15px;
-  font-weight: bold;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.botao-atualizar:hover {
-  background: #4b93e6;
-}
-
-.alerta-pendencia {
-  background-color: #ff6961 !important;
-  animation: pulse 1.5s infinite;
-}
-
-.area-candidato-main {
-  padding: 3rem 2rem;
-  text-align: center;
-}
-
-.area-candidato-main h3 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.select-etapa {
-  margin: 0.5rem auto;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  background-color: white;
-  width: 300px;
-}
-
-/* ====== TABELA NOTAS BINÁRIAS ====== */
-.tabela-notas {
-  margin-top: 2rem;
-  background: #e2c4f7;
-  border-radius: 20px;
-  padding: 2rem;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.cabecalho-tabela {
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
-  padding: 0 1rem;
-  margin-bottom: 1rem;
-  color: #555;
-}
-
-.cabecalho-tabela span {
-  flex: 1;
-  text-align: center;
-  font-size: 0.85rem;
-}
-
-.linha-criterio {
-  display: flex;
-  align-items: center;
-  border-radius: 15px;
-  margin-bottom: 1rem;
-  overflow: hidden;
-}
-
-.bloco-jurado {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #fff;
-  padding: 0.5rem 1rem;
-  min-width: 200px;
-}
-
-.bloco-jurado img {
-  width: 70px;
-  height: 70px;
-  border-radius: 8px;
-}
-
-.notas-linha {
-  flex: 1;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 0.5rem;
-  font-weight: bold;
-  font-size: 0.9rem;
-  background-color: #ddd;
-}
-
-.jurado1 .notas-linha { background-color: #bca3f7; }
-.jurado2 .notas-linha { background-color: #f9a5df; }
-.jurado3 .notas-linha { background-color: #f8d28a; }
-.popular .notas-linha   { background-color: #a4f4ff; }
-
-.popular .bloco-jurado {
-  background-color: #40c4ff;
-  color: #fff;
-  justify-content: center;
-}
-
-.bloco-jurado.binario {
-  background-color: #8c52ff;
-  color: white;
-  flex-direction: row;
-  padding: 1rem;
-  text-align: center;
-  width: 200px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.352);
-}
-
-.bloco-binario-texto {
-  background-color: #d1baff;
-  flex: 1;
-  padding: 1rem;
-  font-weight: bold;
-}
-
-/* ====== MODAL ====== */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.65);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.modal-content-usuario {
-  background-color: #fff;
-  padding: 2rem;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  animation: fadeIn 0.3s ease;
-}
-
-.modal-content-usuario h3 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.6rem;
-  color: #7d27db;
-  text-align: center;
-}
-
-.modal-content-usuario form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.modal-content-usuario input,
-.modal-content-usuario textarea,
-.modal-content-usuario select {
-  padding: 0.6rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 1rem;
-  width: 100%;
-}
-
-.modal-content-usuario input[readonly] {
-  background-color: #f3f3f3;
-  color: #999;
-  cursor: not-allowed;
-}
-
-.modal-content-usuario label {
-  font-weight: bold;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  color: #444;
-}
-
-.modal-content-usuario button[type="submit"] {
-  background-color: #7d27db;
-  color: white;
-  border: none;
-  padding: 0.75rem;
-  border-radius: 12px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.modal-content-usuario button[type="submit"]:hover {
-  background-color: #6923c3;
-}
-
-.modal-content-usuario button:not([type="submit"]) {
-  background-color: #f3f3f3;
-  color: #333;
-  border: 1px solid #ccc;
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-top: 0.5rem;
-}
-
-.atualizar-foto-container {
-  margin-bottom: 1rem;
-}
-
-.preview-foto-perfil {
-  margin: 0.5rem 0;
-  display: flex;
-  justify-content: center;
-}
-
-.foto-preview-atual {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ccc;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
-}
-
-/* ====== PENDÊNCIAS ====== */
-.modal-content-usuario ul {
-  margin-top: 0.8rem;
-  padding-left: 1.2rem;
-  list-style: disc;
-  color: #333;
-  font-size: 0.95rem;
-}
-
-.modal-content-usuario ul li {
-  margin-bottom: 0.4rem;
-}
-
-.modal-content-usuario ul li span {
-  font-weight: bold;
-}
-
-/* ====== TABELA DETALHADA ====== */
-.tabela-candidato-votos {
-    display: flex;
-    flex-direction: column;
-    margin: 2rem auto;
-    width: 100%;
-    min-width: 320px;
-    max-width: 1200px;
-    background: none;
-    box-shadow: none;
-    overflow-x: auto;
-    scrollbar-width: thin;
-}
-
-.tabela-candidato-linha-titulo,
-.tabela-candidato-linha-jurado {
-  display: flex;
-  align-items: center;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-  position: relative;
-  font-size: 1.13rem;
-  z-index: 1;
-}
-
-.tabela-candidato-linha-titulo {
-  background: #333;
-  color: white;
-  font-weight: bold;
-}
-
-.tabela-candidato-media-geral {
-  background-color: #000;
-  color: white;
-}
-
-.tabela-candidato-celula {
-  flex: 1;
-  text-align: center;
-  padding: 0.6rem;
-  background-color: rgba(255, 255, 255, 0.15);
-  color: white;
-  font-weight: 500;
-  font-size: 1.13rem;
-  word-break: break-word;
-  min-width: 70px;
-}
-
-.tabela-candidato-jurado-nome {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 1.13rem;
-}
-
-.tabela-candidato-jurado-nome img {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  object-fit: cover;
-}
-
-.tabela-candidato-media-final {
-  font-weight: bold;
-  background-color: rgba(0, 0, 0, 0.2);
-  font-size: 1.15rem;
-}
-
-.tabela-candidato-linha-jurado.popular {
-  background-color: #26a12d98;
-  color: #000;
-  font-weight: bold;
-}
-
-
-/* ====== TOOLTIP ====== */
-.tooltip-icone {
-  position: relative;
-  display: inline-block;
-  margin-left: 6px;
-  cursor: pointer;
-  color: #fff;
-  font-weight: bold;
-  font-size: 1rem;
-}
-
-.tooltip-conteudo {
-  visibility: hidden;
-  opacity: 0;
-  min-width: 180px;
-  max-width: 260px;
-  background-color: #333;
-  color: #fff;
-  text-align: left;
-  border-radius: 8px;
-  padding: 0.6rem;
-  position: absolute;
-  z-index: 9999;
-  bottom: 140%;
-  left: 50%;
-  transform: translateX(-50%);
-  transition: opacity 0.2s ease;
-  font-size: 0.9rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  white-space: normal;
-  word-wrap: break-word;
-}
-
-.tooltip-icone:hover .tooltip-conteudo {
-  visibility: visible;
-  opacity: 1;
-}
-
-/* ====== SCROLLBAR ====== */
-.tabela-candidato-votos::-webkit-scrollbar {
-  height: 8px;
-}
-.tabela-candidato-votos::-webkit-scrollbar-thumb {
-  background: #d1baff;
-  border-radius: 8px;
-}
-
-/* ====== ANIMAÇÕES ====== */
-@keyframes fadeIn {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
+@media (min-width:640px){
+  .notaTable.head,
+  .notaTable.row,
+  .notaTable.foot{
+    grid-template-columns: 260px repeat(4, minmax(100px,1fr)) 120px;
+    min-width: 820px;
   }
 }
 
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255, 105, 97, 0.5);
-  }
-  70% {
-    box-shadow: 0 0 0 12px rgba(255, 105, 97, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 105, 97, 0);
+@media (min-width:1024px){
+  .notaTable.head,
+  .notaTable.row,
+  .notaTable.foot{
+    grid-template-columns: 300px repeat(4, minmax(110px,1fr)) 140px;
+    min-width: 980px;
   }
 }
 
-/* ====== RESPONSIVIDADE ====== */
+.cell{padding:10px 12px;text-align:center;color:#eaeaff;font-size:14px}
+.cell.jurado{display:flex;align-items:center;justify-content:flex-start;gap:10px;padding-left:12px}
+.cell.jurado img{width:32px;height:32px;border-radius:999px;object-fit:cover}
+@media (min-width:640px){ .cell{font-size:15px} .cell.jurado img{width:36px;height:36px} }
 
-@media (max-width: 1600px) {
-  .tabela-candidato-votos {
-    width: 80%;
-  }
-  .tabela-candidato-linha-titulo,
-  .tabela-candidato-linha-jurado {
-    min-width: 1400px; /* Mantém largura horizontal para scroll */
+.notaTable.head{background:rgba(255,255,255,.06);border-radius:10px}
+.notaTable.row{border-bottom:1px solid rgba(255,255,255,.08)}
+.notaTable.foot{background:#0b0b0b;border-radius:10px;margin-top:8px}
+
+/* badges e tooltip mantidos */
+.cell-note{position:relative}
+.tt-ico{margin-left:6px;position:relative;cursor:help;font-weight:700}
+.tt-ico .tt{
+  position:absolute;visibility:hidden;opacity:0;transition:opacity .15s ease;
+  bottom:125%;left:50%;transform:translateX(-50%);min-width:180px;max-width:260px;
+  background:#333;color:#fff;padding:8px 10px;border-radius:8px;z-index:10;text-align:left;
+  box-shadow:0 8px 18px rgba(0,0,0,.35)
+}
+.tt-ico:hover .tt{visibility:visible;opacity:1}
+
+.badge{display:inline-block;min-width:54px;padding:6px 12px;border-radius:999px;font-weight:900;
+  background:rgba(168,85,247,.35);color:#f3e8ff;border:1px solid rgba(168,85,247,.6)}
+.badge.green{background:rgba(16,185,129,.25);border-color:rgba(16,185,129,.5);color:#d1fae5}
+.badge.indigo{background:#6366f1;color:#fff;border-color:#6366f1}
+
+/* ===== Modal (mantido da sua versão, só retoques) ===== */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.65);
+  display:flex; align-items:center; justify-content:center; z-index:999;
+}
+.modal-content-usuario{
+  background:#fff; color:#111; width:100%; max-width:640px; max-height:90vh; overflow:auto;
+  padding:18px; border-radius:18px; box-shadow:0 20px 50px rgba(0,0,0,.35); animation:fadeIn .25s ease;
+}
+.modal-content-usuario h3{ margin:0 0 12px; color:#7c3aed; font-weight:900; text-align:center; }
+.modal-content-usuario form{ display:flex; flex-direction:column; gap:12px; }
+.modal-content-usuario input, .modal-content-usuario textarea, .modal-content-usuario select{
+  padding:10px 12px; border-radius:10px; border:1px solid #d1d5db; font-size:15px;
+}
+.modal-content-usuario button[type="submit"]{
+  background:#7c3aed; color:#fff; font-weight:800; padding:12px; border-radius:12px; border:0; cursor:pointer;
+}
+.preview-foto-perfil{ display:flex; justify-content:center; }
+.foto-preview-atual{width:136px;height:136px;border-radius:999px;object-fit:cover;border:2px solid #e5e7eb}
+
+/* ===== Responsivo ===== */
+@media (max-width:920px){
+  .areaC-header{ flex-direction:column; align-items:flex-start; }
+  .areaC-head-actions{ width:100%; justify-content:flex-start; }
+  .notaTable.head, .notaTable.row, .notaTable.foot{
+    grid-template-columns: 2fr repeat(4,minmax(80px,1fr)) 120px; /* fallback comum */
   }
 }
-
-/* Tablets e telas médias */
-@media (max-width: 1024px) {
-  .area-candidato-header {
-    flex-direction: column;
-    text-align: center;
-    padding: 2rem;
-  
-    gap: 0.5rem;
-  }
-  .tabela-candidato-linha-titulo,
-  .tabela-candidato-linha-jurado {
-    min-width: 1400px; /* Mantém largura horizontal para scroll */
-  }
-
-  
-  .perfil {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .foto-perfil {
-    width: 70px;
-    height: 70px;
-  }
-  .botao-atualizar {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-  }
-  .area-candidato-main {
-    padding: 2rem 0.2rem;
-  }
-  .select-etapa {
-    width: 100%;
-  }
-  .tabela-notas {
-    padding: 1.5rem;
-  }
-  .bloco-jurado {
-    flex-direction: column;
-    text-align: center;
-    gap: 5px;
-  }
-  .bloco-jurado img {
-    width: 50px;
-    height: 50px;
-  }
-  .notas-linha {
-    font-size: 0.8rem;
-  }
+@media (max-width:600px){
+  .areaC-avatar{ width:56px;height:56px; }
+  .btn-regulamento, .btn-atualizar{ padding:8px 12px; font-size:14px; }
 }
 
-/* Telas menores */
-@media (max-width: 900px) {
-  .tabela-candidato-votos {
-    width: 98vw;
-    min-width: 0;
-    max-width: 100vw;
-    padding: 0 0.5rem;
-    overflow-x: auto;
-  }
-  .tabela-candidato-linha-titulo,
-  .tabela-candidato-linha-jurado {
-    min-width: 1400px; /* Mantém largura horizontal para scroll */
-  }
-  .tabela-candidato-celula {
-    font-size: 1rem;
-    padding: 0.5rem 0.2rem;
-    min-width: 110px;
-  }
-  .tabela-candidato-jurado-nome img {
-    width: 32px;
-    height: 32px;
-  }
+/* reaproveita */
+@keyframes fadeIn{ from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none} }
+
+
+
+
+
+/* modal */
+
+/* ===== Overlay permanece igual ===== */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:16px;z-index:999;
 }
 
-/* Telas pequenas */
-@media (max-width: 768px) {
-  .area-candidato-header {
-    padding: 1.5rem;
-  }
-  .tabela-candidato-linha-titulo,
-  .tabela-candidato-linha-jurado {
-    min-width: 1400px; /* Mantém largura horizontal para scroll */
-  }
-  .perfil h2 {
-    font-size: 1.5rem;
-  }
-  .perfil p {
-    font-size: 0.9rem;
-  }
-  .tabela-notas {
-    padding: 1rem;
-  }
-  .cabecalho-tabela span {
-    font-size: 0.75rem;
-  }
-  .notas-linha {
-    font-size: 0.7rem;
-  }
-  .bloco-jurado {
-    min-width: 150px;
-  }
-  .bloco-jurado.binario {
-    width: 150px;
-    padding: 0.5rem;
-  }
-  .bloco-binario-texto {
-    padding: 0.5rem;
-    font-size: 0.9rem;
-  }
-  .select-etapa {
-    width: 50%;
-    font-size: 0.9rem;
-  }
+/* ===== Caixa do modal no estilo da imagem ===== */
+.modal-sheet{
+  position:relative;width:100%;max-width:420px;max-height:90vh;overflow:auto;
+  background:#111827;border:1px solid rgba(139,92,246,.35);
+  border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.5);
+  padding:18px 16px 20px;
 }
 
-/* Mobile */
-@media (max-width: 600px) {
-  .tabela-candidato-votos {
-    min-width: 0;
-    max-width: 100vw;
-    padding: 0;
-    margin: 1rem 0;
-    overflow-x: auto;
-  }
-  .tabela-candidato-linha-titulo,
-  .tabela-candidato-linha-jurado {
-    min-width: 1400px; /* Mantém largura horizontal para scroll */
-  }
-  .tabela-notas {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    gap: 1.5rem;
-    background-color: transparent;
-    box-shadow: none;
-  }
-  .cabecalho-tabela {
-    display: none; /* Esconde o cabeçalho horizontal em mobile */
-  }
-  .linha-criterio {
-    flex-direction: column;
-    align-items: center;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    padding: 1rem;
-    width: 100%;
-  }
-  .bloco-jurado {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    width: 100%;
-    gap: 0.5rem;
-  }
-  .bloco-jurado img {
-    width: 60px;
-    height: 60px;
-  }
-  .notas-linha {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
-  }
-  .notas-linha span {
-    width: 100%;
-    background: #eee;
-    padding: 0.3rem 0.5rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-align: center;
-  }
-  .linha-criterio.popular .notas-linha span {
-    background: #a4f4ff;
-    font-weight: bold;
-  }
-  .bloco-binario-texto {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    text-align: center;
-  }
-  .linha-criterio.binario {
-    flex-direction: column;
-    background-color: #d1baff;
-    border-radius: 12px;
-    padding: 1rem;
-  }
-  .bloco-jurado.binario {
-    background-color: #8c52ff;
-    color: white;
-    width: 100%;
-    padding: 1rem;
-    text-align: center;
-    border-radius: 10px;
-  }
+/* Título com gradiente */
+.modal-title{
+  margin:6px 0 14px;text-align:center;font-weight:900;
+  font-size:clamp(20px,3.8vw,28px);
+  background:linear-gradient(90deg,#c084fc,#818cf8);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
 }
 
-/* Mobile extra pequeno */
-@media (max-width: 500px) {
-  .modal-content-usuario {
-    padding: 1rem;
-    border-radius: 15px;
-  }
-  .modal-content-usuario h3 {
-    font-size: 1.3rem;
-  }
-  .modal-content-usuario input,
-  .modal-content-usuario textarea {
-    font-size: 0.95rem;
-  }
+/* Botão fechar (canto superior direito) */
+.modal-close{
+  position:absolute;top:10px;right:12px;width:32px;height:32px;border:0;border-radius:8px;
+  background:#00000033;color:#cbd5e1;font-size:16px;cursor:pointer;display:grid;place-items:center;
+}
+.modal-close:hover{background:#00000055;color:#fff}
+
+/* Subtítulo suave */
+.modal-subtle{color:#d1d5db;font-size:13px;text-align:center;margin-bottom:8px}
+
+/* Avatar com aro roxo */
+.modal-avatar-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:10px}
+.modal-avatar{
+  width:84px;height:84px;border-radius:999px;object-fit:cover;
+  border:4px solid #8b5cf6;box-shadow:0 0 0 3px #1f2937;
 }
 
-/* Mobile muito pequeno */
-@media (max-width: 480px) {
-  .area-candidato-header {
-    padding: 1rem;
-  }
-  .perfil h2 {
-    font-size: 1.2rem;
-  }
-  .perfil p {
-    font-size: 0.8rem;
-  }
-  .botao-atualizar {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-  }
-  .tabela-notas {
-    padding: 0.5rem;
-  }
-  .cabecalho-tabela {
-    flex-direction: column;
-    align-items: center;
-  }
-  .cabecalho-tabela span {
-    font-size: 0.7rem;
-  }
-  .linha-criterio {
-    flex-direction: column;
-  }
-  .bloco-jurado {
-    width: 100%;
-  }
-  .notas-linha {
-    flex-direction: column;
-    font-size: 0.6rem;
-  }
-  .bloco-jurado.binario {
-    width: 100%;
-  }
-  .bloco-binario-texto {
-    font-size: 0.8rem;
-  }
+/* Form */
+.modal-form{display:flex;flex-direction:column;gap:12px}
+
+/* Campo e rótulo */
+.modal-field{display:flex;flex-direction:column;gap:6px}
+.modal-label{font-size:12px;color:#c7c9d4}
+
+/* Inputs escuros */
+.modal-input{
+  width:100%;background:#374151cc;border:1px solid #4b5563;color:#e5e7eb;
+  border-radius:10px;padding:12px 14px;font-size:14px;outline:none;
 }
+.modal-input:focus{border-color:#6366f1;box-shadow:0 0 0 2px rgba(99,102,241,.35)}
+.modal-input--readonly{
+  background:#374151aa;color:#a1a1aa;cursor:not-allowed;
+}
+
+/* Input de arquivo com botão roxo "Escolher ficheiro" */
+.file-input{
+  width:100%;color:#94a3b8;background:transparent;border:0;padding:0;
+}
+.file-input::file-selector-button{
+  margin-right:12px;border:0;border-radius:999px;padding:8px 14px;cursor:pointer;
+  font-weight:700;font-size:13px;
+  background:#7c3aed;color:#f5f3ff;transition:background .2s,transform .05s;
+}
+.file-input:hover::file-selector-button{background:#6d28d9}
+.file-input:active::file-selector-button{transform:scale(.98)}
+
+/* Ações */
+.modal-actions{padding-top:6px}
+.modal-save{
+  width:100%;padding:12px 16px;border:0;border-radius:10px;font-weight:800;color:#fff;cursor:pointer;
+  background-image:linear-gradient(90deg,#7c3aed,#4f46e5);transition:filter .2s, transform .05s;
+  box-shadow:0 10px 30px rgba(99,102,241,.35);
+}
+.modal-save:hover{filter:brightness(1.05)}
+.modal-save:active{transform:translateY(1px)}
