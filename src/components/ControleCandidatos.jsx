@@ -148,12 +148,12 @@ const ControleCandidatos = () => {
             <div className="avatar-wrap">
               {c.foto ? (
                 <img
-                  className="avatar"
+                  className="avatar-ver"
                   src={`${API_FESTIVAL}/${c.foto}`}
                   alt={c.nome}
                 />
               ) : (
-                <div className="avatar avatar--noimg">{initials(c.nome)}</div>
+                <div className="avatar-ver avatar--noimg">{initials(c.nome)}</div>
               )}
             </div>
 

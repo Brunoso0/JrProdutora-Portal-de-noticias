@@ -103,8 +103,10 @@
 /* ===== Grid de cards ===== */
 .cand-grid {
   display: grid;
-  gap: 18px;
+  grid-column-gap: 18px;
+  grid-row-gap: 20px;
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 50px;
 }
 @media (max-width: 1280px) { .cand-grid { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 1024px) { .cand-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -140,9 +142,9 @@
   background: #6b7280;
   color: #fff;
 }
-.badge--eliminado { background: #ef4444; }
-.badge--final     { background: #22c55e; }
-.badge--primeira  { background: #3b82f6; }
+.badge--eliminado { background: #ef4444 !important; }
+.badge--final     { background: #22c55e !important; }
+.badge--primeira  { background: #3b82f6 !important; }
 
 /* Avatar */
 .avatar-wrap {
@@ -150,7 +152,7 @@
   height: 84px;
   margin-bottom: 10px;
 }
-.avatar {
+.avatar-ver {
   width: 84px;
   height: 84px;
   border-radius: 999px;
