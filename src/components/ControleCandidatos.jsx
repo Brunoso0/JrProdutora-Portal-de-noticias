@@ -23,7 +23,7 @@ const ControleCandidatos = () => {
     try {
       const [candidatosRes, etapasRes] = await Promise.all([
         axios.get(`${API_FESTIVAL}/api/inscricoes/listar`),
-        axios.get(`${API_FESTIVAL}/api/etapas/listar`)
+        axios.get(`${API_FESTIVAL}/api/etapas/listar`),
       ]);
       setCandidatos(candidatosRes.data);
       setEtapas(etapasRes.data);
@@ -46,7 +46,6 @@ const ControleCandidatos = () => {
 
     const lista = Array.from(etapasUnicas);
     if (possuiEliminado) lista.push("Eliminado");
-
     return lista;
   }, [candidatos]);
 
@@ -63,7 +62,9 @@ const ControleCandidatos = () => {
       if (etapaSelecionada === "Eliminado") {
         lista = lista.filter((c) => c.eliminado === 1);
       } else {
-        lista = lista.filter((c) => c.fase_atual === etapaSelecionada && c.eliminado !== 1);
+        lista = lista.filter(
+          (c) => c.fase_atual === etapaSelecionada && c.eliminado !== 1
+        );
       }
     }
 
@@ -72,86 +73,103 @@ const ControleCandidatos = () => {
     } else if (ordem === "desc") {
       lista.sort((a, b) => b.nome.localeCompare(a.nome));
     }
-
     return lista;
   }, [candidatos, busca, ordem, etapaSelecionada]);
 
+  // badge por status
+  const badgeClass = (c) => {
+    if (c.eliminado === 1) return "badge badge--eliminado";
+    if ((c.fase_atual || "").toLowerCase().includes("final")) return "badge badge--final";
+    if ((c.fase_atual || "").toLowerCase().includes("primeira")) return "badge badge--primeira";
+    return "badge";
+  };
+
+  const badgeText = (c) => (c.eliminado === 1 ? "Eliminado" : c.fase_atual || "Sem etapa");
+
+  const initials = (nome = "") =>
+    nome
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase())
+      .join("");
+
   return (
-    <div className="candidatos-container">
-      <div className="filter-candidatos">
-        <div className="input-group-candidatos">
-          <input
-            type="text"
-            name="text"
-            autoComplete="off"
-            required
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            className="input-candidatos"
-          />
-          <label className="user-label">Pesquisar pelo Nome</label>
+    <div className="cand-page">
+      {/* barra de filtros (glass) */}
+      <header className="cand-filters glass">
+        <div className="filters-grid">
+          <div className="input-text">
+            <input
+              type="text"
+              placeholder="Pesquisar pelo nome..."
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+            />
+            <span className="icon-search" aria-hidden>🔍</span>
+          </div>
+
+          <select
+            value={etapaSelecionada}
+            onChange={(e) => setEtapaSelecionada(e.target.value)}
+            className="select"
+          >
+            <option value="todas">Todas as fases</option>
+            {etapasPresentes.map((etapa, index) => (
+              <option key={index} value={etapa}>
+                {etapa}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={ordem}
+            onChange={(e) => setOrdem(e.target.value)}
+            className="select"
+          >
+            <option value="envio">Ordem de envio</option>
+            <option value="asc">Nome A → Z</option>
+            <option value="desc">Nome Z → A</option>
+          </select>
+
+          <div className="total-chip">
+            Total: {candidatosFiltrados.length} candidato
+            {candidatosFiltrados.length !== 1 ? "s" : ""}
+          </div>
         </div>
+      </header>
 
-        <select
-          value={ordem}
-          onChange={(e) => setOrdem(e.target.value)}
-          className="select-ordem-candidato"
-        >
-          <option value="envio">Ordem de Envio</option>
-          <option value="asc">Nome A → Z</option>
-          <option value="desc">Nome Z → A</option>
-        </select>
+      {/* grid de cards */}
+      <main className="cand-grid">
+        {candidatosFiltrados.map((c, i) => (
+          <article className="cand-card glass" key={i}>
+            <span className={badgeClass(c)}>{badgeText(c)}</span>
 
-        <select
-          value={etapaSelecionada}
-          onChange={(e) => setEtapaSelecionada(e.target.value)}
-          className="select-ordem-candidato"
-        >
-          <option value="todas">Todas as Etapas</option>
-          {etapasPresentes.map((etapa, index) => (
-            <option key={index} value={etapa}>
-              {etapa}
-            </option>
-          ))}
-        </select>
-
-        <div className="contador-candidatos">
-          Total: {candidatosFiltrados.length} candidato{candidatosFiltrados.length !== 1 ? "s" : ""}
-        </div>
-      </div>
-
-      <div className="grid-candidatos">
-        {candidatosFiltrados.map((candidato, index) => (
-          <div key={index} className="card-candidato">
-            <span
-              className={`selo-etapa ${candidato.eliminado === 1 ? "eliminado" : ""}`}
-            >
-              {candidato.eliminado === 1 ? "Eliminado" : (candidato.fase_atual || "Sem etapa")}
-            </span>
-
-            <div className="imagem-candidato">
-              {candidato.foto ? (
-                <img src={`${API_FESTIVAL}/${candidato.foto}`} alt={candidato.nome} />
+            <div className="avatar-wrap">
+              {c.foto ? (
+                <img
+                  className="avatar"
+                  src={`${API_FESTIVAL}/${c.foto}`}
+                  alt={c.nome}
+                />
               ) : (
-                <div className="sem-foto">Sem foto</div>
+                <div className="avatar avatar--noimg">{initials(c.nome)}</div>
               )}
             </div>
 
-            <div className="rodape-candidato">
-              <span className="nome-candidato">{candidato.nome}</span>
-              <div className="botoes-candidato">
-                <button className="botao-perfil" onClick={() => setCandidatoSelecionado(candidato)}>
-                  Ver Perfil
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+            <h3 className="cand-name">{c.nome}</h3>
 
-      <div className="footer-festival-candidatos">
-        <FooterFestival />
-      </div>
+            <button
+              className="btn-profile"
+              onClick={() => setCandidatoSelecionado(c)}
+            >
+              Ver Perfil
+            </button>
+          </article>
+        ))}
+      </main>
+
+    
 
       <ModalCandidato
         candidato={candidatoSelecionado}
@@ -159,7 +177,14 @@ const ControleCandidatos = () => {
         onUpdate={fetchData}
       />
 
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar pauseOnHover draggable theme="colored" />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
     </div>
   );
 };
