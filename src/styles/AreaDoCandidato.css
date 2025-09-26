@@ -166,10 +166,10 @@
 }
 .tt-ico:hover .tt{visibility:visible;opacity:1}
 
-.badge{display:inline-block;min-width:54px;padding:6px 12px;border-radius:999px;font-weight:900;
+.badge-area{display:inline-block;min-width:54px;padding:6px 12px;border-radius:999px;font-weight:900;
   background:rgba(168,85,247,.35);color:#f3e8ff;border:1px solid rgba(168,85,247,.6)}
-.badge.green{background:rgba(16,185,129,.25);border-color:rgba(16,185,129,.5);color:#d1fae5}
-.badge.indigo{background:#6366f1;color:#fff;border-color:#6366f1}
+.badge-area.green{background:rgba(16,185,129,.25);border-color:rgba(16,185,129,.5);color:#d1fae5}
+.badge-area.indigo{background:#6366f1;color:#fff;border-color:#6366f1}
 
 /* ===== Modal (mantido da sua versão, só retoques) ===== */
 .modal-overlay{

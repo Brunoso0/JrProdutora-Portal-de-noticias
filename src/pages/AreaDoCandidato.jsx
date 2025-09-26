@@ -309,7 +309,7 @@ const AreaDoCandidato = () => {
                           </div>
                         ))}
                         <div className="cell media">
-                          <span className="badge">{media.toFixed(1)}</span>
+                          <span className="badge-area">{media.toFixed(1)}</span>
                         </div>
                       </div>
                     );
@@ -322,7 +322,7 @@ const AreaDoCandidato = () => {
                       <div className="cell" key={i}>–</div>
                     ))}
                     <div className="cell media">
-                      <span className="badge green">{notas?.popular ?? "--"}</span>
+                      <span className="badge-area green">{notas?.popular ?? "--"}</span>
                     </div>
                   </div>
 
@@ -333,7 +333,7 @@ const AreaDoCandidato = () => {
                       <div className="cell" key={i}>–</div>
                     ))}
                     <div className="cell media">
-                      <span className="badge indigo">
+                      <span className="badge-area indigo">
                         {(
                           notas.jurados.reduce((soma, jur) =>
                             soma + jur.criterios.reduce((s, c) => s + Number(c.nota || 0), 0) / jur.criterios.length, 0
