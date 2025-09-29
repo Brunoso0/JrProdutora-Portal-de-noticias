@@ -87,7 +87,7 @@
 /* ====== Grid 4 colunas ====== */
 .podioV2__grid {
   max-width: 1280px;
-  margin: 24px auto 40px;
+  margin: 84px auto 40px;
   padding: 0 24px;
   display: grid;
   gap: 22px;

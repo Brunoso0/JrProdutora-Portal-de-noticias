@@ -331,10 +331,12 @@
   transition: box-shadow .18s, transform .18s;
   position: relative;
 }
+
 .candidatos-festival-card:hover {
   box-shadow: 0 6px 32px 0 rgba(124,58,237,0.18);
   transform: translateY(-4px) scale(1.02);
 }
+
 .candidatos-festival-card.nao-aptos {
   opacity: 0.5;
   pointer-events: none;

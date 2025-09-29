@@ -13,8 +13,9 @@ const buildFotoUrl = (raw) => {
   return `${API_FESTIVAL}/${p}`;
 };
 
+// A função fmt ainda é útil para a porcentagem, então podemos mantê-la.
 const fmt = (v, d = 1) =>
-  v == null || isNaN(Number(v)) ? "—" : Number(v).toFixed(2).replace(".", ",");
+  v == null || isNaN(Number(v)) ? "—" : Number(v).toFixed(d).replace(".", ",");
 
 export default function PopupAvancosPodio() {
   const [searchParams] = useSearchParams();
@@ -38,70 +39,65 @@ export default function PopupAvancosPodio() {
 
         let arr = Array.isArray(data) ? data : [];
 
-        // Calcule posições manualmente para júri, se não vierem da API
+        // ⚠️ CORREÇÃO 1: Usar o campo correto para ordenação
         const arrJuri = arr
           .filter(x => x.origem !== "popular" && x.tipo !== "popular")
-          .sort((a, b) => Number(b.media ?? -1) - Number(a.media ?? -1));
+          // Usamos o novo campo numérico, já arredondado e confiável
+          .sort((a, b) => b.media_final_arredondada - a.media_final_arredondada); // <-- MUDANÇA AQUI
+
         arrJuri.forEach((item, idx) => {
           if (idx < 3) item.posicao = idx + 1;
         });
 
+        // O resto da sua lógica de seleção do pódio parece correta
         const podium = [];
         const jaUsados = new Set();
 
         if (Number(etapaId) === 5) {
-          // Apenas 2 jurados + 1 popular
-          // 2 maiores médias do júri
-          const topJurados = arrJuri.slice(0, 2);
-          topJurados.forEach(j => {
-            podium.push(j);
-            jaUsados.add(String(j.candidato_id || j.id));
-          });
-          // 1 maior popular (sem duplicar)
-          const populares = arr
-            .filter(x => x.origem === "popular" || x.tipo === "popular")
-            .sort((a, b) => Number(b.porcentagem ?? 0) - Number(a.porcentagem ?? 0));
-          const pop = populares.find(
-            x => !jaUsados.has(String(x.candidato_id || x.id))
-          );
-          if (pop) podium.push(pop);
-          // Preenche com placeholders se faltar
-          setItems(podium.slice(0, 3));
-        } else {
-          // 1°, 2°, 3° lugar por média/notas
-          [1, 2, 3].forEach((pos) => {
-            const found = arr.find(
-              (x) =>
-                Number(x.posicao || x.rank) === pos &&
-                !jaUsados.has(String(x.candidato_id || x.id))
+            const topJurados = arrJuri.slice(0, 2);
+            topJurados.forEach(j => {
+                podium.push(j);
+                jaUsados.add(String(j.candidato_id || j.id));
+            });
+            const populares = arr
+                .filter(x => x.origem === "popular" || x.tipo === "popular")
+                .sort((a, b) => Number(b.porcentagem ?? 0) - Number(a.porcentagem ?? 0));
+            const pop = populares.find(
+                x => !jaUsados.has(String(x.candidato_id || x.id))
             );
-            if (found) {
-              podium.push(found);
-              jaUsados.add(String(found.candidato_id || found.id));
+            if (pop) podium.push(pop);
+            setItems(podium.slice(0, 3));
+        } else {
+            [1, 2, 3].forEach((pos) => {
+                const found = arr.find(
+                    (x) =>
+                        Number(x.posicao || x.rank) === pos &&
+                        !jaUsados.has(String(x.candidato_id || x.id))
+                );
+                if (found) {
+                    podium.push(found);
+                    jaUsados.add(String(found.candidato_id || found.id));
+                }
+            });
+            const populares = arr
+                .filter((x) => x.origem === "popular" || x.tipo === "popular")
+                .sort((a, b) => Number(b.porcentagem ?? 0) - Number(a.porcentagem ?? 0));
+            const pop = populares.find(
+                (x) => !jaUsados.has(String(x.candidato_id || x.id))
+            );
+            if (pop) podium.push(pop);
+            
+            if (podium.length < 4) {
+                // CORREÇÃO: A ordenação aqui também precisa usar o campo novo
+                const restantes = arr
+                    .filter((x) => !jaUsados.has(String(x.candidato_id || x.id)))
+                    .sort((a, b) => b.media_final_arredondada - a.media_final_arredondada); // <-- MUDANÇA AQUI TAMBÉM
+                for (const r of restantes) {
+                    if (podium.length >= 4) break;
+                    podium.push(r);
+                }
             }
-          });
-
-          // Voto popular (maior %), evitando duplicar alguém que já entrou pelo júri
-          const populares = arr
-            .filter((x) => x.origem === "popular" || x.tipo === "popular")
-            .sort((a, b) => Number(b.porcentagem ?? 0) - Number(a.porcentagem ?? 0));
-          const pop = populares.find(
-            (x) => !jaUsados.has(String(x.candidato_id || x.id))
-          );
-          if (pop) podium.push(pop);
-
-          // Caso falte alguém (ex.: não teve popular), completa com os próximos por média
-          if (podium.length < 4) {
-            const restantes = arr
-              .filter((x) => !jaUsados.has(String(x.candidato_id || x.id)))
-              .sort((a, b) => Number(b.media ?? -1) - Number(a.media ?? -1));
-            for (const r of restantes) {
-              if (podium.length >= 4) break;
-              podium.push(r);
-            }
-          }
-
-          setItems(podium.slice(0, 4));
+            setItems(podium.slice(0, 4));
         }
       } catch (e) {
         setErro("Não foi possível carregar os avanços do dia.");
@@ -121,7 +117,6 @@ export default function PopupAvancosPodio() {
       const pos = Number(c.posicao || c.rank || 0);
       const isPopular = c.origem === "popular" || c.tipo === "popular";
 
-      // subtítulo e valor de destaque (nota final ou % popular)
       let subtitle = "";
       let valueTitle = "";
       let value = "";
@@ -129,19 +124,17 @@ export default function PopupAvancosPodio() {
         subtitle = "❤️ Voto Popular";
         valueTitle = "Votos do Público";
         value = `${fmt(c.porcentagem, 0)}%`;
-      } else if (pos >= 1 && pos <= 3) {
-        const medal =
-          pos === 1 ? "🏆 1º Lugar" : pos === 2 ? "🥈 2º Lugar" : "🥉 3º Lugar";
-        subtitle = medal;
-        valueTitle = "Nota Final";
-        value = fmt(c.media, 1);
       } else {
-        // fallback
+        // Lógica para todos os vencedores por nota
+        if (pos >= 1 && pos <= 3) {
+            const medal = pos === 1 ? "🏆 1º Lugar" : pos === 2 ? "🥈 2º Lugar" : "🥉 3º Lugar";
+            subtitle = medal;
+        }
         valueTitle = "Nota Final";
-        value = fmt(c.media, 1);
+        // ⚠️ CORREÇÃO 2: Usar o campo de exibição que vem direto do backend
+        value = c.media_final_exibicao; // <-- MUDANÇA PRINCIPAL AQUI
       }
 
-      // classe da borda do avatar conforme posição/origem
       let ringClass = "ring-neutral";
       if (pos === 1) ringClass = "ring-gold";
       else if (pos === 2) ringClass = "ring-silver";
@@ -153,6 +146,7 @@ export default function PopupAvancosPodio() {
   }, [items]);
 
   return (
+    // O seu JSX de renderização continua o mesmo, sem necessidade de alterações aqui.
     <div className="podioV2">
       <header className="podioV2__header">
         <h1>Painel de Classificados</h1>
@@ -189,7 +183,6 @@ export default function PopupAvancosPodio() {
             </article>
           ))}
 
-          {/* placeholders caso venham menos que o esperado */}
           {cards.length < (Number(etapaId) === 5 ? 3 : 4) &&
             Array.from({ length: (Number(etapaId) === 5 ? 3 : 4) - cards.length }).map((_, k) => (
               <article className="glassCard placeholder" key={`ph-${k}`}>
