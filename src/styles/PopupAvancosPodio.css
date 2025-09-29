@@ -101,6 +101,13 @@
   .podioV2__grid { grid-template-columns: 1fr; }
 }
 
+/* Centraliza os cards quando há apenas 3 candidatos (etapa 5) */
+.podioV2__grid.podio3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-content: center;
+  max-width: 900px;
+}
+
 /* ====== Card “glassmorphism” ====== */
 .glassCard {
   position: relative;

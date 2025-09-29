@@ -46,45 +46,63 @@ export default function PopupAvancosPodio() {
           if (idx < 3) item.posicao = idx + 1;
         });
 
-        // Se vierem mais que 4, mantemos 1º, 2º, 3º e 1 Popular (sem duplicar candidato)
-        // Caso a sua API já devolva só os 4 certos, isso aqui apenas garante a ordem visual.
         const podium = [];
         const jaUsados = new Set();
 
-        // 1°, 2°, 3° lugar por média/notas
-        [1, 2, 3].forEach((pos) => {
-          const found = arr.find(
-            (x) =>
-              Number(x.posicao || x.rank) === pos &&
-              !jaUsados.has(String(x.candidato_id || x.id))
+        if (Number(etapaId) === 5) {
+          // Apenas 2 jurados + 1 popular
+          // 2 maiores médias do júri
+          const topJurados = arrJuri.slice(0, 2);
+          topJurados.forEach(j => {
+            podium.push(j);
+            jaUsados.add(String(j.candidato_id || j.id));
+          });
+          // 1 maior popular (sem duplicar)
+          const populares = arr
+            .filter(x => x.origem === "popular" || x.tipo === "popular")
+            .sort((a, b) => Number(b.porcentagem ?? 0) - Number(a.porcentagem ?? 0));
+          const pop = populares.find(
+            x => !jaUsados.has(String(x.candidato_id || x.id))
           );
-          if (found) {
-            podium.push(found);
-            jaUsados.add(String(found.candidato_id || found.id));
-          }
-        });
+          if (pop) podium.push(pop);
+          // Preenche com placeholders se faltar
+          setItems(podium.slice(0, 3));
+        } else {
+          // 1°, 2°, 3° lugar por média/notas
+          [1, 2, 3].forEach((pos) => {
+            const found = arr.find(
+              (x) =>
+                Number(x.posicao || x.rank) === pos &&
+                !jaUsados.has(String(x.candidato_id || x.id))
+            );
+            if (found) {
+              podium.push(found);
+              jaUsados.add(String(found.candidato_id || found.id));
+            }
+          });
 
-        // Voto popular (maior %), evitando duplicar alguém que já entrou pelo júri
-        const populares = arr
-          .filter((x) => x.origem === "popular" || x.tipo === "popular")
-          .sort((a, b) => Number(b.porcentagem ?? 0) - Number(a.porcentagem ?? 0));
-        const pop = populares.find(
-          (x) => !jaUsados.has(String(x.candidato_id || x.id))
-        );
-        if (pop) podium.push(pop);
+          // Voto popular (maior %), evitando duplicar alguém que já entrou pelo júri
+          const populares = arr
+            .filter((x) => x.origem === "popular" || x.tipo === "popular")
+            .sort((a, b) => Number(b.porcentagem ?? 0) - Number(a.porcentagem ?? 0));
+          const pop = populares.find(
+            (x) => !jaUsados.has(String(x.candidato_id || x.id))
+          );
+          if (pop) podium.push(pop);
 
-        // Caso falte alguém (ex.: não teve popular), completa com os próximos por média
-        if (podium.length < 4) {
-          const restantes = arr
-            .filter((x) => !jaUsados.has(String(x.candidato_id || x.id)))
-            .sort((a, b) => Number(b.media ?? -1) - Number(a.media ?? -1));
-          for (const r of restantes) {
-            if (podium.length >= 4) break;
-            podium.push(r);
+          // Caso falte alguém (ex.: não teve popular), completa com os próximos por média
+          if (podium.length < 4) {
+            const restantes = arr
+              .filter((x) => !jaUsados.has(String(x.candidato_id || x.id)))
+              .sort((a, b) => Number(b.media ?? -1) - Number(a.media ?? -1));
+            for (const r of restantes) {
+              if (podium.length >= 4) break;
+              podium.push(r);
+            }
           }
+
+          setItems(podium.slice(0, 4));
         }
-
-        setItems(podium.slice(0, 4));
       } catch (e) {
         setErro("Não foi possível carregar os avanços do dia.");
       } finally {
@@ -149,7 +167,7 @@ export default function PopupAvancosPodio() {
       {loading && <div className="msg">Carregando…</div>}
 
       {!loading && !erro && (
-        <section className="podioV2__grid">
+        <section className={`podioV2__grid${Number(etapaId) === 5 ? " podio3" : ""}`}>
           {cards.map((c, i) => (
             <article className="glassCard" key={i}>
               <div className="avatar">
@@ -171,9 +189,9 @@ export default function PopupAvancosPodio() {
             </article>
           ))}
 
-          {/* placeholders caso venham < 4 */}
-          {cards.length < 4 &&
-            Array.from({ length: 4 - cards.length }).map((_, k) => (
+          {/* placeholders caso venham menos que o esperado */}
+          {cards.length < (Number(etapaId) === 5 ? 3 : 4) &&
+            Array.from({ length: (Number(etapaId) === 5 ? 3 : 4) - cards.length }).map((_, k) => (
               <article className="glassCard placeholder" key={`ph-${k}`}>
                 <div className="avatar"><div className="avatar__ph">Foto</div></div>
                 <h2 className="nome">Nome do Candidato</h2>
