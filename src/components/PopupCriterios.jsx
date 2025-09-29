@@ -24,7 +24,7 @@ const buildFotoUrl = (raw) => {
 
 const isNotaValida = (nota) =>
   nota !== "" && nota !== null && nota !== undefined && nota !== "null" && !Number.isNaN(Number(nota)); // 0 é válido
-const formatNota = (v) => (Number.isFinite(v) ? v.toFixed(1).replace(".", ",") : "--");
+const formatNota = (v) => (Number.isFinite(v) ? v.toFixed(2).replace(".", ",") : "--");
 
 // normaliza texto pra comparar nomes (fallback quando API não manda id)
 const norm = (s) =>

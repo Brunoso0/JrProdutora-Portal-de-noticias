@@ -41,7 +41,7 @@
   margin-top: 10px;
 }
 
-.badge {
+.badge-avancos {
   font-size: 12px;
   padding: 6px 10px;
   border-radius: 999px;
@@ -49,7 +49,7 @@
   border: 1px solid var(--line);
   color: var(--muted);
 }
-.badge.data {
+.badge-avancos.data {
   background: rgba(120, 95, 200, .18);
   border-color: rgba(120, 95, 200, .4);
 }

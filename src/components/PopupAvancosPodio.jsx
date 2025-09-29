@@ -14,7 +14,7 @@ const buildFotoUrl = (raw) => {
 };
 
 const fmt = (v, d = 1) =>
-  v == null || isNaN(Number(v)) ? "—" : Number(v).toFixed(d).replace(".", ",");
+  v == null || isNaN(Number(v)) ? "—" : Number(v).toFixed(2).replace(".", ",");
 
 export default function PopupAvancosPodio() {
   const [searchParams] = useSearchParams();
@@ -139,8 +139,8 @@ export default function PopupAvancosPodio() {
       <header className="podioV2__header">
         <h1>Painel de Classificados</h1>
         <div className="badges">
-          {etapaId && <span className="badge">Etapa #{etapaId}</span>}
-          {dataISO && <span className="badge data">{dataISO}</span>}
+          {etapaId && <span className="badge-avancos">Etapa #{etapaId}</span>}
+          {dataISO && <span className="badge-avancos data">{dataISO}</span>}
         </div>
         <button className="btn-close" onClick={() => window.close()}>✕</button>
       </header>
