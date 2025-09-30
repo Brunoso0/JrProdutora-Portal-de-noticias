@@ -27,7 +27,7 @@ const RankingVotos = () => {
       const res = await axios.get(
         `${API_FESTIVAL}/api/dashboardvotos/notas-gerais`,
         {
-          params: { etapa_id: etapaSelecionada, data: dataSelecionada },
+          params: {  data: dataSelecionada },
         }
       );
       setRanking(Array.isArray(res.data) ? res.data : []);
@@ -55,11 +55,9 @@ const RankingVotos = () => {
   };
 
   // Ordena por média (desc), preservando em caso de empate
-  const listaOrdenada = [...ranking].sort((a, b) => {
-    const ma = Number(a.media ?? a.media_geral ?? -1);
-    const mb = Number(b.media ?? b.media_geral ?? -1);
-    return mb - ma;
-  });
+  const listaOrdenada = [...ranking].sort(
+    (a, b) => b.media_final_arredondada - a.media_original
+  )
 
   return (
     <div className="rv-wrap">
@@ -111,7 +109,6 @@ const RankingVotos = () => {
             {listaOrdenada.map((c, idx) => {
               const pos = idx + 1;
               const nome = c.nome_artistico || c.nome || "Candidato";
-              const media = Number(c.media ?? c.media_geral);
               const img = fotoUrl(c.foto);
 
               // classes especiais para top 3
@@ -137,7 +134,7 @@ const RankingVotos = () => {
 
                   <div className="rv-score">
                     <span className="rv-score-value">
-                      {Number.isFinite(media) ? media.toFixed(2) : "—"}
+                      {c.media_original ? Number(c.media_original).toFixed(4).replace('.', ',') : "—"}
                     </span>
                     <span className="rv-score-label">Média</span>
                   </div>

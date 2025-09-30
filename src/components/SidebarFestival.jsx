@@ -25,13 +25,17 @@ const SidebarFestival = ({ setPaginaSelecionada, modoJurado = false }) => {
             <li onClick={() => setPaginaSelecionada("jurados")}>Ver Jurados</li>
             <li onClick={() => setPaginaSelecionada("etapas")}>Ver Etapas</li>
             <li onClick={() => setPaginaSelecionada("classificatoria")}>Classificatoria</li>
-            <li onClick={() => setPaginaSelecionada("dashboard")}>Tabela de Notas</li>
-            <li onClick={() => setPaginaSelecionada("DashboardVotosPublicos")}>Votos Públicos</li>
             <li onClick={() => setPaginaSelecionada("selecionarVotacao")}>Liberar Votação Pública</li>
-            <li onClick={() => setPaginaSelecionada("AvancosDoDia")}>Avanços do Dia</li>
             <li onClick={() => setPaginaSelecionada("DashboardTotalVotos")}>Total de Votos</li>
-            <li onClick={() => setPaginaSelecionada("RankingVotos")}>Ranking do Dia</li>
             {/* <li onClick={() => setPaginaSelecionada("VencedoresFestival2025")}>Vencedores 2025</li> */}
+
+
+            {/* Telas que Rafael irá usar */}
+            <li className="rafael">Para Rafael Usar ⬇</li>
+            <li onClick={() => setPaginaSelecionada("dashboard")}>Notas dos Jurados</li>
+            <li onClick={() => setPaginaSelecionada("DashboardVotosPublicos")}>Votos Públicos</li>
+            <li onClick={() => setPaginaSelecionada("RankingVotos")}>Ranking dos jurados</li>
+            <li onClick={() => setPaginaSelecionada("AvancosDoDia")}>Avanços do Dia</li>
           </>
         )}
       </ul>
