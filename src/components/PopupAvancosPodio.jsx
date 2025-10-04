@@ -149,11 +149,11 @@ export default function PopupAvancosPodio() {
     // O seu JSX de renderização continua o mesmo, sem necessidade de alterações aqui.
     <div className="podioV2">
       <header className="podioV2__header">
-        <h1>Painel de Classificados</h1>
-        <div className="badges">
+        <h1>Vencedores Gospel Talent 2025</h1>
+        {/* <div className="badges">
           {etapaId && <span className="badge-avancos">Etapa #{etapaId}</span>}
           {dataISO && <span className="badge-avancos data">{dataISO}</span>}
-        </div>
+        </div> */}
         <button className="btn-close" onClick={() => window.close()}>✕</button>
       </header>
 
