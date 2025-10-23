@@ -172,6 +172,7 @@ export default function PopupAvancosPodio({ data, sessaoId: propSessaoId, etapaI
     // O seu JSX de renderização continua o mesmo, sem necessidade de alterações aqui.
     <div className="podioV2">
       <header className="podioV2__header">
+<<<<<<< HEAD:src/festival/components/PopupAvancosPodio.jsx
         <h1>Painel de Classificados</h1>
         <div className="badges">
           {sessaoId && <span className="badge-avancos">Sessão #{sessaoId}</span>}
@@ -180,6 +181,14 @@ export default function PopupAvancosPodio({ data, sessaoId: propSessaoId, etapaI
         </div>
         {/* Só mostrar botão de fechar se não for embedded */}
         {!isEmbedded && <button className="btn-close" onClick={() => window.close()}>✕</button>}
+=======
+        <h1>Vencedores Gospel Talent 2025</h1>
+        {/* <div className="badges">
+          {etapaId && <span className="badge-avancos">Etapa #{etapaId}</span>}
+          {dataISO && <span className="badge-avancos data">{dataISO}</span>}
+        </div> */}
+        <button className="btn-close" onClick={() => window.close()}>✕</button>
+>>>>>>> a82b3b0591b092ee981b87567a7e76974a797611:src/components/PopupAvancosPodio.jsx
       </header>
 
       {erro && <div className="msg erro">{erro}</div>}
