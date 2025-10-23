@@ -1,0 +1,114 @@
+/* Estilos para o SecondGrid */
+.second-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Quatro colunas */
+    gap: 1rem; /* Espaçamento entre os itens */
+    margin: 2rem auto; /* Margem superior/inferior e centralização horizontal */
+    width: 60%; /* Largura da seção */
+}
+
+.grid-item {
+    background-color: #ffffff; /* Fundo branco */
+    border: 1px solid #ddd; /* Borda sutil */
+    border-radius: 8px; /* Cantos arredondados */
+    overflow: hidden; /* Garante que o conteúdo respeite os cantos arredondados */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.208); /* Sombra leve */
+    text-align: center;
+    position: relative; /* Necessário para posicionamento da tag */
+    text-decoration: none;
+}
+
+.grid-item:hover {
+    text-decoration: none;
+}
+
+/* Estilo para o container da imagem */
+.image-container {
+    position: relative;
+    overflow: hidden; /* Garante que o zoom da imagem não vaze */
+}
+
+.image-container img {
+    width: 100%; /* A imagem ocupa toda a largura do container */
+    height: 200px;
+    transition: transform 0.3s ease-in-out; /* Transição suave */
+}
+
+.image-container:hover img {
+    transform: scale(1.1); /* Zoom na imagem */
+}
+
+/* Tag sobre a imagem */
+.image-container .tag_category_second {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #ff4b4b;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    opacity: 1; /* A tag sempre visível */
+    transition: opacity 0.3s ease-in-out; /* Transição suave */
+    z-index: 2;
+}
+
+.image-container:hover .tag_category_second {
+    opacity: 1; /* Mantém a tag visível no hover */
+    z-index: 2;
+}
+
+/* Título abaixo da imagem */
+.grid-item .title_news_second {
+    padding: 0.5rem;
+    font-size: 1rem;
+    font-weight: 300; /* Peso leve */
+    color: #333;
+    text-align: center;
+}
+
+
+/* Responsividade - Desktop pequenos */
+@media (max-width: 1580px) {
+    .second-grid {
+        grid-template-columns: repeat(4, 1fr); /* Três colunas */
+        width: 80%; /* Largura da seção */
+    }
+    .grid-item {
+        height: 100%; /* Altura total do item */
+    }
+}
+
+/* Responsividade - Desktop médios */
+@media (max-width: 1280px) {
+    .second-grid {
+        grid-template-columns: repeat(2, 1fr); /* Três colunas */
+        width: 70%; /* Largura da seção */
+    }
+    .grid-item {
+        height: 100%; /* Altura total do item */
+    }
+}
+
+
+/* Responsividade - Tablet */
+@media (max-width: 1024px) {
+    .second-grid {
+        grid-template-columns: repeat(2, 1fr); /* Duas colunas */
+        width: 80%; /* Largura da seção */
+    }
+    .grid-item {
+        height: 100%; /* Altura total do item */
+    }
+}
+
+/* Responsividade - Mobile */
+@media (max-width: 768px) {
+    .second-grid {
+        grid-template-columns: 1fr; /* Uma coluna */
+        width: 90%; /* Largura da seção */
+    }
+    .grid-item {
+        height: 100%; /* Altura total do item */
+    }
+}

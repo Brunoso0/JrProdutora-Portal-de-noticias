@@ -1,11 +1,11 @@
 // layouts/PublicLayout.js
 import React from "react";
-import Header from "../components/Header";
-import Navbar from "../components/Navbar";
-import NewsGrid from "../components/NewsGrid";
-import SectionHeader from "../components/SectionHeader";
-import SecondGrid from "../components/SecondGrid";
-import ThirdGrid from "../components/ThirdGrid";
+import Header from "../portal/components/Header";
+import Navbar from "../portal/components/Navbar";
+import NewsGrid from "../portal/components/NewsGrid";
+import SectionHeader from "../portal/components/SectionHeader";
+import SecondGrid from "../portal/components/SecondGrid";
+import ThirdGrid from "../portal/components/ThirdGrid";
 
 const PublicLayout = () => {
   return (

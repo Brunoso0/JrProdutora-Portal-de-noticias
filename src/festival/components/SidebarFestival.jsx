@@ -1,0 +1,51 @@
+import React from "react";
+import "../styles/SidebarFestival.css";
+
+const SidebarFestival = ({ setPaginaSelecionada, modoJurado = false }) => {
+  return (
+    <div className="sidebar-festival">
+      <h2>{modoJurado ? "Painel do Jurado" : "Admin Festival"}</h2>
+      <ul>
+        {/* Ver Candidatos — compatível com jurado e admin */}
+        <li
+          onClick={() => {
+            if (!modoJurado && setPaginaSelecionada) {
+              setPaginaSelecionada("controleCandidatos");
+            }
+          }}
+          className={modoJurado ? "ativo" : ""}
+        >
+          Ver Candidatos
+        </li>
+
+        {/* Opções visíveis só para admin */}
+        {!modoJurado && (
+          <>
+            <li onClick={() => setPaginaSelecionada("candidatos")}>Editar Candidatos</li>
+            <li onClick={() => setPaginaSelecionada("jurados")}>Ver Jurados</li>
+            <li onClick={() => setPaginaSelecionada("etapas")}>Ver Etapas</li>
+            <li onClick={() => setPaginaSelecionada("classificatoria")}>Classificatoria</li>
+            <li onClick={() => setPaginaSelecionada("selecionarVotacao")}>Liberar Votação Pública</li>
+            <li onClick={() => setPaginaSelecionada("DashboardTotalVotos")}>Total de Votos</li>
+            {/* <li onClick={() => setPaginaSelecionada("VencedoresFestival2025")}>Vencedores 2025</li> */}
+
+
+            {/* Telas que Rafael irá usar */}
+            <li className="rafael">Para Rafael Usar ⬇</li>
+            <li onClick={() => setPaginaSelecionada("dashboard")}>Notas dos Jurados</li>
+            <li onClick={() => setPaginaSelecionada("DashboardVotosPublicos")}>Votos Públicos</li>
+            <li onClick={() => setPaginaSelecionada("RankingVotos")}>Ranking dos jurados</li>
+            <li onClick={() => setPaginaSelecionada("AvancosDoDia")}>Avanços do Dia</li>
+
+            {/* Nova seção de Votação por Sessões */}
+            <li className="rafael">Novo Sistema de Votação ⬇</li>
+            <li onClick={() => setPaginaSelecionada("controleSessao")}>🎛️ Controle de Sessões</li>
+            <li onClick={() => setPaginaSelecionada("resultadosSessoes")}>📊 Resultados por Sessão</li>
+          </>
+        )}
+      </ul>
+    </div>
+  );
+};
+
+export default SidebarFestival;
