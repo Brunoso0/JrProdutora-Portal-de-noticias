@@ -14,34 +14,43 @@ const ModalIniciarSessao = ({ etapa, onClose, onSuccess }) => {
   const carregarCandidatos = async () => {
     try {
       setLoading(true);
-      console.log(`📡 Carregando candidatos da etapa ${etapa.id}...`);
-      
-      // Usar nosso CandidatosService
+      console.log(`📡 Carregando candidatos da etapa ${etapa?.id}...`);
+
       const resultado = await candidatosService.listarCandidatos({
-        etapa_id: etapa.id,
+        etapa_id: etapa?.id,
         incluir_eliminados: false
       });
 
-      if (resultado.success) {
-        const candidatosEtapa = resultado.data;
+      console.log('DEBUG resultado listarCandidatos:', resultado);
+
+      // Normaliza possíveis formatos: resultado.data ou resultado.candidatos
+      const candidatosEtapa = Array.isArray(resultado?.data)
+        ? resultado.data
+        : Array.isArray(resultado?.candidatos)
+        ? resultado.candidatos
+        : [];
+
+      // Garante tipo array antes de usar .length
+      if (candidatosEtapa.length > 0) {
         setCandidatos(candidatosEtapa);
-        
+
         // Se tem poucos candidatos, selecionar todos por padrão
         if (candidatosEtapa.length <= 5) {
           setCandidatosSelecionados(candidatosEtapa.map(c => c.id));
         }
-        
+
         console.log(`✅ ${candidatosEtapa.length} candidatos carregados`);
-        toast.success(`${candidatosEtapa.length} candidatos encontrados para ${etapa.nome}`);
+        toast.success(`${candidatosEtapa.length} candidatos encontrados para ${etapa?.nome || 'esta etapa'}`);
       } else {
-        console.warn('⚠️ Não foi possível carregar candidatos:', resultado.message);
         setCandidatos([]);
-        toast.warn(`Nenhum candidato encontrado para ${etapa.nome}`);
+        setCandidatosSelecionados([]);
+        console.warn('⚠️ Nenhum candidato retornado ou formato inesperado:', resultado);
+        toast.warn(`Nenhum candidato encontrado para ${etapa?.nome || 'esta etapa'}`);
       }
-      
     } catch (error) {
       console.error('💥 Erro ao carregar candidatos:', error);
       setCandidatos([]);
+      setCandidatosSelecionados([]);
       toast.error('Erro ao carregar candidatos da etapa');
     } finally {
       setLoading(false);
