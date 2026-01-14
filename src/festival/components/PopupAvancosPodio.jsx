@@ -177,9 +177,9 @@ export default function PopupAvancosPodio({ data, sessaoId: propSessaoId, etapaI
           {!sessaoId && etapaId && <span className="badge-avancos">Etapa #{etapaId}</span>}
           {!sessaoId && dataISO && <span className="badge-avancos data">{dataISO}</span>}
         </div>
-        {/* Só mostrar botão de fechar se não for embedded */}
-        {!isEmbedded && <button className="btn-close" onClick={() => window.close()}>✕</button>}
-      </header>
+  {/* Só mostrar botão de fechar se não for embedded */}
+  {!isEmbedded && <button className="btn-close" onClick={() => window.close()}>✕</button>}
+</header>
 
       {erro && <div className="msg erro">{erro}</div>}
       {loading && <div className="msg">Carregando…</div>}

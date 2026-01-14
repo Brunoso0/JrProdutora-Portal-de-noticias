@@ -15,36 +15,40 @@ const ControleEtapas = () => {
 
   // Renomeando para função mais genérica
   const carregarDadosDaTela = async () => {
-    console.log("🔄 RECARREGANDO DADOS DA TELA");
     try {
-      console.log("📡 Carregando etapas...");
-      
-      // Usar nosso EtapasService
+      console.log("Recarregando DADOS da Tela");
+
       const resultadoEtapas = await etapasService.listarEtapas();
-      if (resultadoEtapas.success) {
-        setEtapas(resultadoEtapas.data.sort((a, b) => a.id - b.id));
-        console.log("✅ Etapas carregadas:", resultadoEtapas.data.length);
+      console.log("DEBUG resultadoEtapas:", resultadoEtapas);
+
+      // Normaliza possíveis formatos de resposta: `data` ou `etapas`
+      const lista =
+        Array.isArray(resultadoEtapas?.data)
+          ? resultadoEtapas.data
+          : Array.isArray(resultadoEtapas?.etapas)
+          ? resultadoEtapas.etapas
+          : [];
+
+      if (lista.length) {
+        setEtapas(lista.sort((a, b) => Number(a.id) - Number(b.id)));
+        console.log("Etapas carregadas:", lista.length);
       } else {
-        console.warn("⚠️ Erro ao carregar etapas:", resultadoEtapas.message);
+        console.warn("Resposta de etapas vazia ou formato inesperado:", resultadoEtapas);
         setEtapas([]);
       }
 
-      console.log("📡 Verificando sessão ativa...");
-      
-      // Usar nosso SessionServiceV2
       const resultadoSessao = await sessionService.getSessaoAtiva();
-      if (resultadoSessao.success && resultadoSessao.data) {
+      console.log("DEBUG resultadoSessao:", resultadoSessao);
+      if (resultadoSessao?.success && resultadoSessao.data) {
         setSessaoAtiva(resultadoSessao.data);
-        console.log("✅ Sessão ativa encontrada:", resultadoSessao.data.id);
+        console.log("Sessão ativa encontrada:", resultadoSessao.data.id);
       } else {
         setSessaoAtiva(null);
-        console.log("✅ Nenhuma sessão ativa");
+        console.log("Nenhuma sessão ativa");
       }
-      
-      
     } catch (err) {
-      console.error("💥 Erro ao carregar dados:", err);
-      toast.error("Não foi possível carregar os dados da página.");
+      console.error("Erro ao carregar dados:", err);
+      toast.error("Não foi possivel carregar os dados da página.");
     }
   };
 

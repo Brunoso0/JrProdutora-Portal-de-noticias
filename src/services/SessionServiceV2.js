@@ -45,26 +45,43 @@ class SessionService {
   async iniciarSessao(etapaId, descricao, candidatoIds = []) {
     try {
       console.log('📡 Iniciando nova sessão:', { etapaId, descricao, candidatoIds });
-      
-      const response = await axios.post(`${API_FESTIVAL}/api/sessoes/iniciar`, {
-        etapa_id: etapaId,
-        descricao,
-        candidato_ids: candidatoIds
-      });
+
+      // Validações básicas antes de enviar
+      if (!etapaId) {
+        return { success: false, error: 'etapaId é obrigatório' };
+      }
+      // Garante que candidatoIds é um array de números (API costuma esperar ids numéricos)
+      const ids = Array.isArray(candidatoIds)
+        ? candidatoIds.map((v) => (v == null ? v : Number(v))).filter((v) => !Number.isNaN(v))
+        : [];
+
+      const payload = {
+        etapa_id: Number(etapaId),
+        descricao: descricao || '',
+        candidato_ids: ids
+      };
+
+      console.log('▶️ Payload enviar:', payload);
+
+      const response = await axios.post(`${API_FESTIVAL}/api/sessoes/iniciar`, payload);
 
       this._clearCache(); // Limpar cache ao iniciar sessão
-      
+
       return {
         success: true,
         sessao: response.data.sessao || response.data,
         message: response.data.mensagem || 'Sessão iniciada com sucesso'
       };
     } catch (error) {
+      // Log detalhado para debugging
       console.error('❌ Erro ao iniciar sessão:', error);
+      console.error('❌ error.response.data:', error.response?.data);
+      // Retorna detalhes da API quando disponível (útil para mostrar validações)
       return {
         success: false,
+        status: error.response?.status,
         error: error.response?.data?.erro || error.message,
-        details: error.response?.data
+        details: error.response?.data || null
       };
     }
   }
