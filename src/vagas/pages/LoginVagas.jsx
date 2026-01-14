@@ -29,7 +29,7 @@ const LoginVagas = () => {
 
       localStorage.setItem("vagas_token", token);
       toast.success("Login realizado com sucesso!", { autoClose: 2000 });
-      setTimeout(() => navigate("/jrprodutora/listar/all"), 400);
+      setTimeout(() => navigate("/vagas/candidatos"), 400);
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Erro ao processar login.",
