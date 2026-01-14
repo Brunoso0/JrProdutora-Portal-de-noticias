@@ -3,6 +3,7 @@ import axios from "axios";
 const API_BASE_URL = "https://api.jrprodutora.com.br";
 // const API_BASE_URL = "http://localhost:5000";
 const API_FESTIVAL = "https://festival.jrprodutora.com.br"
+const API_VAGAS = "https://api.jrcoffee.com.br:5002/api";
 // const API_FESTIVAL = "http://168.90.147.242:5000"
 // const API_FESTIVAL = "http://localhost:3001"
 
@@ -58,6 +59,6 @@ apiFestival.interceptors.response.use(
   }
 );
 
-export { API_BASE_URL, API_FESTIVAL, apiFestival  };
+export { API_BASE_URL, API_FESTIVAL, API_VAGAS, apiFestival };
 export default api;
  

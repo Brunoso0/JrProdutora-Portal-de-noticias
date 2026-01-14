@@ -29,6 +29,10 @@ import PopupClassificatoria from "./festival/components/PopupClassificatoria";
 import PopupCriterios from "./festival/components/PopupCriterios";
 import PopupAvancosPodio from "./festival/components/PopupAvancosPodio";
 
+import CandidaturaVagas from './vagas/pages/CandidaturaVagas';
+import LoginVagas from "./vagas/pages/LoginVagas";
+import ListaCandidatosVagas from "./vagas/pages/ListaCandidatosVagas";
+
 import PublicLayout from "./layouts/PublicLayout";
 
 
@@ -118,6 +122,9 @@ const App = () => {
             <Route path="/popup-criterios" element={<PopupCriterios />} />
             <Route path="/popup-avancos-dia" element={<PopupAvancosPodio />} />
             <Route path="/" element={<PublicLayout />} />
+            <Route path="/vagas" element={<CandidaturaVagas />} />
+            <Route path="/vagas/login" element={<LoginVagas />} />
+            <Route path="/vagas/candidatos" element={<ListaCandidatosVagas />} />
           </Routes>
           </Router>
         </SessaoProvider>
