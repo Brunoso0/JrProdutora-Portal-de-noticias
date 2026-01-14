@@ -1,0 +1,338 @@
+/* ========================================
+   CANDIDATURA VAGAS - ESTILO IGUAL À IMAGEM
+======================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Fundo Escuro com Gradiente Sutil */
+.candidatura-container {
+  min-height: 100vh;
+  background: #050505; /* Fundo preto quase total */
+  background: radial-gradient(circle at top right, #1a0505 0%, #000000 40%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #fff;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Header */
+.candidatura-header {
+  background: rgba(0, 0, 0, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.container-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  /* Justify content removido pois só temos a logo agora */
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.logo span {
+  color: #dc3545; /* Vermelho vibrante */
+}
+
+/* Main Layout */
+.candidatura-main {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Dividido meio a meio como na imagem */
+  gap: 4rem;
+  align-items: start;
+}
+
+/* Coluna Esquerda */
+.candidatura-left-content {
+  padding-top: 8rem;
+}
+
+.badge-contratando {
+  display: inline-block;
+  background: rgba(220, 53, 69, 0.15);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  color: #ff6b6b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
+}
+
+.main-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1px;
+}
+
+.gradient-text {
+  color: #dc3545; /* Vermelho sólido para destacar como na imagem */
+  background: linear-gradient(90deg, #dc3545, #ff4d4d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.main-description {
+  font-size: 1.1rem;
+  color: #a0a0a0;
+  line-height: 1.6;
+  margin-bottom: 3rem;
+  max-width: 90%;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.benefit-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: transform 0.2s;
+}
+
+.benefit-card:hover {
+  transform: translateY(-3px);
+  border-color: #dc3545;
+}
+
+.benefit-card i {
+  font-size: 1.5rem;
+  color: #dc3545;
+  margin-bottom: 1rem;
+}
+
+.benefit-card h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.benefit-card p {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* Coluna Direita - Formulário */
+.form-card {
+  background: #121212; /* Fundo bem escuro para o cartão */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 2.5rem;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.form-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.form-title i {
+  color: #dc3545;
+}
+
+/* Inputs e Labels */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: #ccc;
+  margin-bottom: 0.5rem;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper i {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.input-wrapper input,
+.input-wrapper select {
+  width: 100%;
+  padding: 0.9rem 1rem 0.9rem 2.8rem;
+  background: #0a0a0a; /* Fundo preto nos inputs */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-wrapper input:focus,
+.input-wrapper select:focus {
+  border-color: #dc3545;
+}
+
+.input-wrapper input::placeholder {
+  color: #444;
+}
+
+.input-error {
+  border-color: #ff4444 !important;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1rem;
+}
+
+/* Uploads */
+.uploads-container {
+  margin: 1.5rem 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.upload-group label:first-child {
+  font-size: 0.85rem;
+  color: #ccc;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.upload-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.2rem;
+  background: #0a0a0a;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.upload-area:hover {
+  border-color: #dc3545;
+  background: rgba(220, 53, 69, 0.05);
+}
+
+.upload-area i {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.upload-area .icon-success {
+  color: #28a745;
+}
+
+.upload-area span {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.error-border {
+  border-color: #ff4444;
+}
+
+/* Termos */
+.terms-group {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1.5rem 0;
+}
+
+.terms-group input {
+  accent-color: #dc3545;
+  width: 16px;
+  height: 16px;
+}
+
+.terms-group label {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.terms-link {
+  color: #dc3545;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Botão Enviar */
+.submit-button {
+  width: 100%;
+  padding: 1rem;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  transition: background 0.3s;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .candidatura-main {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .main-title {
+    font-size: 2.5rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

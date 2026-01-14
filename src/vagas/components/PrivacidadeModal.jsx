@@ -1,4 +1,5 @@
 import React from "react";
+import "../styles/PrivacidadeModal.css";
 
 const PrivacidadeModal = ({ onAccept, onDecline }) => {
   return (

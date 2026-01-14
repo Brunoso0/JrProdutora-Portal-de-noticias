@@ -1,0 +1,248 @@
+/* ========================================
+   PRIVACIDADE MODAL - MODERN DESIGN
+======================================== */
+
+.privacidade-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(5px);
+}
+
+.privacidade-modal-content {
+  background: rgba(23, 23, 23, 0.98);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  border-radius: 16px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(220, 53, 69, 0.2);
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+.privacidade-modal-content > h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  letter-spacing: -0.5px;
+}
+
+/* Body */
+.privacidade-modal-body {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.privacidade-modal-body h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 1rem 0;
+  margin-top: 0;
+}
+
+.privacidade-modal-body h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #dc3545;
+  margin: 1.5rem 0 0.75rem 0;
+  margin-top: 1.5rem;
+}
+
+.privacidade-modal-body p {
+  margin: 0 0 1rem 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.privacidade-modal-body b {
+  color: #ff6b7a;
+  font-weight: 600;
+}
+
+.privacidade-modal-body ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.privacidade-modal-body li {
+  margin: 0.5rem 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.privacidade-modal-body li::marker {
+  color: #dc3545;
+}
+
+/* Scrollbar customizado */
+.privacidade-modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.privacidade-modal-body::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.privacidade-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(220, 53, 69, 0.4);
+  border-radius: 10px;
+}
+
+.privacidade-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(220, 53, 69, 0.6);
+}
+
+/* Footer com Botões */
+.privacidade-modal-footer {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 0 0 16px 16px;
+}
+
+.privacidade-modal-btn {
+  flex: 1;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.privacidade-modal-btn-accept {
+  background: linear-gradient(135deg, #dc3545, #a02830);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.privacidade-modal-btn-accept:hover {
+  background: linear-gradient(135deg, #ff4d5e, #dc3545);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+}
+
+.privacidade-modal-btn-accept:active {
+  transform: translateY(0);
+}
+
+.privacidade-modal-btn-decline {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.privacidade-modal-btn-decline:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.privacidade-modal-btn-decline:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .privacidade-modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .privacidade-modal-content {
+    max-height: 90vh;
+    border-radius: 12px;
+  }
+
+  .privacidade-modal-content > h2 {
+    font-size: 1.25rem;
+    padding: 1.5rem 1.5rem 1rem;
+  }
+
+  .privacidade-modal-body {
+    padding: 1.5rem;
+  }
+
+  .privacidade-modal-body h3 {
+    font-size: 1.1rem;
+  }
+
+  .privacidade-modal-body h4 {
+    font-size: 0.95rem;
+  }
+
+  .privacidade-modal-footer {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .privacidade-modal-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .privacidade-modal-content > h2 {
+    font-size: 1.1rem;
+    padding: 1.25rem 1rem 0.75rem;
+  }
+
+  .privacidade-modal-body {
+    padding: 1rem;
+  }
+
+  .privacidade-modal-body h3 {
+    font-size: 1rem;
+  }
+
+  .privacidade-modal-body p {
+    font-size: 0.9rem;
+  }
+
+  .privacidade-modal-footer {
+    padding: 0.75rem 1rem;
+  }
+
+  .privacidade-modal-btn {
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+  }
+}

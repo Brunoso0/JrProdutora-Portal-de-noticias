@@ -3,14 +3,11 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MaskedInput from "react-text-mask";
-import Button from "../../shared/components/buttonCadastro";
-import UploadField from "../components/UploadField.jsx";
-import VagasSelect from "../components/VagasSelect.jsx";
 import PrivacidadeModal from "../components/PrivacidadeModal.jsx";
-import "../styles/CandidaturaVagas.css";
+import "../styles/CandidaturaVagasNew.css";
 
 const API_VAGAS = "https://api.jrcoffee.com.br:5002/api";
-const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB em bytes
+const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
 const CandidaturaVagas = () => {
   const [selectedJob, setSelectedJob] = useState("");
@@ -28,7 +25,7 @@ const CandidaturaVagas = () => {
     telefone: "",
   });
 
-  // Busca as vagas ao montar o componente
+  // Busca as vagas
   useEffect(() => {
     const fetchVagas = async () => {
       try {
@@ -36,133 +33,60 @@ const CandidaturaVagas = () => {
         setVagas(response.data);
       } catch (error) {
         console.error("Erro ao buscar vagas:", error);
-        toast.error("Erro ao carregar as vagas disponíveis", {
-          position: "top-right",
-          autoClose: 3000,
-        });
       }
     };
-
     fetchVagas();
   }, []);
 
-  // Atualiza o estado ao digitar nos campos
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Valida o arquivo
   const validateFile = (file) => {
     if (!file) return false;
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("O arquivo deve ter no máximo 20MB!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.error("O arquivo deve ter no máximo 20MB!", { position: "top-right", autoClose: 3000 });
       return false;
     }
     return true;
   };
 
-  // Atualiza os arquivos selecionados
   const handleFileChange = (e, setFile) => {
-    if (!e.target.files || e.target.files.length === 0) {
-      return;
-    }
-
+    if (!e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
-    if (validateFile(file)) {
-      setFile(file);
-    }
+    if (validateFile(file)) setFile(file);
   };
 
-  // Manipula o arrastar e soltar arquivos
-  const handleDrop = (e, setFile) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    if (validateFile(file)) {
-      setFile(file);
-    }
-  };
-
-  // Valida o email
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  // Valida o telefone
   const validatePhone = (phone) => {
     const numeroLimpo = phone.replace(/\D/g, "");
     return numeroLimpo.length === 11;
   };
 
-  // Envio do formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const newErrors = {};
 
-    // Validação de nome
-    if (!formData.nome.trim()) {
-      newErrors.nome = true;
-    }
-
-    // Validação de e-mail
-    if (!formData.email) {
-      newErrors.email = true;
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = true;
-      toast.error("E-mail inválido! Certifique-se de que contém '@' e '.com'", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    }
-
-    // Validação de telefone
-    if (!validatePhone(formData.telefone)) {
-      newErrors.telefone = true;
-      toast.error("Número de telefone incorreto!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    }
-
-    // Validação da vaga
-    if (!selectedJob) {
-      newErrors.vaga = true;
-    }
-
-    // Validação do currículo
+    if (!formData.nome.trim()) newErrors.nome = true;
+    if (!formData.email || !validateEmail(formData.email)) newErrors.email = true;
+    if (!validatePhone(formData.telefone)) newErrors.telefone = true;
+    if (!selectedJob) newErrors.vaga = true;
     if (!curriculo) {
       newErrors.curriculo = true;
-      toast.error("Por favor, envie seu currículo em PDF!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.error("Por favor, envie seu currículo!", { position: "top-right" });
     }
-
-    // Validação da imagem
-    if (!imagem) {
-      newErrors.imagem = true;
-    }
-
-    // Validação do checkbox de privacidade
+    if (!imagem) newErrors.imagem = true;
     if (!aceitouPrivacidade) {
       newErrors.privacidade = true;
+      toast.error("Aceite os termos de privacidade.", { position: "top-right" });
     }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      toast.error("Preencha todos os campos obrigatórios!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
       return;
     }
 
-    // Resetando erros antes do envio
     setErrors({});
     setLoading(true);
 
@@ -175,23 +99,12 @@ const CandidaturaVagas = () => {
     data.append("foto", imagem);
 
     try {
-      const response = await axios.post(
-        `${API_VAGAS}/jrprodutora/cadastro`,
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${API_VAGAS}/jrprodutora/cadastro`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       if (response.status === 200 || response.status === 201) {
-        toast.success("Cadastro enviado com sucesso!", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-
-        // Resetar campos após sucesso
+        toast.success("Cadastro enviado com sucesso!", { position: "top-right" });
         setFormData({ nome: "", email: "", telefone: "" });
         setSelectedJob("");
         setCurriculo(null);
@@ -199,27 +112,11 @@ const CandidaturaVagas = () => {
         setAceitouPrivacidade(false);
       }
     } catch (error) {
-      if (error.response?.status === 409) {
-        const errorData = error.response.data;
-        if (errorData.error && errorData.error.includes("Duplicate entry")) {
-          newErrors.email = true;
-          setErrors(newErrors);
-          toast.error("Este e-mail já foi utilizado em outra candidatura!", {
-            position: "top-right",
-            autoClose: 3000,
-          });
-          return;
+        if (error.response?.status === 409) {
+            toast.error("Este e-mail já foi utilizado!", { position: "top-right" });
+        } else {
+            toast.error("Erro ao enviar cadastro.", { position: "top-right" });
         }
-      }
-
-      toast.error(
-        error.response?.data?.message ||
-          `Erro ao enviar os dados: ${error.message}`,
-        {
-          position: "top-right",
-          autoClose: 3000,
-        }
-      );
     } finally {
       setLoading(false);
     }
@@ -227,186 +124,203 @@ const CandidaturaVagas = () => {
 
   return (
     <div className="candidatura-container">
-      <ToastContainer />
-      <div className="candidatura-card">
-        {/* Formulário */}
-        <div className="candidatura-content">
-          <h1>
-            Trabalhe <b>CONOSCO</b>
+      <ToastContainer theme="dark" />
+      
+      {/* Header - Apenas Logo */}
+      <header className="candidatura-header">
+        <div className="container-header">
+          <div className="logo">
+            JR<span>Produtora</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="candidatura-main">
+        {/* Esquerda: Texto */}
+        <div className="candidatura-left-content">
+          <div className="badge-contratando">Estamos Contratando</div>
+          <h1 className="main-title">
+            Construa o futuro<br />
+            <span className="gradient-text">com a gente.</span>
           </h1>
-          <form className="candidatura-form" onSubmit={handleSubmit}>
-            {/* Nome */}
-            <label className="candidatura-label">Nome</label>
-            <input
-              type="text"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
-              placeholder="Seu Nome"
-              className={`candidatura-input ${
-                errors.nome ? "input-error" : ""
-              }`}
-              required
-              disabled={loading}
-            />
+          <p className="main-description">
+            Estamos em busca de talentos que não têm medo de desafiar o status quo. 
+            Se você busca inovação e crescimento, seu lugar é aqui.
+          </p>
 
-            {/* E-mail */}
-            <label className="candidatura-label">E-Mail</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Seu E-Mail"
-              className={`candidatura-input ${
-                errors.email ? "input-error" : ""
-              }`}
-              required
-              disabled={loading}
-            />
-            <p className="email-hint">
-              Atenção: Apenas um e-mail por pessoa, por favor não repetir
-              e-mail.
-            </p>
+          <div className="benefits-grid">
+            <div className="benefit-card">
+              <i className="fas fa-rocket"></i>
+              <h3>Crescimento Rápido</h3>
+              <p>Plano de carreira acelerado.</p>
+            </div>
+            <div className="benefit-card">
+              <i className="fas fa-laptop-code"></i>
+              <h3>Tecnologia de Ponta</h3>
+              <p>Ferramentas mais modernas.</p>
+            </div>
+          </div>
+        </div>
 
-            {/* Número de Contato */}
-            <label className="candidatura-label">Contato</label>
-            <MaskedInput
-              mask={[
-                "(",
-                /[1-9]/,
-                /\d/,
-                ")",
-                " ",
-                "9",
-                " ",
-                /\d/,
-                /\d/,
-                /\d/,
-                /\d/,
-                "-",
-                /\d/,
-                /\d/,
-                /\d/,
-                /\d/,
-              ]}
-              value={formData.telefone}
-              onChange={handleChange}
-              render={(ref, props) => (
+        {/* Direita: Formulário */}
+        <div className="candidatura-right-content">
+          <div className="form-card">
+            <div className="glow-effect"></div>
+            
+            <h2 className="form-title">
+              <i className="far fa-paper-plane"></i> Envie seu Currículo
+            </h2>
+
+            <form className="candidatura-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="nome">Nome Completo</label>
+                <div className="input-wrapper">
+                  <i className="fas fa-user"></i>
+                  <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    value={formData.nome}
+                    onChange={handleChange}
+                    placeholder="João Silva"
+                    className={errors.nome ? "input-error" : ""}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <div className="input-wrapper">
+                    <i className="fas fa-envelope"></i>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="voce@email.com"
+                      className={errors.email ? "input-error" : ""}
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="telefone">Telefone</label>
+                  <div className="input-wrapper">
+                    <i className="fas fa-phone"></i>
+                    <MaskedInput
+                      mask={["(", /[1-9]/, /\d/, ")", " ", /\d/, " ", /\d/, /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/, /\d/]}
+                      value={formData.telefone}
+                      onChange={handleChange}
+                      render={(ref, props) => (
+                        <input
+                          ref={ref}
+                          {...props}
+                          type="text"
+                          name="telefone"
+                          placeholder="(11) 91234-5678"
+                          className={errors.telefone ? "input-error" : ""}
+                          disabled={loading}
+                        />
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="vaga">Vaga Desejada</label>
+                <div className="input-wrapper">
+                  <i className="fas fa-briefcase"></i>
+                  <select
+                    id="vaga"
+                    value={selectedJob}
+                    onChange={(e) => setSelectedJob(e.target.value)}
+                    className={errors.vaga ? "input-error" : ""}
+                    disabled={loading}
+                  >
+                    <option value="">Selecione uma Vaga...</option>
+                    {vagas.length > 0 ? (
+                      vagas.map((vaga) => (
+                        <option key={vaga.id} value={vaga.id}>{vaga.titulo}</option>
+                      ))
+                    ) : (
+                      <option disabled>Carregando vagas...</option>
+                    )}
+                  </select>
+                  <i className="fas fa-chevron-down select-arrow"></i>
+                </div>
+              </div>
+
+              <div className="uploads-container">
+                <div className="upload-group">
+                  <label>Currículo (PDF ou DOCX)</label>
+                  <label className={`upload-area ${errors.curriculo ? "error-border" : ""}`} htmlFor="curriculo-input">
+                    <i className={curriculo ? "fas fa-check-circle icon-success" : "fas fa-file-pdf"}></i>
+                    <span>{curriculo ? curriculo.name : "Clique para enviar currículo"}</span>
+                    <input
+                      type="file"
+                      id="curriculo-input"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => handleFileChange(e, setCurriculo)}
+                      disabled={loading}
+                      style={{ display: "none" }}
+                    />
+                  </label>
+                </div>
+
+                <div className="upload-group">
+                  <label>Foto de Perfil</label>
+                  <label className={`upload-area ${errors.imagem ? "error-border" : ""}`} htmlFor="foto-input">
+                    <i className={imagem ? "fas fa-check-circle icon-success" : "fas fa-camera"}></i>
+                    <span>{imagem ? imagem.name : "Clique para enviar foto"}</span>
+                    <input
+                      type="file"
+                      id="foto-input"
+                      accept="image/*"
+                      onChange={(e) => handleFileChange(e, setImagem)}
+                      disabled={loading}
+                      style={{ display: "none" }}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="terms-group">
                 <input
-                  ref={ref}
-                  {...props}
-                  type="text"
-                  name="telefone"
-                  placeholder="Seu Número"
-                  className={`candidatura-input ${
-                    errors.telefone ? "input-error" : ""
-                  }`}
-                  required
+                  type="checkbox"
+                  id="termos"
+                  checked={aceitouPrivacidade}
+                  onChange={() => setAceitouPrivacidade(!aceitouPrivacidade)}
                   disabled={loading}
                 />
-              )}
-            />
+                <label htmlFor="termos">
+                  Li e aceito os{" "}
+                  <span onClick={() => !loading && setShowModal(true)} className="terms-link">
+                    termos de privacidade
+                  </span>.
+                </label>
+              </div>
 
-            {/* Seleção de Vagas */}
-            <VagasSelect
-              vagas={vagas}
-              selectedJob={selectedJob}
-              setSelectedJob={setSelectedJob}
-              hasError={errors.vaga}
-              disabled={loading}
-            />
-
-            {/* Upload de Arquivos */}
-            <div className="candidatura-upload-section">
-              <UploadField
-                title="Envie seu Currículo"
-                subtitle="Aceitamos apenas PDF"
-                file={curriculo}
-                accept=".pdf"
-                inputId="curriculo-input"
-                onFileChange={(e) => handleFileChange(e, setCurriculo)}
-                onDrop={(e) => handleDrop(e, setCurriculo)}
-                hasError={errors.curriculo}
-                disabled={loading}
-              />
-
-              <UploadField
-                title="Envie sua Foto"
-                subtitle="jpg, webp, png, jpeg"
-                file={imagem}
-                accept="image/jpeg, image/png, image/webp"
-                inputId="imagem-input"
-                onFileChange={(e) => handleFileChange(e, setImagem)}
-                onDrop={(e) => handleDrop(e, setImagem)}
-                hasError={errors.imagem}
-                disabled={loading}
-              />
-            </div>
-
-            {/* Checkbox de Privacidade */}
-            <div
-              className={`candidatura-privacy-checkbox ${
-                errors.privacidade ? "input-error" : ""
-              }`}
-            >
-              <input
-                type="checkbox"
-                id="candidatura-privacy"
-                className="cyberpunk-checkbox"
-                checked={aceitouPrivacidade}
-                onChange={() => setAceitouPrivacidade(!aceitouPrivacidade)}
-                required
-                disabled={loading}
-              />
-
-              <label htmlFor="candidatura-privacy">
-                Declaro que li e aceito os{" "}
-                <span
-                  onClick={() => !loading && setShowModal(true)}
-                  className="candidatura-privacy-link"
-                  style={{
-                    color: "red",
-                    cursor: loading ? "not-allowed" : "pointer",
-                    textDecoration: "underline",
-                  }}
-                >
-                  termos de privacidade
-                </span>
-              </label>
-            </div>
-
-            {showModal && (
-              <PrivacidadeModal
-                onAccept={() => {
-                  setAceitouPrivacidade(true);
-                  setShowModal(false);
-                }}
-                onDecline={() => setShowModal(false)}
-              />
-            )}
-
-            {/* Botão de Envio */}
-            <div className="candidatura-button">
-              <Button
-                type="submit"
-                className="candidatura-submit-button"
-                disabled={loading}
-              >
-                {loading ? "Enviando..." : "Enviar"}
-              </Button>
-            </div>
-          </form>
+              <button type="submit" className="submit-button" disabled={loading}>
+                <span>{loading ? "ENVIANDO..." : "ENVIAR CANDIDATURA"}</span>
+                {!loading && <i className="fas fa-arrow-right"></i>}
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
+      </main>
 
-      {/* Rodapé */}
-      <div className="candidatura-footer">
-        <p>
-          Estaremos aceitando currículos até o dia{" "}
-          <b>31 de dezembro de 2024</b>
-        </p>
-      </div>
+      {showModal && (
+        <PrivacidadeModal
+          onAccept={() => { setAceitouPrivacidade(true); setShowModal(false); }}
+          onDecline={() => setShowModal(false)}
+        />
+      )}
     </div>
   );
 };

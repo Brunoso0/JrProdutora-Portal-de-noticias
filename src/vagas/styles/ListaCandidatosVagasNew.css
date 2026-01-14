@@ -1,0 +1,314 @@
+/* =========================================
+   RESET & BASE - DARK THEME
+========================================= */
+.lista-container {
+  background-color: #000000;
+  min-height: 100vh;
+  padding: 40px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #fff;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+.lista-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.header-title-area {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* A linha vertical vermelha ao lado do título */
+.title-decoration {
+  width: 4px;
+  height: 45px;
+  background-color: #D32F2F; /* Vermelho escuro */
+  border-radius: 2px;
+}
+
+.header-title-area h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.header-title-area p {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 5px 0 0 0;
+}
+
+/* Stats no canto superior direito */
+.header-stats {
+  display: flex;
+  gap: 15px;
+}
+
+.stat-box {
+  background: #111;
+  border: 1px solid #333;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 100px;
+}
+
+.stat-num {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #D32F2F; /* Vermelho do número */
+}
+
+.stat-desc {
+  font-size: 0.65rem;
+  color: #666;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* =========================================
+   FILTROS (Barra Cinza Escura)
+========================================= */
+.filtros-container {
+  background-color: #111; /* Fundo do container de filtros */
+  padding: 20px 25px;
+  border-radius: 12px;
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  align-items: flex-end;
+  border: 1px solid #222;
+}
+
+.filtro-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-group {
+  flex: 2; /* A busca ocupa mais espaço */
+}
+
+.filtro-group label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-search {
+  position: relative;
+  width: 100%;
+}
+
+.input-search i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.input-search input,
+.filtro-group select {
+  width: 100%;
+  background-color: #000; /* Inputs pretos */
+  border: 1px solid #333;
+  padding: 10px 15px 10px 35px; /* Padding extra esquerda p/ icone */
+  border-radius: 6px;
+  color: #ddd;
+  font-size: 0.9rem;
+  outline: none;
+  height: 42px;
+}
+
+.filtro-group select {
+  padding-left: 15px;
+  cursor: pointer;
+}
+
+.input-search input:focus,
+.filtro-group select:focus {
+  border-color: #D32F2F;
+}
+
+/* =========================================
+   GRID DE CARDS
+========================================= */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.candidate-card {
+  background-color: #111;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.candidate-card:hover {
+  transform: translateY(-3px);
+  border-color: #333;
+}
+
+/* Topo do Card (Avatar + Nome) */
+.card-top-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.candidate-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #333;
+}
+
+.header-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.candidate-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+}
+
+.candidate-role {
+  font-size: 0.8rem;
+  color: #888;
+  margin: 2px 0 0 0;
+}
+
+/* Detalhes (Email, Tel, Data) */
+.card-details {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.detail-item i {
+  width: 16px;
+  text-align: center;
+  color: #444; /* Ícones escuros */
+}
+
+/* Botão */
+.btn-ver-curriculo {
+  width: 100%;
+  background-color: #1a1a1a;
+  color: #ccc;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-ver-curriculo:hover:not(:disabled) {
+  background-color: #D32F2F;
+  color: #fff;
+}
+
+.btn-ver-curriculo:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   MODAIS & UTILITÁRIOS
+========================================= */
+.loading-state {
+  text-align: center;
+  color: #D32F2F;
+  font-size: 2rem;
+  padding: 50px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-curriculo {
+  width: 90%;
+  height: 90%;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.curriculo-iframe {
+  flex: 1;
+  border: none;
+  background: #fff;
+}
+
+.close-modal {
+  margin-top: 10px;
+  background: #D32F2F;
+  border: none;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-img-full {
+  max-height: 90vh;
+  max-width: 90vw;
+  border: 5px solid #fff;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .lista-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .filtros-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-group { flex: auto; }
+}
