@@ -145,7 +145,7 @@ const CandidaturaVagas = () => {
             <span className="gradient-text">com a gente.</span>
           </h1>
           <p className="main-description">
-            Estamos em busca de talentos que não têm medo de desafiar o status quo. 
+            Estamos em busca de talentos que não têm medo de se desafiar. 
             Se você busca inovação e crescimento, seu lugar é aqui.
           </p>
 
