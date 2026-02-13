@@ -6,7 +6,12 @@ import MaskedInput from "react-text-mask";
 import PrivacidadeModal from "../components/PrivacidadeModal.jsx";
 import "../styles/CandidaturaVagasNew.css";
 
-const API_VAGAS = "https://api.jrcoffee.com.br:5002/api";
+// Importando a URL do RH que você configurou no service/api.js
+import { API_VAGAS } from "../../services/api.js";
+
+// ID da JR Produtora = 1
+const COMPANY_ID = 1; 
+
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
 const CandidaturaVagas = () => {
@@ -25,14 +30,18 @@ const CandidaturaVagas = () => {
     telefone: "",
   });
 
-  // Busca as vagas
+  // --- BUSCA VAGAS DO BACKEND RH ---
   useEffect(() => {
     const fetchVagas = async () => {
       try {
-        const response = await axios.get(`${API_VAGAS}/jrprodutora/vagas`);
+        // Usa a nova rota pública filtrando pelo ID da Produtora (1)
+        // Se API_VAGAS já vier com barra no final, ajuste aqui. Assumindo que vem sem barra.
+        const response = await axios.get(`${API_VAGAS}/api/public/vacancies?companyId=${COMPANY_ID}`);
         setVagas(response.data);
       } catch (error) {
         console.error("Erro ao buscar vagas:", error);
+        // Opcional: Não mostrar toast de erro se for apenas lista vazia, mas aqui mantemos para debug
+        toast.error("Não foi possível carregar as vagas no momento.");
       }
     };
     fetchVagas();
@@ -61,7 +70,7 @@ const CandidaturaVagas = () => {
 
   const validatePhone = (phone) => {
     const numeroLimpo = phone.replace(/\D/g, "");
-    return numeroLimpo.length === 11;
+    return numeroLimpo.length >= 10;
   };
 
   const handleSubmit = async (e) => {
@@ -76,7 +85,9 @@ const CandidaturaVagas = () => {
       newErrors.curriculo = true;
       toast.error("Por favor, envie seu currículo!", { position: "top-right" });
     }
-    if (!imagem) newErrors.imagem = true;
+    // Mantendo a lógica de foto obrigatória que estava no seu código original
+    if (!imagem) newErrors.imagem = true; 
+    
     if (!aceitouPrivacidade) {
       newErrors.privacidade = true;
       toast.error("Aceite os termos de privacidade.", { position: "top-right" });
@@ -96,26 +107,36 @@ const CandidaturaVagas = () => {
     data.append("telefone", formData.telefone);
     data.append("vaga_id", selectedJob);
     data.append("curriculo_pdf", curriculo);
-    data.append("foto", imagem);
+    if (imagem) data.append("foto", imagem);
 
     try {
-      const response = await axios.post(`${API_VAGAS}/jrprodutora/cadastro`, data, {
+      // Envia para a rota pública de aplicação
+      const response = await axios.post(`${API_VAGAS}/api/public/apply`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (response.status === 200 || response.status === 201) {
         toast.success("Cadastro enviado com sucesso!", { position: "top-right" });
+        
+        // Reset do formulário
         setFormData({ nome: "", email: "", telefone: "" });
         setSelectedJob("");
         setCurriculo(null);
         setImagem(null);
         setAceitouPrivacidade(false);
+        
+        // Limpa inputs de arquivo (opcional, mas recomendado)
+        const curriculoInput = document.getElementById("curriculo-input");
+        const fotoInput = document.getElementById("foto-input");
+        if(curriculoInput) curriculoInput.value = "";
+        if(fotoInput) fotoInput.value = "";
       }
     } catch (error) {
         if (error.response?.status === 409) {
-            toast.error("Este e-mail já foi utilizado!", { position: "top-right" });
+            toast.warning(error.response.data.message || "Seus dados já constam em nosso banco.", { position: "top-right" });
         } else {
-            toast.error("Erro ao enviar cadastro.", { position: "top-right" });
+            console.error(error);
+            toast.error("Erro ao processar sua candidatura. Tente novamente.", { position: "top-right" });
         }
     } finally {
       setLoading(false);
@@ -126,7 +147,6 @@ const CandidaturaVagas = () => {
     <div className="candidatura-container">
       <ToastContainer theme="dark" />
       
-      {/* Header - Apenas Logo */}
       <header className="candidatura-header">
         <div className="container-header">
           <div className="logo">
@@ -135,9 +155,7 @@ const CandidaturaVagas = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="candidatura-main">
-        {/* Esquerda: Texto */}
         <div className="candidatura-left-content">
           <div className="badge-contratando">Estamos Contratando</div>
           <h1 className="main-title">
@@ -163,7 +181,6 @@ const CandidaturaVagas = () => {
           </div>
         </div>
 
-        {/* Direita: Formulário */}
         <div className="candidatura-right-content">
           <div className="form-card">
             <div className="glow-effect"></div>
@@ -246,10 +263,11 @@ const CandidaturaVagas = () => {
                     <option value="">Selecione uma Vaga...</option>
                     {vagas.length > 0 ? (
                       vagas.map((vaga) => (
-                        <option key={vaga.id} value={vaga.id}>{vaga.titulo}</option>
+                        // Importante: Backend novo retorna 'title', não 'titulo'
+                        <option key={vaga.id} value={vaga.id}>{vaga.title}</option> 
                       ))
                     ) : (
-                      <option disabled>Carregando vagas...</option>
+                      <option disabled>Nenhuma vaga aberta no momento</option>
                     )}
                   </select>
                   <i className="fas fa-chevron-down select-arrow"></i>

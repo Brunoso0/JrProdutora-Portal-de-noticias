@@ -1,11 +1,8 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://api.jrprodutora.com.br";
-// const API_BASE_URL = "http://localhost:5000";
-const API_FESTIVAL = "https://festival.jrprodutora.com.br"
-const API_VAGAS = "https://api.jrcoffee.com.br:5002/api";
-// const API_FESTIVAL = "http://168.90.147.242:5000"
-// const API_FESTIVAL = "http://localhost:3001"
+const API_BASE_URL = process.env.API_BASE_URL || "";
+const API_FESTIVAL = process.env.API_FESTIVAL || "";
+const API_VAGAS = process.env.REACT_APP_API_VAGAS || "";
 
 // Configuração para retry automático
 const MAX_RETRIES = 3;
@@ -31,6 +28,8 @@ const apiFestival = axios.create({
   baseURL: API_FESTIVAL,
   timeout: 10000, // 10 segundos
 });
+
+
 
 // Interceptor para retry automático no apiFestival
 apiFestival.interceptors.response.use(
@@ -59,6 +58,6 @@ apiFestival.interceptors.response.use(
   }
 );
 
-export { API_BASE_URL, API_FESTIVAL, API_VAGAS, apiFestival };
+export { API_BASE_URL, API_FESTIVAL, API_VAGAS, apiFestival};
 export default api;
  

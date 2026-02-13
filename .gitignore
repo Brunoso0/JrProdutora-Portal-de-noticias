@@ -25,3 +25,6 @@ yarn-error.log*
 
 NOVA_ESTRUTURA.md
 SISTEMA_VOTACAO_SESSOES.md
+
+
+.env

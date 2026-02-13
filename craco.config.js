@@ -1,4 +1,7 @@
 const path = require("path");
+const webpack = require("webpack");
+
+require("dotenv").config();
 
 module.exports = {
   webpack: {
@@ -12,6 +15,17 @@ module.exports = {
       zlib: "browserify-zlib",
     },
     configure: (webpackConfig) => {
+      const envKeys = ["API_BASE_URL", "API_FESTIVAL", "API_VAGAS"];
+      const definedEnv = envKeys.reduce((acc, key) => {
+        acc[`process.env.${key}`] = JSON.stringify(process.env[key] || "");
+        return acc;
+      }, {});
+
+      webpackConfig.plugins = [
+        ...(webpackConfig.plugins || []),
+        new webpack.DefinePlugin(definedEnv),
+      ];
+
       // Remover o CssMinimizerPlugin para evitar erro de barra
       if (webpackConfig.optimization && webpackConfig.optimization.minimizer) {
         webpackConfig.optimization.minimizer = webpackConfig.optimization.minimizer.filter(

@@ -123,6 +123,7 @@
   },
   "scripts": {
     "start": "craco start",
+    "dev": "cross-env BROWSER=none craco start",
     "build": "craco build && node scripts/copy-htaccess.js",
     "test": "craco test"
   },
@@ -148,6 +149,8 @@
     "@hammaadhrasheedh/editorjs-iframe": "^1.0.21",
     "@tailwindcss/forms": "^0.5.10",
     "@weekwood/editorjs-video": "^1.0.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
     "editorjs-text-color-plugin": "^2.0.4",
     "eslint-config-react-app": "^7.0.1",
     "tailwindcss": "^3.4.17"
