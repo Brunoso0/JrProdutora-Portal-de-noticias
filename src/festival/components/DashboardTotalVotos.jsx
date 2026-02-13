@@ -182,7 +182,7 @@ const DashboardTotalVotos = () => {
         </header>
 
         {/* Filtros */}
-        <section className="tv-filtros card">
+        <section className="tv-filtros total-votos-card">
           <div className="tv-f-grid">
             {/* Seletor de modo */}
             <div className="tv-field">
@@ -258,7 +258,7 @@ const DashboardTotalVotos = () => {
 
         {/* Métricas */}
         <section className="tv-metric-row">
-          <div className="tv-card metric-one card">
+          <div className="tv-card metric-one total-votos-card">
             <div className="metric-label">
               <span className="metric-ico people" />
               Total de Votos no Dia
@@ -268,7 +268,7 @@ const DashboardTotalVotos = () => {
             </div>
           </div>
 
-          <div className="tv-card metric-two card">
+          <div className="tv-card metric-two total-votos-card">
             <div className="metric-two-left">
               <div className="metric-avatar">
                 {maisVotadoPorMinuto?.foto ? (
@@ -302,7 +302,7 @@ const DashboardTotalVotos = () => {
         </section>
 
         {/* Gráfico */}
-        <section className="tv-chart card">
+        <section className="tv-chart total-votos-card">
           <h3>Votos por Minuto</h3>
           <div className="tv-chart-box">
             {votosPorMinuto.length ? (

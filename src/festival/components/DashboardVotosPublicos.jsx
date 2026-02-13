@@ -168,7 +168,7 @@ const DashboardVotosPublicos = () => {
         </header>
 
         {/* Total de votos */}
-        <section className="vp-total card">
+        <section className="vp-total votos-publicos-card">
           <span className="vp-total-label">Total de votos do dia</span>
           <div className="vp-total-value">
             {totalVotos.toLocaleString("pt-BR")}
@@ -189,7 +189,7 @@ const DashboardVotosPublicos = () => {
               const img = fotoUrl(v.foto);
 
               return (
-                <article className="vp-item card" key={v.id || idx}>
+                <article className="vp-item votos-publicos-card" key={v.id || idx}>
                   <div className="vp-rank">{idx + 1}º</div>
 
                   <div className="vp-avatar">

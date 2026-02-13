@@ -69,7 +69,7 @@ const RankingVotos = () => {
         </header>
 
         {/* Filtros */}
-        <section className="rv-filtros card">
+        <section className="rv-filtros ranking-card">
           <div className="rv-f-grid">
             <div className="rv-field">
               <label>Etapa</label>

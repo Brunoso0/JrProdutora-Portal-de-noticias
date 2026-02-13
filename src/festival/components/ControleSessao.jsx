@@ -205,7 +205,7 @@ export default function ControleSessao() {
                         {sessaoAtiva ? '🟢 Votação Ativa' : '🔴 Nenhuma Votação Ativa'}
                     </div>
                     <button 
-                        className="btn btn-secondary"
+                        className="controle-btn btn-secondary"
                         onClick={verificarSessaoAtiva}
                         style={{padding: '5px 10px', fontSize: '12px'}}
                     >
@@ -337,7 +337,7 @@ export default function ControleSessao() {
 
                     <div className="action-buttons">
                         <button 
-                            className="btn btn-danger"
+                            className="controle-btn btn-danger"
                             onClick={handleEncerrarSessao}
                             disabled={isProcessing}
                         >
@@ -345,7 +345,7 @@ export default function ControleSessao() {
                         </button>
                         
                         <button 
-                            className="btn btn-secondary"
+                            className="controle-btn btn-secondary"
                             onClick={verificarSessaoAtiva}
                             disabled={isProcessing}
                         >
@@ -397,7 +397,7 @@ export default function ControleSessao() {
 
                     <div className="action-buttons">
                         <button 
-                            className="btn btn-primary"
+                            className="controle-btn btn-primary"
                             onClick={handleIniciarSessao}
                             disabled={isProcessing || !selectedEtapa || !descricao.trim()}
                         >

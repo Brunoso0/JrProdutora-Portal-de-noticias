@@ -910,7 +910,7 @@ const confirmDelete = (id, type) => {
 
 
       {selectedUser && (
-        <div className="modal">
+        <div className="admin-modal">
           <div className="modal-user-card dark-theme">
             <div className="modal-left">
               <div className="user-profile-pic">
@@ -1203,7 +1203,7 @@ const confirmDelete = (id, type) => {
 
         {/* Modal de edição */}
         {anuncioEditando && (
-          <div className="modal">
+          <div className="admin-modal">
             <div className="modal-content">
               <h3>Editar Anúncio</h3>
 
@@ -1462,7 +1462,7 @@ const confirmDelete = (id, type) => {
           </div>
       </div>
       {showConfirmModal && (
-      <div className="modal">
+      <div className="admin-modal">
         <div className="modal-content">
           <h3>Confirmação</h3>
           <p>Tem certeza de que deseja excluir esta {deleteType === "categoria" ? "categoria" : "programa"}?</p>

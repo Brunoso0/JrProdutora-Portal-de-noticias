@@ -7,7 +7,7 @@ body {
   padding-top: 70px;
 }
 
-.header {
+.portal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -266,7 +266,7 @@ input:not(:placeholder-shown) ~ .reset {
     padding-top: 68px;
   }
 
-  .header {
+  .portal-header {
     padding: 1rem;
   }
 
@@ -295,7 +295,7 @@ input:not(:placeholder-shown) ~ .reset {
     padding-top: 45px;
   }
 
-  .header {
+  .portal-header {
     padding: 0.5rem;
   }
 

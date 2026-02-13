@@ -38,7 +38,7 @@
 .rv-sub { margin-top: 4px; color: #cbb6ff; }
 
 /* ===== Card base (glass) ===== */
-.card {
+.ranking-card {
   background: rgba(0,0,0,.25);
   border: 1px solid rgba(255,255,255,.1);
   border-radius: 16px;

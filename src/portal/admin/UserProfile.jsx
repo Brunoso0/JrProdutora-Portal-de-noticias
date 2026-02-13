@@ -171,26 +171,26 @@ const UserProfile = () => {
             <button className="customize-btn" onClick={openModal}>Customizar</button>
           </aside>
 
-          <div className="card points-card">
+          <div className="user-profile-card points-card">
             <h3>Your points</h3>
             <p className="big-number">{points}</p>
             <button className="info-btn">How to earn more points?</button>
           </div>
 
-          <div className="card level-card">
+          <div className="user-profile-card level-card">
             <h3>My Level</h3>
             <p className="big-number">{level}</p>
             <p className="subtext">2030 to next level</p>
             <progress value="74" max="100"></progress>
           </div>
 
-          <div className="card reward-card">
+          <div className="user-profile-card reward-card">
             <h3>Daily Reward</h3>
             <p>☕ Morning Coffee</p>
             <button className="collect-btn">Collect</button>
           </div>
 
-          <div className="card quests-card">
+          <div className="user-profile-card quests-card">
             <h3>Next Quests</h3>
             <ul>
               <li>Complete a task <span>+20</span></li>
@@ -200,31 +200,31 @@ const UserProfile = () => {
             </ul>
           </div>
 
-          <div className="card trophy-card">
+          <div className="user-profile-card trophy-card">
             <h3>Trophies</h3>
             <img src="/img/trophy.png" alt="Trophy" className="trophy-icon" />
             <p>Kudo Lover</p>
           </div>
 
-          <div className="card stats-card">
+          <div className="user-profile-card stats-card">
             <h3>Global Stats</h3>
             <p className="big-number">345</p>
             <p>Tasks completed</p>
           </div>
 
-          <div className="card tokens-card">
+          <div className="user-profile-card tokens-card">
             <h3>Your Tokens</h3>
             <p className="big-number">{tokens}</p>
             <button className="spend-btn">Spend tokens</button>
           </div>
 
-          <div className="card energy-card">
+          <div className="user-profile-card energy-card">
             <h3>Energy</h3>
             <p className="big-number">{energy}</p>
             <button className="browse-btn">Browse people</button>
           </div>
 
-          <div className="card endorsements-card">
+          <div className="user-profile-card endorsements-card">
             <h3>Recent Endorsements</h3>
             <p>+4 Performance</p>
             <p>+2 Teamwork</p>

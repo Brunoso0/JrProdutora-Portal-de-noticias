@@ -59,28 +59,29 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1100;
 }
 
 .dashboard3-modal-content {
-  background: #272c34;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: #1f2937;
+  border: 1px solid rgba(59, 130, 246, 0.5);
   padding: 15px;
   border-radius: 10px;
   width: 70%;
   height: 85%;
   text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
 .dashboard3-modal-content h2 {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
-  color: azure;
+  color: #60a5fa;
 }
 
 .ds3-chart1 canvas {
@@ -174,11 +175,12 @@
 }
 
 .dashboard3-info-box {
-  background: #67768d;
+  background: #374151;
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   text-align: center;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .dashboard3-charts-grid {
@@ -192,11 +194,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #67768d;
+  background: #374151;
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   text-align: center;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 
@@ -225,7 +228,7 @@
 }
 
 /* Estilo do modal */
-.modal {
+.dashboard-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -235,6 +238,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1100;
 }
 
 .modal-content {
@@ -493,11 +497,12 @@ input[type="month"] {
   width: 100%;
   height: 400px;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.9);
+  background: #374151;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
+  border: 1px solid rgba(59, 130, 246, 0.3);
   justify-content: center;
 }
 

@@ -168,7 +168,7 @@
     margin-top: 20px;
 }
 
-.btn {
+.controle-btn {
     padding: 12px 24px;
     border: none;
     border-radius: 6px;
@@ -182,7 +182,7 @@
     text-decoration: none;
 }
 
-.btn:disabled {
+.controle-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none !important;

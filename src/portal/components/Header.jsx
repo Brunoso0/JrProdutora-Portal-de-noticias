@@ -44,7 +44,7 @@ const Header = () => {
 
   return (
     <div className="header-body">
-    <header className="header">
+    <header className="portal-header">
       <div className="menu">
         <div className="menu-container">
           <div

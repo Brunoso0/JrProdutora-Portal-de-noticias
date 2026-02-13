@@ -606,7 +606,7 @@ const Dashboard = () => {
 
         {/* Modal para visualizar dados detalhados */}
         {openModalId === "noticias-mes" && (
-          <div className="modal">
+          <div className="dashboard-modal">
             <div className="dashboard5-modal-content">
               <h2>📊 Estatísticas por Mês</h2>
                 <label>Escolha o mês:
@@ -775,7 +775,7 @@ const Dashboard = () => {
             </ComposableMap>
             {tooltipContent && <div className="tooltip">{tooltipContent}</div>}
             {selectedCountry && (
-              <div className="modal">
+              <div className="dashboard-modal">
                 <h2>Acessos em {selectedCountry.country}</h2>
                 <ul>
                   {selectedCountry.cidades.map((city, index) => (

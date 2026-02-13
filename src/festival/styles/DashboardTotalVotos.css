@@ -47,7 +47,7 @@
 }
 
 /* ===== Card base (glass) ===== */
-.card {
+.total-votos-card {
   background: rgba(255,255,255,.06);
   border: 1px solid var(--line);
   border-radius: 16px;

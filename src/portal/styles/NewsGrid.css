@@ -45,9 +45,9 @@
 
 .main-article .title_news_main {
     position: absolute;
-    bottom: -19px;
+    bottom: 0;
     width: 100%;
-    padding: 10px 10px 5px 10px;
+    padding: 10px 10px 10px 10px;
     color: white;
     font-weight: 300;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
@@ -97,9 +97,9 @@
 .article .title_news_side {
     position: absolute;
     width: 100%;
-    bottom: -18px;
+    bottom: 0;
     color: white;
-    padding: 10px 10px 5px 10px;
+    padding: 10px 10px 10px 10px;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     background-color: rgba(0, 0, 0, 0.5);

@@ -105,7 +105,7 @@ h1 {
 
 /* Modal de Edição */
 /* Modal Container */
-.modal {
+.admin-modal {
   position: fixed;
   top: 0;
   left: 0;
