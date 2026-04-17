@@ -5,36 +5,25 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import { API_BASE_URL } from './services/api'; // Configuração do Axios
 
-import { AuthProvider } from "./festival/context/AuthContext";
 import { UserProvider } from "./context/UserContext";
-import { SessaoProvider } from "./festival/context/SessaoContext";
 
 import LoginPage from "./portal/pages/LoginPage";
-import LoginFestival from "./festival/pages/LoginFestival";
-import LoginJurados from "./festival/pages/LoginJurados";
-import PainelCandidatos from "./festival/pages/PainelCandidatos";
-import CandidatosFestivalDeMusica from "./festival/pages/candidatosfestivaldemusica";
-import AreaDoCandidato from "./festival/pages/AreaDoCandidato";
 import AdminPage from "./portal/pages/AdminPage";
 import NoticiaPage from "./portal/pages/NoticiaPage";
 import VerTodos from "./portal/pages/VerTudoPage";
-import FestivalMusica from "./festival/pages/FestivalMusica";
-import InscricaoFestival from "./festival/pages/InscricaoFestival";
 
 import ProtectedRoute from "./shared/components/ProtectedRoute";
-import ProtectedRouteJurado from "./festival/components/ProtectedRouteJurado";
-import ProtectedRouteCandidato from "./festival/components/ProtectedRouteCandidato";
-import ProtectedRouteAdminFestival from "./festival/components/ProtectedRouteAdminFestival";
-import PopupClassificatoria from "./festival/components/PopupClassificatoria";
-import PopupCriterios from "./festival/components/PopupCriterios";
-import PopupAvancosPodio from "./festival/components/PopupAvancosPodio";
+import ProtectedRouteCandidato from "./shared/components/ProtectedRouteCandidato";
 
 import CandidaturaVagas from './vagas/pages/CandidaturaVagas';
 import LoginVagas from "./vagas/pages/LoginVagas";
 import ListaCandidatosVagas from "./vagas/pages/ListaCandidatosVagas";
 
 import PublicLayout from "./layouts/PublicLayout";
-
+import FestivalHome from "./festival/pages/FestivalHome";
+import FestivalInscricao from "./festival/pages/FestivalInscricao";
+import LoginCandidato from "./festival/pages/LoginCandidato";
+import CandidateArea from "./festival/pages/CandidateArea";
 
 import "./index.css";
 
@@ -103,32 +92,22 @@ const App = () => {
 
   return (
     <UserProvider>
-      <AuthProvider>
-        <SessaoProvider>
-          <Router>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/loginfestival" element={<LoginFestival />} />
-            <Route path="/loginjurados" element={<LoginJurados />} />
-            <Route path="/candidatosfestivaldemusica" element={<ProtectedRouteJurado><CandidatosFestivalDeMusica /></ProtectedRouteJurado>} />
-            <Route path="/areadocandidato" element={<ProtectedRouteCandidato><AreaDoCandidato /></ProtectedRouteCandidato>} />
-            <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-            <Route path="/painelcandidatos" element={<ProtectedRouteAdminFestival><PainelCandidatos /></ProtectedRouteAdminFestival>} />
-            <Route path="/inscricao-festival" element={<InscricaoFestival />} />
-            <Route path="/festivaldemusica" element={<FestivalMusica />} />
-            <Route path="/noticia/:slug" element={<NoticiaPage />} />
-            <Route path="/ver-todos/:tipo" element={<VerTodos />} />
-            <Route path="/popup-classificatoria" element={<PopupClassificatoria />} />
-            <Route path="/popup-criterios" element={<PopupCriterios />} />
-            <Route path="/popup-avancos-dia" element={<PopupAvancosPodio />} />
-            <Route path="/" element={<PublicLayout />} />
-            <Route path="/vagas" element={<CandidaturaVagas />} />
-            <Route path="/vagas/login" element={<LoginVagas />} />
-            <Route path="/vagas/candidatos" element={<ListaCandidatosVagas />} />
-          </Routes>
-          </Router>
-        </SessaoProvider>
-      </AuthProvider>
+      <Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+        <Route path="/noticia/:slug" element={<NoticiaPage />} />
+        <Route path="/ver-todos/:tipo" element={<VerTodos />} />
+        <Route path="/" element={<PublicLayout />} />
+        <Route path="/vagas" element={<CandidaturaVagas />} />
+        <Route path="/vagas/login" element={<LoginVagas />} />
+        <Route path="/vagas/candidatos" element={<ListaCandidatosVagas />} />
+        <Route path="/festival-forro" element={<FestivalHome />} />
+        <Route path="/festival-forro/inscricao" element={<FestivalInscricao />} />
+        <Route path="/login-candidato" element={<LoginCandidato />} />
+        <Route path="/area-candidato" element={<ProtectedRouteCandidato><CandidateArea /></ProtectedRouteCandidato>} />
+      </Routes>
+      </Router>
     </UserProvider>
   );
 };

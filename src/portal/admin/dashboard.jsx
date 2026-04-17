@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Bar, Line, Pie, Doughnut, PolarArea } from "react-chartjs-2";
 import axios from "axios";
 import { Chart, CategoryScale, LinearScale, LineElement, BarElement, Title, Tooltip, Legend, PointElement, ArcElement, RadialLinearScale  } from "chart.js";
@@ -41,8 +41,6 @@ const Dashboard = () => {
   const [totalPageViews] = useState(15000); // Exemplo fictício de total de páginas vistas
   const [uniqueVisitors] = useState(4000); // Exemplo fictício de visitantes únicos
   const [returningVisitors] = useState(11000); // Exemplo fictício de visitantes retornantes
-  const [prevWeeklyVisits, setPrevWeeklyVisits] = useState(0); // Estado para armazenar o total de visitas da semana anterior
-  const [prevMonthlyVisits, setPrevMonthlyVisits] = useState(0); // Estado para armazenar o total de visitas do mês anterior
   const [newsData, setNewsData] = useState(null); // Dados das notícias do mês
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Inicializa com o mês atual
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Inicializa com o ano atual
@@ -112,7 +110,6 @@ const Dashboard = () => {
         const weeklyResponse = await fetch(`${API_BASE_URL}/admin/weekly-visits`);
         const weeklyData = await weeklyResponse.json();
         if (weeklyData.success) {
-          setPrevWeeklyVisits(weeklyData.data.reduce((sum, item) => sum + item.visits, 0));
           setWeeklyData(weeklyData.data.map(item => ({
             day: diasSemanaPT[item.day] || item.day,
             visits: Number(item.visits),
@@ -123,7 +120,6 @@ const Dashboard = () => {
         const monthlyResponse = await fetch(`${API_BASE_URL}/admin/monthly-yearly-visits`);
         const monthlyData = await monthlyResponse.json();
         if (monthlyData.success) {
-          setPrevMonthlyVisits(monthlyData.data.reduce((sum, item) => sum + item.visits, 0));
           setMonthlyData(monthlyData.data.map(item => ({
             month: item.month,
             visits: Number(item.visits),
@@ -184,48 +180,6 @@ const Dashboard = () => {
   };
   
 
-  const categoriasChartData = {
-    labels: categoriasData.map(categoria => categoria.nome),
-    datasets: [
-      {
-        label: "Visualizações",
-        data: categoriasData.map(categoria => categoria.total_visualizacoes),
-        backgroundColor: "#3b82f6",
-        borderRadius: 6,
-        barThickness: 12, // 🔥 Define um tamanho fixo para evitar expansão
-        
-      },
-      {
-        label: "Notícias",
-        data: categoriasData.map(categoria => categoria.total_noticias),
-        backgroundColor: "#22c55e",
-        color: "#ffffff",
-        borderRadius: 6,
-        barThickness: 12, // 🔥 Define um tamanho fixo para evitar expansão
-      },
-    ],
-  };
-
-  const noticiasChartData = {
-    labels: ["🥇 TOP 1", "🥈 TOP 2", "🥉 TOP 3", "TOP 4", "TOP 5"], // 🔥 Medalhas embutidas diretamente
-    datasets: [
-      {
-        label: "Visualizações",
-        data: noticias.map(noticia => noticia.visualizacoes),
-        backgroundColor: [
-          "rgba(255, 215, 0, 0.6)",   // Ouro 🥇
-          "rgba(192, 192, 192, 0.6)", // Prata 🥈
-          "rgba(205, 127, 50, 0.6)",  // Bronze 🥉
-          "rgba(54, 162, 235, 0.6)",  // 4ª Notícia (oculta na legenda)
-          "rgba(153, 102, 255, 0.6)", // 5ª Notícia (oculta na legenda)
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-  
-  
-
   const legendOptions = {
     plugins: {
       legend: {
@@ -276,48 +230,6 @@ const Dashboard = () => {
 
   const handleCloseModal = () => {
     setOpenModalId(null); // Fecha todos os modais
-  };
-
-  const fetchWeeklyVisits = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/weekly-visits`);
-      const data = await response.json();
-      if (data.success) {
-        // Obtendo o total atual
-        const currentTotal = data.data.reduce((sum, item) => sum + Number(item.visits), 0);
-
-        // Definindo o valor anterior como o valor atual antes da atualização
-        setPrevWeeklyVisits(weeklyData.reduce((sum, item) => sum + item.visits, 0));
-
-        setWeeklyData(data.data.map((item) => ({
-          day: diasSemanaPT[item.day] || item.day,
-          visits: Number(item.visits),
-        })));
-      }
-    } catch (error) {
-      console.error("Erro ao buscar visitas semanais:", error);
-    }
-  };
-
-  const fetchMonthlyYearlyVisits = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/monthly-yearly-visits`);
-      const data = await response.json();
-      if (data.success) {
-        // Obtendo o total atual
-        // const currentTotal = data.data.reduce((sum, item) => sum + Number(item.visits), 0);
-
-        // Definindo o valor anterior como o valor atual antes da atualização
-        setPrevMonthlyVisits(monthlyData.reduce((sum, item) => sum + item.visits, 0));
-
-        setMonthlyData(data.data.map((item) => ({
-          month: item.month,
-          visits: Number(item.visits),
-        })));
-      }
-    } catch (error) {
-      console.error("Erro ao buscar visitas mensais:", error);
-    }
   };
 
   const avgDailyVisits = (weeklyData.reduce((sum, item) => sum + item.visits, 0) / 7).toFixed(2);

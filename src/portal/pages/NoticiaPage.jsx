@@ -5,14 +5,12 @@ import "../styles/NoticiaPage.css";
 import Header from '../components/Header';
 import Navbar from '../components/Navbar';
 import { API_BASE_URL } from '../../services/api';
-import { propaganda } from "../../data/propaganda";
 import Propaganda from "../components/Propaganda";
 
 const NoticiaPage = () => {
   const { slug } = useParams();
   const [noticia, setNoticia] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [adsTopo, setAdsTopo] = useState(null);
   const [adsCorpo, setAdsCorpo] = useState([]);
   const [adsVertical, setAdsVertical] = useState([]);
   const [recomendadas, setRecomendadas] = useState([]);
@@ -29,13 +27,11 @@ const NoticiaPage = () => {
           sessionStorage.setItem(`viewed_${slug}`, "true");
         }
 
-        const [adsTopoRes, adsCorpoRes, adsVerticalRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/anuncios/espaco/horizontal-1/todos`),
+        const [adsCorpoRes, adsVerticalRes] = await Promise.all([
           axios.get(`${API_BASE_URL}/anuncios/espaco/horizontal-2/todos`),
           axios.get(`${API_BASE_URL}/anuncios/espaco/vertical-1/todos`),
         ]);
 
-        setAdsTopo(adsTopoRes.data.sort((a, b) => b.valor - a.valor)[0]);
         setAdsCorpo(adsCorpoRes.data.sort((a, b) => b.valor - a.valor));
         setAdsVertical(adsVerticalRes.data.sort((a, b) => b.valor - a.valor));
 

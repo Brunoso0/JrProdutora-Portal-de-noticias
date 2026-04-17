@@ -1,0 +1,252 @@
+/* src/festival/styles/LoginCandidato.css */
+
+.login-candidato-page {
+  min-height: 100vh;
+  background-color: #F8F6EF;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-candidato-page .bg-shapes {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.login-candidato-page .shape {
+  position: absolute;
+}
+
+.login-candidato-page .shape-top-left-bg {
+  top: 2%;
+  left: 3%;
+  width: 250px;
+  height: 250px;
+  background-color: #E6EAD6;
+  transform: rotate(-30deg);
+  opacity: 0.8;
+  z-index: 1;
+}
+
+.login-candidato-page .shape-top-left {
+  top: 8%;
+  left: 6%;
+  width: 200px;
+  height: 200px;
+  background-color: transparent;
+  border: 1px solid #D1D8C4;
+  transform: rotate(15deg);
+  opacity: 0.6;
+  z-index: 2;
+  background-color: #E9EDDF;
+}
+
+.login-candidato-page .shape-bottom-right {
+  bottom: 8%;
+  right: 5%;
+  width: 280px;
+  height: 280px;
+  background-color: #EBE8E0;
+  transform: rotate(35deg);
+  opacity: 0.9;
+}
+
+.login-candidato-page .login-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  padding: 40px 20px;
+}
+
+.login-candidato-page .login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-candidato-page .icon-wrapper {
+  width: 60px;
+  height: 60px;
+  background-color: #82F282;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px auto;
+  box-shadow: 0 4px 14px rgba(130, 242, 130, 0.4);
+}
+
+.login-candidato-page .music-icon {
+  color: #1A531A;
+}
+
+.login-candidato-page .login-header h1 {
+  color: #007612;
+  font-size: 36px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  letter-spacing: -1px;
+}
+
+.login-candidato-page .login-header p {
+  color: #6B7280;
+  font-size: 15px;
+  margin: 0;
+}
+
+.login-candidato-page .login-card {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+}
+
+.login-candidato-page .input-group {
+  margin-bottom: 24px;
+}
+
+.login-candidato-page .input-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #8C8675;
+  margin-bottom: 8px;
+}
+
+.login-candidato-page .input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-candidato-page .input-icon {
+  position: absolute;
+  left: 16px;
+  color: #9CA3AF;
+}
+
+.login-candidato-page .input-wrapper input {
+  width: 100%;
+  padding: 16px 16px 16px 44px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background-color: #F8F6EF;
+  font-size: 14px;
+  color: #374151;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.login-candidato-page .input-wrapper input::placeholder {
+  color: #A39D90;
+}
+
+.login-candidato-page .input-wrapper input:focus {
+  outline: none;
+  border-color: #007612;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(0, 118, 18, 0.1);
+}
+
+.login-candidato-page .btn-entrar {
+  width: 100%;
+  background-color: #007A19;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 24px;
+}
+
+.login-candidato-page .btn-entrar:hover {
+  background-color: #005a0e;
+}
+
+.login-candidato-page .link-forgot-password {
+  display: block;
+  text-align: center;
+  color: #9C7E3A;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 32px;
+}
+
+.login-candidato-page .link-forgot-password:hover {
+  text-decoration: underline;
+}
+
+.login-candidato-page .divider {
+  height: 1px;
+  background-color: #F8F6EF;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.login-candidato-page .signup-text {
+  text-align: center;
+  font-size: 11px;
+  color: #8C8675;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.login-candidato-page .link-signup {
+  color: #007A19;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-candidato-page .link-signup:hover {
+  text-decoration: underline;
+}
+
+.login-candidato-page .pagination-dots {
+  display: flex;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.login-candidato-page .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.login-candidato-page .dot-yellow { background-color: #D4B01E; opacity: 0.5; }
+.login-candidato-page .dot-green { background-color: #73EA73; opacity: 0.8; }
+.login-candidato-page .dot-blue { background-color: #99C2FF; opacity: 0.7; }
+
+.login-candidato-page .login-footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #8C8675;
+  letter-spacing: 0.5px;
+  border-top: 1px solid #EAE6DD;
+  width: 100%;
+  background-color: #F8F6EF;
+}
+
+@media (max-width: 480px) {
+  .login-candidato-page .login-card {
+    padding: 24px;
+  }
+}

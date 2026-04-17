@@ -4,7 +4,6 @@ import axios from "axios";
 import SectionHeader from "./SectionHeader";
 import "../styles/ThirdGrid.css";
 import Propaganda from "./Propaganda"; // ✅ AQUI
-import PropagandaRotativa from "./PropagandaRotativa";
 
 
 

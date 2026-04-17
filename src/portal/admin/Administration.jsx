@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Bar, Doughnut, Pie } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from "chart.js";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -18,7 +18,6 @@ ChartJS.defaults.color = "#fff";
 const Administration = () => {
   const [approvedUsers, setApprovedUsers] = useState([]); // Usuários liberados
   const [pendingUsers, setPendingUsers] = useState([]); // Usuários pendentes
-  const [message, setMessage] = useState(""); // Mensagem de erro/sucesso
   const [isLoading, setIsLoading] = useState(true); // Carregamento
   const [selectedUser, setSelectedUser] = useState(null); // Modal
   const [userStates, setUserStates] = useState({}); // Estados locais dos usuários
@@ -615,42 +614,6 @@ const handleCreateProgram = async () => {
   }
 };
 
-// Remover Categoria
-const handleDeleteCategory = async (id) => {
-  if (!id) return;
-
-  try {
-    const token = localStorage.getItem("authToken");
-    await axios.delete(`${API_BASE_URL}/noticias/remover-categoria/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    toast.success("✅ Categoria removida com sucesso!");
-    await fetchCategoriesAndPrograms(); // Atualiza a lista
-  } catch (error) {
-    console.error("Erro ao remover categoria:", error.response?.data || error.message);
-    toast.error("❌ Erro ao remover categoria.");
-  }
-};
-
-// Remover Programa
-const handleDeleteProgram = async (id) => {
-  if (!id) return;
-
-  try {
-    const token = localStorage.getItem("authToken");
-    await axios.delete(`${API_BASE_URL}/noticias/remover-programa/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    toast.success("✅ Programa removido com sucesso!");
-    await fetchCategoriesAndPrograms(); // Atualiza a lista
-  } catch (error) {
-    console.error("Erro ao remover programa:", error.response?.data || error.message);
-    toast.error("❌ Erro ao remover programa.");
-  }
-};
-
 const handleDeleteConfirmed = async () => {
   if (!deleteTarget) return;
 
@@ -681,111 +644,6 @@ const confirmDelete = (id, type) => {
   setShowConfirmModal(true);
 };
 
-  
-
-  const handleDrop = async (event, targetColumn) => {
-  event.preventDefault();
-  const user = JSON.parse(event.dataTransfer.getData("user"));
-
-  const token = localStorage.getItem("authToken");
-
-  // Obter IP do usuário
-  let ipOrigem = "IP não identificado";
-  try {
-    const ipRes = await axios.get("https://api.ipify.org?format=json");
-    ipOrigem = ipRes.data.ip;
-  } catch (error) {
-    console.error("Erro ao obter IP:", error.message);
-  }
-
-  if (targetColumn === "approved" && user.nivel_acesso === 0) {
-    await updateUserAccess(user.id, 1);
-    setPendingUsers((prev) => prev.filter((u) => u.id !== user.id));
-    setApprovedUsers((prev) => [...prev, { ...user, nivel_acesso: 1 }]);
-
-    // 🔒 Log de auditoria: aprovação
-    try {
-      await axios.post(
-        `${API_BASE_URL}/auth/drag-drop-auditoria"`,
-        {
-          acao: `Aprovou o usuário ID ${user.id} via drag and drop.`,
-          ip_origem: ipOrigem,
-          alvo_id: user.id // 👈 Aqui
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );      
-    } catch (error) {
-      console.error("Erro ao registrar auditoria:", error.message);
-    }
-
-    // Alerta
-    toast.success(`✅ ${user.nome} foi APROVADO com sucesso!`, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "dark",
-    });
-
-  } else if (targetColumn === "pending" && user.nivel_acesso > 0) {
-    await updateUserAccess(user.id, 0);
-    setApprovedUsers((prev) => prev.filter((u) => u.id !== user.id));
-    setPendingUsers((prev) => [...prev, { ...user, nivel_acesso: 0 }]);
-
-    // 🔒 Log de auditoria: remoção
-    try {
-      await axios.post(
-        `${API_BASE_URL}/auth/drag-drop-auditoria`,
-        {
-          acao: `Removeu o usuário ID ${user.id} da autorização via drag and drop.`,
-          ip_origem: ipOrigem,
-          alvo_id: user.id // 👈 Aqui também
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );           
-    } catch (error) {
-      console.error("Erro ao registrar auditoria:", error.message);
-    }
-
-    // Alerta
-    toast.warn(`⚠️ ${user.nome} foi REMOVIDO da autorização!`, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "dark",
-    });
-  }
-};
-
-  
-
-  const updateUserAccess = async (userId, nivel_acesso) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      await axios.put(
-        `${API_BASE_URL}/auth/update-user`,
-        { userId, nivel_acesso },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setMessage("Usuário atualizado com sucesso!");
-    } catch (error) {
-      console.error(
-        "Erro ao atualizar nível de acesso:",
-        error.response?.data || error.message
-      );
-      setMessage("Erro ao atualizar nível de acesso.");
-    }
-  };
-
   const handleInputChange = (field, value) => {
     setUserStates((prev) => ({
       ...prev,
@@ -797,17 +655,19 @@ const confirmDelete = (id, type) => {
   };
 
   const handleConfirmChanges = async () => {
+    if (!selectedUser) return;
+
     try {
       const token = localStorage.getItem("authToken");
-      const { cargo, programa, nivel_acesso } = userStates[selectedUser.id];
-  
+      const estadoAtual = userStates[selectedUser.id] || {};
+
       await axios.put(
         `${API_BASE_URL}/auth/update-user`,
         {
           userId: selectedUser.id,
-          cargo: cargo || null,
-          programa_id: programa || null,
-          nivel_acesso: nivel_acesso || 0,
+          cargo: estadoAtual.cargo || "",
+          programa: estadoAtual.programa || 0,
+          nivel_acesso: estadoAtual.nivel_acesso || 0,
         },
         {
           headers: {
@@ -815,24 +675,46 @@ const confirmDelete = (id, type) => {
           },
         }
       );
-  
+
+      setApprovedUsers((prev) =>
+        prev.map((user) =>
+          user.id === selectedUser.id
+            ? {
+                ...user,
+                cargo: estadoAtual.cargo || "",
+                programa_id: estadoAtual.programa || 0,
+                nivel_acesso: estadoAtual.nivel_acesso || 0,
+              }
+            : user
+        )
+      );
+
+      setPendingUsers((prev) =>
+        prev.map((user) =>
+          user.id === selectedUser.id
+            ? {
+                ...user,
+                cargo: estadoAtual.cargo || "",
+                programa_id: estadoAtual.programa || 0,
+                nivel_acesso: estadoAtual.nivel_acesso || 0,
+              }
+            : user
+        )
+      );
+
       toast.success(`✅ Dados de ${selectedUser.nome} atualizados com sucesso!`, {
         position: "top-right",
         autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
         theme: "dark",
       });
-  
-      setSelectedUser(null); // Fecha o modal
+
+      setSelectedUser(null);
     } catch (error) {
       console.error(
         "Erro ao atualizar usuário:",
         error.response?.data || error.message
       );
-  
+
       toast.error("❌ Erro ao atualizar os dados do usuário.", {
         position: "top-right",
         autoClose: 4000,

@@ -5,16 +5,10 @@ import "../styles/UserProfile.css";
 import { API_BASE_URL } from '../../services/api'; // Importando o arquivo de configuração do Axios
 
 const UserProfile = () => {
-  const [userData, setUserData] = useState({
-    name: "",
-    profileImage: "",
-    type: "",
-    program: "",
-  });
-  const [points, setPoints] = useState(3456);
-  const [level, setLevel] = useState(80);
-  const [tokens, setTokens] = useState(34);
-  const [energy, setEnergy] = useState(10);
+  const points = 3456;
+  const level = 80;
+  const tokens = 34;
+  const energy = 10;
   const [name, setUserName] = useState("");
   const [nivel_acesso, setUserAccessLevel] = useState(null);
   const [imagePreview, setImagePreview] = useState("/img/user.jpg");
@@ -22,7 +16,6 @@ const UserProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newName, setNewName] = useState(name);
   const [newProfileImage, setNewProfileImage] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
   const [dragging, setDragging] = useState(false);
 
 
@@ -73,13 +66,6 @@ const UserProfile = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
-  const handleImageChange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    setNewProfileImage(file); // ✅ objeto File
-  }
-};
 
   
   const handleDrop = (e) => {

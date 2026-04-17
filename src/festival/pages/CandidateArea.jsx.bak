@@ -1,0 +1,2694 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import {
+  Activity,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Edit3,
+  FileText,
+  Gift,
+  LogOut,
+  MapPin,
+  Menu,
+  Mic2,
+  Music,
+  ShieldCheck,
+  Star,
+  Trophy,
+  User,
+  Users,
+  X
+} from 'lucide-react';
+import '../styles/CandidateArea.css';
+
+const API_FESTIVAL_BASE_URL = process.env.REACT_APP_API_FESTIVAL || 'http://localhost:3015';
+const DEFAULT_USER_IMAGE = '/img/user.jpg';
+
+const PHASE_LABELS = {
+  inscrito: 'Inscrito',
+  inscricao: 'Inscrição',
+  audicao: 'Audição',
+  classificatoria: 'Classificatória',
+  semifinal: 'Semifinal',
+  final: 'Final',
+  vencedor: 'Vencedor',
+  em_espera: 'Em espera'
+};
+
+const STATUS_LABELS = {
+  ativo: 'ATIVO',
+  inscrito: 'INSCRITO',
+  aprovado: 'APROVADO',
+  eliminado: 'ELIMINADO',
+  desistente: 'DESISTENTE',
+  pendente: 'PENDENTE'
+};
+
+const CandidateArea = () => {
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [sessions, setSessions] = useState([]);
+  const [sessionResults, setSessionResults] = useState([]);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isInscricaoModalOpen, setIsInscricaoModalOpen] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+
+  const [editForm, setEditForm] = useState({
+    name: '',
+    artistic_name: '',
+    birth_date: '',
+    address: '',
+    phone: '',
+    song_name: ''
+  });
+  const [editError, setEditError] = useState('');
+  const [selectedPhotoFile, setSelectedPhotoFile] = useState(null);
+  const [photoPreviewUrl, setPhotoPreviewUrl] = useState('');
+
+  const [activeMenu, setActiveMenu] = useState('perfil');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [isLoadingResults, setIsLoadingResults] = useState(false);
+  const [profileError, setProfileError] = useState('');
+  const [resultsError, setResultsError] = useState('');
+  const [profileSuccess, setProfileSuccess] = useState('');
+
+  const resolveProfilePhotoUrl = (photoUrl) => {
+    if (!photoUrl) return DEFAULT_USER_IMAGE;
+
+    if (
+      photoUrl.startsWith('http://') ||
+      photoUrl.startsWith('https://') ||
+      photoUrl.startsWith('data:') ||
+      photoUrl.startsWith('blob:') ||
+      photoUrl.startsWith('/img/')
+    ) {
+      return photoUrl;
+    }
+
+    const normalizedPath = photoUrl.startsWith('/') ? photoUrl : `/${photoUrl}`;
+    return `${API_FESTIVAL_BASE_URL}${normalizedPath}`;
+  };
+
+  const formatSessionDate = (dateValue) => {
+    if (!dateValue) return 'Data não definida';
+
+    const parsedDate = new Date(dateValue);
+    if (Number.isNaN(parsedDate.getTime())) return 'Data não definida';
+
+    return parsedDate.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  const formatSessionTime = (timeValue) => {
+    if (!timeValue) return 'Horário não definido';
+
+    if (typeof timeValue === 'string') {
+      if (/^\d{2}:\d{2}/.test(timeValue)) {
+        return timeValue.slice(0, 5);
+      }
+
+      const parsedDate = new Date(timeValue);
+      if (!Number.isNaN(parsedDate.getTime())) {
+        return parsedDate.toLocaleTimeString('pt-BR', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+
+      return timeValue;
+    }
+
+    return 'Horário não definido';
+  };
+
+  const getCandidateCode = (id) => {
+    if (!id) return '#FORRO-0000';
+    return `#FORRO-${String(id).padStart(4, '0')}`;
+  };
+
+  const calculateAge = (birthDate) => {
+    if (!birthDate) return null;
+
+    const parsedDate = new Date(birthDate);
+    if (Number.isNaN(parsedDate.getTime())) return null;
+
+    const today = new Date();
+    let age = today.getFullYear() - parsedDate.getFullYear();
+    const monthDifference = today.getMonth() - parsedDate.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < parsedDate.getDate())) {
+      age -= 1;
+    }
+
+    return age;
+  };
+
+  const formatInscricaoDate = (dateValue) => {
+    if (!dateValue) return 'Data não disponível';
+
+    const parsedDate = new Date(dateValue);
+    if (Number.isNaN(parsedDate.getTime())) return 'Data não disponível';
+
+    return parsedDate.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  const getPhaseLabel = (phaseValue) => {
+    if (!phaseValue) return 'Etapa não definida';
+
+    const normalized = String(phaseValue).toLowerCase().replace(/\s+/g, '_');
+    return PHASE_LABELS[normalized] || String(phaseValue);
+  };
+
+  const getStatusLabel = (statusValue) => {
+    if (!statusValue) return 'ATIVO';
+
+    const normalized = String(statusValue).toLowerCase().replace(/\s+/g, '_');
+    return STATUS_LABELS[normalized] || String(statusValue).toUpperCase();
+  };
+
+  const formatScoreValue = (value) => {
+    if (value === null || value === undefined || value === '') return '--';
+
+    const numericValue = Number(value);
+    if (Number.isNaN(numericValue)) return String(value);
+
+    return numericValue.toLocaleString('pt-BR', {
+      minimumFractionDigits: numericValue % 1 === 0 ? 0 : 2,
+      maximumFractionDigits: 2
+    });
+  };
+
+  const getPrimaryCandidatePhoto = () => {
+    return resolveProfilePhotoUrl(
+      photoPreviewUrl ||
+      profile?.profile_photo_url ||
+      user?.profile_photo_url ||
+      profile?.avatar ||
+      user?.avatar ||
+      DEFAULT_USER_IMAGE
+    );
+  };
+
+  const openEditModal = () => {
+    const currentName = profile?.name || user?.name || '';
+    const currentArtisticName = profile?.artistic_name || user?.artistic_name || '';
+
+    setEditForm({
+      name: currentName,
+      artistic_name: currentArtisticName,
+      birth_date: profile?.birth_date || '',
+      address: profile?.address || '',
+      phone: profile?.phone || '',
+      song_name: profile?.song_name || ''
+    });
+    setEditError('');
+    setSelectedPhotoFile(null);
+    setPhotoPreviewUrl(getPrimaryCandidatePhoto());
+    setIsEditModalOpen(true);
+    setIsMobileMenuOpen(false);
+    setProfileSuccess('');
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditError('');
+    setSelectedPhotoFile(null);
+    setPhotoPreviewUrl('');
+  };
+
+  const openInscricaoModal = () => {
+    setIsInscricaoModalOpen(true);
+    setIsMobileMenuOpen(false);
+  };
+
+  const closeInscricaoModal = () => {
+    setIsInscricaoModalOpen(false);
+  };
+
+  const openMobileMenu = () => {
+    setIsMobileMenuOpen(true);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleEditInputChange = (event) => {
+    const { name, value } = event.target;
+    setEditForm((current) => ({
+      ...current,
+      [name]: value
+    }));
+  };
+
+  const handlePhotoChange = (event) => {
+    const file = event.target.files && event.target.files[0] ? event.target.files[0] : null;
+
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setSelectedPhotoFile(file);
+      setPhotoPreviewUrl(previewUrl);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsMobileMenuOpen(false);
+    navigate('/login-candidato', { replace: true });
+  };
+
+  const normalizeSessionResults = (payload) => {
+    if (!payload) return [];
+
+    if (Array.isArray(payload.results)) return payload.results;
+    if (Array.isArray(payload.data?.results)) return payload.data.results;
+    if (Array.isArray(payload.data)) return payload.data;
+    if (Array.isArray(payload)) return payload;
+
+    return [payload];
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const bootstrapCandidateArea = async () => {
+      setIsLoadingProfile(true);
+      setIsLoadingResults(false);
+      setProfileError('');
+      setResultsError('');
+      setProfileSuccess('');
+
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      let parsedUser = null;
+
+      if (userData) {
+        try {
+          parsedUser = JSON.parse(userData);
+          if (isMounted) {
+            setUser(parsedUser);
+          }
+        } catch (error) {
+          localStorage.removeItem('user');
+        }
+      }
+
+      if (!token) {
+        navigate('/login-candidato', { replace: true });
+        return;
+      }
+
+      try {
+        const headers = { Authorization: `Bearer ${token}` };
+
+        const [profileResponse, sessionsResponse] = await Promise.allSettled([
+          axios.get(`${API_FESTIVAL_BASE_URL}/api/candidate/me`, { headers }),
+          axios.get(`${API_FESTIVAL_BASE_URL}/api/candidate/sessions`, { headers })
+        ]);
+
+        if (!isMounted) return;
+
+        if (profileResponse.status === 'fulfilled') {
+          const responseProfile = profileResponse.value?.data?.profile || null;
+          const responseUser = profileResponse.value?.data?.user || null;
+
+          if (responseUser) {
+            setUser(responseUser);
+            localStorage.setItem('user', JSON.stringify(responseUser));
+          } else if (parsedUser) {
+            setUser(parsedUser);
+          }
+
+          setProfile(responseProfile);
+        } else {
+          const status = profileResponse.reason?.response?.status;
+          if (status === 401 || status === 403) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            navigate('/login-candidato', { replace: true });
+            return;
+          }
+
+          setProfileError(profileResponse.reason?.response?.data?.message || 'Não foi possível carregar os dados do candidato.');
+          if (parsedUser) {
+            setUser(parsedUser);
+          }
+        }
+
+        let normalizedSessions = [];
+        if (sessionsResponse.status === 'fulfilled') {
+          normalizedSessions = Array.isArray(sessionsResponse.value?.data?.sessions)
+            ? sessionsResponse.value.data.sessions
+            : Array.isArray(sessionsResponse.value?.data)
+              ? sessionsResponse.value.data
+              : [];
+          setSessions(normalizedSessions);
+        } else {
+          const sessionsStatus = sessionsResponse.reason?.response?.status;
+          if (sessionsStatus !== 401 && sessionsStatus !== 403) {
+            setResultsError(sessionsResponse.reason?.response?.data?.message || 'Não foi possível carregar as sessões do candidato.');
+          }
+        }
+
+        const finishedSessions = normalizedSessions.filter((session) => {
+          const sessionStatus = String(session?.session_status || session?.status || '').toLowerCase();
+          return sessionStatus === 'finished' || sessionStatus === 'concluida' || sessionStatus === 'concluído';
+        });
+
+        if (!finishedSessions.length) {
+          setSessionResults([]);
+          return;
+        }
+
+        setIsLoadingResults(true);
+
+        const resultResponses = await Promise.allSettled(
+          finishedSessions.map((session) => axios.get(`${API_FESTIVAL_BASE_URL}/api/candidate/results/${session.id}`, { headers }))
+        );
+
+        if (!isMounted) return;
+
+        const collectedResults = [];
+        let hadResultError = false;
+
+        resultResponses.forEach((resultResponse) => {
+          if (resultResponse.status === 'fulfilled') {
+            collectedResults.push(...normalizeSessionResults(resultResponse.value?.data));
+          } else {
+            hadResultError = true;
+          }
+        });
+
+        setSessionResults(collectedResults);
+
+        if (hadResultError) {
+          setResultsError('Alguns resultados não puderam ser carregados.');
+        }
+      } catch (error) {
+        const status = error?.response?.status;
+        if (status === 401 || status === 403) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          navigate('/login-candidato', { replace: true });
+          return;
+        }
+
+        setProfileError(error?.response?.data?.message || 'Não foi possível carregar os dados do candidato.');
+      } finally {
+        if (isMounted) {
+          setIsLoadingProfile(false);
+          setIsLoadingResults(false);
+        }
+      }
+    };
+
+    bootstrapCandidateArea();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate]);
+
+  useEffect(() => {
+    return () => {
+      if (photoPreviewUrl && photoPreviewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(photoPreviewUrl);
+      }
+    };
+  }, [photoPreviewUrl]);
+
+  const candidateName = profile?.name || user?.name || 'Candidato';
+  const candidateCode = getCandidateCode(profile?.id || user?.id || profile?.user_id || user?.user_id);
+  const candidateStatusValue = profile?.status || profile?.candidate_status || user?.status || 'ativo';
+  const candidateStatusLabel = getStatusLabel(candidateStatusValue);
+  const candidatePhoto = getPrimaryCandidatePhoto();
+  const candidateAge = calculateAge(profile?.birth_date);
+  const registrationDate = formatInscricaoDate(profile?.created_at || user?.created_at);
+
+  const orderedSessions = [...sessions].sort((firstSession, secondSession) => {
+    const firstDate = new Date(`${firstSession?.session_date || ''} ${firstSession?.session_time || ''}`);
+    const secondDate = new Date(`${secondSession?.session_date || ''} ${secondSession?.session_time || ''}`);
+
+    const firstTime = Number.isNaN(firstDate.getTime()) ? 0 : firstDate.getTime();
+    const secondTime = Number.isNaN(secondDate.getTime()) ? 0 : secondDate.getTime();
+
+    return firstTime - secondTime;
+  });
+
+  const nextSession = orderedSessions.find((session) => {
+    const sessionStatus = String(session?.session_status || session?.status || '').toLowerCase();
+    return sessionStatus !== 'finished' && sessionStatus !== 'concluida' && sessionStatus !== 'concluído';
+  }) || orderedSessions[0] || null;
+
+  const finishedSessionsCount = orderedSessions.filter((session) => {
+    const sessionStatus = String(session?.session_status || session?.status || '').toLowerCase();
+    return sessionStatus === 'finished' || sessionStatus === 'concluida' || sessionStatus === 'concluído';
+  }).length;
+
+  const upcomingSessionsCount = orderedSessions.length - finishedSessionsCount;
+
+  const sortedResults = [...sessionResults].sort((firstResult, secondResult) => {
+    const firstSessionId = Number(firstResult?.session?.id || firstResult?.session_id || firstResult?.id || 0);
+    const secondSessionId = Number(secondResult?.session?.id || secondResult?.session_id || secondResult?.id || 0);
+    return secondSessionId - firstSessionId;
+  });
+
+  const resultScores = sortedResults
+    .map((result) => {
+      const scoreValue = result?.effective_score ?? result?.total_score ?? result?.average_score ?? result?.score;
+      const numericScore = Number(scoreValue);
+      return Number.isNaN(numericScore) ? null : numericScore;
+    })
+    .filter((value) => value !== null);
+
+  const averageScore = resultScores.length
+    ? (resultScores.reduce((sum, value) => sum + value, 0) / resultScores.length)
+    : null;
+
+  const candidateMenuItems = [
+    { id: 'perfil', label: 'Perfil', icon: User },
+    { id: 'notas', label: 'Notas', icon: FileText },
+    { id: 'status', label: 'Status Competição', icon: Trophy },
+    { id: 'apresentacao', label: 'Apresentação', icon: Mic2 },
+    { id: 'inscricao', label: 'VER INSCRIÇÃO', icon: Gift, special: true }
+  ];
+
+  const renderProfileView = () => (
+    <div className="content-grid">
+      <section className="perfil-card card">
+        <div className="perfil-header">
+          <ShieldCheck size={18} />
+          <h3>Perfil do Candidato</h3>
+        </div>
+
+        {profileError && <div className="candidate-modal-error" style={{ marginBottom: 12 }}>{profileError}</div>}
+        {profileSuccess && <div className="candidate-modal-help" style={{ marginBottom: 12, color: '#1a6b32' }}>{profileSuccess}</div>}
+
+        <div className="perfil-avatar-container">
+          <div className="perfil-avatar-wrapper">
+            <img
+              src={candidatePhoto}
+              alt="Avatar do candidato"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = DEFAULT_USER_IMAGE;
+              }}
+            />
+            <button type="button" className="edit-btn" onClick={openEditModal} aria-label="Editar perfil">
+              <Edit3 size={14} />
+            </button>
+          </div>
+        </div>
+
+        <div className="score-list">
+          <div className="score-item">
+            <div className="score-info">
+              <h4>{candidateName}</h4>
+              <p>{profile?.artistic_name || user?.artistic_name || 'Nome artístico não informado'}</p>
+            </div>
+            <div className="score-value">
+              <strong>{candidateCode}</strong>
+            </div>
+          </div>
+
+          <div className="score-item">
+            <div className="score-info">
+              <h4>Status</h4>
+              <p>Situação atual da candidatura no festival</p>
+            </div>
+            <div className="score-value">
+              <strong>{candidateStatusLabel}</strong>
+            </div>
+          </div>
+
+          <div className="score-item">
+            <div className="score-info">
+              <h4>Idade</h4>
+              <p>Calculada a partir da data de nascimento</p>
+            </div>
+            <div className="score-value">
+              <strong>{candidateAge !== null ? candidateAge : '--'}</strong>
+              <span>anos</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="desempenho-divider"></div>
+
+        <div className="media-final-area">
+          <span>Canção inscrita</span>
+          <div className="media-bar-container">
+            <div className="media-bar-fill" style={{ width: '100%' }}></div>
+          </div>
+          <div className="media-final-score" style={{ fontSize: 18 }}>
+            {profile?.song_name || 'Não informada'}
+          </div>
+        </div>
+
+        <button type="button" className="btn-green-full" onClick={openEditModal}>
+          Editar perfil
+        </button>
+      </section>
+
+      <div className="right-column">
+        <section className="apresentacao-card">
+          <h4>Resumo da participação</h4>
+          <div className="apresentacao-icon-row">
+            <Music size={18} />
+            <span>{profile?.song_name || 'Música não informada'}</span>
+          </div>
+          <div className="apresentacao-icon-row">
+            <Calendar size={18} />
+            <span>{registrationDate}</span>
+          </div>
+          <div className="apresentacao-icon-row">
+            <Clock size={18} />
+            <span>{nextSession ? `${formatSessionDate(nextSession.session_date)} às ${formatSessionTime(nextSession.session_time)}` : 'Agenda em definição'}</span>
+          </div>
+
+          <div className="palco-info">
+            <span>Próxima fase</span>
+            <strong>{nextSession ? getPhaseLabel(nextSession.phase || nextSession.session_phase || nextSession.stage) : 'Aguardando definição'}</strong>
+          </div>
+        </section>
+
+        <section className="status-card active-status">
+          <div className="status-icon-circle">
+            <CheckCircle size={24} />
+          </div>
+          <div className="status-info">
+            <h5>Cadastro</h5>
+            <h4>Concluído</h4>
+            <p>Seu cadastro está disponível para consulta, edição e acompanhamento das próximas etapas.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+
+  const renderNotasView = () => (
+    <div className="notas-container">
+      <div className="status-comp-header">
+        <div className="status-comp-title">
+          <h2>Notas</h2>
+          <p>Acompanhe aqui os resultados das sessões já concluídas. Quando a banca publicar novas notas, elas aparecem nesta área.</p>
+        </div>
+
+        <div className="status-comp-badge-card">
+          <div className="badge-icon">
+            <Star size={18} />
+          </div>
+          <div className="badge-info">
+            <span>MÉDIA GERAL</span>
+            <strong>{averageScore !== null ? formatScoreValue(averageScore) : '--'}</strong>
+          </div>
+        </div>
+      </div>
+
+      {resultsError && <div className="candidate-modal-error">{resultsError}</div>}
+
+      {isLoadingResults ? (
+        <div className="apresentacao-empty-state">
+          <div className="empty-state-icon">
+            <Activity size={44} />
+          </div>
+          <h3>Carregando resultados</h3>
+          <p>Estamos buscando as notas publicadas para as sessões concluídas.</p>
+        </div>
+      ) : sortedResults.length ? (
+        <div className="apresentacao-checklist">
+          <h4>Resultados por sessão</h4>
+          <div className="checklist-items">
+            {sortedResults.map((result, index) => {
+              const session = result?.session || result?.session_data || result?.sessionInfo || null;
+              const sessionLabel = getPhaseLabel(result?.phase || session?.phase || session?.session_phase || `Sessão ${index + 1}`);
+              const sessionDate = formatSessionDate(session?.session_date || result?.session_date || result?.date);
+              const sessionTime = formatSessionTime(session?.session_time || result?.session_time || result?.time);
+              const placeLabel = session?.location || result?.location || 'Local não informado';
+              const totalScore = result?.effective_score ?? result?.total_score ?? result?.average_score ?? result?.score;
+              const manualAdjustment = result?.manual_adjustment ?? result?.adjustment;
+
+              return (
+                <div className="checklist-item" key={`${session?.id || result?.session_id || index}`}>
+                  <div className="checklist-checkbox">
+                    <CheckCircle size={20} />
+                  </div>
+                  <div className="checklist-text">
+                    <span>{sessionLabel}</span>
+                    <p>
+                      {sessionDate} • {sessionTime} • {placeLabel}
+                    </p>
+                    <p>
+                      Pontuação final: {formatScoreValue(totalScore)}
+                      {manualAdjustment !== undefined && manualAdjustment !== null && manualAdjustment !== '' ? ` • Ajuste: ${formatScoreValue(manualAdjustment)}` : ''}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <div className="apresentacao-empty-state">
+          <div className="empty-state-icon">
+            <Trophy size={44} />
+          </div>
+          <h3>Sem notas disponíveis</h3>
+          <p>As notas das sessões finalizadas serão exibidas aqui assim que a organização publicar os resultados.</p>
+          <p className="empty-state-info">Total de sessões concluídas: {finishedSessionsCount}</p>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderStatusView = () => (
+    <div className="status-comp-container">
+      <div className="status-comp-header">
+        <div className="status-comp-title">
+          <h2>Status Competição</h2>
+          <p>Veja a situação atual da sua candidatura, as próximas etapas do festival e o histórico das sessões já realizadas.</p>
+        </div>
+
+        <div className="status-comp-badge-card">
+          <div className="badge-icon">
+            <Trophy size={18} />
+          </div>
+          <div className="badge-info">
+            <span>STATUS ATUAL</span>
+            <strong>{candidateStatusLabel}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div className="status-comp-body">
+        <section className="status-timeline-card">
+          <div className="timeline-header">
+            <Users size={18} />
+            <h3>Linha do tempo</h3>
+          </div>
+
+          {orderedSessions.length ? (
+            <div className="timeline-container">
+              {orderedSessions.map((session, index) => {
+                const isFinished = String(session?.session_status || session?.status || '').toLowerCase() === 'finished';
+                const sessionPhase = getPhaseLabel(session?.phase || session?.session_phase || session?.stage || `Sessão ${index + 1}`);
+                const sessionLocation = session?.location || 'Local não informado';
+
+                return (
+                  <div className="timeline-item" key={session?.id || `${sessionPhase}-${index}`}>
+                    <div className={`timeline-marker ${isFinished ? 'concluded' : 'next'}`}>
+                      {isFinished ? <CheckCircle size={16} /> : <Clock size={14} />}
+                    </div>
+                    {index < orderedSessions.length - 1 && <div className="timeline-line"></div>}
+                    <div className={`timeline-content ${isFinished ? 'concluded-card' : 'next-card'}`}>
+                      <span className={`step-status ${isFinished ? '' : 'next-status'}`}>
+                        {isFinished ? 'CONCLUÍDA' : 'PRÓXIMA ETAPA'}
+                      </span>
+                      <h4>{sessionPhase}</h4>
+                      <p>
+                        {formatSessionDate(session?.session_date)} às {formatSessionTime(session?.session_time)} • {sessionLocation}
+                      </p>
+                      <span className={`step-date ${isFinished ? '' : 'next-date'}`}>
+                        <Calendar size={12} />
+                        {isFinished ? 'Sessão realizada' : 'Sessão agendada'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="apresentacao-empty-state" style={{ marginTop: 0 }}>
+              <div className="empty-state-icon">
+                <Activity size={44} />
+              </div>
+              <h3>Ainda não há sessões cadastradas</h3>
+              <p>Quando a equipe do festival publicar a agenda, ela aparecerá aqui automaticamente.</p>
+            </div>
+          )}
+        </section>
+
+        <div className="status-right-column">
+          <section className="status-cards-row">
+            <div className="status-card active-status">
+              <div className="status-icon-circle">
+                <CheckCircle size={24} />
+              </div>
+              <div className="status-info">
+                <h5>Concluídas</h5>
+                <h4>{finishedSessionsCount}</h4>
+                <p>Sessões já encerradas no seu histórico.</p>
+              </div>
+            </div>
+
+            <div className="status-card eliminated-status">
+              <div className="status-icon-circle">
+                <Activity size={24} />
+              </div>
+              <div className="status-info">
+                <h5>Próximas</h5>
+                <h4>{upcomingSessionsCount}</h4>
+                <p>Sessões ainda pendentes na agenda do candidato.</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="duvidas-card">
+            <div className="duvidas-text">
+              <h3>Precisa de apoio?</h3>
+              <p>Se os dados exibidos não refletirem a sua situação atual, revise o perfil e entre em contato com a organização do festival.</p>
+            </div>
+            <button type="button" className="btn-white" onClick={openEditModal}>
+              Revisar perfil
+            </button>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderApresentacaoView = () => {
+    const hasPresentationData = Boolean(nextSession || profile?.song_name || orderedSessions.length);
+
+    return (
+      <div className="apresentacao-container">
+        <div className="apresentacao-header">
+          <h2>Apresentação</h2>
+          <p>Organize sua preparação para o palco com os dados da inscrição, a música selecionada e a agenda das próximas etapas.</p>
+        </div>
+
+        <div className="apresentacao-content">
+          {!hasPresentationData ? (
+            <div className="apresentacao-empty-state">
+              <div className="empty-state-icon">
+                <Mic2 size={48} />
+              </div>
+              <h3>Sem informações de apresentação</h3>
+              <p>Assim que houver uma sessão programada, as orientações e os horários aparecerão nesta área.</p>
+              <p className="empty-state-info">Atualize seu perfil se alguma informação estiver incorreta.</p>
+            </div>
+          ) : (
+            <>
+              <div className="apresentacao-info-card">
+                <div className="info-card-icon">
+                  <Mic2 size={28} />
+                </div>
+                <div className="info-card-content">
+                  <h5>Sua apresentação atual</h5>
+                  <p>
+                    {profile?.song_name || 'Canção não informada'}
+                    {nextSession
+                      ? ` | ${getPhaseLabel(nextSession.phase || nextSession.session_phase || nextSession.stage)} em ${formatSessionDate(nextSession.session_date)} às ${formatSessionTime(nextSession.session_time)}`
+                      : ''}
+                  </p>
+                </div>
+              </div>
+
+              <div className="apresentacao-checklist">
+                <h4>Checklist do candidato</h4>
+                <div className="checklist-items">
+                  <div className="checklist-item">
+                    <div className="checklist-checkbox">
+                      <Music size={18} />
+                    </div>
+                    <div className="checklist-text">
+                      <span>Música principal</span>
+                      <p>{profile?.song_name || 'Não informada no perfil'}</p>
+                    </div>
+                  </div>
+
+                  <div className="checklist-item">
+                    <div className="checklist-checkbox">
+                      <Calendar size={18} />
+                    </div>
+                    <div className="checklist-text">
+                      <span>Próxima data</span>
+                      <p>{nextSession ? formatSessionDate(nextSession.session_date) : 'Aguardando definição da organização'}</p>
+                    </div>
+                  </div>
+
+                  <div className="checklist-item">
+                    <div className="checklist-checkbox">
+                      <Clock size={18} />
+                    </div>
+                    <div className="checklist-text">
+                      <span>Horário estimado</span>
+                      <p>{nextSession ? formatSessionTime(nextSession.session_time) : 'Aguardando definição da organização'}</p>
+                    </div>
+                  </div>
+
+                  <div className="checklist-item">
+                    <div className="checklist-checkbox">
+                      <MapPin size={18} />
+                    </div>
+                    <div className="checklist-text">
+                      <span>Local</span>
+                      <p>{nextSession?.location || 'Aguardando definição da organização'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderMainContent = () => {
+    if (isLoadingProfile) {
+      return (
+        <div className="apresentacao-empty-state" style={{ margin: '30px 40px' }}>
+          <div className="empty-state-icon">
+            <Activity size={48} />
+          </div>
+          <h3>Carregando área do candidato</h3>
+          <p>Estamos recuperando seu perfil, suas sessões e os resultados já publicados.</p>
+        </div>
+      );
+    }
+
+    if (activeMenu === 'notas') return renderNotasView();
+    if (activeMenu === 'status') return renderStatusView();
+    if (activeMenu === 'apresentacao') return renderApresentacaoView();
+    return renderProfileView();
+  };
+
+  const handleEditSubmit = async (event) => {
+    event.preventDefault();
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      handleLogout();
+      return;
+    }
+
+    if (!editForm.name.trim()) {
+      setEditError('Informe o nome do candidato.');
+      return;
+    }
+
+    if (!editForm.artistic_name.trim()) {
+      setEditError('Informe o nome artístico.');
+      return;
+    }
+
+    setIsSavingProfile(true);
+    setEditError('');
+
+    try {
+      const headers = {
+        Authorization: `Bearer ${token}`
+      };
+
+      let uploadedPhotoReference = '';
+
+      if (selectedPhotoFile) {
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', selectedPhotoFile);
+
+        const uploadResponse = await axios.post(
+          `${API_FESTIVAL_BASE_URL}/api/uploads/imagens`,
+          uploadFormData,
+          {
+            headers: {
+              ...headers,
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+        );
+
+        const uploadData = uploadResponse?.data;
+        uploadedPhotoReference =
+          uploadData?.fileReference ||
+          uploadData?.reference ||
+          uploadData?.path ||
+          uploadData?.file_path ||
+          uploadData?.file_url ||
+          uploadData?.url ||
+          uploadData?.data?.fileReference ||
+          uploadData?.data?.path ||
+          uploadData?.data?.url ||
+          '';
+      }
+
+      const payload = {
+        name: editForm.name.trim(),
+        artistic_name: editForm.artistic_name.trim(),
+        birth_date: editForm.birth_date || '',
+        address: editForm.address.trim(),
+        phone: editForm.phone.trim(),
+        song_name: editForm.song_name.trim()
+      };
+
+      if (uploadedPhotoReference) {
+        payload.profile_photo_url = uploadedPhotoReference;
+      }
+
+      const response = await axios.patch(`${API_FESTIVAL_BASE_URL}/api/candidate/me`, payload, { headers });
+      const updatedProfile = response?.data?.profile || response?.data?.candidate || response?.data || null;
+      const updatedUser = response?.data?.user || response?.data?.candidate_user || null;
+
+      if (updatedProfile) {
+        setProfile(updatedProfile);
+      } else {
+        setProfile((current) => ({ ...(current || {}), ...payload }));
+      }
+
+      if (updatedUser) {
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      } else {
+        const mergedUser = {
+          ...(user || {}),
+          name: payload.name,
+          artistic_name: payload.artistic_name,
+          profile_photo_url: uploadedPhotoReference || user?.profile_photo_url || profile?.profile_photo_url
+        };
+        setUser(mergedUser);
+        localStorage.setItem('user', JSON.stringify(mergedUser));
+      }
+
+      if (payload.profile_photo_url) {
+        setPhotoPreviewUrl(resolveProfilePhotoUrl(payload.profile_photo_url));
+      }
+
+      setProfileSuccess(response?.data?.message || 'Perfil atualizado com sucesso.');
+      closeEditModal();
+    } catch (error) {
+      const status = error?.response?.status;
+      if (status === 401 || status === 403) {
+        handleLogout();
+        return;
+      }
+
+      setEditError(error?.response?.data?.message || 'Não foi possível atualizar o perfil.');
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
+
+  return (
+    <div className="candidate-area-page">
+      <div className="candidate-layout">
+        {isMobileMenuOpen && <button type="button" className="candidate-sidebar-backdrop" onClick={closeMobileMenu} aria-label="Fechar menu" />}
+
+        <aside className={`candidate-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+          <div className="sidebar-logo">
+            <h1>Festival de Forró</h1>
+            <p>Área do Candidato</p>
+          </div>
+
+          <div className="sidebar-divider"></div>
+
+          <div className="sidebar-user-mini">
+            <img
+              className="mini-avatar"
+              src={candidatePhoto}
+              alt="Avatar do candidato"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = DEFAULT_USER_IMAGE;
+              }}
+            />
+            <div className="mini-info">
+              <h4>{candidateName}</h4>
+              <span>{candidateCode}</span>
+            </div>
+          </div>
+
+          <nav className="sidebar-nav">
+            {candidateMenuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeMenu === item.id;
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`nav-item ${isActive ? 'active' : ''}`}
+                  onClick={() => {
+                    if (item.id === 'inscricao') {
+                      openInscricaoModal();
+                      return;
+                    }
+
+                    setActiveMenu(item.id);
+                    closeMobileMenu();
+                  }}
+                >
+                  <Icon size={16} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="sidebar-bottom">
+            <button type="button" className="btn-yellow" onClick={openEditModal}>
+              Editar Perfil
+            </button>
+            <button type="button" className="bottom-link red" onClick={handleLogout}>
+              <LogOut size={14} />
+              Sair
+            </button>
+          </div>
+        </aside>
+
+        <main className="candidate-main">
+          <div className="main-header">
+            <div className="header-top">
+              <div className="header-title-area">
+                <h2>Área do Candidato</h2>
+                <p>Acompanhe sua inscrição, resultados e próximos passos no festival.</p>
+              </div>
+
+              <div className="header-actions">
+                <button type="button" className="mobile-menu-btn" onClick={openMobileMenu} aria-label="Abrir menu">
+                  <Menu size={20} />
+                </button>
+
+                <div className="status-badge-container">
+                  <span className="status-badge">{candidateStatusLabel}</span>
+                  <span className="fase-text">{nextSession ? getPhaseLabel(nextSession.phase || nextSession.session_phase || nextSession.stage) : 'Agenda pendente'}</span>
+                </div>
+
+                <button type="button" className="bell-btn" onClick={openInscricaoModal} aria-label="Ver inscrição">
+                  <Gift size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="main-divider"></div>
+
+          {profileError && !isLoadingProfile && (
+            <div style={{ margin: '20px 40px 0', color: '#b91c1c', fontWeight: 600 }}>
+              {profileError}
+            </div>
+          )}
+
+          {profileSuccess && !isEditModalOpen && (
+            <div style={{ margin: '20px 40px 0', color: '#1a6b32', fontWeight: 600 }}>
+              {profileSuccess}
+            </div>
+          )}
+
+          {renderMainContent()}
+
+          <footer className="site-footer">
+            <div className="footer-diamonds">
+              <span className="diamond green"></span>
+              <span className="diamond yellow"></span>
+              <span className="diamond blue"></span>
+              <span className="diamond red"></span>
+            </div>
+            <h3>Festival de Forró</h3>
+            <p>O Coração do Nordeste</p>
+            <div className="footer-links">
+              <button type="button" onClick={openInscricaoModal}>Ver inscrição</button>
+              <button type="button" onClick={openEditModal}>Editar perfil</button>
+              <button type="button" onClick={handleLogout}>Sair</button>
+            </div>
+          </footer>
+        </main>
+
+        {isEditModalOpen && (
+          <div className="candidate-modal-overlay" onClick={closeEditModal}>
+            <div className="candidate-modal" onClick={(event) => event.stopPropagation()}>
+              <div className="candidate-modal-header">
+                <h3>Editar perfil</h3>
+                <button type="button" className="candidate-modal-close" onClick={closeEditModal} aria-label="Fechar modal">
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="candidate-photo-preview-row">
+                <img
+                  className="candidate-photo-preview"
+                  src={photoPreviewUrl || candidatePhoto}
+                  alt="Pré-visualização do candidato"
+                  onError={(event) => {
+                    event.currentTarget.onerror = null;
+                    event.currentTarget.src = DEFAULT_USER_IMAGE;
+                  }}
+                />
+                <div>
+                  <strong>{candidateName}</strong>
+                  <p>Atualize sua foto e revise os dados principais antes de salvar.</p>
+                  <label className="candidate-photo-upload-button" htmlFor="candidate-photo-upload">
+                    Alterar foto
+                  </label>
+                  <input
+                    id="candidate-photo-upload"
+                    type="file"
+                    accept="image/*"
+                    className="candidate-photo-upload-input"
+                    onChange={handlePhotoChange}
+                  />
+                </div>
+              </div>
+
+              <form className="candidate-modal-form" onSubmit={handleEditSubmit}>
+                <div className="candidate-modal-grid">
+                  <div className="candidate-modal-field">
+                    <label htmlFor="edit-name">Nome</label>
+                    <input id="edit-name" name="name" type="text" value={editForm.name} onChange={handleEditInputChange} placeholder="Nome completo" />
+                  </div>
+
+                  <div className="candidate-modal-field">
+                    <label htmlFor="edit-artistic-name">Nome artístico</label>
+                    <input id="edit-artistic-name" name="artistic_name" type="text" value={editForm.artistic_name} onChange={handleEditInputChange} placeholder="Nome artístico" />
+                  </div>
+
+                  <div className="candidate-modal-field">
+                    <label htmlFor="edit-birth-date">Data de nascimento</label>
+                    <input id="edit-birth-date" name="birth_date" type="date" value={editForm.birth_date} onChange={handleEditInputChange} />
+                  </div>
+
+                  <div className="candidate-modal-field">
+                    <label htmlFor="edit-phone">Telefone</label>
+                    <input id="edit-phone" name="phone" type="text" value={editForm.phone} onChange={handleEditInputChange} placeholder="(00) 00000-0000" />
+                  </div>
+
+                  <div className="candidate-modal-field candidate-modal-field-full">
+                    <label htmlFor="edit-address">Endereço</label>
+                    <input id="edit-address" name="address" type="text" value={editForm.address} onChange={handleEditInputChange} placeholder="Endereço completo" />
+                  </div>
+
+                  <div className="candidate-modal-field candidate-modal-field-full">
+                    <label htmlFor="edit-song-name">Música apresentada</label>
+                    <input id="edit-song-name" name="song_name" type="text" value={editForm.song_name} onChange={handleEditInputChange} placeholder="Nome da música" />
+                  </div>
+                </div>
+
+                {editError && <div className="candidate-modal-error">{editError}</div>}
+
+                <div className="candidate-modal-actions">
+                  <button type="button" className="candidate-modal-cancel" onClick={closeEditModal} disabled={isSavingProfile}>
+                    Cancelar
+                  </button>
+                  <button type="submit" className="candidate-modal-save" disabled={isSavingProfile}>
+                    {isSavingProfile ? 'Salvando...' : 'Salvar alterações'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {isInscricaoModalOpen && (
+          <div className="inscricao-modal-overlay" onClick={closeInscricaoModal}>
+            <div className="inscricao-modal" onClick={(event) => event.stopPropagation()}>
+              <button type="button" className="inscricao-modal-close" onClick={closeInscricaoModal} aria-label="Fechar inscrição">
+                <X size={20} />
+              </button>
+
+              <div className="inscricao-card">
+                <div className="inscricao-photo">
+                  <img
+                    src={candidatePhoto}
+                    alt="Candidato"
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = DEFAULT_USER_IMAGE;
+                    }}
+                  />
+                </div>
+
+                <h2>{candidateName}</h2>
+
+                <div className="inscricao-details">
+                  {candidateAge !== null && (
+                    <div className="detail-item">
+                      <span className="detail-label">Idade</span>
+                      <span className="detail-value">{candidateAge} anos</span>
+                    </div>
+                  )}
+
+                  <div className="detail-item">
+                    <span className="detail-label">Data da Inscrição</span>
+                    <span className="detail-value">{registrationDate}</span>
+                  </div>
+                </div>
+
+                <div className="inscricao-message">
+                  <p>
+                    Obrigado por participar do Festival de Forró! Sua inscrição foi confirmada com sucesso.
+                    Desejamos uma ótima apresentação e muito sucesso em cada etapa da competição.
+                  </p>
+                </div>
+
+                <div className="inscricao-logos">
+                  <div className="logo-placeholder">
+                    <p>Logo da Prefeitura</p>
+                  </div>
+                  <div className="logo-placeholder">
+                    <p>Logo do Festival</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CandidateArea;import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { Bell, Menu, User, Star, Trophy, Mic2, FileText, Settings, LogOut, Edit3, Calendar, Clock, Check, X, TrendingUp, Download, CheckCircle, Activity, Music, Shirt, Map, Users, Gift } from 'lucide-react';
+import '../styles/CandidateArea.css';
+
+const CandidateArea = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [sessions, setSessions] = useState([]);
+  const [sessionResults, setSessionResults] = useState([]);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [isLoadingResults, setIsLoadingResults] = useState(false);
+  const [profileError, setProfileError] = useState('');
+  const [resultsError, setResultsError] = useState('');
+  const [profileSuccess, setProfileSuccess] = useState('');
+  const [activeMenu, setActiveMenu] = useState('perfil');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [editError, setEditError] = useState('');
+  const [selectedPhotoFile, setSelectedPhotoFile] = useState(null);
+  const [photoPreviewUrl, setPhotoPreviewUrl] = useState('');
+  const [editForm, setEditForm] = useState({
+    name: '',
+    artistic_name: '',
+    birth_date: '',
+    address: '',
+    phone: '',
+    song_name: ''
+  });
+  const [isInscricaoModalOpen, setIsInscricaoModalOpen] = useState(false);
+  const API_FESTIVAL_BASE_URL = process.env.REACT_APP_API_FESTIVAL || 'http://localhost:3015';
+  const DEFAULT_USER_IMAGE = '/img/user.jpg';
+
+  const PHASE_LABELS = {
+    inscrito: 'Inscrito',
+    audicao: 'Audição',
+    final: 'Final',
+    vencedor: 'Vencedor'
+  };
+
+  const STATUS_LABELS = {
+    ativo: 'ATIVO',
+    eliminado: 'ELIMINADO',
+    desistente: 'DESISTENTE'
+  };
+
+  const formatSessionDate = (dateValue) => {
+    if (!dateValue) return 'Data não definida';
+    const parsed = new Date(dateValue);
+    if (Number.isNaN(parsed.getTime())) return 'Data não definida';
+    return parsed.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  const formatSessionTime = (timeValue) => {
+    if (!timeValue) return 'Horário não definido';
+    if (typeof timeValue === 'string') return timeValue.slice(0, 5);
+    return 'Horário não definido';
+  };
+
+  const getCandidateCode = (id) => {
+    if (!id) return '#FORRO-----';
+    return `#FORRO-${String(id).padStart(4, '0')}`;
+  };
+
+  const resolveProfilePhotoUrl = (photoUrl) => {
+    if (!photoUrl) return DEFAULT_USER_IMAGE;
+
+    if (
+      photoUrl.startsWith('http://') ||
+      photoUrl.startsWith('https://') ||
+      photoUrl.startsWith('data:') ||
+      photoUrl.startsWith('blob:') ||
+      photoUrl.startsWith('/img/')
+    ) {
+      return photoUrl;
+    }
+
+    const normalizedPath = photoUrl.startsWith('/') ? photoUrl : `/${photoUrl}`;
+    return `${API_FESTIVAL_BASE_URL}${normalizedPath}`;
+  };
+
+  useEffect(() => {
+    const bootstrapCandidateArea = async () => {
+      setIsLoadingProfile(true);
+      setIsLoadingResults(false);
+      setProfileError('');
+      setResultsError('');
+      setProfileSuccess('');
+
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      let parsedUser = null;
+
+      if (userData) {
+        try {
+          parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+        } catch (error) {
+          localStorage.removeItem('user');
+        }
+      }
+
+      if (!token) {
+        navigate('/login-candidato');
+        return;
+      }
+
+      try {
+        const [profileResponse, sessionsResponse] = await Promise.all([
+          axios.get(`${API_FESTIVAL_BASE_URL}/api/candidate/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          axios.get(`${API_FESTIVAL_BASE_URL}/api/candidate/sessions`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+        ]);
+
+        if (profileResponse?.data?.user) {
+          setUser(profileResponse.data.user);
+          localStorage.setItem('user', JSON.stringify(profileResponse.data.user));
+        } else if (parsedUser) {
+          setUser(parsedUser);
+        }
+
+        const normalizedSessions = Array.isArray(sessionsResponse?.data?.sessions) ? sessionsResponse.data.sessions : [];
+
+        setProfile(profileResponse?.data?.profile || null);
+        setSessions(normalizedSessions);
+
+        const finishedSessions = normalizedSessions.filter((session) => session.session_status === 'finished');
+        if (!finishedSessions.length) {
+          setSessionResults([]);
+        } else {
+          setIsLoadingResults(true);
+
+          try {
+            const resultResponses = await Promise.all(
+              finishedSessions.map(async (session) => {
+                try {
+                  const response = await axios.get(`${API_FESTIVAL_BASE_URL}/api/candidate/results/${session.id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                  });
+
+                  return response?.data || null;
+                } catch (error) {
+                  return null;
+                }
+              })
+            );
+
+            setSessionResults(resultResponses.filter(Boolean));
+          } catch (error) {
+            setResultsError('Não foi possível carregar os resultados das sessões finalizadas.');
+            setSessionResults([]);
+          } finally {
+            setIsLoadingResults(false);
+          }
+        }
+      } catch (error) {
+        const status = error?.response?.status;
+        if (status === 401 || status === 403) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          navigate('/login-candidato');
+          return;
+        }
+
+        setProfileError(error?.response?.data?.message || 'Não foi possível carregar os dados do candidato.');
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+          </footer>
+
+        </main>
+
+        {isInscricaoModalOpen && (
+          <div className="inscricao-modal-overlay" onClick={closeInscricaoModal}>
+            <div className="inscricao-modal" onClick={(event) => event.stopPropagation()}>
+              <button type="button" className="inscricao-modal-close" onClick={closeInscricaoModal}>
+                <X size={20} />
+              </button>
+
+              <div className="inscricao-card">
+                <div className="inscricao-photo">
+                  <img 
+                    src={profilePhoto}
+                    alt="Candidato" 
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = DEFAULT_USER_IMAGE;
+                    }}
+                  />
+                </div>
+
+                <div className="inscricao-content">
+                  <h2>{user?.name}</h2>
+                  
+                  <div className="inscricao-details">
+                    {calculateAge(profile?.birth_date) && (
+                      <div className="detail-item">
+                        <span className="detail-label">Idade</span>
+                        <span className="detail-value">{calculateAge(profile?.birth_date)} anos</span>
+                      </div>
+                    )}
+                    <div className="detail-item">
+                      <span className="detail-label">Data da Inscrição</span>
+                      <span className="detail-value">{formatInscricaoDate(user?.created_at)}</span>
+                    </div>
+                  </div>
+
+                  <div className="inscricao-message">
+                    <p>
+                      Obrigado por participar do Festival de Forró! Sua inscrição foi confirmada com sucesso. 
+                      Desejamos muito sucesso em sua apresentação e que você vivencie a magia da cultura nordestina 
+                      junto a todos os fãs do forró que estarão torcendo por você.
+                    </p>
+                  </div>
+
+                  <div className="inscricao-logos">
+                    <div className="logo-placeholder">
+                      <p>Logo da Prefeitura</p>
+                    </div>
+                    <div className="logo-placeholder">
+                      <p>Logo do Apoiador</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CandidateArea;
+
+    bootstrapCandidateArea();
+  }, [API_FESTIVAL_BASE_URL, navigate]);
+
+  const nextSession = sessions.find((session) => session.session_status !== 'finished') || sessions[0] || null;
+  const finishedSessionsCount = sessions.filter((session) => session.session_status === 'finished').length;
+  const upcomingSessionsCount = sessions.filter((session) => session.session_status !== 'finished').length;
+  const hasScheduleInfo = Boolean(nextSession && (nextSession.session_date || nextSession.session_time || nextSession.location));
+  const hasNotesInfo = sessions.some((session) => {
+    const totalScore = Number(session?.total_score || 0);
+    const manualAdjustment = Number(session?.manual_adjustment || 0);
+    const effectiveScore = Number(session?.effective_score || 0);
+    return totalScore !== 0 || manualAdjustment !== 0 || effectiveScore !== 0;
+  });
+  const latestScoredSession = [...sessions]
+    .filter((session) => {
+      const totalScore = Number(session?.total_score || 0);
+      const manualAdjustment = Number(session?.manual_adjustment || 0);
+      const effectiveScore = Number(session?.effective_score || 0);
+      return totalScore !== 0 || manualAdjustment !== 0 || effectiveScore !== 0;
+    })
+    .sort((a, b) => Number(b.id || 0) - Number(a.id || 0))[0] || null;
+  const profilePhoto = resolveProfilePhotoUrl(profile?.profile_photo_url || user?.profile_photo_url || user?.avatar || DEFAULT_USER_IMAGE);
+  const modalPhotoPreview = photoPreviewUrl || profilePhoto;
+  const sortedResults = [...sessionResults].sort((a, b) => Number(b?.session?.id || 0) - Number(a?.session?.id || 0));
+  const latestResult = sortedResults[0] || null;
+  const hasRealNotes = sortedResults.length > 0;
+  const averageEffectiveScore = hasRealNotes
+    ? sortedResults.reduce((acc, result) => acc + Number(result?.effective_score || 0), 0) / sortedResults.length
+    : 0;
+  const latestEffectiveScore = Number(latestResult?.effective_score || 0);
+  const latestTechnicalScore = Number(latestResult?.total_score || 0);
+  const latestAdjustmentScore = Number(latestResult?.manual_adjustment || 0);
+  const latestPosition = Number(latestResult?.position || 0);
+  const latestTotalCandidates = Number(latestResult?.total_candidates || 0);
+  const latestWinnerMessage = latestResult?.winner_message || '';
+  const bestResult = hasRealNotes
+    ? [...sortedResults].sort((a, b) => Number(b?.effective_score || 0) - Number(a?.effective_score || 0))[0]
+    : null;
+  const competitionStateLabel = profile?.status === 'eliminado'
+    ? 'ELIMINADO'
+    : profile?.status === 'desistente'
+      ? 'DESISTENTE'
+      : latestResult?.is_winner
+        ? 'CLASSIFICADO'
+        : 'ATIVO';
+  const statusLabel = STATUS_LABELS[profile?.status] || 'ATIVO';
+  const phaseLabel = PHASE_LABELS[profile?.current_phase] || 'Audição';
+  const canEditProfile = Boolean(profile?.can_edit ?? true);
+  const canEditSongName = !profile?.song_name;
+
+  const openEditModal = () => {
+    if (!user && !profile) {
+      return;
+    }
+
+    setEditError('');
+    setSelectedPhotoFile(null);
+    setPhotoPreviewUrl('');
+    setEditForm({
+      name: user?.name || '',
+      artistic_name: profile?.artistic_name || '',
+      birth_date: profile?.birth_date ? String(profile.birth_date).slice(0, 10) : '',
+      address: profile?.address || '',
+      phone: profile?.phone || '',
+      song_name: profile?.song_name || ''
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    if (isSavingProfile) return;
+    setIsEditModalOpen(false);
+    setEditError('');
+    setSelectedPhotoFile(null);
+    if (photoPreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(photoPreviewUrl);
+    }
+    setPhotoPreviewUrl('');
+  };
+
+  const openInscricaoModal = () => {
+    setIsInscricaoModalOpen(true);
+  };
+
+  const closeInscricaoModal = () => {
+    setIsInscricaoModalOpen(false);
+  };
+
+  const calculateAge = (birthDate) => {
+    if (!birthDate) return null;
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age > 0 ? age : null;
+  };
+
+  const formatInscricaoDate = (createdAt) => {
+    if (!createdAt) return 'Data não disponível';
+    const date = new Date(createdAt);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  const handleEditInputChange = (event) => {
+    const { name, value } = event.target;
+    setEditForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const handlePhotoChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setEditError('Envie uma imagem JPG, PNG ou WEBP.');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setEditError('A imagem deve ter no máximo 10MB.');
+      return;
+    }
+
+    if (photoPreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(photoPreviewUrl);
+    }
+
+    setEditError('');
+    setSelectedPhotoFile(file);
+    setPhotoPreviewUrl(URL.createObjectURL(file));
+  };
+
+  const handleSaveProfile = async (event) => {
+    event.preventDefault();
+
+    if (!canEditProfile) {
+      setEditError('Seu perfil está bloqueado para edição.');
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login-candidato');
+      return;
+    }
+
+    const payload = {
+      name: editForm.name.trim(),
+      artistic_name: editForm.artistic_name.trim(),
+      birth_date: editForm.birth_date || '',
+      address: editForm.address.trim(),
+      phone: editForm.phone.trim()
+    };
+
+    if (canEditSongName) {
+      payload.song_name = editForm.song_name.trim();
+    }
+
+    if (!payload.name || !payload.artistic_name) {
+      setEditError('Nome e nome artístico são obrigatórios.');
+      return;
+    }
+
+    if (canEditSongName && !payload.song_name) {
+      setEditError('Informe a música para concluir a atualização.');
+      return;
+    }
+
+    setIsSavingProfile(true);
+    setEditError('');
+    setProfileSuccess('');
+
+    try {
+      if (selectedPhotoFile) {
+        const uploadData = new FormData();
+        uploadData.append('file', selectedPhotoFile);
+
+        const uploadResponse = await axios.post(`${API_FESTIVAL_BASE_URL}/api/uploads/imagens`, uploadData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const uploadedReference = uploadResponse?.data?.fileReference;
+        if (!uploadedReference) {
+          throw new Error('Falha ao obter referência da imagem enviada.');
+        }
+
+        payload.profile_photo_url = uploadedReference;
+      }
+
+      const response = await axios.patch(`${API_FESTIVAL_BASE_URL}/api/candidate/me`, payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response?.data?.user) {
+        setUser(response.data.user);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+
+      if (response?.data?.profile) {
+        setProfile(response.data.profile);
+      }
+
+      setSelectedPhotoFile(null);
+      if (photoPreviewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(photoPreviewUrl);
+      }
+      setPhotoPreviewUrl('');
+
+      setProfileSuccess(response?.data?.message || 'Perfil atualizado com sucesso.');
+      setIsEditModalOpen(false);
+    } catch (error) {
+      setEditError(error?.response?.data?.message || 'Não foi possível salvar o perfil.');
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login-candidato');
+  };
+
+  const handleMenuClick = (menu) => {
+    setActiveMenu(menu);
+    setIsMobileMenuOpen(false);
+  };
+
+  const openMobileMenu = () => {
+    setIsMobileMenuOpen(true);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  return (
+    <div className="candidate-area-page">
+      <div className="candidate-layout">
+        {isMobileMenuOpen && <button type="button" className="candidate-sidebar-backdrop" aria-label="Fechar menu" onClick={closeMobileMenu}></button>}
+        
+        {/* SIDEBAR */}
+        <aside className={`candidate-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+          <div className="sidebar-logo">
+            <h1>FESTIVAL DE<br/>FORRÓ</h1>
+            <p>EDIÇÃO DIGITAL ARRAIAL</p>
+          </div>
+          
+          <div className="sidebar-divider"></div>
+          
+          <div className="sidebar-user-mini">
+            <img 
+              src={profilePhoto}
+              alt="Avatar" 
+              className="mini-avatar"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = DEFAULT_USER_IMAGE;
+              }}
+            />
+            <div className="mini-info">
+              <h4>Área do Candidato</h4>
+              <span>ID: {getCandidateCode(user?.id)}</span>
+            </div>
+          </div>
+
+          <nav className="sidebar-nav">
+            <button className={`nav-item ${activeMenu === 'perfil' ? 'active' : ''}`} onClick={() => handleMenuClick('perfil')}>
+              <User size={18} /> Meu Perfil
+            </button>
+            <button className={`nav-item ${activeMenu === 'notas' ? 'active' : ''}`} onClick={() => handleMenuClick('notas')}>
+              <Star size={18} /> Minhas Notas
+            </button>
+            <button className={`nav-item ${activeMenu === 'status' ? 'active' : ''}`} onClick={() => handleMenuClick('status')}>
+              <Trophy size={18} /> Status Competição
+            </button>
+            <button className={`nav-item ${activeMenu === 'apresentacao' ? 'active' : ''}`} onClick={() => handleMenuClick('apresentacao')}>
+              <Mic2 size={18} /> Apresentação
+            </button>
+          </nav>
+
+          <div className="sidebar-bottom">
+            <button className="btn-yellow" onClick={openInscricaoModal}>VER INSCRIÇÃO</button>
+            <button className="bottom-link">
+              <Settings size={15} /> CONFIGURAÇÕES
+            </button>
+            <button className="bottom-link red" onClick={handleLogout}>
+              <LogOut size={15} /> SAIR
+            </button>
+          </div>
+        </aside>
+
+        {/* MAIN CONTENT */}
+        <main className="candidate-main">
+          
+          {/* HEADER */}
+          <header className="main-header">
+            <div className="header-top">
+              <div className="header-title-area">
+                <h2>ÁREA DO CANDIDATO</h2>
+                <p>Gerencie sua jornada no coração do Nordeste.</p>
+              </div>
+              <div className="header-actions">
+                <button type="button" className="mobile-menu-btn" onClick={openMobileMenu} aria-label="Abrir menu de navegação">
+                  <Menu size={22} />
+                </button>
+                <div className="status-badge-container">
+                  <div className="status-badge">{statusLabel}</div>
+                  <div className="fase-text">Fase: {phaseLabel}</div>
+                </div>
+                <button className="bell-btn">
+                  <Bell size={20} />
+                </button>
+              </div>
+            </div>
+          </header>
+          
+          <div className="main-divider"></div>
+
+                    {isLoadingProfile && (
+                      <div style={{ marginBottom: '16px', color: '#0f172a', fontWeight: 600 }}>
+                        Carregando informações do candidato...
+                      </div>
+                    )}
+
+                    {profileError && (
+                      <div style={{ marginBottom: '16px', color: '#b91c1c', fontWeight: 600 }}>
+                        {profileError}
+                      </div>
+                    )}
+
+                    {profileSuccess && (
+                      <div style={{ marginBottom: '16px', color: '#166534', fontWeight: 600 }}>
+                        {profileSuccess}
+                      </div>
+                    )}
+
+                    {isLoadingResults && (
+                      <div style={{ marginBottom: '16px', color: '#0f172a', fontWeight: 600 }}>
+                        Carregando resultados das sessões finalizadas...
+                      </div>
+                    )}
+
+                    {resultsError && (
+                      <div style={{ marginBottom: '16px', color: '#b91c1c', fontWeight: 600 }}>
+                        {resultsError}
+                      </div>
+                    )}
+
+          {activeMenu === 'perfil' && (
+          <div className="content-grid">
+            
+            {/* LEFT COLUMN */}
+            <div className="left-column">
+              
+              {/* Meu Perfil Card */}
+              <div className="card perfil-card">
+                <div className="card-decor-tr"></div>
+                <div className="perfil-header">
+                  <User size={20} color="#1a6b32" />
+                  <h3>Meu Perfil</h3>
+                </div>
+                
+                <div className="perfil-avatar-container">
+                  <div className="perfil-avatar-wrapper">
+                    <img
+                      src={profilePhoto}
+                      alt="Perfil"
+                      onError={(event) => {
+                        event.currentTarget.onerror = null;
+                        event.currentTarget.src = DEFAULT_USER_IMAGE;
+                      }}
+                    />
+                    <button className="edit-btn" onClick={openEditModal} type="button" disabled={!canEditProfile}>
+                      <Edit3 size={21} strokeWidth={2.6} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>NOME ARTÍSTICO</label>
+                  <input type="text" className="form-input" disabled value={profile?.artistic_name || 'Não informado'} />
+                </div>
+                <div className="form-group">
+                  <label>MÚSICA QUE IRÁ CANTAR</label>
+                  <input type="text" className="form-input" disabled value={profile?.song_name || 'Não informada'} />
+                </div>
+
+                <button className="btn-green-full" type="button" onClick={openEditModal} disabled={!canEditProfile}>
+                  {canEditProfile ? 'Salvar Alterações' : 'Perfil bloqueado'}
+                </button>
+              </div>
+
+              {/* Sua Apresentacao Card */}
+              <div className="card apresentacao-card">
+                <div style={{ position: 'absolute', top: 15, right: 15, opacity: 0.2 }}>
+                  <Calendar size={40} />
+                </div>
+                <h4>SUA APRESENTAÇÃO</h4>
+                {hasScheduleInfo ? (
+                  <>
+                    <div className="apresentacao-icon-row">
+                      <Calendar size={18} />
+                      <span>{formatSessionDate(nextSession?.session_date)}</span>
+                    </div>
+                    <div className="apresentacao-icon-row">
+                      <Clock size={18} />
+                      <span>{formatSessionTime(nextSession?.session_time)}</span>
+                    </div>
+                    <div className="palco-info">
+                      <span>PALCO PRINCIPAL</span>
+                      <strong>{nextSession?.location || 'Local não definido'}</strong>
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ marginTop: '14px', fontWeight: 600, lineHeight: 1.5 }}>
+                    Você ainda não possui informações de data.
+                    <br />
+                    Aguarde ser agendado.
+                  </div>
+                )}
+              </div>
+
+            </div>
+
+            {/* RIGHT COLUMN */}
+            <div className="right-column">
+              
+              {/* Desempenho Geral Card */}
+              <div className="card desempenho-card">
+                {hasNotesInfo ? (
+                  <>
+                    <div className="voto-popular-badge">
+                      <span>PONTUAÇÃO FINAL</span>
+                      <strong>{Number(latestScoredSession?.effective_score || 0).toFixed(2)}</strong>
+                    </div>
+
+                    <div className="desempenho-header">
+                      <h3>DESEMPENHO GERAL</h3>
+                      <p>Resultado consolidado da última avaliação disponível.</p>
+                    </div>
+
+                    <div className="score-list">
+                      <div className="score-item">
+                        <div className="score-info">
+                          <h4>Média dos Jurados</h4>
+                          <p>Pontuação consolidada dos jurados na sessão.</p>
+                        </div>
+                        <div className="score-value">
+                          <strong>{Number(latestScoredSession?.total_score || 0).toFixed(2)}</strong>
+                          <span>/ 10</span>
+                        </div>
+                      </div>
+
+                      <div className="score-item">
+                        <div className="score-info">
+                          <h4>Votos Públicos</h4>
+                          <p>Pontuação agregada dos votos do público.</p>
+                        </div>
+                        <div className="score-value">
+                          <strong>{Number(latestScoredSession?.manual_adjustment || 0).toFixed(2)}</strong>
+                          <span>pts</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="desempenho-divider"></div>
+
+                    <div className="media-final-area">
+                      <span>RESULTADO EFETIVO</span>
+                      <div className="media-bar-container">
+                        <div className="media-bar-fill" style={{ width: `${Math.min(100, Math.max(0, Number(latestScoredSession?.effective_score || 0) * 10))}%` }}></div>
+                      </div>
+                      <div className="media-final-score">{Number(latestScoredSession?.effective_score || 0).toFixed(2)}</div>
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ padding: '28px 0', lineHeight: 1.6, fontWeight: 600 }}>
+                    Você ainda não possui notas.
+                    <br />
+                    Aguarde ser avaliado para ver as notas.
+                  </div>
+                )}
+              </div>
+
+              {/* Status Cards */}
+              <div className="status-cards-row">
+                <div className="status-card active-status">
+                  <div className="status-icon-circle">
+                    <Check size={24} strokeWidth={3} />
+                  </div>
+                  <div className="status-info">
+                    <h5>SITUAÇÃO ATUAL</h5>
+                    <h4>{profile?.status === 'eliminado' ? 'PERFIL BLOQUEADO' : 'VOCÊ ESTÁ ATIVO'}</h4>
+                    <p>{profile?.status === 'eliminado' ? 'Edição desativada para candidato eliminado.' : 'Continue ensaiando para a próxima fase!'}</p>
+                  </div>
+                </div>
+
+                <div className="status-card eliminated-status">
+                  <div className="status-icon-circle">
+                    <X size={24} strokeWidth={3} />
+                  </div>
+                  <div className="status-info">
+                    <h5>STATUS DE ELIMINAÇÃO</h5>
+                    <h4>{profile?.status === 'eliminado' ? 'ELIMINADO' : 'NÃO ELIMINADO'}</h4>
+                    <p>{profile?.status === 'eliminado' ? 'Campos bloqueados para edição.' : 'Seu cadastro segue ativo no festival.'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Duvidas Card */}
+              <div className="duvidas-card">
+                <div className="duvidas-text">
+                  <h3>Dúvidas sobre sua avaliação?</h3>
+                  <p>Nossa equipe técnica está pronta para dar o feedback detalhado por video-chamada.</p>
+                </div>
+                <button className="btn-white">TIRE SUA DÚVIDA</button>
+              </div>
+
+            </div>
+
+          </div>
+          )}
+
+          {activeMenu === 'notas' && (
+            <div className="notas-container">
+              <div className="notas-header-section">
+                <div className="notas-title-box">
+                  <h3>MINHAS NOTAS</h3>
+                  <p>
+                    {hasRealNotes
+                      ? `Resultados reais da última sessão finalizada: ${latestResult?.session?.title || 'Sessão'}.`
+                      : 'Seus resultados aparecerão aqui quando uma sessão for finalizada e liberada.'}
+                  </p>
+                </div>
+                <div className="notas-status-card">
+                  <div className="status-icon"><TrendingUp size={24} /></div>
+                  <div className="status-text">
+                    <span>STATUS GERAL</span>
+                    <strong>{competitionStateLabel}</strong>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="notas-kpi-row">
+                <div className="media-geral-card">
+                  <div className="media-geral-header">MÉDIA GERAL</div>
+                  <div className="media-geral-value">
+                    <strong>{hasRealNotes ? averageEffectiveScore.toFixed(2) : '--'}</strong>
+                    <span>/ 10</span>
+                  </div>
+                  <div className="media-geral-stars">
+                    {[1, 2, 3, 4, 5].map((starIndex) => {
+                      const starLimit = hasRealNotes ? Math.round((averageEffectiveScore / 10) * 5) : 0;
+                      const isFilled = starIndex <= starLimit;
+
+                      return (
+                        <Star
+                          key={starIndex}
+                          size={18}
+                          fill={isFilled ? '#FFDE00' : 'transparent'}
+                          color={isFilled ? '#FFDE00' : '#B7A96A'}
+                        />
+                      );
+                    })}
+                  </div>
+                  <div className="media-geral-desc">
+                    {hasRealNotes
+                      ? `Sessões avaliadas: ${sortedResults.length}`
+                      : 'Aguarde ser avaliado para ver suas notas.'}
+                  </div>
+                  <div className="media-geral-decor">♩</div>
+                </div>
+                
+                <div className="criterios-card">
+                  <h4>{hasRealNotes ? 'Último Resultado Consolidado' : 'Resultado Pendente'}</h4>
+                  <div className="criterio-bar-item">
+                    <div className="criterio-bar-label">
+                      <span>Média dos Jurados</span>
+                      <strong>{hasRealNotes ? latestTechnicalScore.toFixed(2) : '--'}</strong>
+                    </div>
+                    <div className="criterio-bar-bg"><div className="criterio-bar-fill green" style={{ width: `${Math.min(100, Math.max(0, latestTechnicalScore * 10))}%` }}></div></div>
+                  </div>
+                  <div className="criterio-bar-item">
+                    <div className="criterio-bar-label">
+                      <span>Votos Públicos</span>
+                      <strong>{hasRealNotes ? latestAdjustmentScore.toFixed(2) : '--'}</strong>
+                    </div>
+                    <div className="criterio-bar-bg"><div className="criterio-bar-fill olive" style={{ width: `${Math.min(100, Math.max(0, latestAdjustmentScore * 10))}%` }}></div></div>
+                  </div>
+                  <div className="criterio-bar-item">
+                    <div className="criterio-bar-label">
+                      <span>Resultado Efetivo</span>
+                      <strong>{hasRealNotes ? latestEffectiveScore.toFixed(2) : '--'}</strong>
+                    </div>
+                    <div className="criterio-bar-bg"><div className="criterio-bar-fill blue" style={{ width: `${Math.min(100, Math.max(0, latestEffectiveScore * 10))}%` }}></div></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="evolucao-section">
+                <h4>EVOLUÇÃO POR SESSÃO</h4>
+                <div className="evolucao-cards">
+                  {hasRealNotes ? (
+                    sortedResults.map((result, index) => (
+                      <div key={result?.session?.id || index} className={`evolucao-card ${index === 0 ? 'green' : 'grey'}`}>
+                        <div className="evolucao-icon">{index === 0 ? <Check size={20} /> : <Clock size={20} />}</div>
+                        <div className="evolucao-info">
+                          <h5>{result?.session?.title || `Sessão #${result?.session?.id || '-'}`}</h5>
+                          <p>
+                            Posição {result?.position || '-'} de {result?.total_candidates || '-'}
+                            {result?.session?.session_date ? ` • ${formatSessionDate(result.session.session_date)}` : ''}
+                          </p>
+                        </div>
+                        <div className="evolucao-score">{Number(result?.effective_score || 0).toFixed(2)}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="evolucao-card grey">
+                      <div className="evolucao-icon"><Clock size={20} /></div>
+                      <div className="evolucao-info">
+                        <h5>Sem avaliações finalizadas</h5>
+                        <p>Quando a sessão terminar, seu histórico aparecerá aqui.</p>
+                      </div>
+                      <div className="evolucao-score">--</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="comentarios-section">
+                <h4>RESUMO DA ÚLTIMA AVALIAÇÃO</h4>
+                <div className="comentarios-list">
+                  <div className="comentario-card">
+                    <div className="comentario-badge olive">RESULTADO</div>
+                    <img src={profilePhoto} alt="Candidato" className="jurado-avatar" />
+                    <div className="comentario-body">
+                      <p>
+                        {hasRealNotes
+                          ? `Você obteve ${latestEffectiveScore.toFixed(2)} pontos na sessão ${latestResult?.session?.title || ''}. ${latestWinnerMessage || 'Resultado registrado com sucesso.'}`
+                          : 'Você ainda não possui notas. Aguarde ser avaliado para visualizar o resumo da avaliação.'}
+                      </p>
+                      <div className="comentario-author olive">─────── PAINEL OFICIAL DO FESTIVAL</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="notas-actions">
+                <p>
+                  {hasRealNotes
+                    ? `Melhor resultado até agora: ${Number(bestResult?.effective_score || 0).toFixed(2)} pontos.`
+                    : 'Assim que os jurados concluírem sua avaliação, os resultados aparecerão aqui automaticamente.'}
+                </p>
+                <div className="notas-buttons">
+                  <button className="btn-download-notas" type="button"><Download size={18} /> BAIXAR EXTRATO DE RESULTADOS</button>
+                  <button className="btn-recorrer" type="button">ATUALIZAR DADOS</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeMenu === 'status' && (
+            <div className="status-comp-container">
+              <div className="status-comp-header">
+                <div className="status-comp-title">
+                  <h2>Sua Jornada no Arraial</h2>
+                  <p>Acompanhe seu progresso rumo ao título de melhor sanfoneiro do Nordeste.</p>
+                </div>
+                <div className="status-comp-badge-card">
+                  <div className="badge-icon green"><CheckCircle size={28} strokeWidth={2.5} /></div>
+                  <div className="badge-info">
+                    <span>STATUS ATUAL</span>
+                    <strong>{competitionStateLabel}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div className="status-comp-body">
+                {/* Timeline Column */}
+                <div className="status-timeline-card">
+                  <div className="timeline-header">
+                    <Activity size={24} color="#7B692A" />
+                    <h3>Fases da Competição</h3>
+                  </div>
+                  
+                  <div className="timeline-container">
+                    <div className="timeline-item">
+                      <div className={`timeline-marker ${hasRealNotes ? 'concluded' : 'next'}`}>
+                        {hasRealNotes ? <Check size={16} /> : <Clock size={16} />}
+                      </div>
+                      <div className={`timeline-content ${hasRealNotes ? 'concluded-card' : 'next-card'}`}>
+                        <span className={`step-status ${hasRealNotes ? '' : 'next-status'}`}>
+                          {hasRealNotes ? 'CONCLUÍDO' : 'AGUARDANDO'}
+                        </span>
+                        <h4>{hasRealNotes ? (latestResult?.session?.title || 'Sessão finalizada mais recente') : 'Nenhuma sessão finalizada'}</h4>
+                        <p>
+                          {hasRealNotes
+                            ? `Pontuação ${latestEffectiveScore.toFixed(2)} • posição ${latestPosition || '-'} de ${latestTotalCandidates || '-'}.`
+                            : 'Nenhuma sessão finalizada com resultado liberado até o momento.'}
+                        </p>
+                        <div className={`step-date ${hasRealNotes ? '' : 'next-date'}`}><Calendar size={12} /> {latestResult?.session?.session_date ? formatSessionDate(latestResult.session.session_date) : 'Data não definida'}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="timeline-line"></div>
+                    
+                    <div className="timeline-item">
+                      <div className="timeline-marker next">
+                        <Star size={16} />
+                      </div>
+                      <div className="timeline-content next-card">
+                        <span className="step-status next-status">PRÓXIMA ETAPA</span>
+                        <h4>{nextSession?.title || 'Aguardando nova etapa'}</h4>
+                        <p>
+                          {nextSession
+                            ? `Prepare-se para a sessão ${nextSession.title}.`
+                            : 'Ainda não há nova sessão agendada para o seu perfil.'}
+                        </p>
+                        <div className="step-date next-date"><Clock size={12} /> {nextSession?.session_date ? formatSessionDate(nextSession.session_date) : 'Em breve'}</div>
+                      </div>
+                    </div>
+                    <div className="timeline-line-bottom"></div>
+                  </div>
+                </div>
+
+                {/* Right Area Column */}
+                <div className="status-right-column">
+                  <div className="prep-hero-standalone" style={{ backgroundImage: "url('/img/theater_curtain.png')" }}>
+                    <div className="prep-hero-overlay"></div>
+                    <h3>O que Preparar para a apresentação</h3>
+                  </div>
+                  
+                  <div className="prep-items-grid">
+                    <div className="prep-item-card">
+                      <div className="prep-item-card-icon olive">
+                        <Music size={28} />
+                      </div>
+                      <div className="prep-item-card-body">
+                        <h4>Música cadastrada</h4>
+                        <p>{profile?.song_name || 'Você ainda não cadastrou a música da apresentação.'}</p>
+                      </div>
+                    </div>
+
+                    <div className="prep-item-card">
+                      <div className="prep-item-card-icon green">
+                        <Shirt size={28} />
+                      </div>
+                      <div className="prep-item-card-body">
+                        <h4>Figurino</h4>
+                        <p>Escolha um figurino que combine com o seu estilo artístico e represente a cultura nordestina.</p>
+                      </div>
+                    </div>
+
+                    <div className="prep-item-card">
+                      <div className="prep-item-card-icon olive">
+                        <Mic2 size={28} />
+                      </div>
+                      <div className="prep-item-card-body">
+                        <h4>Afinação de voz</h4>
+                        <p>Trabalhe a afinação vocal para garantir uma apresentação impecável no palco.</p>
+                      </div>
+                    </div>
+
+                    <div className="prep-item-card">
+                      <div className="prep-item-card-icon green">
+                        <Users size={28} />
+                      </div>
+                      <div className="prep-item-card-body">
+                        <h4>Coreografia</h4>
+                        <p>Desenvolva movimentos e coreografia para complementar sua performance musical.</p>
+                      </div>
+                    </div>
+
+                    <div className="prep-item-card">
+                      <div className="prep-item-card-icon olive">
+                        <FileText size={28} />
+                      </div>
+                      <div className="prep-item-card-body">
+                        <h4>Músicas autorais</h4>
+                        <p>Se tiver composições próprias, considere incluir no seu repertório de apresentação.</p>
+                      </div>
+                    </div>
+
+                    <div className="prep-item-card">
+                      <div className="prep-item-card-icon green">
+                        <Star size={28} />
+                      </div>
+                      <div className="prep-item-card-body">
+                        <h4>Interpretações diferentes</h4>
+                        <p>Pratique interpretações variadas da música para surpreender e emocionar o público.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="prep-session-info">
+                    <div className="prep-info-header">
+                      <Calendar size={20} />
+                      <span>Data e Horário da Apresentação</span>
+                    </div>
+                    <p className="prep-info-datetime">
+                      {nextSession
+                        ? `${formatSessionDate(nextSession.session_date)} às ${formatSessionTime(nextSession.session_time)}`
+                        : 'Aguardando agendamento da próxima apresentação'}
+                    </p>
+                    <p className="prep-info-status">
+                      {profile?.status === 'eliminado' ? '⚠️ Seu perfil está bloqueado para edição.' : '✓ Seu perfil está ativo para as próximas etapas.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Cards Row */}
+              <div className="status-bottom-cards">
+                <div className="info-card blue-card">
+                  <Map size={24} />
+                  <div className="card-lbl">LOCAL</div>
+                  <div className="card-val">{nextSession?.location || latestResult?.session?.location || 'A definir'}</div>
+                </div>
+                
+                <div className="info-card yellow-card">
+                  <Users size={24} />
+                  <div className="card-lbl">SESSÕES</div>
+                  <div className="card-val">{finishedSessionsCount} finalizadas<br />{upcomingSessionsCount} pendentes</div>
+                </div>
+
+                <div className="info-card beige-card">
+                  <Gift size={24} />
+                  <div className="card-lbl">POSIÇÃO ATUAL</div>
+                  <div className="card-val">{hasRealNotes ? `${latestPosition || '-'}º de ${latestTotalCandidates || '-'}` : 'Sem ranking'}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeMenu === 'apresentacao' && (
+            <div className="apresentacao-container">
+              <div className="apresentacao-header">
+                <h2>Minha Apresentação</h2>
+                <p>Acompanhe informações sobre sua apresentação no festival.</p>
+              </div>
+
+              <div className="apresentacao-content">
+                <div className="apresentacao-empty-state">
+                  <div className="empty-state-icon">
+                    <Calendar size={64} />
+                  </div>
+                  <h3>Aguardando agendamento</h3>
+                  <p>Ainda não há uma data agendada para sua apresentação.</p>
+                  <p className="empty-state-info">Assim que a produção confirmar o horário e local, você receberá uma notificação e as informações aparecerão aqui.</p>
+                </div>
+
+                <div className="apresentacao-checklist">
+                  <h4>Prepare-se enquanto isso:</h4>
+                  <div className="checklist-items">
+                    <div className="checklist-item">
+                      <div className="checklist-checkbox">
+                        <Check size={20} />
+                      </div>
+                      <div className="checklist-text">
+                        <span>Música selecionada</span>
+                        <p>{profile?.song_name || 'Não informada'}</p>
+                      </div>
+                    </div>
+
+                    <div className="checklist-item">
+                      <div className="checklist-checkbox">
+                        <Shirt size={20} />
+                      </div>
+                      <div className="checklist-text">
+                        <span>Escolher figurino apropriado</span>
+                        <p>Que combine com a cultura nordestina</p>
+                      </div>
+                    </div>
+
+                    <div className="checklist-item">
+                      <div className="checklist-checkbox">
+                        <Mic2 size={20} />
+                      </div>
+                      <div className="checklist-text">
+                        <span>Treinar afinação vocal</span>
+                        <p>Garantir melhor desempenho no palco</p>
+                      </div>
+                    </div>
+
+                    <div className="checklist-item">
+                      <div className="checklist-checkbox">
+                        <Users size={20} />
+                      </div>
+                      <div className="checklist-text">
+                        <span>Desenvolver coreografia</span>
+                        <p>Movimentos que complementem a performance</p>
+                      </div>
+                    </div>
+
+                    <div className="checklist-item">
+                      <div className="checklist-checkbox">
+                        <Music size={20} />
+                      </div>
+                      <div className="checklist-text">
+                        <span>Variar interpretações</span>
+                        <p>Pratique diferentes formas de interpretar a música</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="apresentacao-info-card">
+                  <div className="info-card-icon">
+                    <Bell size={24} />
+                  </div>
+                  <div className="info-card-content">
+                    <h5>Fique atento às notificações</h5>
+                    <p>Você receberá uma notificação assim que sua data de apresentação for confirmada. Não esqueça de verificar seu perfil regularmente.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {isEditModalOpen && (
+            <div className="candidate-modal-overlay" onClick={closeEditModal}>
+              <div className="candidate-modal" onClick={(event) => event.stopPropagation()}>
+                <div className="candidate-modal-header">
+                  <h3>Editar Perfil</h3>
+                  <button type="button" className="candidate-modal-close" onClick={closeEditModal}>
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <div className="candidate-photo-preview-row">
+                  <img
+                    src={modalPhotoPreview}
+                    alt="Foto de perfil"
+                    className="candidate-photo-preview"
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = DEFAULT_USER_IMAGE;
+                    }}
+                  />
+                  <div>
+                    <strong>Foto de perfil</strong>
+                    <p>Selecione uma imagem JPG, PNG ou WEBP (até 10MB) para atualizar sua foto.</p>
+                    <label className="candidate-photo-upload-button" htmlFor="candidate-photo-input">
+                      {selectedPhotoFile ? 'Trocar imagem' : 'Selecionar imagem'}
+                    </label>
+                    <input
+                      id="candidate-photo-input"
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      onChange={handlePhotoChange}
+                      disabled={!canEditProfile || isSavingProfile}
+                      className="candidate-photo-upload-input"
+                    />
+                  </div>
+                </div>
+
+                <form className="candidate-modal-form" onSubmit={handleSaveProfile}>
+                  <div className="candidate-modal-grid">
+                    <div className="candidate-modal-field">
+                      <label htmlFor="name">Nome completo</label>
+                      <input id="name" name="name" value={editForm.name} onChange={handleEditInputChange} disabled={!canEditProfile || isSavingProfile} required />
+                    </div>
+
+                    <div className="candidate-modal-field">
+                      <label htmlFor="artistic_name">Nome artístico</label>
+                      <input id="artistic_name" name="artistic_name" value={editForm.artistic_name} onChange={handleEditInputChange} disabled={!canEditProfile || isSavingProfile} required />
+                    </div>
+
+                    <div className="candidate-modal-field">
+                      <label htmlFor="birth_date">Data de nascimento</label>
+                      <input id="birth_date" type="date" name="birth_date" value={editForm.birth_date} onChange={handleEditInputChange} disabled={!canEditProfile || isSavingProfile} />
+                    </div>
+
+                    <div className="candidate-modal-field">
+                      <label htmlFor="phone">Telefone</label>
+                      <input id="phone" name="phone" value={editForm.phone} onChange={handleEditInputChange} disabled={!canEditProfile || isSavingProfile} />
+                    </div>
+
+                    <div className="candidate-modal-field candidate-modal-field-full">
+                      <label htmlFor="address">Endereço</label>
+                      <input id="address" name="address" value={editForm.address} onChange={handleEditInputChange} disabled={!canEditProfile || isSavingProfile} />
+                    </div>
+
+                    <div className="candidate-modal-field candidate-modal-field-full">
+                      <label htmlFor="song_name">Música da apresentação</label>
+                      <input
+                        id="song_name"
+                        name="song_name"
+                        value={editForm.song_name}
+                        onChange={handleEditInputChange}
+                        disabled={!canEditProfile || isSavingProfile || !canEditSongName}
+                        placeholder={canEditSongName ? 'Informe sua música' : 'Música já definida'}
+                      />
+                      {!canEditSongName && (
+                        <small className="candidate-modal-help">Música já definida. A troca só pode ser feita na próxima fase.</small>
+                      )}
+                    </div>
+                  </div>
+
+                  {editError && <div className="candidate-modal-error">{editError}</div>}
+
+                  <div className="candidate-modal-actions">
+                    <button type="button" className="candidate-modal-cancel" onClick={closeEditModal} disabled={isSavingProfile}>
+                      Cancelar
+                    </button>
+                    <button type="submit" className="candidate-modal-save" disabled={isSavingProfile || !canEditProfile}>
+                      {isSavingProfile ? 'Salvando...' : 'Salvar alterações'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          <footer className="site-footer">
+            <div className="footer-diamonds">
+              <div className="diamond green"></div>
+              <div className="diamond yellow"></div>
+              <div className="diamond blue"></div>
+              <div className="diamond red"></div>
+            </div>
+            <h3>FESTIVAL DE FORRÓ 2024</h3>
+            <p>© 2024 FESTIVAL DE FORRÓ - O CORAÇÃO DO NORDESTE BATE AQUI.</p>
+            <div className="footer-links">
+              <button type="button">PRIVACIDADE</button>
+              <button type="button">TERMOS DE USO</button>
+              <button type="button">CONTATO</button>
+              <button type="button">EDITAL</button>
+            </div>
+          </footer>
+
+        </main>
+      </div>
+    </div>
+  );
+};
+
+        {isInscricaoModalOpen && (
+          <div className="inscricao-modal-overlay" onClick={closeInscricaoModal}>
+            <div className="inscricao-modal" onClick={(event) => event.stopPropagation()}>
+              <button type="button" className="inscricao-modal-close" onClick={closeInscricaoModal}>
+                <X size={20} />
+              </button>
+
+              <div className="inscricao-card">
+                <div className="inscricao-photo">
+                  <img 
+                    src={profilePhoto}
+                    alt="Candidato" 
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = DEFAULT_USER_IMAGE;
+                    }}
+                  />
+                </div>
+
+                <div className="inscricao-content">
+                  <h2>{user?.name}</h2>
+                  
+                  <div className="inscricao-details">
+                    {calculateAge(profile?.birth_date) && (
+                      <div className="detail-item">
+                        <span className="detail-label">Idade</span>
+                        <span className="detail-value">{calculateAge(profile?.birth_date)} anos</span>
+                      </div>
+                    )}
+                    <div className="detail-item">
+                      <span className="detail-label">Data da Inscrição</span>
+                      <span className="detail-value">{formatInscricaoDate(user?.created_at)}</span>
+                    </div>
+                  </div>
+
+                  <div className="inscricao-message">
+                    <p>
+                      Obrigado por participar do Festival de Forró! Sua inscrição foi confirmada com sucesso. 
+                      Desejamos muito sucesso em sua apresentação e que você vivencie a magia da cultura nordestina 
+                      junto a todos os fãs do forró que estarão torcendo por você.
+                    </p>
+                  </div>
+
+                  <div className="inscricao-logos">
+                    <div className="logo-placeholder">
+                      <p>Logo da Prefeitura</p>
+                    </div>
+                    <div className="logo-placeholder">
+                      <p>Logo do Apoiador</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CandidateArea;
+
+            </footer>
+
+          </main>
+
+          {isInscricaoModalOpen && (
+            <div className="inscricao-modal-overlay" onClick={closeInscricaoModal}>
+              <div className="inscricao-modal" onClick={(event) => event.stopPropagation()}>
+                <button type="button" className="inscricao-modal-close" onClick={closeInscricaoModal}>
+                  <X size={20} />
+                </button>
+
+                <div className="inscricao-card">
+                  <div className="inscricao-photo">
+                    <img 
+                      src={profilePhoto}
+                      alt="Candidato" 
+                      onError={(event) => {
+                        event.currentTarget.onerror = null;
+                        event.currentTarget.src = DEFAULT_USER_IMAGE;
+                      }}
+                    />
+                  </div>
+
+                  <div className="inscricao-content">
+                    <h2>{user?.name}</h2>
+                  
+                    <div className="inscricao-details">
+                      {calculateAge(profile?.birth_date) && (
+                        <div className="detail-item">
+                          <span className="detail-label">Idade</span>
+                          <span className="detail-value">{calculateAge(profile?.birth_date)} anos</span>
+                        </div>
+                      )}
+                      <div className="detail-item">
+                        <span className="detail-label">Data da Inscrição</span>
+                        <span className="detail-value">{formatInscricaoDate(user?.created_at)}</span>
+                      </div>
+                    </div>
+
+                    <div className="inscricao-message">
+                      <p>
+                        Obrigado por participar do Festival de Forró! Sua inscrição foi confirmada com sucesso. 
+                        Desejamos muito sucesso em sua apresentação e que você vivencie a magia da cultura nordestina 
+                        junto a todos os fãs do forró que estarão torcendo por você.
+                      </p>
+                    </div>
+
+                    <div className="inscricao-logos">
+                      <div className="logo-placeholder">
+                        <p>Logo da Prefeitura</p>
+                      </div>
+                      <div className="logo-placeholder">
+                        <p>Logo do Apoiador</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  export default CandidateArea;
