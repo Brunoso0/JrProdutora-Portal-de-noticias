@@ -64,54 +64,59 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1100px;
+  max-width: 72rem;
   margin: 0 auto;
-  padding: 24px 20px;
+  padding: 1.25rem 1.5rem;
 }
 
 .festival-inscricao-page .festival-logo {
-  font-size: 18px;
+  font-size: 1.5rem;
   font-weight: 800;
-  color: var(--green-main);
+  color: #1A3C1E;
+  letter-spacing: -0.025em;
   margin: 0;
 }
 
 .festival-inscricao-page .festival-nav {
   display: flex;
-  gap: 32px;
+  gap: 2rem;
 }
 
 .festival-inscricao-page .festival-nav a {
   text-decoration: none;
-  color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 500;
+  color: #4B5563;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
   transition: color 0.2s;
+  padding-bottom: 0.25rem;
 }
 
 .festival-inscricao-page .festival-nav a:hover {
-  color: var(--text-main);
+  color: #008000;
 }
 
 .festival-inscricao-page .festival-nav a.active {
-  color: var(--green-main);
-  border-bottom: 2px solid var(--green-main);
-  padding-bottom: 4px;
+  color: #008000;
+  border-bottom: 2px solid #008000;
 }
 
 .festival-inscricao-page .btn-entrar {
-  background-color: var(--green-main);
-  color: white;
+  background-color: #1A3C1E;
+  color: #fff;
   border: none;
-  padding: 10px 24px;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 14px;
+  padding: 0.6rem 1.75rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: background-color 0.2s;
 }
 
 .festival-inscricao-page .btn-entrar:hover {
-  background-color: #00600d;
+  background-color: #122b15;
 }
 
 /* ===== Main / Hero ===== */
@@ -385,6 +390,11 @@
   line-height: 1.5;
   margin: 0 0 24px 0;
 }
+
+.festival-inscricao-page .upload-box .festival-input-group {
+  margin-bottom: 16px;
+}
+
 .festival-inscricao-page .btn-upload {
   background-color: var(--blue-btn);
   color: white;
@@ -892,13 +902,24 @@
 
 /* ===== Responsive adjustments ===== */
 @media (max-width: 768px) {
+  .festival-inscricao-page .festival-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .festival-inscricao-page .festival-nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
   .festival-inscricao-page .input-pair {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  .festival-inscricao-page .festival-nav {
-    display: none;
-  }
+
   .festival-inscricao-page .image-gallery {
     gap: 8px;
   }

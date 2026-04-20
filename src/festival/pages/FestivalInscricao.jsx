@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { User, Music, FileText, CheckCircle, UploadCloud, ChevronDown, Moon, Gift, Sparkles } from 'lucide-react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../styles/FestivalInscricao.css';
 
 const API_FESTIVAL_BASE_URL = process.env.REACT_APP_API_FESTIVAL || 'http://localhost:3015';
@@ -22,12 +24,30 @@ const INITIAL_FORM = {
 };
 
 const FestivalInscricao = () => {
+  const location = useLocation();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState('');
-  const [submitSuccess, setSubmitSuccess] = useState('');
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [portfolioFile, setPortfolioFile] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.key]);
+
+  useEffect(() => {
+    const prefillName = (location.state?.prefillName || '').trim();
+    const prefillEmail = (location.state?.prefillEmail || '').trim();
+
+    if (!prefillName && !prefillEmail) {
+      return;
+    }
+
+    setFormData((current) => ({
+      ...current,
+      name: prefillName || current.name,
+      email: prefillEmail || current.email
+    }));
+  }, [location.state]);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -141,12 +161,9 @@ const FestivalInscricao = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setSubmitError('');
-    setSubmitSuccess('');
-
     const validationError = validateForm();
     if (validationError) {
-      setSubmitError(validationError);
+      toast.error(validationError);
       return;
     }
 
@@ -215,12 +232,11 @@ const FestivalInscricao = () => {
         localStorage.setItem('user', JSON.stringify(data.user));
       }
 
-      setSubmitSuccess(data.message || 'Candidato cadastrado com sucesso.');
       setFormData(INITIAL_FORM);
       setPortfolioFile(null);
       setIsSubmitted(true);
     } catch (error) {
-      setSubmitError(error.message || 'Falha ao cadastrar candidato.');
+      toast.error(error.message || 'Falha ao cadastrar candidato.');
     } finally {
       setIsSubmitting(false);
     }
@@ -228,6 +244,8 @@ const FestivalInscricao = () => {
 
   return (
     <div className="festival-inscricao-page">
+      <ToastContainer position="top-right" autoClose={4000} newestOnTop closeOnClick pauseOnHover theme="light" />
+
       {/* Elemento decorativo de fundo brilhante no header */}
       {!isSubmitted && <div className="festival-glow-bg"></div>}
 
@@ -236,9 +254,8 @@ const FestivalInscricao = () => {
           <h1 className="festival-logo">Festival de Forró</h1>
           <nav className="festival-nav">
             <Link to="/festival-forro">Início</Link>
-            <a href="#programacao">Programação</a>
             <Link to="/festival-forro/inscricao" className="active">Inscrição</Link>
-            <a href="#contato">Contato</a>
+            {/* <a href="#contato">Contato</a> */}
           </nav>
           <Link to="/login-candidato" className="btn-entrar">Entrar</Link>
         </header>
@@ -250,8 +267,7 @@ const FestivalInscricao = () => {
             <div className="festival-hero">
               <h2>Inscrição de <span className="talentos-text">Talentos</span></h2>
               <p className="hero-subtitle">
-                Junte-se à maior celebração do Nordeste. Prepare sua sanfona, zabumba e<br/>
-                triângulo. O palco do Festival de Forró espera por você.
+                Junte-se à maior celebração do Nordeste. Prepare sua sanfona, zabumba e triângulo. O palco do Festival de Forró espera por você.
               </p>
               <div className="decorative-dashes">
                 <span className="dash-yellow"></span>
@@ -328,7 +344,7 @@ const FestivalInscricao = () => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        placeholder="(74) 9 9122-6010"
+                        placeholder="(74) 9 9592-1580"
                         maxLength={16}
                       />
                     </div>
@@ -483,8 +499,6 @@ const FestivalInscricao = () => {
                   <CheckCircle size={18} className="check-icon" />
                   Ao enviar, você concorda com o regulamento do festival.
                 </label>
-                {submitError ? <p className="submit-feedback submit-feedback-error">{submitError}</p> : null}
-                {submitSuccess ? <p className="submit-feedback submit-feedback-success">{submitSuccess}</p> : null}
                 <button type="submit" className="btn-submit" disabled={isSubmitting}>
                   {isSubmitting ? 'Enviando...' : 'Enviar Inscrição'}
                 </button>
@@ -494,13 +508,13 @@ const FestivalInscricao = () => {
 
             <div className="image-gallery">
               <div className="gallery-item">
-                <img src="https://images.unsplash.com/photo-1549429443-4dcfea2d9a60?w=400&q=80" alt="Homem tocando sanfona em preto e branco" />
+                <img src="/img/cantora.png" alt="Cantora de forró" />
               </div>
               <div className="gallery-item">
-                <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80" alt="Galpão de festa junina com bandeirolas" />
+                <img src="/img/vencedora.png" alt="Vencedora do festival" />
               </div>
               <div className="gallery-item">
-                <img src="https://images.unsplash.com/photo-1533174000255-598dc38ca7de?w=400&q=80" alt="Festival palco com sanfona e multidão" />
+                <img src="/img/cantor-forro.png" alt="Cantor de forró" />
               </div>
             </div>
           </div>
@@ -577,8 +591,8 @@ const FestivalInscricao = () => {
         <footer className="festival-site-footer">
           <div className="footer-content">
             <div className="footer-left">
-              <h3>Festival de Forró</h3>
-              <p>© 2024 Festival de Forró - O Coração do Nordeste</p>
+              <h3>Festival de Forró 2026</h3>
+              <p>© 2026 JR Produtora - O CORAÇÃO DO NORDESTE BATE AQUI.</p>
             </div>
             <div className="footer-links">
               <a href="#termos">Termos de Uso</a>

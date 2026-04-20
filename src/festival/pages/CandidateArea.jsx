@@ -1176,12 +1176,12 @@ const CandidateArea = () => {
               <div className="diamond blue"></div>
               <div className="diamond red"></div>
             </div>
-            <h3>FESTIVAL DE FORRÓ 2024</h3>
-            <p>© 2024 FESTIVAL DE FORRÓ - O CORAÇÃO DO NORDESTE BATE AQUI.</p>
+            <h3>FESTIVAL DE FORRÓ 2026</h3>
+            <p>© 2026 JR Produtora - O CORAÇÃO DO NORDESTE BATE AQUI.</p>
             <div className="footer-links">
               <button type="button">PRIVACIDADE</button>
               <button type="button">TERMOS DE USO</button>
-              <button type="button">CONTATO</button>
+              {/* <button type="button">CONTATO</button> */}
               <button type="button">EDITAL</button>
             </div>
           </footer>

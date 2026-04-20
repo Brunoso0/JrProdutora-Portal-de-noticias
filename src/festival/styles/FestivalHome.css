@@ -1,0 +1,832 @@
+/* =========================================================================
+   FestivalHome.css - Vanilla CSS para a página inicial do Festival
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Variáveis do Tema */
+:root {
+  --fh-bg: #FDFBF7;
+  --fh-green-dark: #1A3C1E;
+  --fh-green: #008000;
+  --fh-green-light: #789b3f;
+  --fh-gold: #9C7A2E;
+  --fh-gold-light: #C2B280;
+  --fh-yellow: #FFD100;
+  --fh-blue-dark: #2f5597;
+  --fh-gray-text: #666;
+  --fh-gray-light: #EAE4D7;
+}
+
+/* Base Container */
+.festival-home-container {
+  min-height: 100vh;
+  background-color: var(--fh-bg);
+  color: var(--fh-green-dark);
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ----------------------------------------------------------------------
+   Ribbons Superiores
+   ---------------------------------------------------------------------- */
+.festival-home-ribbons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  pointer-events: none;
+  opacity: 0.9;
+  z-index: 0;
+}
+
+.ribbon {
+  width: 1.5rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+}
+
+.ribbon-1 { background-color: #C2B280; height: 4rem; margin-left: 2.5rem; }
+.ribbon-2 { background-color: #8FB38D; height: 3rem; }
+.ribbon-3 { background-color: #A0B0D0; height: 4rem; }
+.ribbon-4 { background-color: #E2A691; height: 2.5rem; }
+.ribbon-5 { background-color: #C2B280; height: 4rem; margin-right: 2rem; }
+
+@media (min-width: 768px) {
+  .ribbon { width: 2rem; }
+  .ribbon-1 { height: 5rem; margin-left: 8rem; }
+  .ribbon-2 { height: 3.5rem; }
+  .ribbon-3 { height: 6rem; }
+  .ribbon-4 { height: 4rem; }
+  .ribbon-5 { height: 6rem; margin-right: 6rem; }
+}
+
+/* ----------------------------------------------------------------------
+   Header Navbar
+   ---------------------------------------------------------------------- */
+.festival-home-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.festival-logo-text {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--fh-green-dark);
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.festival-home-nav {
+  display: flex;
+  order: 3;
+  width: 100%;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4B5563;
+  letter-spacing: 0.025em;
+}
+
+@media (min-width: 768px) {
+  .festival-home-header {
+    flex-wrap: nowrap;
+    gap: 0;
+  }
+
+  .festival-home-nav {
+    order: 0;
+    width: auto;
+    gap: 2rem;
+    flex-wrap: nowrap;
+  }
+}
+
+.nav-link {
+  text-decoration: none;
+  color: inherit;
+  padding-bottom: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--fh-green);
+}
+
+.nav-link.active {
+  color: var(--fh-green);
+  border-bottom: 2px solid var(--fh-green);
+}
+
+.btn-entrar {
+  background-color: var(--fh-green-dark);
+  color: #fff;
+  padding: 0.6rem 1.75rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.2;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: background-color 0.2s;
+}
+
+.btn-entrar:hover {
+  background-color: #122b15;
+}
+
+/* ----------------------------------------------------------------------
+   Hero Section
+   ---------------------------------------------------------------------- */
+.festival-home-hero {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 2rem 1.5rem;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .festival-home-hero { flex-direction: row; }
+}
+
+.hero-text-content {
+  flex: 1;
+}
+
+.hero-tag {
+  display: inline-block;
+  background-color: #88A6D1;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin: 0 0 1.5rem 0;
+}
+
+@media (min-width: 768px) {
+  .hero-title { font-size: 4rem; }
+}
+
+.text-green-dark { color: var(--fh-green-dark); }
+.text-gold { color: var(--fh-gold); }
+
+.hero-description {
+  color: var(--fh-gray-text);
+  font-size: 1rem;
+  max-width: 28rem;
+  line-height: 1.625;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .hero-description { font-size: 1.125rem; }
+}
+
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn-inscreva {
+  background-color: var(--fh-green);
+  color: #fff;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.btn-inscreva:hover {
+  background-color: #006600;
+}
+
+.btn-programacao {
+  background-color: var(--fh-yellow);
+  color: var(--fh-green-dark);
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.btn-programacao:hover {
+  background-color: #e6bd00;
+}
+
+/* Imagem Hero */
+.hero-image-container {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  max-width: 32rem;
+}
+
+.hero-image-wrapper {
+  background-color: #5a702b;
+  border-radius: 1rem;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: flex-end;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+}
+
+.hero-image-circle-bg {
+  position: absolute;
+  top: 2.5rem;
+  bottom: 2.5rem;
+  left: 0;
+  right: 0;
+  background-color: #e4a434;
+  opacity: 0.9;
+  clip-path: circle(45% at 50% 50%);
+}
+
+.hero-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+  transform: scale(0.95);
+  z-index: 10;
+}
+
+.hero-image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+  z-index: 20;
+}
+
+.hero-image-overlay h3 {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.hero-image-overlay p {
+  color: #d1fae5;
+  font-size: 0.875rem;
+  font-weight: 300;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.xote-baiao-tag {
+  position: absolute;
+  top: -0.75rem;
+  right: -0.75rem;
+  background-color: var(--fh-blue-dark);
+  color: #fff;
+  font-weight: 900;
+  padding: 0.6rem 2rem;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(15deg);
+  transform-origin: bottom right;
+  clip-path: polygon(10% 0, 100% 0, 95% 100%, 0% 100%);
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+}
+
+/* ----------------------------------------------------------------------
+   Nossa Essência Section
+   ---------------------------------------------------------------------- */
+.festival-home-essencia {
+  max-width: 72rem;
+  margin: 1rem auto 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.essencia-title-section {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.essencia-title-section h2 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #1A1A1A;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.title-underline {
+  height: 0.25rem;
+  width: 4rem;
+  background-color: var(--fh-gold);
+  margin: 1rem auto 0 auto;
+  border-radius: 9999px;
+}
+
+.essencia-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .essencia-cards-container { flex-direction: row; }
+}
+
+.essencia-card-main {
+  flex: 1.5;
+  background-color: #F5F1E8;
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .essencia-card-main { padding: 3rem; }
+}
+
+.card-main-decor {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 16rem;
+  height: 16rem;
+  background-color: var(--fh-gray-light);
+  border-bottom-left-radius: 120px;
+  opacity: 0.7;
+}
+
+.card-main-content {
+  position: relative;
+  z-index: 10;
+}
+
+.icon-wrapper {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--fh-green);
+  margin-bottom: 1.25rem;
+}
+
+.card-main-content h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 1rem 0;
+}
+
+.card-main-content p {
+  color: var(--fh-gray-text);
+  line-height: 1.625;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.essencia-cards-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.card-aulas {
+  background-color: var(--fh-yellow);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-aulas h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 0.5rem 0;
+}
+
+.card-aulas p {
+  color: #5A4A00;
+  font-size: 0.875rem;
+  line-height: 1.625;
+  margin: 0;
+}
+
+.card-gastronomia {
+  background-color: var(--fh-blue-dark);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+}
+
+.card-gastronomia h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+.card-gastronomia p {
+  color: #cfe1ff;
+  font-size: 0.875rem;
+  line-height: 1.625;
+  margin: 0;
+}
+
+/* ----------------------------------------------------------------------
+   Sanfona Banner
+   ---------------------------------------------------------------------- */
+.festival-home-sanfona {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.sanfona-banner {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  position: relative;
+  height: 15rem;
+  display: flex;
+  align-items: center;
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+}
+
+@media (min-width: 768px) {
+  .sanfona-banner { height: 18.75rem; padding: 4rem; }
+}
+
+.sanfona-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-image: url('https://images.unsplash.com/photo-1541363659-1e42c262ed47?q=80&w=2000&auto=format&fit=crop');
+  filter: brightness(0.5) contrast(1.2);
+}
+
+.sanfona-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(62,26,6,0.8), transparent);
+  mix-blend-mode: multiply;
+}
+
+.sanfona-text {
+  position: relative;
+  z-index: 10;
+  font-size: 1.8rem;
+  color: #FFF8E7;
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-style: italic;
+  font-weight: 700;
+  max-width: 48rem;
+  line-height: 1.25;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .sanfona-text { font-size: 3rem; }
+}
+
+/* ----------------------------------------------------------------------
+   Como Participar Section
+   ---------------------------------------------------------------------- */
+.festival-home-participar {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+.participar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  align-items: flex-start;
+}
+
+@media (min-width: 1024px) {
+  .participar-container { flex-direction: row; }
+}
+
+/* Steps */
+.participar-steps-col {
+  flex: 1;
+  width: 100%;
+  padding-top: 1rem;
+}
+
+.participar-title {
+  font-size: 2.5rem;
+  letter-spacing: -0.025em;
+  color: var(--fh-green);
+  font-weight: 500;
+  margin: 0 0 0.75rem 0;
+}
+
+.participar-subtitle {
+  color: var(--fh-gray-text);
+  font-size: 0.9375rem;
+  margin: 0 0 2.5rem 0;
+}
+
+.participar-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.step-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.step-number {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  margin-top: 0.25rem;
+}
+
+.step-bg-green { background-color: var(--fh-green); }
+.step-bg-gold { background-color: var(--fh-gold); }
+.step-bg-blue { background-color: var(--fh-blue-dark); }
+
+.step-content h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 0.25rem 0;
+}
+
+.step-content p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.625;
+  margin: 0;
+}
+
+/* Formulário */
+.participar-form-col {
+  width: 100%;
+  position: relative;
+  margin-top: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .participar-form-col {
+    width: 27.5rem;
+    flex-shrink: 0;
+    margin-top: 0;
+  }
+}
+
+.form-shadow-bg {
+  position: absolute;
+  inset: 0;
+  background-color: #E8E4D9;
+  border-radius: 2rem;
+  transform: translate(1.25rem, 1.25rem);
+  opacity: 0.6;
+}
+
+.participar-form-container {
+  position: relative;
+  background-color: #F4EFE6;
+  border-radius: 2rem;
+  padding: 2.25rem 2.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.participar-form-container h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-align: center;
+  color: #1A1A1A;
+  margin: 0 0 2rem 0;
+}
+
+.inscricao-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  background-color: #E5E0D4;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.875rem 1rem;
+  color: #1A1A1A;
+  font-size: 0.875rem;
+  transition: box-shadow 0.2s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--fh-green);
+}
+
+.form-group input::placeholder {
+  color: #6b7280;
+}
+
+.form-group select {
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+}
+
+.form-actions {
+  padding-top: 0.75rem;
+}
+
+.btn-confirmar {
+  width: 100%;
+  background-color: var(--fh-green);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.875rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: background-color 0.2s, transform 0.1s;
+  font-size: 1rem;
+}
+
+.btn-confirmar:hover {
+  background-color: #006600;
+}
+
+.btn-confirmar:active {
+  transform: scale(0.98);
+}
+
+.form-terms {
+  text-align: center;
+  font-size: 0.625rem;
+  color: #9ca3af;
+  margin: 1.25rem 0 0 0;
+  padding: 0 0.5rem;
+  line-height: 1.25;
+}
+
+/* ----------------------------------------------------------------------
+   Footer
+   ---------------------------------------------------------------------- */
+.festival-home-footer {
+  border-top: 1px solid #E8E2CD;
+  padding: 2rem 0;
+  width: 100%;
+  background-color: var(--fh-bg);
+}
+
+.footer-content {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .footer-content { flex-direction: row; }
+}
+
+.footer-brand {
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .footer-brand { text-align: left; }
+}
+
+.footer-brand h3 {
+  color: var(--fh-green);
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin: 0 0 0.125rem 0;
+}
+
+.footer-brand p {
+  color: #6b7280;
+  font-size: 0.6875rem;
+  margin: 0;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.footer-links a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--fh-green);
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+  color: #9ca3af;
+}
+
+.social-icon {
+  color: inherit;
+  transition: color 0.2s;
+  width: 1rem;
+  height: 1rem;
+}
+
+.social-icon:hover {
+  color: var(--fh-green);
+}
