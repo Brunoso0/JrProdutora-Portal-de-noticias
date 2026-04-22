@@ -6,7 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/FestivalInscricao.css';
 
-const API_FESTIVAL_BASE_URL = process.env.REACT_APP_API_FESTIVAL || 'http://localhost:3015';
+const API_FESTIVAL = process.env.REACT_APP_API_FESTIVAL || 'http://localhost:3015';
 
 const INITIAL_FORM = {
   name: '',
@@ -181,7 +181,7 @@ const FestivalInscricao = () => {
         const endpoint = isImage ? '/api/uploads/imagens' : '/api/uploads/pdfs';
 
         const uploadResponse = await axios.post(
-          `${API_FESTIVAL_BASE_URL}${endpoint}`,
+          `${API_FESTIVAL}${endpoint}`,
           uploadFormData,
           {
             headers: {
@@ -210,7 +210,7 @@ const FestivalInscricao = () => {
         portfolio_pdf_ref: portfolioPdfRef || undefined
       };
 
-      const response = await fetch(`${API_FESTIVAL_BASE_URL}/api/auth/register`, {
+      const response = await fetch(`${API_FESTIVAL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
