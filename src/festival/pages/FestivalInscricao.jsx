@@ -6,7 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/FestivalInscricao.css';
 
-const API_FESTIVAL = process.env.REACT_APP_API_FESTIVAL || 'http://localhost:3015';
+const API_FESTIVAL = process.env.API_FESTIVAL;
 
 const INITIAL_FORM = {
   name: '',
