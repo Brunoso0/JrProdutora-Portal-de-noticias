@@ -30,7 +30,7 @@ const CandidateArea = () => {
     phone: '',
     song_name: ''
   });
-  const API_FESTIVAL_BASE_URL = process.env.REACT_APP_API_FESTIVAL || 'http://localhost:3015';
+  const API_FESTIVAL_BASE_URL = process.env.API_FESTIVAL;
   const DEFAULT_USER_IMAGE = '/img/user.jpg';
 
   const PHASE_LABELS = {

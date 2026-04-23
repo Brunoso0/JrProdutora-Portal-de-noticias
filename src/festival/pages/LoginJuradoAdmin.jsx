@@ -1,60 +1,85 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Mail, Contact, ArrowRight, Music } from 'lucide-react';
-import '../styles/LoginCandidato.css';
+import { Mail, Lock, ArrowRight, Music } from 'lucide-react';
+import '../styles/LoginJuradoAdmin.css';
 
-const LoginCandidato = () => {
+const readTokenFromResponse = (response) => {
+  const data = response?.data || {};
+  const authHeader = response?.headers?.authorization || response?.headers?.Authorization;
+
+  if (typeof data.token === 'string' && data.token.trim()) return data.token;
+  if (typeof data.authToken === 'string' && data.authToken.trim()) return data.authToken;
+  if (typeof data.accessToken === 'string' && data.accessToken.trim()) return data.accessToken;
+
+  if (typeof authHeader === 'string' && authHeader.trim()) {
+    return authHeader.replace(/^Bearer\s+/i, '').trim();
+  }
+
+  return '';
+};
+
+const LoginJuradoAdmin = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
-    cpf: ''
+    password: ''
   });
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const API_FESTIVAL = process.env.API_FESTIVAL;
 
-  const handleChange = (e) => {
-    let value = e.target.value;
-    if (e.target.name === 'cpf') {
-      value = value.replace(/\D/g, '').slice(0, 11);
-      if (value.length > 3) value = `${value.slice(0, 3)}.${value.slice(3)}`;
-      if (value.length > 7) value = `${value.slice(0, 7)}.${value.slice(7)}`;
-      if (value.length > 11) value = `${value.slice(0, 11)}-${value.slice(11)}`;
-    }
-    setFormData({ ...formData, [e.target.name]: value });
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((current) => ({
+      ...current,
+      [name]: value
+    }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setErrorMsg('');
     setIsLoading(true);
 
     try {
       const payload = {
         email: formData.email,
-        password: formData.cpf
+        password: formData.password
       };
 
       const response = await axios.post(`${API_FESTIVAL}/api/auth/login`, payload);
+      const user = response?.data?.user || response?.data?.data?.user || null;
+      const role = (user?.role || response?.data?.role || '').toString().toLowerCase();
+      const token = readTokenFromResponse(response);
 
-      console.log('✅ Login Response:', response.data);
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        navigate('/area-candidato');
+      if (role && role !== 'admin') {
+        setErrorMsg('Acesso permitido apenas para administradores.');
+        return;
       }
-    } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Credenciais inválidas ou erro ao realizar login.');
+
+      if (!token) {
+        setErrorMsg('Login confirmado no backend, mas o token não foi retornado para o frontend.');
+        return;
+      }
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('festivalAdminToken', token);
+      if (user) {
+        localStorage.setItem('festivalAdminUser', JSON.stringify(user));
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+      navigate('/festival-forro/admin');
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || 'Credenciais inválidas ou erro ao realizar login.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="login-candidato-page">
-      {/* Background Shapes */}
+    <div className="login-jurado-page">
       <div className="bg-shapes">
         <div className="shape shape-top-left-bg"></div>
         <div className="shape shape-top-left"></div>
@@ -67,42 +92,43 @@ const LoginCandidato = () => {
             <Music size={24} className="music-icon" fill="currentColor" />
           </div>
           <h1>Festival de Forró</h1>
-          <p>Área do Candidato</p>
+          <p>Área Administrativa</p>
         </div>
 
         <div className="login-card">
           <form onSubmit={handleSubmit}>
             {errorMsg && (
-              <div style={{ color: '#D93025', fontSize: '13px', textAlign: 'center', marginBottom: '16px', fontWeight: '500' }}>
+              <div className="login-error-msg">
                 {errorMsg}
               </div>
             )}
+
             <div className="input-group">
               <label>E-mail</label>
               <div className="input-wrapper">
                 <Mail size={18} className="input-icon" />
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   name="email"
-                  placeholder="exemplo@email.com" 
+                  placeholder="exemplo@email.com"
                   value={formData.email}
                   onChange={handleChange}
-                  required 
+                  required
                 />
               </div>
             </div>
 
             <div className="input-group">
-              <label>CPF (Senha)</label>
+              <label>Senha</label>
               <div className="input-wrapper">
-                <Contact size={18} className="input-icon" />
-                <input 
-                  type="text" 
-                  name="cpf"
-                  placeholder="000.000.000-00" 
-                  value={formData.cpf}
+                <Lock size={18} className="input-icon" />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Digite sua senha"
+                  value={formData.password}
                   onChange={handleChange}
-                  required 
+                  required
                 />
               </div>
             </div>
@@ -120,13 +146,8 @@ const LoginCandidato = () => {
             <div className="divider"></div>
 
             <p className="signup-text">
-              Ainda não se inscreveu para o festival?<br/>
-              <Link to="/festival-forro/inscricao" className="link-signup">Faça sua inscrição aqui.</Link>
-            </p>
-
-            <p className="signup-text" style={{ marginTop: '14px' }}>
-              É administrador?<br />
-              <Link to="/festival-forro/admin/login" className="link-signup">Entrar na área administrativa.</Link>
+              Você é candidato?<br />
+              <Link to="/login-candidato" className="link-signup">Entrar na área do candidato.</Link>
             </p>
           </form>
         </div>
@@ -145,4 +166,4 @@ const LoginCandidato = () => {
   );
 };
 
-export default LoginCandidato;
+export default LoginJuradoAdmin;

@@ -1,0 +1,59 @@
+/* Reset some base styles applied dynamically */
+.festival-admin-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #FAF4E9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.festival-admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+
+.festival-admin-content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  /* Scrollbar configuration for webkit */
+  scrollbar-width: thin;
+  scrollbar-color: #D6CBB3 transparent;
+}
+
+.festival-admin-content-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.festival-admin-content-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.festival-admin-content-area::-webkit-scrollbar-thumb {
+  background-color: #D6CBB3;
+  border-radius: 4px;
+}
+
+/* Placeholder for missing sections */
+.festival-admin-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  text-align: center;
+  color: #6B7280;
+}
+
+.festival-admin-placeholder h2 {
+  font-size: 24px;
+  color: #374151;
+  margin-bottom: 16px;
+}

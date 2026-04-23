@@ -14,6 +14,7 @@ import VerTodos from "./portal/pages/VerTudoPage";
 
 import ProtectedRoute from "./shared/components/ProtectedRoute";
 import ProtectedRouteCandidato from "./shared/components/ProtectedRouteCandidato";
+import ProtectedRouteFestivalAdmin from "./shared/components/ProtectedRouteFestivalAdmin";
 
 import CandidaturaVagas from './vagas/pages/CandidaturaVagas';
 import LoginVagas from "./vagas/pages/LoginVagas";
@@ -23,7 +24,9 @@ import PublicLayout from "./layouts/PublicLayout";
 import FestivalHome from "./festival/pages/FestivalHome";
 import FestivalInscricao from "./festival/pages/FestivalInscricao";
 import LoginCandidato from "./festival/pages/LoginCandidato";
+import LoginJuradoAdmin from "./festival/pages/LoginJuradoAdmin";
 import CandidateArea from "./festival/pages/CandidateArea";
+import FestivalAdmin from "./festival/pages/FestivalAdmin";
 
 import "./index.css";
 
@@ -105,6 +108,9 @@ const App = () => {
         <Route path="/festival-forro" element={<FestivalHome />} />
         <Route path="/festival-forro/inscricao" element={<FestivalInscricao />} />
         <Route path="/login-candidato" element={<LoginCandidato />} />
+        <Route path="/festival-forro/login" element={<LoginJuradoAdmin />} />
+        <Route path="/festival-forro/admin/login" element={<LoginJuradoAdmin />} />
+        <Route path="/festival-forro/admin" element={<ProtectedRouteFestivalAdmin><FestivalAdmin /></ProtectedRouteFestivalAdmin>} />
         <Route path="/area-candidato" element={<ProtectedRouteCandidato><CandidateArea /></ProtectedRouteCandidato>} />
       </Routes>
       </Router>

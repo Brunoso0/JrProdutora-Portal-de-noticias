@@ -1,0 +1,141 @@
+.admin-sidebar {
+  background-color: #FAF4E9; /* Off-white / Cream based on the design */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  overflow-y: auto;
+  border-right: 1px solid rgba(0,0,0,0.05);
+}
+
+.admin-sidebar.open {
+  width: 250px;
+}
+
+.admin-sidebar.closed {
+  width: 80px;
+  align-items: center;
+}
+
+/* Header / Logo */
+.admin-sidebar-header {
+  padding: 32px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.admin-sidebar.closed .admin-sidebar-header {
+  padding: 32px 0;
+  justify-content: center;
+}
+
+.admin-sidebar-logo-icon {
+  width: 40px;
+  height: 40px;
+  background-color: #E2F5DB;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-sidebar-logo-text {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
+
+.admin-sidebar-logo-text h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0F3A15;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.admin-sidebar-logo-text p {
+  font-size: 12px;
+  color: #6B7280;
+  margin: 2px 0 0 0;
+}
+
+/* Navigation Links */
+.admin-sidebar-nav {
+  flex: 1;
+}
+
+.admin-sidebar-nav ul,
+.admin-sidebar-footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-sidebar-footer {
+  padding-bottom: 32px;
+}
+
+.admin-sidebar-link {
+  display: flex;
+  align-items: center;
+  width: calc(100% - 32px);
+  margin: 0 16px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #4B5563;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.admin-sidebar.closed .admin-sidebar-link {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  padding: 0;
+  justify-content: center;
+}
+
+.admin-sidebar-link:hover {
+  background-color: rgba(14, 96, 35, 0.05);
+  color: #0E6023;
+}
+
+.admin-sidebar-link.active {
+  background-color: #0E6023;
+  color: #FFFFFF;
+}
+
+.admin-sidebar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-sidebar-label {
+  margin-left: 12px;
+  white-space: nowrap;
+}
+
+.admin-sidebar.closed .admin-sidebar-label {
+  display: none;
+}
+
+.admin-sidebar-link.logout-btn .login-icon-red {
+  color: #DC2626;
+}
+
+.admin-sidebar-link.logout-btn:hover {
+  background-color: rgba(220, 38, 38, 0.05);
+  color: #DC2626;
+}

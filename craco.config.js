@@ -1,7 +1,13 @@
 const path = require("path");
 const webpack = require("webpack");
+const dotenv = require("dotenv");
 
-require("dotenv").config();
+const NODE_ENV = process.env.NODE_ENV || "development";
+const rootDir = __dirname;
+
+// Carrega .env base e sobrescreve com o arquivo específico do ambiente ativo.
+dotenv.config({ path: path.resolve(rootDir, ".env") });
+dotenv.config({ path: path.resolve(rootDir, `.env.${NODE_ENV}`), override: true });
 
 module.exports = {
   webpack: {
