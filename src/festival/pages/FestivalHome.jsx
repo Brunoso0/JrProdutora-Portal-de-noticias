@@ -76,6 +76,22 @@ const FestivalHome = () => {
             </a> */}
           </div>
         </div>
+
+        <div className="hero-image-container">
+          <div className="hero-image-wrapper">
+            <div className="hero-image-circle-bg"></div>
+            <img
+              src="/img/forro_couple_illustration.png"
+              alt="Casal dançando forró"
+              className="hero-image"
+            />
+            <div className="hero-image-overlay">
+              <h3>Xote & Baião</h3>
+              <p>Tradição que atravessa gerações</p>
+            </div>
+            <span className="xote-baiao-tag">VEM DANÇAR</span>
+          </div>
+        </div>
       </section>
 
       {/* Nossa Essência Section */}
