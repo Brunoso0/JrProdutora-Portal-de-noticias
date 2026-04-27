@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '../components/AdminSidebar';
 import AdminTopbar from '../components/AdminTopbar';
+import DashboardAdmin from '../subPages/DashboardAdmin';
 import SessoesAdmin from '../subPages/SessoesAdmin';
+import ArtistasAdmin from '../subPages/ArtistasAdmin';
+import JuradosAdmin from '../subPages/JuradosAdmin';
 import '../styles/FestivalAdmin.css';
 
 const FestivalAdmin = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState('sessoes'); // Default tab based on requirement
+  const [activeTab, setActiveTab] = useState('dashboard'); // Dashboard as default landing page
   const [adminName, setAdminName] = useState('Administrador');
 
   useEffect(() => {
@@ -36,11 +39,14 @@ const FestivalAdmin = () => {
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'dashboard':
+        return <DashboardAdmin onNavigateTab={setActiveTab} />;
       case 'sessoes':
         return <SessoesAdmin />;
-      case 'dashboard':
       case 'artistas':
+        return <ArtistasAdmin />;
       case 'jurados':
+        return <JuradosAdmin />;
       case 'configuracoes':
       default:
         // Placeholder for other pages until implemented

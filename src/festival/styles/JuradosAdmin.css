@@ -1,0 +1,672 @@
+/* Jurados Admin Styles */
+
+.jurados-container {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+.jurados-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  font-size: 1.2rem;
+  color: #666;
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+/* Alerts */
+.jurados-alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  animation: slideIn 0.3s ease;
+}
+
+.jurados-alert.alert-error {
+  background-color: #fee;
+  color: #c33;
+  border: 1px solid #fcc;
+}
+
+.jurados-alert.alert-success {
+  background-color: #efe;
+  color: #3c3;
+  border: 1px solid #cfc;
+}
+
+.close-alert {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+  padding: 0;
+  margin-left: 1rem;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+.jurados-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.jurados-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #2c3e50;
+}
+
+.jurados-refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.jurados-add-btn {
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.jurados-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.jurados-refresh-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.jurados-refresh-btn:active {
+  transform: translateY(0);
+}
+
+/* Filters */
+.jurados-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 0.7rem 1rem 0.7rem 2.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.filter-icon {
+  position: absolute;
+  left: 0.8rem;
+  color: #999;
+  pointer-events: none;
+}
+
+.filter-select {
+  padding: 0.7rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  min-width: 150px;
+  transition: all 0.3s ease;
+}
+
+.filter-select:hover,
+.filter-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Table */
+.jurados-table-wrapper {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  margin-bottom: 2rem;
+}
+
+.jurados-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.jurados-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.jurados-table th {
+  padding: 1rem 1.2rem;
+  text-align: left;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.jurados-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+}
+
+.jurados-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.jurados-table td {
+  padding: 1rem 1.2rem;
+}
+
+.photo-cell {
+  text-align: center;
+}
+
+.judge-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+.judge-photo-preview {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 2px solid #cbd5e1;
+  margin-top: 0.5rem;
+}
+
+.judge-photo-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  color: #999;
+  font-weight: bold;
+}
+
+.area-badge {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-ativo {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-inativo {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.empty-message {
+  text-align: center;
+  color: #999;
+  padding: 2rem !important;
+  font-style: italic;
+}
+
+/* Actions Cell */
+.acoes-cell {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.acao-btn {
+  padding: 0.5rem 0.7rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.acao-ver {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.acao-ver:hover {
+  background: #1976d2;
+  color: white;
+}
+
+.acao-editar {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.acao-editar:hover {
+  background: #388e3c;
+  color: white;
+}
+
+.acao-excluir {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.acao-excluir:hover {
+  background: #d32f2f;
+  color: white;
+}
+
+/* Pagination */
+.jurados-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-btn {
+  padding: 0.6rem 1.2rem;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  color: #666;
+  font-weight: 600;
+  min-width: 150px;
+  text-align: center;
+}
+
+.jurados-container .jurados-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+  padding: 1rem;
+}
+
+.jurados-container .jurados-modal-card {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 24px;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.22);
+  max-width: 720px;
+  width: min(100%, 720px);
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+  position: relative;
+}
+
+.jurados-container .jurados-modal-card-delete {
+  max-width: 460px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.jurados-container .jurados-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.35rem 1.5rem 1.1rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+}
+
+.jurados-container .jurados-modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.jurados-container .jurados-modal-close {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.jurados-container .jurados-modal-close:hover {
+  color: #0f172a;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+}
+
+.jurados-container .jurados-modal-content {
+  padding: 1.5rem;
+}
+
+.jurados-container .jurados-modal-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Form */
+.jurados-container .jurados-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.15rem;
+}
+
+.jurados-container .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.jurados-container .form-group-full {
+  grid-column: 1 / -1;
+}
+
+.jurados-container .form-group label {
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.92rem;
+}
+
+.jurados-container .form-value {
+  padding: 0.85rem 0.95rem;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #f8fafc;
+  margin: 0;
+  word-break: break-word;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.jurados-container .form-input,
+.jurados-container .form-select,
+.jurados-container .form-textarea {
+  padding: 0.85rem 0.95rem;
+  border: 1px solid #dbe3ef;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: #fff;
+  color: #0f172a;
+}
+
+.jurados-container .form-input:focus,
+.jurados-container .form-select:focus,
+.jurados-container .form-textarea:focus {
+  outline: none;
+  border-color: #818cf8;
+  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.14);
+}
+
+.jurados-container .form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.jurados-container .jurados-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem 1.5rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.9);
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.4), rgba(248, 250, 252, 0.95));
+}
+
+.jurados-container .jurados-btn {
+  padding: 0.78rem 1.25rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.jurados-container .jurados-btn-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  color: white;
+  box-shadow: 0 12px 24px rgba(99, 102, 241, 0.28);
+}
+
+.jurados-container .jurados-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 28px rgba(99, 102, 241, 0.35);
+}
+
+.jurados-container .jurados-btn-secondary {
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #dbe3ef;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+.jurados-container .jurados-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.jurados-container .jurados-btn-danger {
+  background: linear-gradient(135deg, #fb7185 0%, #ef4444 100%);
+  color: white;
+  box-shadow: 0 12px 24px rgba(239, 68, 68, 0.25);
+}
+
+.jurados-container .jurados-btn-danger:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 28px rgba(239, 68, 68, 0.32);
+}
+
+.jurados-container .jurados-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Delete Message */
+.jurados-container .delete-message {
+  font-size: 1rem;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+  line-height: 1.6;
+}
+
+.jurados-container .delete-warning {
+  font-size: 0.85rem;
+  color: #dc2626;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .jurados-container {
+    padding: 1rem;
+  }
+
+  .jurados-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .jurados-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .jurados-filters {
+    flex-direction: column;
+  }
+
+  .filter-group,
+  .filter-select {
+    width: 100%;
+  }
+
+  .jurados-table {
+    font-size: 0.8rem;
+  }
+
+  .jurados-table th,
+  .jurados-table td {
+    padding: 0.7rem 0.5rem;
+  }
+
+  .acoes-cell {
+    gap: 0.3rem;
+  }
+
+  .acao-btn {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .jurados-form {
+    grid-template-columns: 1fr;
+  }
+
+  .jurados-container .jurados-modal-card {
+    width: 100%;
+    max-height: 92vh;
+  }
+}

@@ -25,11 +25,101 @@ const formatDate = (dateString) => {
   return parsed.toLocaleDateString('pt-BR');
 };
 
-const parseIdsCsv = (raw) =>
-  raw
-    .split(',')
-    .map((item) => Number(item.trim()))
-    .filter((value) => Number.isFinite(value) && value > 0);
+const normalizeText = (value) => String(value || '').trim().toLowerCase();
+
+const parseCandidateNames = (raw) =>
+  String(raw || '')
+    .split(/[\n,;]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+const collectCandidateEntries = (source, bucket = []) => {
+  if (!source) return bucket;
+
+  if (Array.isArray(source)) {
+    source.forEach((item) => collectCandidateEntries(item, bucket));
+    return bucket;
+  }
+
+  if (typeof source !== 'object') return bucket;
+
+  const candidateName = source.artistic_name || source.name || source.candidate_name || source.label;
+  const candidateId = source.candidate_id ?? source.candidateId ?? source.id ?? source.user_id;
+
+  if (candidateName || candidateId) {
+    bucket.push({
+      id: Number(candidateId),
+      name: String(candidateName || '').trim()
+    });
+  }
+
+  Object.values(source).forEach((value) => {
+    if (Array.isArray(value) || (value && typeof value === 'object')) {
+      collectCandidateEntries(value, bucket);
+    }
+  });
+
+  return bucket;
+};
+
+const findCandidateMatch = (rawName, candidateOptions) => {
+  const query = normalizeText(rawName);
+  if (!query) return null;
+
+  const exactMatch = candidateOptions.find((candidate) => normalizeText(candidate.name) === query);
+  if (exactMatch) return exactMatch;
+
+  const partialMatches = candidateOptions.filter((candidate) => normalizeText(candidate.name).includes(query));
+  if (partialMatches.length === 1) return partialMatches[0];
+
+  return null;
+};
+
+const CandidateLookupField = ({
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+  helperText,
+  onSelect,
+  rows = 3
+}) => {
+  const optionCount = options.length;
+
+  return (
+    <div className="candidate-lookup-field">
+      <label>{label}</label>
+      <textarea
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        rows={rows}
+      />
+      <div className="candidate-lookup-meta">
+        <span>{helperText}</span>
+        <span>{optionCount ? `${optionCount} sugestão(ões)` : 'Nenhum nome encontrado'}</span>
+      </div>
+      <select
+        size={Math.min(6, Math.max(optionCount, 2))}
+        value=""
+        onChange={(event) => {
+          if (event.target.value) {
+            onSelect(event.target.value);
+          }
+        }}
+        disabled={optionCount === 0}
+      >
+        <option value="">Selecione um nome sugerido</option>
+        {options.map((candidate) => (
+          <option key={`${candidate.id || candidate.name}`} value={candidate.name}>
+            {candidate.name}{candidate.id ? ` • #${candidate.id}` : ''}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
 
 const SessoesAdmin = () => {
   const [sessions, setSessions] = useState([]);
@@ -59,11 +149,11 @@ const SessoesAdmin = () => {
     winners_count: '3'
   });
 
-  const [activeCandidateId, setActiveCandidateId] = useState('');
-  const [candidateIdsCsv, setCandidateIdsCsv] = useState('');
-  const [candidateIdToRemove, setCandidateIdToRemove] = useState('');
+  const [activeCandidateName, setActiveCandidateName] = useState('');
+  const [candidateNamesCsv, setCandidateNamesCsv] = useState('');
+  const [candidateNameToRemove, setCandidateNameToRemove] = useState('');
   const [scoreCorrection, setScoreCorrection] = useState({
-    candidateId: '',
+    candidateName: '',
     adjustment: ''
   });
 
@@ -116,14 +206,100 @@ const SessoesAdmin = () => {
     }
   }, [apiRequest, selectedSessionId]);
 
+  const loadSelectedSessionResults = useCallback(async (sessionId) => {
+    if (!sessionId) return;
+
+    try {
+      const response = await apiRequest('get', `/api/sessions/${sessionId}/results`);
+      setResultsData(response?.data || null);
+    } catch (error) {
+      setResultsData(null);
+    }
+  }, [apiRequest]);
+
   useEffect(() => {
     loadSessions();
   }, [loadSessions]);
+
+  useEffect(() => {
+    if (!selectedSessionId) {
+      setResultsData(null);
+      setActiveCandidateName('');
+      setCandidateNameToRemove('');
+      setCandidateNamesCsv('');
+      setScoreCorrection((current) => ({ ...current, candidateName: '' }));
+      return;
+    }
+
+    loadSelectedSessionResults(selectedSessionId);
+  }, [loadSelectedSessionResults, selectedSessionId]);
 
   const selectedSession = useMemo(
     () => sessions.find((item) => Number(item.id) === Number(selectedSessionId)) || null,
     [sessions, selectedSessionId]
   );
+
+  const candidateOptions = useMemo(() => {
+    const collected = [];
+    collectCandidateEntries(selectedSession, collected);
+    collectCandidateEntries(resultsData, collected);
+
+    const uniqueCandidates = new Map();
+
+    collected.forEach((candidate) => {
+      const name = String(candidate.name || '').trim();
+      if (!name) return;
+
+      const candidateId = Number(candidate.id);
+      const key = Number.isFinite(candidateId) && candidateId > 0
+        ? `id:${candidateId}`
+        : `name:${normalizeText(name)}`;
+
+      if (!uniqueCandidates.has(key)) {
+        uniqueCandidates.set(key, {
+          id: Number.isFinite(candidateId) && candidateId > 0 ? candidateId : null,
+          name
+        });
+      }
+    });
+
+    return Array.from(uniqueCandidates.values()).sort((left, right) => left.name.localeCompare(right.name, 'pt-BR'));
+  }, [resultsData, selectedSession]);
+
+  const filterCandidateOptions = useCallback((query) => {
+    const normalizedQuery = normalizeText(query);
+    if (!normalizedQuery) return candidateOptions;
+
+    return candidateOptions.filter((candidate) => {
+      const normalizedName = normalizeText(candidate.name);
+      return normalizedName.includes(normalizedQuery) || String(candidate.id || '').includes(normalizedQuery);
+    });
+  }, [candidateOptions]);
+
+  useEffect(() => {
+    if (!selectedSession) return;
+
+    const activeCandidateId =
+      selectedSession.active_candidate_id ??
+      selectedSession.activeCandidateId ??
+      selectedSession.active_candidate?.candidate_id ??
+      selectedSession.active_candidate?.id ??
+      selectedSession.activeCandidate?.candidate_id ??
+      selectedSession.activeCandidate?.id;
+
+    const activeCandidateNameFromSession =
+      selectedSession.active_candidate?.artistic_name ??
+      selectedSession.active_candidate?.name ??
+      selectedSession.activeCandidate?.artistic_name ??
+      selectedSession.activeCandidate?.name ??
+      selectedSession.active_candidate_name ??
+      selectedSession.activeCandidateName ??
+      '';
+
+    const activeCandidateById = candidateOptions.find((candidate) => String(candidate.id) === String(activeCandidateId));
+
+    setActiveCandidateName(activeCandidateById?.name || activeCandidateNameFromSession || '');
+  }, [candidateOptions, selectedSession]);
 
   const filteredSessions = useMemo(() => {
     if (activeTab === 'all') return sessions;
@@ -227,72 +403,93 @@ const SessoesAdmin = () => {
     event.preventDefault();
     if (!selectedSessionId) return;
 
+    const match = findCandidateMatch(activeCandidateName, candidateOptions);
+    if (!match?.id) {
+      setErrorMsg('Selecione um nome artístico válido para definir o candidato ativo.');
+      return;
+    }
+
     await runAction(
       () =>
         apiRequest('patch', `/api/sessions/${selectedSessionId}/active-candidate`, {
-          active_candidate_id: Number(activeCandidateId)
+          active_candidate_id: Number(match.id)
         }),
-      'Candidato ativo atualizado.'
+      `Candidato ativo atualizado para ${match.name}.`
     );
+
+    setActiveCandidateName(match.name);
   };
 
   const handleAddCandidates = async (event) => {
     event.preventDefault();
     if (!selectedSessionId) return;
 
-    const ids = parseIdsCsv(candidateIdsCsv);
-    if (!ids.length) {
-      setErrorMsg('Informe ao menos um ID de candidato valido.');
+    const candidateNames = parseCandidateNames(candidateNamesCsv);
+    if (!candidateNames.length) {
+      setErrorMsg('Informe ao menos um nome artístico válido.');
+      return;
+    }
+
+    const resolvedCandidates = candidateNames.map((candidateName) => ({
+      candidateName,
+      match: findCandidateMatch(candidateName, candidateOptions)
+    }));
+
+    const unresolvedCandidate = resolvedCandidates.find((item) => !item.match?.id);
+    if (unresolvedCandidate) {
+      setErrorMsg(`Nao encontrei correspondencia para "${unresolvedCandidate.candidateName}".`);
       return;
     }
 
     await runAction(
       () =>
         apiRequest('post', `/api/sessions/${selectedSessionId}/candidates`, {
-          candidate_ids: ids
+          candidate_ids: resolvedCandidates.map((item) => Number(item.match.id))
         }),
       'Candidatos vinculados a sessao.'
     );
 
-    setCandidateIdsCsv('');
+    setCandidateNamesCsv('');
   };
 
   const handleRemoveCandidate = async (event) => {
     event.preventDefault();
     if (!selectedSessionId) return;
 
-    const candidateId = Number(candidateIdToRemove);
-    if (!Number.isFinite(candidateId) || candidateId <= 0) {
-      setErrorMsg('Informe um ID de candidato valido para remocao.');
+    const match = findCandidateMatch(candidateNameToRemove, candidateOptions);
+    if (!match?.id) {
+      setErrorMsg('Selecione um nome artístico válido para remoção.');
       return;
     }
 
     await runAction(
-      () => apiRequest('delete', `/api/sessions/${selectedSessionId}/candidates/${candidateId}`),
+      () => apiRequest('delete', `/api/sessions/${selectedSessionId}/candidates/${Number(match.id)}`),
       'Candidato removido da sessao.'
     );
 
-    setCandidateIdToRemove('');
+    setCandidateNameToRemove('');
   };
 
   const handleScoreCorrection = async (event) => {
     event.preventDefault();
     if (!selectedSessionId) return;
 
-    const candidateId = Number(scoreCorrection.candidateId);
+    const match = findCandidateMatch(scoreCorrection.candidateName, candidateOptions);
     const adjustment = Number(scoreCorrection.adjustment);
-    if (!Number.isFinite(candidateId) || candidateId <= 0 || !Number.isFinite(adjustment)) {
-      setErrorMsg('Preencha ID de candidato e ajuste (float) validos.');
+    if (!match?.id || !Number.isFinite(adjustment)) {
+      setErrorMsg('Preencha nome artístico e ajuste (float) válidos.');
       return;
     }
 
     await runAction(
       () =>
-        apiRequest('patch', `/api/sessions/${selectedSessionId}/candidates/${candidateId}/score-correction`, {
+        apiRequest('patch', `/api/sessions/${selectedSessionId}/candidates/${Number(match.id)}/score-correction`, {
           adjustment
         }),
       'Correcao de pontuacao aplicada.'
     );
+
+    setScoreCorrection((current) => ({ ...current, candidateName: match.name }));
   };
 
   const handleLoadResults = async () => {
@@ -453,75 +650,72 @@ const SessoesAdmin = () => {
               </div>
 
               <form onSubmit={handleSetActiveCandidate}>
-                <label>Candidato ativo (ID)</label>
-                <div className="inline-fields">
-                  <input
-                    type="number"
-                    min="1"
-                    value={activeCandidateId}
-                    onChange={(e) => setActiveCandidateId(e.target.value)}
-                    placeholder="Ex.: 17"
-                    required
-                  />
-                  <button type="submit" disabled={isSaving}>Definir</button>
-                </div>
+                <CandidateLookupField
+                  label="Candidato ativo (nome artístico)"
+                  value={activeCandidateName}
+                  onChange={(event) => setActiveCandidateName(event.target.value)}
+                  options={filterCandidateOptions(activeCandidateName)}
+                  placeholder="Digite o nome artístico do candidato"
+                  helperText="Escreva o nome e escolha a sugestão correspondente antes de confirmar."
+                  onSelect={setActiveCandidateName}
+                  rows={2}
+                />
+                <button type="submit" disabled={isSaving}>Definir</button>
               </form>
             </div>
 
             <div className="control-card">
               <h4>Candidatos da sessão</h4>
               <form onSubmit={handleAddCandidates}>
-                <label>Adicionar IDs (separados por vírgula)</label>
-                <div className="inline-fields">
-                  <input
-                    type="text"
-                    value={candidateIdsCsv}
-                    onChange={(e) => setCandidateIdsCsv(e.target.value)}
-                    placeholder="12, 15, 18"
-                    required
-                  />
-                  <button type="submit" disabled={isSaving}>Vincular</button>
-                </div>
+                <CandidateLookupField
+                  label="Adicionar candidatos por nome artístico"
+                  value={candidateNamesCsv}
+                  onChange={(event) => setCandidateNamesCsv(event.target.value)}
+                  options={filterCandidateOptions(candidateNamesCsv)}
+                  placeholder="Maria do Forro, João da Sanfona"
+                  helperText="Separe os nomes por vírgula, ponto e vírgula ou quebra de linha."
+                  onSelect={setCandidateNamesCsv}
+                  rows={4}
+                />
+                <button type="submit" disabled={isSaving}>Vincular</button>
               </form>
 
               <form onSubmit={handleRemoveCandidate}>
-                <label>Remover candidato (ID)</label>
-                <div className="inline-fields">
-                  <input
-                    type="number"
-                    min="1"
-                    value={candidateIdToRemove}
-                    onChange={(e) => setCandidateIdToRemove(e.target.value)}
-                    placeholder="Ex.: 15"
-                    required
-                  />
-                  <button type="submit" disabled={isSaving}>Remover</button>
-                </div>
+                <CandidateLookupField
+                  label="Remover candidato (nome artístico)"
+                  value={candidateNameToRemove}
+                  onChange={(event) => setCandidateNameToRemove(event.target.value)}
+                  options={filterCandidateOptions(candidateNameToRemove)}
+                  placeholder="Digite o nome artístico"
+                  helperText="Use o nome artístico para localizar o candidato correto antes de remover."
+                  onSelect={setCandidateNameToRemove}
+                  rows={2}
+                />
+                <button type="submit" disabled={isSaving}>Remover</button>
               </form>
             </div>
 
             <div className="control-card">
               <h4>Correção de pontuação e ranking</h4>
               <form onSubmit={handleScoreCorrection}>
-                <label>Correção manual</label>
-                <div className="inline-fields">
-                  <input
-                    type="number"
-                    min="1"
-                    value={scoreCorrection.candidateId}
-                    onChange={(e) => setScoreCorrection((c) => ({ ...c, candidateId: e.target.value }))}
-                    placeholder="ID candidato"
-                    required
-                  />
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={scoreCorrection.adjustment}
-                    onChange={(e) => setScoreCorrection((c) => ({ ...c, adjustment: e.target.value }))}
-                    placeholder="Ajuste"
-                    required
-                  />
-                </div>
+                <CandidateLookupField
+                  label="Correção manual (nome artístico)"
+                  value={scoreCorrection.candidateName}
+                  onChange={(event) => setScoreCorrection((c) => ({ ...c, candidateName: event.target.value }))}
+                  options={filterCandidateOptions(scoreCorrection.candidateName)}
+                  placeholder="Digite o nome artístico"
+                  helperText="Localize o candidato pelo nome antes de aplicar o ajuste."
+                  onSelect={(selectedName) => setScoreCorrection((c) => ({ ...c, candidateName: selectedName }))}
+                  rows={2}
+                />
+                <input
+                  type="number"
+                  step="0.01"
+                  value={scoreCorrection.adjustment}
+                  onChange={(e) => setScoreCorrection((c) => ({ ...c, adjustment: e.target.value }))}
+                  placeholder="Ajuste"
+                  required
+                />
                 <button type="submit" disabled={isSaving}>Aplicar correção</button>
               </form>
 

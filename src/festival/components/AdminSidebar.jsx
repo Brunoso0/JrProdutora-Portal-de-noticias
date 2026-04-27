@@ -28,8 +28,8 @@ const AdminSidebar = ({ isOpen, activeTab, onTabChange, onLogout }) => {
         </div>
         {isOpen && (
           <div className="admin-sidebar-logo-text">
-            <h2>Arraial Digital</h2>
-            <p>Edição 2024</p>
+            <h2>Festival Forró</h2>
+            <p>Edição 2026</p>
           </div>
         )}
       </div>
