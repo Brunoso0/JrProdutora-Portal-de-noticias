@@ -6,6 +6,7 @@ import DashboardAdmin from '../subPages/DashboardAdmin';
 import SessoesAdmin from '../subPages/SessoesAdmin';
 import ArtistasAdmin from '../subPages/ArtistasAdmin';
 import JuradosAdmin from '../subPages/JuradosAdmin';
+import ConfiguracoesAdmin from '../subPages/ConfiguracoesAdmin';
 import '../styles/FestivalAdmin.css';
 
 const FestivalAdmin = () => {
@@ -48,14 +49,9 @@ const FestivalAdmin = () => {
       case 'jurados':
         return <JuradosAdmin />;
       case 'configuracoes':
+        return <ConfiguracoesAdmin adminName={adminName} />;
       default:
-        // Placeholder for other pages until implemented
-        return (
-          <div className="festival-admin-placeholder">
-            <h2>Página em construção</h2>
-            <p>O conteúdo para a seção "{activeTab}" será disponibilizado em breve.</p>
-          </div>
-        );
+        return <DashboardAdmin onNavigateTab={setActiveTab} />;
     }
   };
 
@@ -65,7 +61,7 @@ const FestivalAdmin = () => {
       case 'artistas': return 'Gerenciamento de Artistas';
       case 'sessoes': return 'Gerenciamento de Sessões';
       case 'jurados': return 'Gerenciamento de Jurados';
-      case 'configuracoes': return 'Configurações do Sistema';
+      case 'configuracoes': return 'Configurações da Conta';
       default: return 'Área Administrativa';
     }
   };
@@ -83,6 +79,7 @@ const FestivalAdmin = () => {
           title={getPageTitle()} 
           toggleSidebar={toggleSidebar} 
           adminName={adminName} 
+          onOpenSettings={() => setActiveTab('configuracoes')}
         />
         <div className="festival-admin-content-area">
           {renderContent()}

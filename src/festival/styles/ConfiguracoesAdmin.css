@@ -1,0 +1,490 @@
+.festival-settings-page {
+  padding: 2rem;
+  background:
+    radial-gradient(circle at top left, rgba(14, 96, 35, 0.12), transparent 34%),
+    radial-gradient(circle at top right, rgba(201, 162, 39, 0.14), transparent 30%),
+    linear-gradient(180deg, #fbf7ef 0%, #f4efe5 100%);
+  min-height: 100%;
+}
+
+.festival-settings-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.festival-settings-hero h2 {
+  margin: 0.35rem 0 0.75rem;
+  font-size: clamp(1.7rem, 2.4vw, 2.6rem);
+  color: #17321f;
+}
+
+.festival-settings-hero p {
+  margin: 0;
+  max-width: 62ch;
+  color: #59655d;
+  line-height: 1.6;
+}
+
+.festival-settings-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(14, 96, 35, 0.12);
+  color: #0e6023;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.festival-settings-hero-card {
+  min-width: 280px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(14, 96, 35, 0.08);
+  box-shadow: 0 14px 40px rgba(53, 65, 39, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.festival-settings-hero-card strong,
+.festival-settings-profile-meta strong {
+  display: block;
+  color: #17321f;
+}
+
+.festival-settings-hero-card p,
+.festival-settings-profile-meta span,
+.festival-settings-profile-meta small {
+  color: #6a736b;
+}
+
+.festival-settings-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border-radius: 16px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.festival-settings-alert.success {
+  background: rgba(14, 96, 35, 0.09);
+  color: #0e6023;
+  border: 1px solid rgba(14, 96, 35, 0.14);
+}
+
+.festival-settings-alert.error {
+  background: rgba(184, 35, 35, 0.08);
+  color: #8c1f1f;
+  border: 1px solid rgba(184, 35, 35, 0.14);
+}
+
+.festival-settings-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.9fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.festival-settings-card,
+.festival-settings-actions-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(37, 51, 34, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 18px 42px rgba(60, 55, 38, 0.08);
+}
+
+.festival-settings-card {
+  padding: 1.35rem;
+}
+
+.festival-settings-profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.festival-settings-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.festival-settings-card-header.simple {
+  margin-bottom: 1rem;
+}
+
+.festival-settings-card-header h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  color: #17321f;
+}
+
+.festival-settings-card-header p {
+  margin: 0.35rem 0 0;
+  color: #69746c;
+  line-height: 1.5;
+}
+
+.festival-settings-ghost-btn,
+.festival-settings-secondary-btn,
+.festival-settings-primary-btn,
+.festival-settings-choice,
+.festival-settings-switch-item {
+  border: none;
+  cursor: pointer;
+}
+
+.festival-settings-ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 0.95rem;
+  border-radius: 999px;
+  color: #0e6023;
+  background: rgba(14, 96, 35, 0.08);
+  font-weight: 700;
+}
+
+.festival-settings-hidden-input {
+  display: none;
+}
+
+.festival-settings-profile-top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(14, 96, 35, 0.06), rgba(201, 162, 39, 0.06));
+}
+
+.festival-settings-avatar {
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #0e6023, #c9a227);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 800;
+  box-shadow: 0 12px 28px rgba(14, 96, 35, 0.24);
+}
+
+.festival-settings-avatar.large {
+  width: 84px;
+  height: 84px;
+}
+
+.festival-settings-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.festival-settings-profile-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.festival-settings-profile-meta small {
+  font-size: 0.82rem;
+}
+
+.festival-settings-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.festival-settings-form-grid label,
+.festival-settings-textarea-label,
+.festival-settings-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.festival-settings-form-grid label span,
+.festival-settings-textarea-label span,
+.festival-settings-card label span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #48604e;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.festival-settings-form-grid input,
+.festival-settings-card select,
+.festival-settings-textarea-label textarea {
+  width: 100%;
+  border: 1px solid rgba(53, 65, 39, 0.13);
+  background: #fffdf8;
+  border-radius: 16px;
+  padding: 0.95rem 1rem;
+  color: #17321f;
+  font-size: 0.96rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.festival-settings-form-grid input:focus,
+.festival-settings-card select:focus,
+.festival-settings-textarea-label textarea:focus {
+  border-color: rgba(14, 96, 35, 0.45);
+  box-shadow: 0 0 0 4px rgba(14, 96, 35, 0.09);
+}
+
+.password-grid {
+  margin-top: 0.25rem;
+}
+
+.password-full {
+  grid-column: 1 / -1;
+}
+
+.password-helper {
+  margin: 0.9rem 0 0;
+  color: #6b736c;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.festival-settings-textarea-label {
+  grid-column: 1 / -1;
+}
+
+.festival-settings-textarea-label textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.festival-settings-side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.festival-settings-switch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.festival-settings-switch-list.compact {
+  margin-top: 1rem;
+}
+
+.festival-settings-switch-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.92rem 1rem;
+  border-radius: 18px;
+  text-align: left;
+  background: #f8f6ef;
+  color: #17321f;
+  border: 1px solid rgba(53, 65, 39, 0.08);
+}
+
+.festival-settings-switch-item strong {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.festival-settings-switch-item span,
+.festival-settings-security-note p,
+.festival-settings-status-list span {
+  color: #6b736c;
+  line-height: 1.45;
+}
+
+.festival-settings-switch {
+  width: 52px;
+  height: 32px;
+  padding: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #d8ddd5;
+  transition: background 0.2s ease;
+}
+
+.festival-settings-switch span {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+  transform: translateX(0);
+  transition: transform 0.2s ease;
+}
+
+.festival-settings-switch.on {
+  background: linear-gradient(135deg, #0e6023, #1d8b37);
+}
+
+.festival-settings-switch.on span {
+  transform: translateX(20px);
+}
+
+.festival-settings-security-note {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: rgba(201, 162, 39, 0.08);
+  color: #6f5a13;
+}
+
+.festival-settings-security-note p {
+  margin: 0;
+  color: inherit;
+}
+
+.festival-settings-preference-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.festival-settings-choice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  background: #f7f3ea;
+  color: #4c5a4f;
+  font-weight: 700;
+  border: 1px solid rgba(53, 65, 39, 0.08);
+}
+
+.festival-settings-choice.active {
+  color: #0e6023;
+  background: rgba(14, 96, 35, 0.09);
+  border-color: rgba(14, 96, 35, 0.2);
+}
+
+.festival-settings-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.festival-settings-status-list div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  background: #f8f6ef;
+}
+
+.festival-settings-status-list strong {
+  color: #17321f;
+}
+
+.festival-settings-actions-card {
+  padding: 1rem;
+  display: flex;
+  gap: 0.85rem;
+  justify-content: flex-end;
+}
+
+.festival-settings-secondary-btn,
+.festival-settings-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.15rem;
+  border-radius: 16px;
+  font-weight: 700;
+}
+
+.festival-settings-secondary-btn {
+  background: #f1efe6;
+  color: #49604d;
+}
+
+.festival-settings-primary-btn {
+  background: linear-gradient(135deg, #0e6023, #1d8b37);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(14, 96, 35, 0.22);
+}
+
+.festival-settings-primary-btn:hover,
+.festival-settings-secondary-btn:hover,
+.festival-settings-choice:hover,
+.festival-settings-ghost-btn:hover,
+.festival-settings-switch-item:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 1100px) {
+  .festival-settings-hero {
+    flex-direction: column;
+  }
+
+  .festival-settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .festival-settings-side-column {
+    order: 2;
+  }
+}
+
+@media (max-width: 760px) {
+  .festival-settings-page {
+    padding: 1rem;
+  }
+
+  .festival-settings-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .festival-settings-preference-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .festival-settings-actions-card {
+    flex-direction: column-reverse;
+  }
+
+  .festival-settings-secondary-btn,
+  .festival-settings-primary-btn {
+    width: 100%;
+  }
+
+  .festival-settings-profile-top,
+  .festival-settings-switch-item,
+  .festival-settings-status-list div {
+    align-items: flex-start;
+  }
+}
