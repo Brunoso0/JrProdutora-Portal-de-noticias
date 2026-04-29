@@ -46,6 +46,18 @@ const isLikelyUploadFile = (value) => {
   return normalized.startsWith('uploads/') || normalized.startsWith('/uploads/');
 };
 
+const buildImageSrc = (value, apiBase) => {
+  const val = String(value || '').trim();
+  if (!val) return '';
+  if (isLikelyUrl(val)) return val;
+  if (isLikelyUploadFile(val)) {
+    const origin = getApiOrigin(apiBase);
+    const normalizedPath = val.startsWith('/') ? val : `/${val}`;
+    return origin ? `${origin}${normalizedPath}` : normalizedPath;
+  }
+  return val;
+};
+
 const getPortfolioFileLabel = (pathValue) => {
   const normalized = String(pathValue || '').trim();
   const fileName = normalized.split('/').pop();
@@ -399,7 +411,7 @@ const ArtistasAdmin = () => {
                       <td>
                         <div className="artista-foto-cell">
                           {candidate.profile_photo_url ? (
-                            <img src={candidate.profile_photo_url} alt={candidate.artistic_name || candidate.name} />
+                            <img src={buildImageSrc(candidate.profile_photo_url, apiBase)} alt={candidate.artistic_name || candidate.name} />
                           ) : (
                             <div className="artista-foto-placeholder">Sem foto</div>
                           )}

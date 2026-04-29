@@ -273,6 +273,11 @@ body {
   text-transform: uppercase;
 }
 
+.status-badge.red {
+  background-color: #b91c1c;
+  color: white;
+}
+
 .fase-text {
   font-size: 11px;
   font-weight: 600;
@@ -370,8 +375,8 @@ body {
   color: white;
   border: 2px solid white;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 35px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -638,9 +643,28 @@ body {
   border: 2px solid #1a6b32;
 }
 
+.status-card.active-status.red {
+  border-color: #b91c1c;
+}
+
+.status-card.active-status.red .status-icon-circle {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-card.active-status.red h5 {
+  color: #b91c1c;
+}
+
 .status-card.eliminated-status {
   background-color: #Eeeadd;
   opacity: 0.7;
+}
+
+.status-card.eliminated-status.red {
+  background-color: #fee2e2;
+  border: 2px solid #b91c1c;
+  opacity: 1;
 }
 
 .status-icon-circle {
@@ -662,6 +686,11 @@ body {
   color: #999;
 }
 
+.eliminated-status.red .status-icon-circle {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
 .status-info h5 {
   font-size: 10px;
   font-weight: 700;
@@ -672,6 +701,10 @@ body {
 
 .eliminated-status .status-info h5 {
   color: #999;
+}
+
+.eliminated-status.red .status-info h5 {
+  color: #b91c1c;
 }
 
 .status-info h4 {
@@ -1857,6 +1890,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.badge-icon.red {
+  background: #fcd7d7;
+  color: #b91c1c;
 }
 
 .badge-info {

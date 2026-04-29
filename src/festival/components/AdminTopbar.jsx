@@ -2,6 +2,34 @@ import React, { useEffect, useState } from 'react';
 import { Search, Settings, Menu } from 'lucide-react';
 import '../styles/AdminTopbar.css';
 
+const isLikelyUrl = (value) => /^https?:\/\//i.test(String(value || '').trim());
+const isLikelyUploadFile = (value) => {
+  const normalized = String(value || '').trim();
+  return normalized.startsWith('uploads/') || normalized.startsWith('/uploads/');
+};
+
+const getApiOrigin = (apiBase) => {
+  const normalizedBase = String(apiBase || '').trim();
+  if (!normalizedBase) return '';
+  try {
+    return new URL(normalizedBase).origin;
+  } catch (error) {
+    return normalizedBase.replace(/\/api\/?$/, '').replace(/\/$/, '');
+  }
+};
+
+const buildImageSrc = (value, apiBase) => {
+  const val = String(value || '').trim();
+  if (!val) return '';
+  if (isLikelyUrl(val)) return val;
+  if (isLikelyUploadFile(val)) {
+    const origin = getApiOrigin(apiBase);
+    const normalizedPath = val.startsWith('/') ? val : `/${val}`;
+    return origin ? `${origin}${normalizedPath}` : normalizedPath;
+  }
+  return val;
+};
+
 const AdminTopbar = ({ title, toggleSidebar, adminName, onOpenSettings }) => {
   const [avatarSrc, setAvatarSrc] = useState('');
 
@@ -9,7 +37,7 @@ const AdminTopbar = ({ title, toggleSidebar, adminName, onOpenSettings }) => {
     try {
       const stored = JSON.parse(localStorage.getItem('festivalAdminUser') || localStorage.getItem('user') || '{}');
       const src = stored?.profile_photo_url || stored?.avatar || stored?.avatarUrl || '';
-      setAvatarSrc(src);
+      setAvatarSrc(buildImageSrc(src, process.env.API_FESTIVAL));
     } catch (e) {
       setAvatarSrc('');
     }

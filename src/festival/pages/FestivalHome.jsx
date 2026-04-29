@@ -58,11 +58,10 @@ const FestivalHome = () => {
       {/* Hero Section */}
       <section className="festival-home-hero">
         <div className="hero-text-content">
-          <span className="hero-tag">1ª EDIÇÃO • 2026</span>
           <h2 className="hero-title">
-            <span className="text-green-dark">O Coração<br/>do </span>
-            <span className="text-gold">Nordeste</span><br/>
-            <span className="text-green-dark">Pulsando.</span>
+            <span className="text-green-dark">1ª Edição <br /></span>
+            <span className="text-gold">Festival de <br />Forró</span><br/>
+            <span className="text-green-dark">de Senhor do Bonfim.</span>
           </h2>
           <p className="hero-description">
             Sinta a vibração da zabumba e o lamento da sanfona no maior encontro de tradição e alegria. Uma experiência única de imersão na cultura nordestina.

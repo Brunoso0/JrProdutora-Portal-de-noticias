@@ -40,6 +40,109 @@ const CandidateArea = () => {
     vencedor: 'Vencedor'
   };
 
+  const SCORE_CRITERIA = [
+    { key: 'afinacao', label: 'Afinação' },
+    { key: 'presenca_palco', label: 'Presença de palco' },
+    { key: 'melodia_harmonia', label: 'Melodia e harmonia' },
+    { key: 'ritmo', label: 'Ritmo' },
+    { key: 'interpretacao', label: 'Interpretação' },
+    { key: 'autenticidade', label: 'Autenticidade / música autoral' },
+    { key: 'diccao', label: 'Dicção / pronúncia' }
+  ];
+
+  const readCriterionFromResult = (result, key) => {
+    if (!result) return null;
+
+    // common shapes: result.criteria = { key: value }
+    if (result.criteria && typeof result.criteria === 'object' && key in result.criteria) return Number(result.criteria[key]);
+    // alternative shapes
+    if (result.scores && typeof result.scores === 'object' && key in result.scores) return Number(result.scores[key]);
+    if (result.breakdown && typeof result.breakdown === 'object' && key in result.breakdown) return Number(result.breakdown[key]);
+    if (key in result && (typeof result[key] === 'number' || typeof result[key] === 'string')) return Number(result[key]);
+
+    // try snake/other variants
+    const altKeys = [key, key.replace(/_/g, ''), key.replace(/_/g, '-'), key.replace(/_/g, ' '), `${key}_score`];
+    for (const k of altKeys) {
+      if (result[k] !== undefined) return Number(result[k]);
+    }
+
+    return null;
+  };
+
+  const extractJudgeVotes = (result) => {
+    if (!result) return [];
+
+    // 1) result.judges: array of judge objects with scores
+    if (Array.isArray(result.judges) && result.judges.length) {
+      return result.judges.map((j) => ({
+        id: j.id ?? j.judge_id ?? j.user_id ?? null,
+        name: j.name || j.full_name || j.display_name || j.label || `Jurado ${j.id || ''}`,
+        avatar: j.profile_photo_url || j.avatar || j.avatarUrl || '',
+        scores: j.scores || j.criteria || j.breakdown || {}
+      }));
+    }
+
+    // 2) result.votes: array of vote objects { judge, scores }
+    if (Array.isArray(result.votes) && result.votes.length) {
+      return result.votes.map((v) => ({
+        id: v.judge?.id ?? v.judge_id ?? v.user_id ?? null,
+        name: v.judge?.name || v.judge_name || v.judge?.full_name || v.name || `Jurado ${v.judge_id || ''}`,
+        avatar: v.judge?.profile_photo_url || v.judge?.avatar || '',
+        scores: v.scores || v.criteria || v.breakdown || {}
+      }));
+    }
+
+    // 3) result.judge_scores as object mapping judgeId -> scores
+    if (result.judge_scores && typeof result.judge_scores === 'object') {
+      return Object.keys(result.judge_scores).map((judgeKey) => {
+        const entry = result.judge_scores[judgeKey] || {};
+        return {
+          id: entry.judge_id ?? entry.id ?? judgeKey,
+          name: entry.judge_name || entry.name || `Jurado ${judgeKey}`,
+          avatar: entry.profile_photo_url || entry.avatar || '',
+          scores: entry.scores || entry.criteria || entry.breakdown || (typeof entry === 'object' ? entry : {})
+        };
+      });
+    }
+
+    // 4) result.judges_scores or other variants
+    const altKeys = ['judges_scores', 'judgeScores', 'judge_votes', 'judges_votes'];
+    for (const k of altKeys) {
+      if (result[k] && typeof result[k] === 'object') {
+        if (Array.isArray(result[k])) {
+          return result[k].map((entry) => ({
+            id: entry.judge_id ?? entry.id ?? null,
+            name: entry.judge_name || entry.name || `Jurado ${entry.judge_id || ''}`,
+            avatar: entry.profile_photo_url || entry.avatar || '',
+            scores: entry.scores || entry.criteria || entry.breakdown || {}
+          }));
+        }
+
+        return Object.keys(result[k]).map((judgeKey) => {
+          const entry = result[k][judgeKey] || {};
+          return {
+            id: entry.judge_id ?? entry.id ?? judgeKey,
+            name: entry.judge_name || entry.name || `Jurado ${judgeKey}`,
+            avatar: entry.profile_photo_url || entry.avatar || '',
+            scores: entry.scores || entry.criteria || entry.breakdown || (typeof entry === 'object' ? entry : {})
+          };
+        });
+      }
+    }
+
+    // 5) fallback: if result.per_judge or result.perJudge
+    if (Array.isArray(result.per_judge)) {
+      return result.per_judge.map((entry) => ({
+        id: entry.judge_id ?? entry.id ?? null,
+        name: entry.judge_name || entry.name || `Jurado ${entry.judge_id || ''}`,
+        avatar: entry.profile_photo_url || entry.avatar || '',
+        scores: entry.scores || entry.criteria || entry.breakdown || {}
+      }));
+    }
+
+    return [];
+  };
+
   const STATUS_LABELS = {
     ativo: 'ATIVO',
     eliminado: 'ELIMINADO',
@@ -228,6 +331,10 @@ const CandidateArea = () => {
   const canEditSongName = !profile?.song_name;
 
   const openEditModal = () => {
+    if (profile?.status === 'eliminado') {
+      return;
+    }
+
     if (!user && !profile) {
       return;
     }
@@ -288,6 +395,11 @@ const CandidateArea = () => {
 
   const handleSaveProfile = async (event) => {
     event.preventDefault();
+
+    if (profile?.status === 'eliminado') {
+      setEditError('Seu perfil está bloqueado. Candidatos eliminados não podem fazer alterações.');
+      return;
+    }
 
     if (!canEditProfile) {
       setEditError('Seu perfil está bloqueado para edição.');
@@ -436,8 +548,8 @@ const CandidateArea = () => {
           </nav>
 
           <div className="sidebar-bottom">
-            <button className="btn-yellow">VER INSCRIÇÃO</button>
-            <button className="bottom-link">
+            <button className="btn-yellow" disabled={profile?.status === 'eliminado'} title={profile?.status === 'eliminado' ? 'Bloqueado para candidatos eliminados' : ''}>VER INSCRIÇÃO</button>
+            <button className="bottom-link" disabled={profile?.status === 'eliminado'} title={profile?.status === 'eliminado' ? 'Bloqueado para candidatos eliminados' : ''}>
               <Settings size={15} /> CONFIGURAÇÕES
             </button>
             <button className="bottom-link red" onClick={handleLogout}>
@@ -461,7 +573,7 @@ const CandidateArea = () => {
                   <Menu size={22} />
                 </button>
                 <div className="status-badge-container">
-                  <div className="status-badge">{statusLabel}</div>
+                  <div className={`status-badge ${profile?.status === 'eliminado' ? 'red' : ''}`}>{statusLabel}</div>
                   <div className="fase-text">Fase: {phaseLabel}</div>
                 </div>
                 <button className="bell-btn">
@@ -472,6 +584,12 @@ const CandidateArea = () => {
           </header>
           
           <div className="main-divider"></div>
+
+          {profile?.status === 'eliminado' && (
+            <div style={{ backgroundColor: '#fee2e2', borderLeft: '4px solid #b91c1c', padding: '16px', marginBottom: '16px', color: '#991b1b', fontWeight: 600 }}>
+              ⚠️ Seu perfil foi eliminado da competição. Você pode visualizar suas informações, mas não é permitido fazer alterações.
+            </div>
+          )}
 
                     {isLoadingProfile && (
                       <div style={{ marginBottom: '16px', color: '#0f172a', fontWeight: 600 }}>
@@ -527,8 +645,8 @@ const CandidateArea = () => {
                         event.currentTarget.src = DEFAULT_USER_IMAGE;
                       }}
                     />
-                    <button className="edit-btn" onClick={openEditModal} type="button" disabled={!canEditProfile}>
-                      <Edit3 size={21} strokeWidth={2.6} />
+                    <button className="edit-btn" onClick={openEditModal} type="button" disabled={!canEditProfile || profile?.status === 'eliminado'} title={profile?.status === 'eliminado' ? 'Perfil bloqueado para candidatos eliminados' : ''}>
+                      <Edit3 size={24} strokeWidth={2.6} />
                     </button>
                   </div>
                 </div>
@@ -542,8 +660,8 @@ const CandidateArea = () => {
                   <input type="text" className="form-input" disabled value={profile?.song_name || 'Não informada'} />
                 </div>
 
-                <button className="btn-green-full" type="button" onClick={openEditModal} disabled={!canEditProfile}>
-                  {canEditProfile ? 'Salvar Alterações' : 'Perfil bloqueado'}
+                <button className="btn-green-full" type="button" onClick={openEditModal} disabled={!canEditProfile || profile?.status === 'eliminado'}>
+                  {profile?.status === 'eliminado' ? 'Perfil bloqueado (eliminado)' : canEditProfile ? 'Editar Perfil' : 'Perfil bloqueado'}
                 </button>
               </div>
 
@@ -641,9 +759,9 @@ const CandidateArea = () => {
 
               {/* Status Cards */}
               <div className="status-cards-row">
-                <div className="status-card active-status">
+                <div className={`status-card active-status ${profile?.status === 'eliminado' ? 'red' : ''}`}>
                   <div className="status-icon-circle">
-                    <Check size={24} strokeWidth={3} />
+                    {profile?.status === 'eliminado' ? <X size={24} strokeWidth={3} /> : <Check size={24} strokeWidth={3} />}
                   </div>
                   <div className="status-info">
                     <h5>SITUAÇÃO ATUAL</h5>
@@ -652,7 +770,7 @@ const CandidateArea = () => {
                   </div>
                 </div>
 
-                <div className="status-card eliminated-status">
+                <div className={`status-card eliminated-status ${profile?.status === 'eliminado' ? 'red' : ''}`}>
                   <div className="status-icon-circle">
                     <X size={24} strokeWidth={3} />
                   </div>
@@ -802,6 +920,66 @@ const CandidateArea = () => {
                 </div>
               </div>
 
+              <div className="jurados-table-section">
+                <h4>Notas dos Jurados</h4>
+                {!hasRealNotes ? (
+                  <div style={{ padding: '12px 0' }}>Aguardando avaliações dos jurados.</div>
+                ) : (
+                  (() => {
+                    const judgeEntries = extractJudgeVotes(latestResult) || [];
+                    // count how many judges submitted at least one score
+                    const judgesWithVotes = judgeEntries.filter((j) => {
+                      if (!j || !j.scores) return false;
+                      return Object.values(j.scores).some((v) => v !== null && v !== undefined && v !== '');
+                    });
+
+                    const judgesCount = judgeEntries.length;
+                    const votesCount = judgesWithVotes.length;
+
+                    return (
+                      <>
+                        <div className="jurados-meta" style={{ marginBottom: 8 }}>
+                          <span style={{ marginRight: 12 }}>Jurados registrados: <strong>{judgesCount}</strong></span>
+                          <span>Jurados que já votaram: <strong>{votesCount}</strong></span>
+                        </div>
+
+                        <div className="jurados-table-wrap">
+                          <table className="jurados-table">
+                            <thead>
+                              <tr>
+                                <th>Critério</th>
+                                {judgeEntries.map((j) => (
+                                  <th key={j.id || j.name} style={{ textAlign: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+                                      {j.avatar ? <img src={j.avatar} alt={j.name} style={{ width: 28, height: 28, borderRadius: 14 }} /> : <div className="jurado-initials" style={{ width: 28, height: 28, borderRadius: 14, background: '#ddd', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{(j.name || 'J').slice(0,2).toUpperCase()}</div>}
+                                    </div>
+                                    <div style={{ fontSize: 12, marginTop: 6 }}>{j.name ? (j.name.length > 12 ? `${j.name.slice(0,12)}...` : j.name) : 'Jurado'}</div>
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {SCORE_CRITERIA.map((crit) => (
+                                <tr key={crit.key}>
+                                  <td>{crit.label}</td>
+                                  {judgeEntries.map((j) => {
+                                    const raw = readCriterionFromResult({ criteria: j.scores }, crit.key);
+                                    const display = raw == null || Number.isNaN(Number(raw)) ? '--' : Number(raw).toFixed(2);
+                                    return (
+                                      <td key={`${crit.key}-${j.id || j.name}`} style={{ textAlign: 'center' }}>{display}</td>
+                                    );
+                                  })}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </>
+                    );
+                  })()
+                )}
+              </div>
+
               <div className="notas-actions">
                 <p>
                   {hasRealNotes
@@ -824,7 +1002,9 @@ const CandidateArea = () => {
                   <p>Acompanhe seu progresso rumo ao título de melhor sanfoneiro do Nordeste.</p>
                 </div>
                 <div className="status-comp-badge-card">
-                  <div className="badge-icon green"><CheckCircle size={28} strokeWidth={2.5} /></div>
+                  <div className={`badge-icon ${profile?.status === 'eliminado' ? 'red' : 'green'}`}>
+                    {profile?.status === 'eliminado' ? <X size={28} strokeWidth={2.5} /> : <CheckCircle size={28} strokeWidth={2.5} />}
+                  </div>
                   <div className="badge-info">
                     <span>STATUS ATUAL</span>
                     <strong>{competitionStateLabel}</strong>
@@ -853,6 +1033,8 @@ const CandidateArea = () => {
                         <p>
                           {hasRealNotes
                             ? `Pontuação ${latestEffectiveScore.toFixed(2)} • posição ${latestPosition || '-'} de ${latestTotalCandidates || '-'}.`
+                            : sessions.length === 0
+                            ? 'Aguardando os dados...'
                             : 'Nenhuma sessão finalizada com resultado liberado até o momento.'}
                         </p>
                         <div className={`step-date ${hasRealNotes ? '' : 'next-date'}`}><Calendar size={12} /> {latestResult?.session?.session_date ? formatSessionDate(latestResult.session.session_date) : 'Data não definida'}</div>
