@@ -57,39 +57,41 @@ const FestivalHome = () => {
 
       {/* Hero Section */}
       <section className="festival-home-hero">
+        {/* Decorative Background Elements */}
+        <div className="hero-decor-circle-1"></div>
+        <div className="hero-decor-circle-2"></div>
+        
         <div className="hero-text-content">
+          <div className="hero-tag-new">
+             <span className="pulse-dot"></span> Inscrições Abertas
+          </div>
           <h2 className="hero-title">
-            <span className="text-green-dark">1ª Edição <br /></span>
-            <span className="text-gold">Festival de <br />Forró</span><br/>
-            <span className="text-green-dark">de Senhor do Bonfim.</span>
+            <span className="text-highlight">1ª Edição</span>
+            Festival de <br />
+            <span className="text-gradient">Forró</span><br/>
+            de Senhor do Bonfim.
           </h2>
           <p className="hero-description">
             Sinta a vibração da zabumba e o lamento da sanfona no maior encontro de tradição e alegria. Uma experiência única de imersão na cultura nordestina.
           </p>
           <div className="hero-buttons">
-            <Link to="/festival-forro/inscricao" className="btn-inscreva">
+            <Link to="/festival-forro/inscricao" className="btn-inscreva-glow">
               Inscreva-se Agora
+              <svg className="icon-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </Link>
-            {/* <a href="#programacao" className="btn-programacao">
-              Ver Programação
-            </a> */}
+            <a href="/docs/REGULAMENTO_FESTIVAL_DE_FORRO-2026.pdf" target="_blank" rel="noopener noreferrer" className="btn-edital-outline">
+              <svg className="icon-doc" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              Ver Edital
+            </a>
           </div>
         </div>
-
         <div className="hero-image-container">
-          <div className="hero-image-wrapper">
-            <div className="hero-image-circle-bg"></div>
-            <img
-              src="/img/forro_couple_illustration.png"
-              alt="Casal dançando forró"
-              className="hero-image"
-            />
-            <div className="hero-image-overlay">
-              <h3>Xote & Baião</h3>
-              <p>Tradição que atravessa gerações</p>
-            </div>
-            <span className="xote-baiao-tag">VEM DANÇAR</span>
-          </div>
+          <div className="hero-image-glow-bg"></div>
+          <img
+            src="/img/LOGO_FESTIVAL_DE_FORRO.png"
+            alt="Logo Festival de Forró"
+            className="hero-logo-animated"
+          />
         </div>
       </section>
 

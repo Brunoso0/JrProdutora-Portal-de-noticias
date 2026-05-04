@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Mail, Lock, ArrowRight, Music } from 'lucide-react';
+import { formatErrorMessage } from '../utils/errorFormatter';
 import '../styles/LoginJuradoAdmin.css';
 
 const readTokenFromResponse = (response) => {
@@ -72,7 +73,7 @@ const LoginJuradoAdmin = () => {
       }
       navigate('/festival-forro/admin');
     } catch (error) {
-      setErrorMsg(error.response?.data?.message || 'Credenciais inválidas ou erro ao realizar login.');
+      setErrorMsg(formatErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

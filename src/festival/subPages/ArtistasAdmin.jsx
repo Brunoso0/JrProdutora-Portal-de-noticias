@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Search, RefreshCw, Save, Trash2, Eye, Pencil, X } from 'lucide-react';
+import { formatErrorMessage } from '../utils/errorFormatter';
 import '../styles/ArtistasAdmin.css';
 
 const STATUS_OPTIONS = [
@@ -185,7 +186,7 @@ const ArtistasAdmin = () => {
         setForm(EMPTY_FORM);
       }
     } catch (error) {
-      setErrorMsg(error?.response?.data?.message || error.message || 'Erro ao carregar artistas.');
+      setErrorMsg(formatErrorMessage(error));
     } finally {
       setIsLoadingList(false);
     }
@@ -224,7 +225,7 @@ const ArtistasAdmin = () => {
       });
     } catch (error) {
       setForm(EMPTY_FORM);
-      setErrorMsg(error?.response?.data?.message || error.message || 'Erro ao carregar detalhes do artista.');
+      setErrorMsg(formatErrorMessage(error));
     } finally {
       setIsLoadingDetail(false);
     }
@@ -313,7 +314,7 @@ const ArtistasAdmin = () => {
       await loadCandidates();
       await loadCandidateDetail(selectedCandidateId);
     } catch (error) {
-      setErrorMsg(error?.response?.data?.message || error.message || 'Erro ao atualizar artista.');
+      setErrorMsg(formatErrorMessage(error));
     } finally {
       setIsSaving(false);
     }
@@ -335,7 +336,7 @@ const ArtistasAdmin = () => {
       closeDetail();
       await loadCandidates();
     } catch (error) {
-      setErrorMsg(error?.response?.data?.message || error.message || 'Erro ao excluir artista.');
+      setErrorMsg(formatErrorMessage(error));
     } finally {
       setIsDeleting(false);
     }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Users, Music, UserCheck, AlertCircle, TrendingUp } from 'lucide-react';
+import { formatErrorMessage } from '../utils/errorFormatter';
 import '../styles/DashboardAdmin.css';
 
 const DashboardAdmin = ({ onNavigateTab }) => {
@@ -71,8 +72,8 @@ const DashboardAdmin = ({ onNavigateTab }) => {
         eliminatedCandidates: eliminatedCount,
       });
     } catch (error) {
-      console.error('Erro ao carregar estatísticas:', error);
-      setErrorMsg('Erro ao carregar dados do dashboard');
+      console.error('Erro ao carregar estatísticas');
+      setErrorMsg(formatErrorMessage(error));
     } finally {
       setLoading(false);
     }

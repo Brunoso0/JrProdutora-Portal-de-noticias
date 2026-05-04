@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Plus, MoreVertical, ArrowRight, RefreshCw } from 'lucide-react';
+import { formatErrorMessage } from '../utils/errorFormatter';
 import '../styles/SessoesAdmin.css';
 
 const STATUS_OPTIONS = ['waiting', 'public_voting', 'judge_voting', 'finished'];
@@ -200,7 +201,7 @@ const SessoesAdmin = () => {
         setSelectedSessionId(nextSessions[0].id);
       }
     } catch (error) {
-      setErrorMsg(error?.response?.data?.message || error.message || 'Erro ao carregar sessoes.');
+      setErrorMsg(formatErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -340,7 +341,7 @@ const SessoesAdmin = () => {
       }
       await loadSessions();
     } catch (error) {
-      setErrorMsg(error?.response?.data?.message || error.message || 'Nao foi possivel concluir a operacao.');
+      setErrorMsg(formatErrorMessage(error));
     } finally {
       setIsSaving(false);
     }

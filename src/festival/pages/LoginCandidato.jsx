@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Mail, Contact, ArrowRight, Music } from 'lucide-react';
+import { formatErrorMessage } from '../utils/errorFormatter';
 import '../styles/LoginCandidato.css';
 
 const LoginCandidato = () => {
@@ -46,7 +47,7 @@ const LoginCandidato = () => {
         navigate('/area-candidato');
       }
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Credenciais inválidas ou erro ao realizar login.');
+      setErrorMsg(formatErrorMessage(err));
     } finally {
       setIsLoading(false);
     }

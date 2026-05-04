@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Search, RefreshCw, Trash2, Eye, Pencil, X } from 'lucide-react';
 import { API_FESTIVAL } from '../../services/api';
+import { formatErrorMessage } from '../utils/errorFormatter';
 import '../styles/JuradosAdmin.css';
 
 const EMPTY_FORM = {
@@ -92,7 +93,7 @@ const JuradosAdmin = () => {
         setForm(EMPTY_FORM);
       }
     } catch (error) {
-      const errorMessage = error?.response?.data?.message || error.message || 'Erro ao carregar jurados.';
+      const errorMessage = formatErrorMessage(error);
       setErrorMsg(errorMessage);
     } finally {
       setIsLoadingList(false);
@@ -121,7 +122,7 @@ const JuradosAdmin = () => {
         });
       } catch (error) {
         setForm(EMPTY_FORM);
-        const errorMessage = error?.response?.data?.message || error.message || 'Erro ao carregar detalhes do jurado.';
+        const errorMessage = formatErrorMessage(error);
         setErrorMsg(errorMessage);
       } finally {
         setIsLoadingDetail(false);
@@ -164,7 +165,7 @@ const JuradosAdmin = () => {
         setSuccessMsg('');
       }, 500);
     } catch (error) {
-      const errorMessage = error?.response?.data?.message || error.message || 'Erro ao salvar jurado.';
+      const errorMessage = formatErrorMessage(error);
       setErrorMsg(errorMessage);
     } finally {
       setIsSaving(false);
@@ -193,7 +194,7 @@ const JuradosAdmin = () => {
         setSuccessMsg('');
       }, 500);
     } catch (error) {
-      const errorMessage = error?.response?.data?.message || error.message || 'Erro ao deletar jurado.';
+      const errorMessage = formatErrorMessage(error);
       setErrorMsg(errorMessage);
     } finally {
       setIsDeleting(false);
@@ -241,7 +242,7 @@ const JuradosAdmin = () => {
         setForm((prev) => ({ ...prev, profile_photo_url: normalized }));
         setSuccessMsg('Foto enviada com sucesso!');
       } catch (error) {
-        const errorMessage = error?.response?.data?.message || error.message || 'Erro ao enviar imagem.';
+        const errorMessage = formatErrorMessage(error);
         setErrorMsg(errorMessage);
       } finally {
         setIsUploadingPhoto(false);
@@ -616,7 +617,7 @@ const JuradosAdmin = () => {
                         setSuccessMsg('');
                       }, 500);
                     } catch (error) {
-                      const errorMessage = error?.response?.data?.message || error.message || 'Erro ao criar jurado.';
+                      const errorMessage = formatErrorMessage(error);
                       setErrorMsg(errorMessage);
                     } finally {
                       setIsCreating(false);

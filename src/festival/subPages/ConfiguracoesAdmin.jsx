@@ -3,7 +3,6 @@ import axios from 'axios';
 import {
   Camera,
   CheckCircle2,
-  Clock3,
   CloudUpload,
   Lock,
   Mail,
@@ -17,6 +16,7 @@ import {
   ShieldCheck,
   Globe,
 } from 'lucide-react';
+import { formatErrorMessage } from '../utils/errorFormatter';
 import '../styles/ConfiguracoesAdmin.css';
 
 const DEFAULT_FORM = {
@@ -408,8 +408,8 @@ const ConfiguracoesAdmin = ({ adminName }) => {
         setSuccessMsg('Configurações da conta salvas com sucesso.');
         setErrorMsg('');
       } catch (error) {
-        console.error('Erro ao salvar configurações:', error?.response || error?.message || error);
-        setErrorMsg(error.response?.data?.message || 'Erro ao salvar no servidor.');
+        console.error('Erro ao salvar configurações');
+        setErrorMsg(formatErrorMessage(error));
         setSuccessMsg('');
       }
     })();

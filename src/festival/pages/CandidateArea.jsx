@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Bell, Menu, User, Star, Trophy, Mic2, FileText, Settings, LogOut, Edit3, Calendar, Clock, Check, X, TrendingUp, Download, CheckCircle, Activity, Music, Shirt, Map, Users, Gift } from 'lucide-react';
+import { formatErrorMessage } from '../utils/errorFormatter';
 import '../styles/CandidateArea.css';
 
 const CandidateArea = () => {
@@ -30,6 +31,8 @@ const CandidateArea = () => {
     phone: '',
     song_name: ''
   });
+  const [isIncompleteProfileModalOpen, setIsIncompleteProfileModalOpen] = useState(false);
+  const [incompleteProfileItems, setIncompleteProfileItems] = useState([]);
   const API_FESTIVAL_BASE_URL = process.env.API_FESTIVAL;
   const DEFAULT_USER_IMAGE = '/img/user.jpg';
 
@@ -149,6 +152,25 @@ const CandidateArea = () => {
     desistente: 'DESISTENTE'
   };
 
+  // Função para verificar itens faltando no perfil
+  const checkIncompleteProfileItems = (prof, prof_photo) => {
+    const missing = [];
+    
+    if (!prof_photo || prof_photo === DEFAULT_USER_IMAGE) {
+      missing.push('Foto de perfil');
+    }
+    
+    if (!prof?.birth_date) {
+      missing.push('Data de nascimento');
+    }
+    
+    if (!prof?.song_name) {
+      missing.push('Música para apresentação');
+    }
+    
+    return missing;
+  };
+
   const formatSessionDate = (dateValue) => {
     if (!dateValue) return 'Data não definida';
     const parsed = new Date(dateValue);
@@ -171,7 +193,7 @@ const CandidateArea = () => {
     return `#FORRO-${String(id).padStart(4, '0')}`;
   };
 
-  const resolveProfilePhotoUrl = (photoUrl) => {
+  const resolveProfilePhotoUrl = useCallback((photoUrl) => {
     if (!photoUrl) return DEFAULT_USER_IMAGE;
 
     if (
@@ -186,7 +208,7 @@ const CandidateArea = () => {
 
     const normalizedPath = photoUrl.startsWith('/') ? photoUrl : `/${photoUrl}`;
     return `${API_FESTIVAL_BASE_URL}${normalizedPath}`;
-  };
+  }, [API_FESTIVAL_BASE_URL, DEFAULT_USER_IMAGE]);
 
   useEffect(() => {
     const bootstrapCandidateArea = async () => {
@@ -236,6 +258,16 @@ const CandidateArea = () => {
         setProfile(profileResponse?.data?.profile || null);
         setSessions(normalizedSessions);
 
+        // Verificar itens faltando no perfil
+        const profileData = profileResponse?.data?.profile || null;
+        const profilePhoto = resolveProfilePhotoUrl(profileResponse?.data?.user?.profile_photo_url || profileResponse?.data?.profile?.profile_photo_url || DEFAULT_USER_IMAGE);
+        const missingItems = checkIncompleteProfileItems(profileData, profilePhoto);
+        
+        if (missingItems.length > 0 && profileData?.status !== 'eliminado') {
+          setIncompleteProfileItems(missingItems);
+          setIsIncompleteProfileModalOpen(true);
+        }
+
         const finishedSessions = normalizedSessions.filter((session) => session.session_status === 'finished');
         if (!finishedSessions.length) {
           setSessionResults([]);
@@ -281,7 +313,7 @@ const CandidateArea = () => {
     };
 
     bootstrapCandidateArea();
-  }, [API_FESTIVAL_BASE_URL, navigate]);
+  }, [API_FESTIVAL_BASE_URL, navigate, resolveProfilePhotoUrl]);
 
   const nextSession = sessions.find((session) => session.session_status !== 'finished') || sessions[0] || null;
   const finishedSessionsCount = sessions.filter((session) => session.session_status === 'finished').length;
@@ -477,7 +509,8 @@ const CandidateArea = () => {
       setProfileSuccess(response?.data?.message || 'Perfil atualizado com sucesso.');
       setIsEditModalOpen(false);
     } catch (error) {
-      setEditError(error?.response?.data?.message || 'Não foi possível salvar o perfil.');
+      const friendlyErrorMessage = formatErrorMessage(error);
+      setEditError(friendlyErrorMessage);
     } finally {
       setIsSavingProfile(false);
     }
@@ -1347,6 +1380,56 @@ const CandidateArea = () => {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          )}
+
+          {isIncompleteProfileModalOpen && (
+            <div className="candidate-modal-overlay" onClick={() => setIsIncompleteProfileModalOpen(false)}>
+              <div className="candidate-modal incomplete-profile-modal" onClick={(event) => event.stopPropagation()}>
+                <div className="candidate-modal-header">
+                  <h3>⚠️ Itens Faltando no Perfil</h3>
+                  <button type="button" className="candidate-modal-close" onClick={() => setIsIncompleteProfileModalOpen(false)}>
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <div className="incomplete-profile-content">
+                  <p className="incomplete-profile-message">
+                    Seu perfil ainda está incompleto. Complete os itens abaixo para melhorar sua experiência:
+                  </p>
+                  
+                  <div className="incomplete-profile-items-list">
+                    {incompleteProfileItems.map((item, index) => (
+                      <div key={index} className="incomplete-item">
+                        <div className="incomplete-item-icon">❌</div>
+                        <div className="incomplete-item-text">
+                          <strong>{item}</strong>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="incomplete-profile-actions">
+                    <button 
+                      type="button" 
+                      className="btn-incomplete-close" 
+                      onClick={() => setIsIncompleteProfileModalOpen(false)}
+                    >
+                      Fechar
+                    </button>
+                    <button 
+                      type="button" 
+                      className="btn-incomplete-edit" 
+                      onClick={() => {
+                        setIsIncompleteProfileModalOpen(false);
+                        openEditModal();
+                      }}
+                    >
+                      Atualizar Perfil
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
