@@ -37,7 +37,7 @@ export const formatErrorMessage = (error) => {
 
   // Tratamento de erros HTTP específicos
   if (statusCode === 401 || statusCode === 403) {
-    return 'Sua sessão expirou. Por favor, faça login novamente.';
+    return 'Credenciais Invalidas, verifique seus dados e tente novamente.';
   }
 
   if (statusCode === 400) {

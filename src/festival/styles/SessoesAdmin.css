@@ -352,6 +352,10 @@
   color: #374151;
 }
 
+.item-actions {
+  position: relative;
+}
+
 .item-actions .action-btn {
   background: none;
   border: none;
@@ -360,28 +364,111 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s;
 }
 
 .item-actions .action-btn:hover {
   color: #374151;
+  background-color: #F3F4F6;
+}
+
+.action-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 10;
+  min-width: 120px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.action-menu-item {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.action-menu-item:hover {
+  background-color: #F9FAFB;
+}
+
+.action-menu-item.delete {
+  color: #DC2626;
+}
+
+.action-menu-item.delete:hover {
+  background-color: #FEF2F2;
 }
 
 .sessoes-control-panel {
   background: #fff;
   border-radius: 14px;
   border: 1px solid #E8DFCC;
-  padding: 20px;
   margin-bottom: 36px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
 }
 
-.sessoes-control-panel h3 {
+.sessoes-control-header {
+  padding: 24px 24px 0 24px;
+  background-color: #FCFBF9;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.sessoes-control-header h3 {
   margin: 0 0 6px;
+  color: #1F2937;
+  font-size: 20px;
+}
+
+.sessoes-control-header p {
+  margin: 0 0 18px;
+  color: #6B7280;
+  font-size: 14px;
+}
+
+.sessoes-tabs {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+}
+
+.sessoes-tab-btn {
+  background: none;
+  border: none;
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.sessoes-tab-btn:hover {
   color: #1F2937;
 }
 
-.sessoes-control-panel p {
-  margin: 0 0 18px;
-  color: #6B7280;
+.sessoes-tab-btn.active {
+  color: #1A7032;
+  border-bottom-color: #1A7032;
+}
+
+.sessoes-tab-content {
+  padding: 24px;
 }
 
 .control-grid {
@@ -482,6 +569,20 @@
   cursor: not-allowed;
 }
 
+.control-card button.danger {
+  background-color: #DC2626;
+}
+
+.control-card button.secondary {
+  background-color: #F3F4F6;
+  color: #374151;
+  border: 1px solid #E5E7EB;
+}
+
+.control-card button.secondary:hover {
+  background-color: #E5E7EB;
+}
+
 .status-buttons {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -511,6 +612,37 @@
   gap: 10px;
   font-size: 13px;
   margin-bottom: 6px;
+}
+
+.transmission-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transmission-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.transmission-option:hover {
+  background-color: #FAFAFA;
+}
+
+.transmission-option.active {
+  background-color: #F0FDF4;
+  border-color: #86EFAC;
+}
+
+.transmission-option input {
+  width: auto;
+  margin: 0;
 }
 
 /* Info Cards */
