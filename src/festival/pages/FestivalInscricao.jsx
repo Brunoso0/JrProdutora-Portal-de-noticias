@@ -502,7 +502,7 @@ const FestivalInscricao = () => {
                 <button type="submit" className="btn-submit" disabled={isSubmitting}>
                   {isSubmitting ? 'Enviando...' : 'Enviar Inscrição'}
                 </button>
-                <span className="hint-text">As inscrições encerram em 05 de Maio.</span>
+                <span className="hint-text">As inscrições encerram em 11 de Maio.</span>
               </div>
             </form>
 
