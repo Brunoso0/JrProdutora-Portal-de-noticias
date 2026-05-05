@@ -1,6 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { Plus, MoreVertical, ArrowRight, RefreshCw, Trash2, Edit2, Eye } from 'lucide-react';
+import { Plus, MoreVertical, ArrowRight, RefreshCw, Trash2, Edit2, Eye, GripVertical } from 'lucide-react';
+import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { formatErrorMessage } from '../utils/errorFormatter';
 import '../styles/SessoesAdmin.css';
 
@@ -27,11 +30,27 @@ const formatDate = (dateString) => {
 
 const normalizeText = (value) => String(value || '').trim().toLowerCase();
 
-const parseCandidateNames = (raw) =>
-  String(raw || '')
-    .split(/[\n,;]/)
-    .map((item) => item.trim())
-    .filter(Boolean);
+const getApiOrigin = (apiBase) => {
+  const normalizedBase = String(apiBase || '').trim();
+  if (!normalizedBase) return '';
+  try {
+    return new URL(normalizedBase).origin;
+  } catch (error) {
+    return normalizedBase.replace(/\/api\/?$/, '').replace(/\/$/, '');
+  }
+};
+
+const buildCandidatePhotoSrc = (rawValue, apiBase) => {
+  const value = String(rawValue || '').trim();
+  if (!value) return '';
+  if (/^https?:\/\//i.test(value)) return value;
+  if (value.startsWith('/uploads/') || value.startsWith('uploads/')) {
+    const origin = getApiOrigin(apiBase);
+    const normalizedPath = value.startsWith('/') ? value : `/${value}`;
+    return origin ? `${origin}${normalizedPath}` : normalizedPath;
+  }
+  return value;
+};
 
 const collectCandidateEntries = (source, bucket = []) => {
   if (!source) return bucket;
@@ -42,10 +61,18 @@ const collectCandidateEntries = (source, bucket = []) => {
   if (typeof source !== 'object') return bucket;
   const candidateName = source.artistic_name || source.name || source.candidate_name || source.label;
   const candidateId = source.candidate_id ?? source.candidateId ?? source.id ?? source.user_id;
+  const photo = source.profile_photo_url || source.profile_photo || source.photo_url || source.avatar || source.image;
+  const presentationOrder = source.presentation_order ?? source.order ?? source.position;
+  const presentationTime = source.presentation_time ?? source.time ?? source.horario;
+  const estimatedTime = source.estimated_time ?? source.estimatedTime;
   if (candidateName || candidateId) {
     bucket.push({
       id: Number(candidateId),
-      name: String(candidateName || '').trim()
+      name: String(candidateName || '').trim(),
+      photo: String(photo || '').trim(),
+      presentationOrder: Number(presentationOrder),
+      presentationTime: String(presentationTime || '').trim(),
+      estimatedTime: String(estimatedTime || '').trim()
     });
   }
   Object.values(source).forEach((value) => {
@@ -95,6 +122,39 @@ const CandidateLookupField = ({ label, value, onChange, options, placeholder, he
   );
 };
 
+const SortableCandidateRow = ({ candidate, onTimeChange }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: String(candidate.id) });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition
+  };
+
+  return (
+    <tr ref={setNodeRef} style={style} className="candidate-table-row sortable-row">
+      <td className="drag-cell">
+        <button type="button" className="drag-handle" aria-label={`Mover ${candidate.name}`} {...attributes} {...listeners}>
+          <GripVertical size={16} />
+        </button>
+      </td>
+      <td>
+        <div className="candidate-cell-content">
+          {candidate.photo ? <img src={candidate.photo} alt={candidate.name} className="candidate-avatar" /> : <div className="candidate-avatar placeholder">{String(candidate.name || '?').slice(0, 1).toUpperCase()}</div>}
+          <span>{candidate.name}</span>
+        </div>
+      </td>
+      <td className="order-cell">{candidate.order}</td>
+      <td>
+        <input
+          type="time"
+          value={candidate.time}
+          onChange={(event) => onTimeChange(candidate.id, event.target.value)}
+          className="time-input"
+        />
+      </td>
+    </tr>
+  );
+};
+
 const SessoesAdmin = () => {
   const [sessions, setSessions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -110,22 +170,26 @@ const SessoesAdmin = () => {
   const [resultsData, setResultsData] = useState(null);
   const [sessionJudges, setSessionJudges] = useState([]);
   const [allJudges, setAllJudges] = useState([]);
+  const [allCandidates, setAllCandidates] = useState([]);
+  const [auditData, setAuditData] = useState([]);
+  const [auditModalData, setAuditModalData] = useState(null);
+  const [editingVoteId, setEditingVoteId] = useState(null);
+  const [editVoteForm, setEditVoteForm] = useState({});
 
   const [createForm, setCreateForm] = useState({
-    title: '', session_date: '', session_time: '', location: '', status: 'waiting', winners_count_judges: '3', winners_count_public: '1', is_public_voting_open: false
+    title: '', session_date: '', session_time: '', location: '', status: 'waiting', winners_count_judges: '3', winners_count_public: '1', candidates_limit: '12', is_public_voting_open: false
   });
 
   const [sessionForm, setSessionForm] = useState({
-    title: '', session_date: '', session_time: '', location: '', status: 'waiting', winners_count_judges: '3', winners_count_public: '1', is_public_voting_open: false
+    title: '', session_date: '', session_time: '', location: '', status: 'waiting', winners_count_judges: '3', winners_count_public: '1', candidates_limit: '12', is_public_voting_open: false
   });
 
   const [activeCandidateName, setActiveCandidateName] = useState('');
-  const [candidateNamesCsv, setCandidateNamesCsv] = useState('');
-  const [candidateNameToRemove, setCandidateNameToRemove] = useState('');
   const [scoreCorrection, setScoreCorrection] = useState({ candidateName: '', adjustment: '' });
-  const [judgeIdToAdd, setJudgeIdToAdd] = useState('');
 
-  const [candidateDetailsForm, setCandidateDetailsForm] = useState({ candidateId: '', order: '', time: '', estimatedTime: '' });
+  const [sortableCandidates, setSortableCandidates] = useState([]);
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
   const apiBase = process.env.API_FESTIVAL || 'http://localhost:3015';
 
@@ -133,13 +197,14 @@ const SessoesAdmin = () => {
     return localStorage.getItem('festivalAdminToken') || localStorage.getItem('token') || localStorage.getItem('authToken') || '';
   }, []);
 
-  const apiRequest = useCallback(async (method, path, data) => {
+  const apiRequest = useCallback(async (method, path, data, params) => {
     const token = getToken();
     if (!token) throw new Error('Token de admin nao encontrado. Faca login novamente.');
     return axios({
       method,
       url: `${apiBase}${path}`,
       data,
+      params,
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
     });
   }, [apiBase, getToken]);
@@ -178,6 +243,16 @@ const SessoesAdmin = () => {
     }
   }, [apiRequest]);
 
+  const loadAuditData = useCallback(async (sessionId) => {
+    if (!sessionId) return;
+    try {
+      const response = await apiRequest('get', `/api/sessions/${sessionId}/audit`);
+      setAuditData(response?.data?.auditData || []);
+    } catch (error) {
+      setAuditData([]);
+    }
+  }, [apiRequest]);
+
   const loadAllJudges = useCallback(async () => {
     try {
       const response = await apiRequest('get', '/api/admin/judges');
@@ -187,26 +262,68 @@ const SessoesAdmin = () => {
     }
   }, [apiRequest]);
 
+  const loadAllCandidates = useCallback(async () => {
+    try {
+      let page = 1;
+      const limit = 100;
+      let keepLoading = true;
+      let merged = [];
+
+      while (keepLoading) {
+        const response = await apiRequest('get', '/api/admin/candidates', undefined, { page, limit });
+        const pageCandidates = Array.isArray(response?.data?.candidates) ? response.data.candidates : [];
+        const total = Number(response?.data?.pagination?.total || 0);
+        merged = merged.concat(pageCandidates);
+
+        const reachedTotal = total > 0 && merged.length >= total;
+        keepLoading = pageCandidates.length === limit && !reachedTotal;
+        page += 1;
+        if (page > 50) keepLoading = false;
+      }
+
+      setAllCandidates(merged);
+    } catch (error) {
+      setAllCandidates([]);
+    }
+  }, [apiRequest]);
+
   useEffect(() => {
     loadSessions();
     loadAllJudges();
-  }, [loadSessions, loadAllJudges]);
+    loadAllCandidates();
+  }, [loadSessions, loadAllJudges, loadAllCandidates]);
 
   useEffect(() => {
     if (!selectedSessionId) {
       setResultsData(null);
       setSessionJudges([]);
+      setAuditData([]);
       setActiveCandidateName('');
-      setCandidateNameToRemove('');
-      setCandidateNamesCsv('');
       setScoreCorrection({ candidateName: '', adjustment: '' });
+      setSortableCandidates([]);
       return;
     }
     loadSelectedSessionResults(selectedSessionId);
     loadSessionJudges(selectedSessionId);
-  }, [loadSelectedSessionResults, loadSessionJudges, selectedSessionId]);
+    loadAuditData(selectedSessionId);
+  }, [loadSelectedSessionResults, loadSessionJudges, loadAuditData, selectedSessionId]);
 
   const selectedSession = useMemo(() => sessions.find((item) => Number(item.id) === Number(selectedSessionId)) || null, [sessions, selectedSessionId]);
+
+  const allCandidatesCatalog = useMemo(() => {
+    const map = new Map();
+    allCandidates.forEach((candidate) => {
+      const id = Number(candidate.id);
+      if (!Number.isFinite(id) || id <= 0) return;
+      const name = String(candidate.artistic_name || candidate.name || '').trim();
+      map.set(id, {
+        id,
+        name,
+        photo: buildCandidatePhotoSrc(candidate.profile_photo_url || candidate.profile_photo || '', apiBase)
+      });
+    });
+    return Array.from(map.values()).sort((left, right) => left.name.localeCompare(right.name, 'pt-BR'));
+  }, [allCandidates, apiBase]);
 
   const candidateOptions = useMemo(() => {
     const collected = [];
@@ -219,11 +336,71 @@ const SessoesAdmin = () => {
       const candidateId = Number(candidate.id);
       const key = Number.isFinite(candidateId) && candidateId > 0 ? `id:${candidateId}` : `name:${normalizeText(name)}`;
       if (!uniqueCandidates.has(key)) {
-        uniqueCandidates.set(key, { id: Number.isFinite(candidateId) && candidateId > 0 ? candidateId : null, name });
+        uniqueCandidates.set(key, {
+          id: Number.isFinite(candidateId) && candidateId > 0 ? candidateId : null,
+          name,
+          photo: buildCandidatePhotoSrc(candidate.photo || '', apiBase),
+          presentationOrder: Number(candidate.presentationOrder),
+          presentationTime: String(candidate.presentationTime || '').trim(),
+          estimatedTime: String(candidate.estimatedTime || '').trim()
+        });
       }
     });
     return Array.from(uniqueCandidates.values()).sort((left, right) => left.name.localeCompare(right.name, 'pt-BR'));
-  }, [resultsData, selectedSession]);
+  }, [apiBase, resultsData, selectedSession]);
+
+  useEffect(() => {
+    if (!selectedSessionId) {
+      setSortableCandidates([]);
+      return;
+    }
+
+    const fromSession = candidateOptions.filter((candidate) => Number.isFinite(Number(candidate.id)) && Number(candidate.id) > 0);
+    const mergedById = new Map();
+
+    fromSession.forEach((candidate, index) => {
+      const id = Number(candidate.id);
+      if (!Number.isFinite(id) || id <= 0) return;
+      const catalogCandidate = allCandidatesCatalog.find((item) => item.id === id);
+      mergedById.set(id, {
+        id,
+        name: catalogCandidate?.name || candidate.name,
+        photo: catalogCandidate?.photo || candidate.photo || '',
+        order: Number.isFinite(candidate.presentationOrder) && candidate.presentationOrder > 0 ? Number(candidate.presentationOrder) : index + 1,
+        time: candidate.presentationTime || '',
+        estimatedTime: candidate.estimatedTime || ''
+      });
+    });
+
+    setSortableCandidates((previous) => {
+      if (!mergedById.size) return [];
+      const previousById = new Map(previous.map((item) => [item.id, item]));
+      const next = Array.from(mergedById.values()).map((item) => {
+        const prev = previousById.get(item.id);
+        if (!prev) return item;
+        return {
+          ...item,
+          order: Number(prev.order) > 0 ? Number(prev.order) : item.order,
+          time: prev.time || item.time,
+          estimatedTime: prev.estimatedTime || item.estimatedTime
+        };
+      });
+      return next
+        .sort((left, right) => Number(left.order || 9999) - Number(right.order || 9999))
+        .map((item, index) => ({ ...item, order: index + 1 }));
+    });
+  }, [allCandidatesCatalog, candidateOptions, selectedSessionId]);
+
+  const sessionCandidateIds = useMemo(() => new Set(sortableCandidates.map((candidate) => Number(candidate.id))), [sortableCandidates]);
+
+  const sessionCandidatesLimit = useMemo(() => {
+    const rawLimit = sessionForm.candidates_limit ?? selectedSession?.candidates_limit ?? selectedSession?.participants_limit ?? selectedSession?.max_candidates;
+    const normalized = Number(rawLimit);
+    if (!Number.isFinite(normalized) || normalized <= 0) return 0;
+    return Math.floor(normalized);
+  }, [sessionForm.candidates_limit, selectedSession]);
+
+  const hasReachedSessionLimit = sessionCandidatesLimit > 0 && sortableCandidates.length >= sessionCandidatesLimit;
 
   const filterCandidateOptions = useCallback((query) => {
     const normalizedQuery = normalizeText(query);
@@ -244,6 +421,7 @@ const SessoesAdmin = () => {
       status: selectedSession.status || 'waiting',
       winners_count_judges: String(selectedSession.winners_count_judges || 3),
       winners_count_public: String(selectedSession.winners_count_public || 1),
+      candidates_limit: String(selectedSession.candidates_limit ?? selectedSession.participants_limit ?? selectedSession.max_candidates ?? 12),
       is_public_voting_open: Boolean(selectedSession.is_public_voting_open)
     });
 
@@ -276,6 +454,7 @@ const SessoesAdmin = () => {
       if (selectedSessionId) {
         await loadSelectedSessionResults(selectedSessionId);
         await loadSessionJudges(selectedSessionId);
+        await loadAuditData(selectedSessionId);
       }
     } catch (error) {
       setErrorMsg(formatErrorMessage(error));
@@ -290,7 +469,8 @@ const SessoesAdmin = () => {
       const payload = {
         title: createForm.title, session_date: createForm.session_date || undefined, session_time: createForm.session_time || undefined,
         location: createForm.location || undefined, status: createForm.status, winners_count_judges: Number(createForm.winners_count_judges),
-        winners_count_public: Number(createForm.winners_count_public), is_public_voting_open: Boolean(createForm.is_public_voting_open)
+        winners_count_public: Number(createForm.winners_count_public), is_public_voting_open: Boolean(createForm.is_public_voting_open),
+        candidates_limit: Number(createForm.candidates_limit), participants_limit: Number(createForm.candidates_limit), max_candidates: Number(createForm.candidates_limit)
       };
       const response = await apiRequest('post', '/api/sessions', payload);
       const created = response?.data?.session;
@@ -306,6 +486,7 @@ const SessoesAdmin = () => {
       title: sessionForm.title, session_date: sessionForm.session_date || null, session_time: sessionForm.session_time || null,
       location: sessionForm.location || null, status: sessionForm.status,
       winners_count_judges: Number(sessionForm.winners_count_judges), winners_count_public: Number(sessionForm.winners_count_public),
+      candidates_limit: Number(sessionForm.candidates_limit), participants_limit: Number(sessionForm.candidates_limit), max_candidates: Number(sessionForm.candidates_limit),
       is_public_voting_open: Boolean(sessionForm.is_public_voting_open)
     }), 'Dados gerais da sessão atualizados.');
   };
@@ -314,6 +495,12 @@ const SessoesAdmin = () => {
     if (!selectedSessionId) return;
     await runAction(() => apiRequest('patch', `/api/sessions/${selectedSessionId}/status`, { status: nextStatus }),
       `Status alterado para ${STATUS_LABELS[nextStatus] || nextStatus}.`);
+  };
+
+  const handleUpdatePublicVoting = async (isOpen) => {
+    if (!selectedSessionId) return;
+    await runAction(() => apiRequest('patch', `/api/sessions/${selectedSessionId}`, { is_public_voting_open: isOpen }),
+      `Votação popular ${isOpen ? 'aberta' : 'fechada'}.`);
   };
 
   const handleSetActiveCandidate = async (event) => {
@@ -329,48 +516,77 @@ const SessoesAdmin = () => {
     setActiveCandidateName(match.name);
   };
 
-  const handleAddCandidates = async (event) => {
-    event.preventDefault();
+  const handleSetActiveCandidateById = async (candidateId) => {
     if (!selectedSessionId) return;
-    const candidateNames = parseCandidateNames(candidateNamesCsv);
-    if (!candidateNames.length) {
-      setErrorMsg('Informe ao menos um nome artístico válido.');
-      return;
-    }
-    const resolvedCandidates = candidateNames.map((candidateName) => ({ candidateName, match: findCandidateMatch(candidateName, candidateOptions) }));
-    const unresolvedCandidate = resolvedCandidates.find((item) => !item.match?.id);
-    if (unresolvedCandidate) {
-      setErrorMsg(`Não encontrei correspondência para "${unresolvedCandidate.candidateName}".`);
-      return;
-    }
-    await runAction(() => apiRequest('post', `/api/sessions/${selectedSessionId}/candidates`, { candidate_ids: resolvedCandidates.map((item) => Number(item.match.id)) }),
-      'Candidatos vinculados a sessão.');
-    setCandidateNamesCsv('');
+    
+    // Atualização otimista para resposta imediata da interface
+    setSessions(prev => prev.map(s => 
+      s.id === selectedSessionId ? { ...s, active_candidate_id: candidateId } : s
+    ));
+
+    await runAction(async () => {
+      await apiRequest('patch', `/api/sessions/${selectedSessionId}/active-candidate`, { active_candidate_id: candidateId === null ? null : Number(candidateId) });
+    }, `Candidato ativo atualizado.`);
   };
 
-  const handleRemoveCandidate = async (event) => {
-    event.preventDefault();
-    if (!selectedSessionId) return;
-    const match = findCandidateMatch(candidateNameToRemove, candidateOptions);
-    if (!match?.id) {
-      setErrorMsg('Selecione um nome artístico válido para remoção.');
+  const handleAddCandidateById = async (candidateId) => {
+    if (!selectedSessionId || !candidateId) return;
+    if (hasReachedSessionLimit) {
+      setErrorMsg(`A sessão atingiu o limite de ${sessionCandidatesLimit} candidato(s). Aumente a quantidade em Dados Gerais para adicionar mais.`);
       return;
     }
-    await runAction(() => apiRequest('delete', `/api/sessions/${selectedSessionId}/candidates/${Number(match.id)}`), 'Candidato removido da sessão.');
-    setCandidateNameToRemove('');
+    await runAction(() => apiRequest('post', `/api/sessions/${selectedSessionId}/candidates`, { candidate_ids: [Number(candidateId)] }), 'Candidato vinculado à sessão.');
   };
 
-  const handleUpdateCandidateDetails = async (event) => {
-    event.preventDefault();
-    if (!selectedSessionId) return;
-    if (!candidateDetailsForm.candidateId) {
-      setErrorMsg('Selecione um candidato na lista para atualizar.');
-      return;
-    }
-    await runAction(() => apiRequest('patch', `/api/sessions/${selectedSessionId}/candidates/${candidateDetailsForm.candidateId}/details`, {
-      presentation_order: candidateDetailsForm.order, presentation_time: candidateDetailsForm.time, estimated_time: candidateDetailsForm.estimatedTime
-    }), 'Detalhes de apresentação salvos.');
+  const handleRemoveCandidateById = async (candidateId) => {
+    if (!selectedSessionId || !candidateId) return;
+    await runAction(() => apiRequest('delete', `/api/sessions/${selectedSessionId}/candidates/${Number(candidateId)}`), 'Candidato removido da sessão.');
   };
+
+  const handleSortableCandidatesChange = useCallback((candidateId, field, value) => {
+    setSortableCandidates((current) => current.map((candidate) => (
+      Number(candidate.id) === Number(candidateId) ? { ...candidate, [field]: value } : candidate
+    )));
+  }, []);
+
+  const handleDragEnd = useCallback((event) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setSortableCandidates((current) => {
+      const oldIndex = current.findIndex((candidate) => String(candidate.id) === String(active.id));
+      const newIndex = current.findIndex((candidate) => String(candidate.id) === String(over.id));
+      if (oldIndex === -1 || newIndex === -1) return current;
+      return arrayMove(current, oldIndex, newIndex).map((candidate, index) => ({ ...candidate, order: index + 1 }));
+    });
+  }, []);
+
+  const handleSaveOrderAndSchedule = async () => {
+    if (!selectedSessionId || !sortableCandidates.length) return;
+    const payload = sortableCandidates.map((candidate, index) => ({
+      candidateId: Number(candidate.id),
+      presentation_order: index + 1,
+      presentation_time: candidate.time || null,
+      estimated_time: candidate.estimatedTime || null
+    }));
+
+    await runAction(async () => {
+      await Promise.all(payload.map((item) => apiRequest('patch', `/api/sessions/${selectedSessionId}/candidates/${item.candidateId}/details`, {
+        presentation_order: item.presentation_order,
+        presentation_time: item.presentation_time,
+        estimated_time: item.estimated_time
+      })));
+    }, 'Ordem e horários salvos com sucesso.');
+  };
+
+  const openSessionDetails = useCallback((sessionId) => {
+    setSelectedSessionId(sessionId);
+    setActiveSessionTab('dados');
+    setDropdownOpenId(null);
+    window.requestAnimationFrame(() => {
+      const panel = document.querySelector('.sessoes-control-panel');
+      if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, []);
 
   const handleScoreCorrection = async (event) => {
     event.preventDefault();
@@ -386,17 +602,60 @@ const SessoesAdmin = () => {
     setScoreCorrection((current) => ({ ...current, candidateName: match.name }));
   };
 
-  const handleAddJudge = async (event) => {
-    event.preventDefault();
-    if (!selectedSessionId || !judgeIdToAdd) return;
-    await runAction(() => apiRequest('post', `/api/sessions/${selectedSessionId}/judges`, { judge_id: Number(judgeIdToAdd) }), 'Juiz vinculado à sessão.');
-    setJudgeIdToAdd('');
+  const handleAddJudgeById = async (judgeId) => {
+    if (!selectedSessionId || !judgeId) return;
+    await runAction(() => apiRequest('post', `/api/sessions/${selectedSessionId}/judges`, { judge_id: Number(judgeId) }), 'Juiz vinculado à sessão.');
   };
 
   const handleRemoveJudge = async (judgeId) => {
     if (!selectedSessionId) return;
     await runAction(() => apiRequest('delete', `/api/sessions/${selectedSessionId}/judges/${judgeId}`), 'Juiz removido da sessão.');
   };
+
+  const handleSaveVoteEdit = async (judgeId, candidateId) => {
+    if (!selectedSessionId) return;
+    await runAction(async () => {
+      await apiRequest('put', `/api/sessions/${selectedSessionId}/votes/${judgeId}/${candidateId}`, {
+        tuning: Number(editVoteForm.tuning),
+        stage_presence: Number(editVoteForm.stage_presence),
+        harmony: Number(editVoteForm.harmony),
+        rhythm: Number(editVoteForm.rhythm),
+        interpretation: Number(editVoteForm.interpretation),
+        authenticity: Number(editVoteForm.authenticity),
+        diction: Number(editVoteForm.diction)
+      });
+      setEditingVoteId(null);
+    }, 'Voto atualizado com sucesso.');
+    
+    // Atualizar o modal com novos dados
+    setAuditModalData(prev => {
+      if (!prev) return null;
+      const updatedAudit = auditData.find(a => a.candidate_id === prev.candidate_id);
+      return updatedAudit ? updatedAudit : prev;
+    });
+  };
+
+  const handleDeleteVote = async (judgeId, candidateId) => {
+    if (!selectedSessionId) return;
+    if (!window.confirm('Tem certeza que deseja apagar o voto deste jurado? Ele terá que votar novamente.')) return;
+    await runAction(async () => {
+      await apiRequest('delete', `/api/sessions/${selectedSessionId}/votes/${judgeId}/${candidateId}`);
+    }, 'Voto excluído com sucesso.');
+    
+    setAuditModalData(prev => {
+      if (!prev) return null;
+      const updatedAudit = auditData.find(a => a.candidate_id === prev.candidate_id);
+      return updatedAudit ? updatedAudit : prev;
+    });
+  };
+
+  useEffect(() => {
+    // Atualiza os dados do modal se os dados de auditoria mudarem no fundo
+    if (auditModalData && auditData) {
+      const updated = auditData.find(a => a.candidate_id === auditModalData.candidate_id);
+      if (updated) setAuditModalData(updated);
+    }
+  }, [auditData]);
 
   return (
     <div className="sessoes-admin-container" onClick={() => setDropdownOpenId(null)}>
@@ -409,6 +668,7 @@ const SessoesAdmin = () => {
             <input type="text" placeholder="Titulo da sessao" value={createForm.title} onChange={(e) => setCreateForm(c => ({ ...c, title: e.target.value }))} required />
             <input type="date" value={createForm.session_date} onChange={(e) => setCreateForm(c => ({ ...c, session_date: e.target.value }))} />
             <input type="time" value={createForm.session_time} onChange={(e) => setCreateForm(c => ({ ...c, session_time: e.target.value }))} />
+            <input type="number" min="1" placeholder="Qtd. candidatos" value={createForm.candidates_limit} onChange={(e) => setCreateForm(c => ({ ...c, candidates_limit: e.target.value }))} />
             <button className="sessoes-banner-btn" type="submit" disabled={isSaving}><Plus size={18} /> Criar Nova Sessão</button>
           </form>
         </div>
@@ -480,9 +740,9 @@ const SessoesAdmin = () => {
                   <MoreVertical size={20} />
                 </button>
                 {dropdownOpenId === session.id && (
-                  <div className="action-menu">
-                    <button className="action-menu-item" onClick={() => console.log('View session public page:', session.id)}><Eye size={14} style={{ marginRight: 6, display:'inline', verticalAlign:'middle' }}/> Ver</button>
-                    <button className="action-menu-item" onClick={() => setSelectedSessionId(session.id)}><Edit2 size={14} style={{ marginRight: 6, display:'inline', verticalAlign:'middle' }}/> Editar</button>
+                  <div className="action-menu" onClick={(e) => e.stopPropagation()}>
+                    <button className="action-menu-item" onClick={() => openSessionDetails(session.id)}><Eye size={14} style={{ marginRight: 6, display:'inline', verticalAlign:'middle' }}/> Ver</button>
+                    <button className="action-menu-item" onClick={() => { setSelectedSessionId(session.id); setDropdownOpenId(null); }}><Edit2 size={14} style={{ marginRight: 6, display:'inline', verticalAlign:'middle' }}/> Editar</button>
                     <button className="action-menu-item delete" onClick={() => alert('Excluir sessão ainda não implementado')}><Trash2 size={14} style={{ marginRight: 6, display:'inline', verticalAlign:'middle' }}/> Excluir</button>
                   </div>
                 )}
@@ -530,6 +790,8 @@ const SessoesAdmin = () => {
                   <input type="number" min="0" value={sessionForm.winners_count_judges} onChange={(e) => setSessionForm(c => ({ ...c, winners_count_judges: e.target.value }))} />
                   <label>Vencedores (Voto Público)</label>
                   <input type="number" min="0" value={sessionForm.winners_count_public} onChange={(e) => setSessionForm(c => ({ ...c, winners_count_public: e.target.value }))} />
+                  <label>Quantidade de Candidatos na Sessão</label>
+                  <input type="number" min="1" value={sessionForm.candidates_limit} onChange={(e) => setSessionForm(c => ({ ...c, candidates_limit: e.target.value }))} />
                   <label><input type="checkbox" checked={sessionForm.is_public_voting_open} onChange={(e) => setSessionForm(c => ({ ...c, is_public_voting_open: e.target.checked }))} /> Votação Popular Aberta</label>
                   <button type="submit" disabled={isSaving} style={{ marginTop: 'auto' }}>Salvar Dados Gerais</button>
                 </div>
@@ -539,100 +801,251 @@ const SessoesAdmin = () => {
             {activeSessionTab === 'candidatos' && (
               <div className="control-grid">
                 <div className="control-card">
-                  <h4>Adicionar Candidatos</h4>
-                  <form onSubmit={handleAddCandidates}>
-                    <CandidateLookupField
-                      label="Nomes Artísticos"
-                      value={candidateNamesCsv}
-                      onChange={(e) => setCandidateNamesCsv(e.target.value)}
-                      options={filterCandidateOptions(candidateNamesCsv)}
-                      placeholder="Maria do Forró, João da Sanfona"
-                      helperText="Separe por vírgula ou quebra de linha."
-                      onSelect={setCandidateNamesCsv}
-                      rows={3}
-                    />
-                    <button type="submit" disabled={isSaving}>Vincular à Sessão</button>
-                  </form>
-                  <form onSubmit={handleRemoveCandidate} style={{ marginTop: 24 }}>
-                    <CandidateLookupField
-                      label="Remover Candidato"
-                      value={candidateNameToRemove}
-                      onChange={(e) => setCandidateNameToRemove(e.target.value)}
-                      options={filterCandidateOptions(candidateNameToRemove)}
-                      placeholder="Nome do candidato"
-                      helperText="Localize para remover da sessão."
-                      onSelect={setCandidateNameToRemove}
-                      rows={1}
-                    />
-                    <button type="submit" className="danger" disabled={isSaving}>Remover</button>
-                  </form>
+                  <h4>
+                    Candidatos da Sessão ({sortableCandidates.length}{sessionCandidatesLimit > 0 ? `/${sessionCandidatesLimit}` : ''})
+                  </h4>
+                  {hasReachedSessionLimit && (
+                    <div className="sessoes-alert erro" style={{ marginBottom: 8 }}>
+                      Limite da sessão atingido. Ajuste a quantidade de candidatos em Dados Gerais.
+                    </div>
+                  )}
+                  <div className="candidate-table-wrapper">
+                    <table className="candidate-table">
+                      <thead>
+                        <tr>
+                          <th>Foto</th>
+                          <th>Nome Artístico</th>
+                          <th>Ação</th>
+                        </tr>
+                      </thead>
+                    </table>
+                    <div className="candidate-table-scroll">
+                      <table className="candidate-table">
+                        <tbody>
+                          {allCandidatesCatalog.map((candidate) => {
+                            const isInSession = sessionCandidateIds.has(Number(candidate.id));
+                            return (
+                              <tr key={candidate.id} className="candidate-table-row">
+                                <td>
+                                  <div className="candidate-cell-content">
+                                    {candidate.photo ? <img src={candidate.photo} alt={candidate.name} className="candidate-avatar" /> : <div className="candidate-avatar placeholder">{String(candidate.name || '?').slice(0, 1).toUpperCase()}</div>}
+                                  </div>
+                                </td>
+                                <td>{candidate.name}</td>
+                                <td>
+                                  {isInSession ? (
+                                    <button type="button" className="danger candidate-action-btn" onClick={() => handleRemoveCandidateById(candidate.id)} disabled={isSaving}>Remover</button>
+                                  ) : (
+                                    <button type="button" className="candidate-action-btn" onClick={() => handleAddCandidateById(candidate.id)} disabled={isSaving || hasReachedSessionLimit}>Adicionar</button>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                          {allCandidatesCatalog.length === 0 && (
+                            <tr className="candidate-table-row">
+                              <td colSpan={3}>Nenhum candidato encontrado.</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
                 <div className="control-card">
-                  <h4>Ordem e Horário ({resultsData?.final_ranking?.length || 0})</h4>
-                  <div className="ranking-box" style={{ flex: 1, overflowY: 'auto', marginBottom: 12 }}>
-                    <ul>
-                      {resultsData?.final_ranking?.map((row) => (
-                        <li key={row.candidate_id} style={{ cursor: 'pointer' }} onClick={() => setCandidateDetailsForm({ candidateId: row.candidate_id, order: '', time: '' })}>
-                          <span>#{row.candidate_id} - {row.artistic_name || row.name}</span>
-                          <span style={{ fontSize: 11, color: '#6B7280' }}>Selecionar</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <form onSubmit={handleUpdateCandidateDetails}>
-                    <div className="inline-fields">
-                      <div><label>ID Candidato</label><input type="text" readOnly value={candidateDetailsForm.candidateId} placeholder="Clique na lista" required /></div>
-                      <div><label>Ordem</label><input type="number" min="0" value={candidateDetailsForm.order} onChange={(e) => setCandidateDetailsForm(c => ({...c, order: e.target.value}))} /></div>
-                      <div><label>Horário</label><input type="time" value={candidateDetailsForm.time} onChange={(e) => setCandidateDetailsForm(c => ({...c, time: e.target.value}))} /></div>
+                  <h4>Ordem e Horário ({sortableCandidates.length})</h4>
+                  <div className="sortable-help">Arraste para definir a ordem e preencha o horário de apresentação de cada candidato.</div>
+                  <div className="candidate-table-wrapper">
+                    <table className="candidate-table order-table-header">
+                      <thead>
+                        <tr>
+                          <th className="drag-col">Ordem</th>
+                          <th>Candidato</th>
+                          <th className="order-col">Posição</th>
+                          <th>Horário</th>
+                        </tr>
+                      </thead>
+                    </table>
+                    <div className="candidate-table-scroll">
+                      <table className="candidate-table">
+                        <tbody>
+                          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                            <SortableContext items={sortableCandidates.map((candidate) => String(candidate.id))} strategy={verticalListSortingStrategy}>
+                              {sortableCandidates.map((candidate, index) => (
+                                <SortableCandidateRow
+                                  key={candidate.id}
+                                  candidate={{ ...candidate, order: index + 1 }}
+                                  onTimeChange={(candidateId, value) => handleSortableCandidatesChange(candidateId, 'time', value)}
+                                />
+                              ))}
+                            </SortableContext>
+                          </DndContext>
+                        </tbody>
+                      </table>
                     </div>
-                    <button type="submit" disabled={!candidateDetailsForm.candidateId || isSaving} style={{ marginTop: 8 }}>Salvar Ordem/Horário</button>
-                  </form>
+                  </div>
+                  <button type="button" disabled={isSaving || sortableCandidates.length === 0} style={{ marginTop: 8 }} onClick={handleSaveOrderAndSchedule}>Salvar Ordem/Horário</button>
                 </div>
               </div>
             )}
 
             {activeSessionTab === 'votacao' && (
               <div className="control-grid">
-                <div className="control-card">
-                  <h4>Status da Votação</h4>
-                  <div className="status-buttons">
-                    {STATUS_OPTIONS.map((st) => (
-                      <button type="button" className={selectedSession.status === st ? '' : 'secondary'} key={st} onClick={() => handleUpdateStatus(st)} disabled={isSaving}>
-                        {STATUS_LABELS[st]}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                  <div className="control-card">
+                    <h4>Voto Popular (Público)</h4>
+                    <p style={{ marginBottom: 16, fontSize: 13, color: '#6b7280' }}>
+                      A votação popular exibe todos os candidatos desta sessão simultaneamente para que o público escolha seu favorito.
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: selectedSession.is_public_voting_open ? '#f0fdf4' : '#f3f4f6', padding: 16, borderRadius: 8, border: `1px solid ${selectedSession.is_public_voting_open ? '#bbf7d0' : '#e5e7eb'}` }}>
+                      <div>
+                        <span style={{ fontWeight: 'bold', display: 'block', color: selectedSession.is_public_voting_open ? '#166534' : '#374151' }}>
+                          {selectedSession.is_public_voting_open ? 'Votação Aberta' : 'Votação Fechada'}
+                        </span>
+                        <span style={{ fontSize: 12, color: selectedSession.is_public_voting_open ? '#15803d' : '#6b7280' }}>
+                          {selectedSession.is_public_voting_open ? 'O público pode votar agora.' : 'Acesso bloqueado para o público.'}
+                        </span>
+                      </div>
+                      <button 
+                        type="button" 
+                        onClick={() => handleUpdatePublicVoting(!selectedSession.is_public_voting_open)}
+                        disabled={isSaving}
+                        style={{
+                          backgroundColor: selectedSession.is_public_voting_open ? '#ef4444' : '#10b981',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: 6,
+                          fontWeight: 'bold',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {selectedSession.is_public_voting_open ? 'Desligar' : 'Ligar Votação'}
                       </button>
-                    ))}
+                    </div>
                   </div>
-                  <form onSubmit={handleSetActiveCandidate} style={{ marginTop: 24 }}>
-                    <CandidateLookupField
-                      label="Candidato Ativo (Para avaliação dos juízes)"
-                      value={activeCandidateName}
-                      onChange={(e) => setActiveCandidateName(e.target.value)}
-                      options={filterCandidateOptions(activeCandidateName)}
-                      placeholder="Nome do candidato no palco"
-                      helperText="O júri só poderá votar neste candidato."
-                      onSelect={setActiveCandidateName}
-                      rows={2}
-                    />
-                    <button type="submit" disabled={isSaving}>Definir Candidato Ativo</button>
-                  </form>
+
+                  <div className="control-card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <h4>Voto Técnico (Jurados)</h4>
+                      {selectedSession?.active_candidate_id && (
+                        <button 
+                          type="button" 
+                          onClick={() => handleSetActiveCandidateById(null)} 
+                          style={{ padding: '4px 8px', fontSize: 12, backgroundColor: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca', borderRadius: 4, cursor: 'pointer' }}
+                        >
+                          Pausar Avaliação
+                        </button>
+                      )}
+                    </div>
+                    <p style={{ marginBottom: 16, fontSize: 13, color: '#6b7280', marginTop: 4 }}>
+                      Os jurados avaliam um candidato por vez. Selecione quem está no palco agora.
+                    </p>
+                    
+                    <div className="candidate-table-wrapper">
+                    <table className="candidate-table">
+                      <thead>
+                        <tr>
+                          <th style={{ width: 60 }}>Ordem</th>
+                          <th>Candidato</th>
+                          <th>Ação</th>
+                        </tr>
+                      </thead>
+                    </table>
+                    <div className="candidate-table-scroll" style={{ maxHeight: 250 }}>
+                      <table className="candidate-table">
+                        <tbody>
+                          {sortableCandidates.map((candidate) => {
+                            const isActive = String(candidate.id) === String(selectedSession?.active_candidate_id);
+                            return (
+                              <tr key={candidate.id} className={`candidate-table-row ${isActive ? 'active-row' : ''}`} style={isActive ? { backgroundColor: '#e0f2fe' } : {}}>
+                                <td style={{ width: 60 }}>{candidate.order}</td>
+                                <td>
+                                  <div className="candidate-cell-content">
+                                    {candidate.photo ? <img src={candidate.photo} alt={candidate.name} className="candidate-avatar" /> : <div className="candidate-avatar placeholder">{String(candidate.name || '?').slice(0, 1).toUpperCase()}</div>}
+                                    <span style={isActive ? { fontWeight: 'bold' } : {}}>{candidate.name} {isActive && '(Ativo)'}</span>
+                                  </div>
+                                </td>
+                                <td>
+                                  {!isActive ? (
+                                    <button type="button" className="candidate-action-btn" onClick={() => handleSetActiveCandidateById(candidate.id)} disabled={isSaving}>Definir Ativo</button>
+                                  ) : (
+                                    <span style={{ color: '#0284c7', fontWeight: 'bold', fontSize: 13 }}>Atualmente Ativo</span>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                          {sortableCandidates.length === 0 && (
+                            <tr className="candidate-table-row">
+                              <td colSpan={3}>Nenhum candidato na sessão.</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
+
                 <div className="control-card">
-                  <h4>Correção de Pontuação e Auditoria</h4>
-                  <form onSubmit={handleScoreCorrection}>
-                    <CandidateLookupField
-                      label="Candidato"
-                      value={scoreCorrection.candidateName}
-                      onChange={(e) => setScoreCorrection(c => ({ ...c, candidateName: e.target.value }))}
-                      options={filterCandidateOptions(scoreCorrection.candidateName)}
-                      placeholder="Nome artístico"
-                      helperText="Erro relatado pelos jurados? Corrija aqui."
-                      onSelect={(val) => setScoreCorrection(c => ({ ...c, candidateName: val }))}
-                      rows={2}
-                    />
-                    <label>Ajuste na nota final (ex: -1.5, 2.0)</label>
-                    <input type="number" step="0.01" value={scoreCorrection.adjustment} onChange={(e) => setScoreCorrection(c => ({ ...c, adjustment: e.target.value }))} required />
-                    <button type="submit" disabled={isSaving}>Aplicar Correção</button>
-                  </form>
+                  <h4>Status Geral da Sessão</h4>
+                  <p style={{ marginBottom: 12, fontSize: 13, color: '#6b7280' }}>Define o estado global desta sessão. Use "Finalizada" para encerrar definitivamente.</p>
+                  <div className="status-buttons" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                    <button type="button" style={{ backgroundColor: selectedSession.status === 'waiting' ? '#eab308' : '', color: selectedSession.status === 'waiting' ? 'white' : '' }} className={selectedSession.status === 'waiting' ? '' : 'secondary'} onClick={() => handleUpdateStatus('waiting')} disabled={isSaving}>⏳ Aguardando Início</button>
+                    <button type="button" style={{ backgroundColor: (selectedSession.status === 'judge_voting' || selectedSession.status === 'public_voting') ? '#10b981' : '', color: (selectedSession.status === 'judge_voting' || selectedSession.status === 'public_voting') ? 'white' : '' }} className={(selectedSession.status === 'judge_voting' || selectedSession.status === 'public_voting') ? '' : 'secondary'} onClick={() => handleUpdateStatus('judge_voting')} disabled={isSaving}>▶️ Em Andamento</button>
+                    <button type="button" style={{ backgroundColor: selectedSession.status === 'finished' ? '#ef4444' : '', color: selectedSession.status === 'finished' ? 'white' : '' }} className={selectedSession.status === 'finished' ? '' : 'secondary'} onClick={() => handleUpdateStatus('finished')} disabled={isSaving}>🛑 Finalizada</button>
+                  </div>
+                </div>
+              </div>
+                
+              <div className="control-card">
+                  <h4>Auditoria de Notas e Alertas</h4>
+                  <p style={{ marginBottom: 16, fontSize: 13, color: '#6b7280' }}>Acompanhe os votos recebidos, veja notas detalhadas e alertas dos jurados.</p>
+                  
+                  <div className="candidate-table-wrapper">
+                    <table className="candidate-table">
+                      <thead>
+                        <tr>
+                          <th>Candidato</th>
+                          <th>Votos</th>
+                          <th>Alertas</th>
+                          <th>Ações</th>
+                        </tr>
+                      </thead>
+                    </table>
+                    <div className="candidate-table-scroll" style={{ maxHeight: 250 }}>
+                      <table className="candidate-table">
+                        <tbody>
+                          {auditData.map((item) => {
+                            const hasAlerts = item.alerts && item.alerts.length > 0;
+                            return (
+                              <tr key={item.candidate_id} className="candidate-table-row">
+                                <td>
+                                  <div className="candidate-cell-content">
+                                    <span style={{ fontWeight: hasAlerts ? 'bold' : 'normal' }}>{item.artistic_name || item.name}</span>
+                                  </div>
+                                </td>
+                                <td>{item.votes ? item.votes.length : 0}</td>
+                                <td>
+                                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, borderRadius: '50%', backgroundColor: hasAlerts ? '#ef4444' : '#e5e7eb', color: hasAlerts ? 'white' : '#9ca3af' }} title={hasAlerts ? 'Possui Alertas' : 'Sem alertas'}>
+                                    <span style={{ fontSize: 14, fontWeight: 'bold' }}>!</span>
+                                  </div>
+                                </td>
+                                <td>
+                                  <button type="button" className="candidate-action-btn" onClick={() => setAuditModalData(item)} disabled={isSaving}>Ver Notas</button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                          {auditData.length === 0 && (
+                            <tr className="candidate-table-row">
+                              <td colSpan={4}>Nenhuma auditoria disponível.</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -640,31 +1053,41 @@ const SessoesAdmin = () => {
             {activeSessionTab === 'juizes' && (
               <div className="control-grid">
                 <div className="control-card">
-                  <h4>Vincular Juiz à Sessão</h4>
-                  <form onSubmit={handleAddJudge}>
-                    <label>Selecione o Juiz</label>
-                    <select value={judgeIdToAdd} onChange={(e) => setJudgeIdToAdd(e.target.value)} required>
-                      <option value="">Selecione um juiz...</option>
-                      {allJudges.map(j => (
-                        <option key={j.id} value={j.id}>{j.name} ({j.email})</option>
-                      ))}
-                    </select>
-                    <button type="submit" disabled={isSaving} style={{ marginTop: 12 }}>Adicionar Juiz</button>
-                  </form>
-                </div>
-                <div className="control-card">
-                  <h4>Juízes Escalados ({sessionJudges.length})</h4>
-                  <div className="ranking-box">
-                    {sessionJudges.length === 0 ? <p style={{ fontSize: 13 }}>Nenhum juiz vinculado.</p> : (
-                      <ul>
-                        {sessionJudges.map(j => (
-                          <li key={j.id}>
-                            <span>{j.name}</span>
-                            <button type="button" className="action-btn" style={{ background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer' }} onClick={() => handleRemoveJudge(j.id)}><Trash2 size={14}/></button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                  <h4>
+                    Juízes da Sessão ({sessionJudges.length})
+                  </h4>
+                  <div className="candidate-table-wrapper">
+                    <table className="candidate-table">
+                      <thead>
+                        <tr>
+                          <th>Nome</th>
+                          <th>Email</th>
+                          <th>Ação</th>
+                        </tr>
+                      </thead>
+                    </table>
+                    <div className="candidate-table-scroll">
+                      <table className="candidate-table">
+                        <tbody>
+                          {allJudges.map((judge) => {
+                            const isInSession = sessionJudges.some(j => Number(j.id) === Number(judge.id));
+                            return (
+                              <tr key={judge.id} className="candidate-table-row">
+                                <td>{judge.name}</td>
+                                <td style={{ fontSize: 12, color: '#6B7280' }}>{judge.email}</td>
+                                <td>
+                                  {isInSession ? (
+                                    <button type="button" className="danger candidate-action-btn" onClick={() => handleRemoveJudge(judge.id)} disabled={isSaving}>Remover</button>
+                                  ) : (
+                                    <button type="button" className="candidate-action-btn" onClick={() => handleAddJudgeById(judge.id)} disabled={isSaving}>Adicionar</button>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -672,6 +1095,95 @@ const SessoesAdmin = () => {
 
           </div>
         </section>
+      )}
+
+      {auditModalData && (
+        <div className="sessoes-modal-overlay" onClick={() => { if(!editingVoteId) setAuditModalData(null); }} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="sessoes-modal-content" onClick={(e) => e.stopPropagation()} style={{ backgroundColor: 'white', padding: 24, borderRadius: 8, width: '90%', maxWidth: 850, maxHeight: '90vh', overflowY: 'auto' }}>
+            <div className="sessoes-modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h3 style={{ margin: 0 }}>Notas de: {auditModalData.artistic_name || auditModalData.name}</h3>
+              <button className="close-btn" onClick={() => { setAuditModalData(null); setEditingVoteId(null); }} style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: '#6b7280' }}>&times;</button>
+            </div>
+            <div className="sessoes-modal-body">
+              {auditModalData.alerts && auditModalData.alerts.length > 0 && (
+                <div className="sessoes-alert erro" style={{ marginBottom: 16 }}>
+                  <strong>Alertas pendentes:</strong>
+                  <ul style={{ margin: '8px 0 0 16px', padding: 0 }}>
+                    {auditModalData.alerts.map(a => <li key={a.id}>{a.message}</li>)}
+                  </ul>
+                </div>
+              )}
+              
+              <div className="candidate-table-wrapper" style={{ border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
+                <table className="candidate-table" style={{ fontSize: 12, width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+                  <thead style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                    <tr>
+                      <th style={{ padding: '8px 12px' }}>Jurado</th>
+                      <th style={{ padding: '8px 4px' }}>Afin.</th>
+                      <th style={{ padding: '8px 4px' }}>Presen.</th>
+                      <th style={{ padding: '8px 4px' }}>Harm.</th>
+                      <th style={{ padding: '8px 4px' }}>Ritmo</th>
+                      <th style={{ padding: '8px 4px' }}>Interp.</th>
+                      <th style={{ padding: '8px 4px' }}>Autent.</th>
+                      <th style={{ padding: '8px 4px' }}>Dicção</th>
+                      <th style={{ padding: '8px 12px' }}>Total</th>
+                      <th style={{ padding: '8px 12px' }}>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {auditModalData.votes.map(vote => {
+                      const isEditing = editingVoteId === vote.id;
+                      if (isEditing) {
+                        return (
+                          <tr key={vote.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                            <td style={{ padding: '8px 12px', fontWeight: 'bold' }}>{vote.judge_name}</td>
+                            <td style={{ padding: '8px 4px' }}><input type="number" step="0.1" min="0" max="10" value={editVoteForm.tuning} onChange={(e) => setEditVoteForm(c => ({...c, tuning: e.target.value}))} style={{ width: 45, padding: 2, fontSize: 12 }}/></td>
+                            <td style={{ padding: '8px 4px' }}><input type="number" step="0.1" min="0" max="10" value={editVoteForm.stage_presence} onChange={(e) => setEditVoteForm(c => ({...c, stage_presence: e.target.value}))} style={{ width: 45, padding: 2, fontSize: 12 }}/></td>
+                            <td style={{ padding: '8px 4px' }}><input type="number" step="0.1" min="0" max="10" value={editVoteForm.harmony} onChange={(e) => setEditVoteForm(c => ({...c, harmony: e.target.value}))} style={{ width: 45, padding: 2, fontSize: 12 }}/></td>
+                            <td style={{ padding: '8px 4px' }}><input type="number" step="0.1" min="0" max="10" value={editVoteForm.rhythm} onChange={(e) => setEditVoteForm(c => ({...c, rhythm: e.target.value}))} style={{ width: 45, padding: 2, fontSize: 12 }}/></td>
+                            <td style={{ padding: '8px 4px' }}><input type="number" step="0.1" min="0" max="10" value={editVoteForm.interpretation} onChange={(e) => setEditVoteForm(c => ({...c, interpretation: e.target.value}))} style={{ width: 45, padding: 2, fontSize: 12 }}/></td>
+                            <td style={{ padding: '8px 4px' }}><input type="number" step="0.1" min="0" max="10" value={editVoteForm.authenticity} onChange={(e) => setEditVoteForm(c => ({...c, authenticity: e.target.value}))} style={{ width: 45, padding: 2, fontSize: 12 }}/></td>
+                            <td style={{ padding: '8px 4px' }}><input type="number" step="0.1" min="0" max="10" value={editVoteForm.diction} onChange={(e) => setEditVoteForm(c => ({...c, diction: e.target.value}))} style={{ width: 45, padding: 2, fontSize: 12 }}/></td>
+                            <td style={{ padding: '8px 12px' }}>-</td>
+                            <td style={{ padding: '8px 12px', display: 'flex', gap: 4 }}>
+                              <button type="button" onClick={() => handleSaveVoteEdit(vote.judge_id, auditModalData.candidate_id)} style={{ padding: '4px 8px', fontSize: 11, backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: 4, cursor: 'pointer' }}>Salvar</button>
+                              <button type="button" onClick={() => setEditingVoteId(null)} style={{ padding: '4px 8px', fontSize: 11, backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: 4, cursor: 'pointer' }}>Cancelar</button>
+                            </td>
+                          </tr>
+                        );
+                      }
+                      return (
+                        <tr key={vote.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                          <td style={{ padding: '8px 12px', fontWeight: 'bold' }}>{vote.judge_name}</td>
+                          <td style={{ padding: '8px 4px' }}>{Number(vote.tuning).toFixed(1)}</td>
+                          <td style={{ padding: '8px 4px' }}>{Number(vote.stage_presence).toFixed(1)}</td>
+                          <td style={{ padding: '8px 4px' }}>{Number(vote.harmony).toFixed(1)}</td>
+                          <td style={{ padding: '8px 4px' }}>{Number(vote.rhythm).toFixed(1)}</td>
+                          <td style={{ padding: '8px 4px' }}>{Number(vote.interpretation).toFixed(1)}</td>
+                          <td style={{ padding: '8px 4px' }}>{Number(vote.authenticity).toFixed(1)}</td>
+                          <td style={{ padding: '8px 4px' }}>{Number(vote.diction).toFixed(1)}</td>
+                          <td style={{ padding: '8px 12px', fontWeight: 'bold', color: '#0284c7' }}>{Number(vote.total_score).toFixed(2)}</td>
+                          <td style={{ padding: '8px 12px', display: 'flex', gap: 4 }}>
+                            <button type="button" onClick={() => {
+                              setEditingVoteId(vote.id);
+                              setEditVoteForm({
+                                tuning: vote.tuning, stage_presence: vote.stage_presence, harmony: vote.harmony, rhythm: vote.rhythm, interpretation: vote.interpretation, authenticity: vote.authenticity, diction: vote.diction
+                              });
+                            }} title="Editar" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#3b82f6' }}><Edit2 size={16} /></button>
+                            <button type="button" onClick={() => handleDeleteVote(vote.judge_id, auditModalData.candidate_id)} title="Excluir" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#ef4444' }}><Trash2 size={16} /></button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {auditModalData.votes.length === 0 && (
+                      <tr><td colSpan={10} style={{ textAlign: 'center', padding: 16 }}>Nenhum voto recebido.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Info Cards Row */}
