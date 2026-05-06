@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap');
 
 body {
   margin: 0;
@@ -2539,6 +2539,69 @@ body {
   color: #888;
   font-style: italic;
   margin-top: 16px !important;
+}
+
+.apresentacao-scheduled-state {
+  background: linear-gradient(135deg, #e5ecd6, #d1ead8);
+  border-radius: 16px;
+  padding: 60px 40px;
+  text-align: center;
+  border: 2px solid #1a6b32;
+}
+
+.scheduled-icon-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  color: #1a6b32;
+}
+
+.apresentacao-scheduled-state h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a6b32;
+  margin: 0 0 20px 0;
+}
+
+.scheduled-details {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.scheduled-details .detail-item {
+  background: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.scheduled-details .detail-item span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.scheduled-details .detail-item strong {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a6b32;
+}
+
+.scheduled-state-info {
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 600;
 }
 
 .apresentacao-checklist {

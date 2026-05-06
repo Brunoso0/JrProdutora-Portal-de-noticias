@@ -119,7 +119,7 @@ const ArtistasAdmin = () => {
   const [phaseFilter, setPhaseFilter] = useState('');
 
   const [page, setPage] = useState(1);
-  const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0 });
+  const [pagination, setPagination] = useState({ page: 1, limit: 7, total: 0 });
 
   const [isLoadingList, setIsLoadingList] = useState(false);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
@@ -162,7 +162,7 @@ const ArtistasAdmin = () => {
 
   const listQuery = useMemo(() => ({
     page,
-    limit: 20,
+    limit: 7,
     q: search || undefined,
     status: statusFilter || undefined,
     current_phase: phaseFilter || undefined
@@ -175,7 +175,7 @@ const ArtistasAdmin = () => {
     try {
       const response = await apiRequest('get', '/api/admin/candidates', undefined, listQuery);
       const nextCandidates = response?.data?.candidates || [];
-      const nextPagination = response?.data?.pagination || { page: 1, limit: 20, total: 0 };
+      const nextPagination = response?.data?.pagination || { page: 1, limit: 7, total: 0 };
 
       setCandidates(nextCandidates);
       setPagination(nextPagination);
@@ -247,7 +247,7 @@ const ArtistasAdmin = () => {
     setPage(1);
   }, [search, statusFilter, phaseFilter]);
 
-  const totalPages = Math.max(Math.ceil(Number(pagination.total || 0) / Number(pagination.limit || 20)), 1);
+  const totalPages = Math.max(Math.ceil(Number(pagination.total || 0) / Number(pagination.limit || 7)), 1);
 
   const handleRefresh = async () => {
     await loadCandidates();

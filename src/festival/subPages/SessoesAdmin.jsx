@@ -93,6 +93,15 @@ const findCandidateMatch = (rawName, candidateOptions) => {
   return null;
 };
 
+const getTransmissionLabel = (mode) => {
+  if (mode === 'ranking_public') return 'Ranking dos votos públicos';
+  if (mode === 'ranking_judges') return 'Ranking dos votos dos jurados';
+  if (mode === 'winners') return 'Vencedores';
+  if (mode === 'current_candidate_score') return 'Pontuação do candidato';
+  if (mode === 'idle') return 'Tela em branco';
+  return 'Tela da transmissão';
+};
+
 const CandidateLookupField = ({ label, value, onChange, options, placeholder, helperText, onSelect, rows = 3 }) => {
   const optionCount = options.length;
   return (
@@ -188,6 +197,9 @@ const SessoesAdmin = () => {
   const [scoreCorrection, setScoreCorrection] = useState({ candidateName: '', adjustment: '' });
 
   const [sortableCandidates, setSortableCandidates] = useState([]);
+  const [deleteConfirmModalId, setDeleteConfirmModalId] = useState(null);
+  const [broadcastMode, setBroadcastMode] = useState('none');
+  const [isBroadcastLoading, setIsBroadcastLoading] = useState(false);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -240,6 +252,21 @@ const SessoesAdmin = () => {
       setSessionJudges(response?.data?.judges || []);
     } catch (error) {
       setSessionJudges([]);
+    }
+  }, [apiRequest]);
+
+  const loadSessionBroadcast = useCallback(async (sessionId) => {
+    if (!sessionId) return;
+
+    setIsBroadcastLoading(true);
+    try {
+      const response = await apiRequest('get', `/api/sessions/${sessionId}/broadcast`);
+      const nextBroadcast = response?.data?.broadcast || { display_mode: 'none', show_names: true };
+      setBroadcastMode(nextBroadcast.display_mode || 'none');
+    } catch (error) {
+      setBroadcastMode('none');
+    } finally {
+      setIsBroadcastLoading(false);
     }
   }, [apiRequest]);
 
@@ -298,6 +325,7 @@ const SessoesAdmin = () => {
       setResultsData(null);
       setSessionJudges([]);
       setAuditData([]);
+      setBroadcastMode('none');
       setActiveCandidateName('');
       setScoreCorrection({ candidateName: '', adjustment: '' });
       setSortableCandidates([]);
@@ -306,7 +334,8 @@ const SessoesAdmin = () => {
     loadSelectedSessionResults(selectedSessionId);
     loadSessionJudges(selectedSessionId);
     loadAuditData(selectedSessionId);
-  }, [loadSelectedSessionResults, loadSessionJudges, loadAuditData, selectedSessionId]);
+    loadSessionBroadcast(selectedSessionId);
+  }, [loadSelectedSessionResults, loadSessionJudges, loadAuditData, loadSessionBroadcast, selectedSessionId]);
 
   const selectedSession = useMemo(() => sessions.find((item) => Number(item.id) === Number(selectedSessionId)) || null, [sessions, selectedSessionId]);
 
@@ -649,13 +678,55 @@ const SessoesAdmin = () => {
     });
   };
 
+  const handleDeleteSession = async (sessionId) => {
+    setDeleteConfirmModalId(null);
+    setIsSaving(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    try {
+      await apiRequest('delete', `/api/sessions/${Number(sessionId)}`);
+      setSuccessMsg('Sessão excluída com sucesso.');
+      setSelectedSessionId(null);
+      setActiveSessionTab('dados');
+      await loadSessions();
+    } catch (error) {
+      setErrorMsg(formatErrorMessage(error));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleBroadcastModeChange = async (mode) => {
+    if (!selectedSessionId) return;
+
+    setBroadcastMode(mode);
+    try {
+      await apiRequest('patch', `/api/sessions/${selectedSessionId}/broadcast`, { display_mode: mode });
+      localStorage.setItem(
+        `festival-transmission-update-${selectedSessionId}`,
+        JSON.stringify({ sessionId: selectedSessionId, display_mode: mode, updatedAt: Date.now() })
+      );
+      await loadSessionBroadcast(selectedSessionId);
+    } catch (error) {
+      setErrorMsg(formatErrorMessage(error));
+    }
+  };
+
+  const openBroadcastScreen = async () => {
+    if (!selectedSessionId) return;
+    const sessionRoute = `${window.location.origin}/festival-forro/admin/transmissao/${selectedSessionId}`;
+    window.open(sessionRoute, '_blank', 'noopener,noreferrer');
+    await loadSessionBroadcast(selectedSessionId);
+  };
+
   useEffect(() => {
     // Atualiza os dados do modal se os dados de auditoria mudarem no fundo
     if (auditModalData && auditData) {
       const updated = auditData.find(a => a.candidate_id === auditModalData.candidate_id);
       if (updated) setAuditModalData(updated);
     }
-  }, [auditData]);
+  }, [auditData, auditModalData]);
 
   return (
     <div className="sessoes-admin-container" onClick={() => setDropdownOpenId(null)}>
@@ -743,7 +814,7 @@ const SessoesAdmin = () => {
                   <div className="action-menu" onClick={(e) => e.stopPropagation()}>
                     <button className="action-menu-item" onClick={() => openSessionDetails(session.id)}><Eye size={14} style={{ marginRight: 6, display:'inline', verticalAlign:'middle' }}/> Ver</button>
                     <button className="action-menu-item" onClick={() => { setSelectedSessionId(session.id); setDropdownOpenId(null); }}><Edit2 size={14} style={{ marginRight: 6, display:'inline', verticalAlign:'middle' }}/> Editar</button>
-                    <button className="action-menu-item delete" onClick={() => alert('Excluir sessão ainda não implementado')}><Trash2 size={14} style={{ marginRight: 6, display:'inline', verticalAlign:'middle' }}/> Excluir</button>
+                    <button className="action-menu-item delete" onClick={() => setDeleteConfirmModalId(session.id)}><Trash2 size={14} style={{ marginRight: 6, display:'inline', verticalAlign:'middle' }}/> Excluir</button>
                   </div>
                 )}
               </div>
@@ -754,19 +825,161 @@ const SessoesAdmin = () => {
       </div>
 
       {selectedSession && (
-        <section className="sessoes-control-panel">
-          <div className="sessoes-control-header">
-            <h3>Gerenciar: {selectedSession.title || `Sessao ${selectedSession.id}`}</h3>
-            <p>ID #{selectedSession.id} • Status: {STATUS_LABELS[selectedSession.status] || selectedSession.status}</p>
-            <div className="sessoes-tabs">
-              <button className={`sessoes-tab-btn ${activeSessionTab === 'dados' ? 'active' : ''}`} onClick={() => setActiveSessionTab('dados')}>Dados Gerais</button>
-              <button className={`sessoes-tab-btn ${activeSessionTab === 'candidatos' ? 'active' : ''}`} onClick={() => setActiveSessionTab('candidatos')}>Candidatos</button>
-              <button className={`sessoes-tab-btn ${activeSessionTab === 'votacao' ? 'active' : ''}`} onClick={() => setActiveSessionTab('votacao')}>Votação</button>
-              <button className={`sessoes-tab-btn ${activeSessionTab === 'juizes' ? 'active' : ''}`} onClick={() => setActiveSessionTab('juizes')}>Juízes</button>
+        <div 
+          className="sessoes-control-modal-overlay" 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setSelectedSessionId(null);
+              setActiveSessionTab('dados');
+            }
+          }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+        >
+          <div 
+            className="sessoes-control-modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+              width: '100%',
+              maxWidth: '1200px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+          >
+            <div className="sessoes-control-header" style={{ padding: '24px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
+              <div>
+                <h3 style={{ margin: '0 0 4px 0' }}>Gerenciar: {selectedSession.title || `Sessao ${selectedSession.id}`}</h3>
+                <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>ID #{selectedSession.id} • Status: {STATUS_LABELS[selectedSession.status] || selectedSession.status}</p>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => {
+                  setSelectedSessionId(null);
+                  setActiveSessionTab('dados');
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '0',
+                  width: '32px',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                ×
+              </button>
             </div>
-          </div>
 
-          <div className="sessoes-tab-content">
+            <div className="sessoes-tabs" style={{ padding: '0 24px', borderBottom: '1px solid #e5e7eb', display: 'flex', gap: '0', flexShrink: 0 }}>
+              <button 
+                className={`sessoes-tab-btn ${activeSessionTab === 'dados' ? 'active' : ''}`} 
+                onClick={() => setActiveSessionTab('dados')}
+                style={{
+                  padding: '12px 16px',
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: activeSessionTab === 'dados' ? '600' : '500',
+                  color: activeSessionTab === 'dados' ? '#1f2937' : '#6b7280',
+                  borderBottom: activeSessionTab === 'dados' ? '2px solid #059669' : '2px solid transparent',
+                  marginBottom: '-1px'
+                }}
+              >
+                Dados Gerais
+              </button>
+              <button 
+                className={`sessoes-tab-btn ${activeSessionTab === 'candidatos' ? 'active' : ''}`} 
+                onClick={() => setActiveSessionTab('candidatos')}
+                style={{
+                  padding: '12px 16px',
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: activeSessionTab === 'candidatos' ? '600' : '500',
+                  color: activeSessionTab === 'candidatos' ? '#1f2937' : '#6b7280',
+                  borderBottom: activeSessionTab === 'candidatos' ? '2px solid #059669' : '2px solid transparent',
+                  marginBottom: '-1px'
+                }}
+              >
+                Candidatos
+              </button>
+              <button 
+                className={`sessoes-tab-btn ${activeSessionTab === 'votacao' ? 'active' : ''}`} 
+                onClick={() => setActiveSessionTab('votacao')}
+                style={{
+                  padding: '12px 16px',
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: activeSessionTab === 'votacao' ? '600' : '500',
+                  color: activeSessionTab === 'votacao' ? '#1f2937' : '#6b7280',
+                  borderBottom: activeSessionTab === 'votacao' ? '2px solid #059669' : '2px solid transparent',
+                  marginBottom: '-1px'
+                }}
+              >
+                Votação
+              </button>
+              <button 
+                className={`sessoes-tab-btn ${activeSessionTab === 'juizes' ? 'active' : ''}`} 
+                onClick={() => setActiveSessionTab('juizes')}
+                style={{
+                  padding: '12px 16px',
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: activeSessionTab === 'juizes' ? '600' : '500',
+                  color: activeSessionTab === 'juizes' ? '#1f2937' : '#6b7280',
+                  borderBottom: activeSessionTab === 'juizes' ? '2px solid #059669' : '2px solid transparent',
+                  marginBottom: '-1px'
+                }}
+              >
+                Juízes
+              </button>
+              <button 
+                className={`sessoes-tab-btn ${activeSessionTab === 'transmissao' ? 'active' : ''}`} 
+                onClick={() => setActiveSessionTab('transmissao')}
+                style={{
+                  padding: '12px 16px',
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: activeSessionTab === 'transmissao' ? '600' : '500',
+                  color: activeSessionTab === 'transmissao' ? '#1f2937' : '#6b7280',
+                  borderBottom: activeSessionTab === 'transmissao' ? '2px solid #059669' : '2px solid transparent',
+                  marginBottom: '-1px'
+                }}
+              >
+                Transmissão
+              </button>
+            </div>
+
+            <div className="sessoes-tab-content" style={{ padding: '24px', flexGrow: 1, overflowY: 'auto' }}>
             {activeSessionTab === 'dados' && (
               <form className="control-grid" onSubmit={handleUpdateSessionDetails}>
                 <div className="control-card">
@@ -1093,8 +1306,110 @@ const SessoesAdmin = () => {
               </div>
             )}
 
+            {activeSessionTab === 'transmissao' && (
+              <div className="control-grid">
+                <div className="control-card">
+                  <h4>Painel da Transmissão</h4>
+                  <p style={{ marginBottom: 12, fontSize: 13, color: '#6b7280' }}>
+                    Controle a tela exibida no painel ao vivo. Os botões abaixo enviam o conteúdo para a nova guia da transmissão.
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+                    <button type="button" className={`candidate-action-btn ${broadcastMode === 'idle' ? 'active' : ''}`} onClick={() => handleBroadcastModeChange('idle')} disabled={isBroadcastLoading || isSaving}>Tela em branco</button>
+                    <button type="button" className={`candidate-action-btn ${broadcastMode === 'ranking_public' ? 'active' : ''}`} onClick={() => handleBroadcastModeChange('ranking_public')} disabled={isBroadcastLoading || isSaving}>Ranking dos votos públicos</button>
+                    <button type="button" className={`candidate-action-btn ${broadcastMode === 'ranking_judges' ? 'active' : ''}`} onClick={() => handleBroadcastModeChange('ranking_judges')} disabled={isBroadcastLoading || isSaving}>Ranking dos votos dos jurados</button>
+                    <button type="button" className={`candidate-action-btn ${broadcastMode === 'winners' ? 'active' : ''}`} onClick={() => handleBroadcastModeChange('winners')} disabled={isBroadcastLoading || isSaving}>Vencedores</button>
+                    <button type="button" className={`candidate-action-btn ${broadcastMode === 'current_candidate_score' ? 'active' : ''}`} onClick={() => handleBroadcastModeChange('current_candidate_score')} disabled={isBroadcastLoading || isSaving}>Pontuação do candidato</button>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+                    <button type="button" className="candidate-action-btn" onClick={openBroadcastScreen} disabled={isBroadcastLoading || isSaving}>
+                      Tela da transmissão
+                    </button>
+                    <span style={{ fontSize: 12, color: '#6b7280' }}>
+                      Modo atual: {getTransmissionLabel(broadcastMode)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            </div>
           </div>
-        </section>
+        </div>
+      )}
+
+      {deleteConfirmModalId && (
+        <div 
+          className="sessoes-delete-confirm-modal-overlay"
+          onClick={() => setDeleteConfirmModalId(null)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+        >
+          <div 
+            className="sessoes-delete-confirm-modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+              width: '100%',
+              maxWidth: '400px',
+              padding: '24px'
+            }}
+          >
+            <h3 style={{ margin: '0 0 12px 0', color: '#ef4444' }}>Excluir Sessão</h3>
+            <p style={{ margin: '0 0 20px 0', color: '#6b7280', fontSize: '14px' }}>
+              Tem certeza que deseja excluir esta sessão? Todos os candidatos, jurados, votos e dados associados serão removidos permanentemente. Esta ação não pode ser desfeita.
+            </p>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button 
+                type="button"
+                onClick={() => setDeleteConfirmModalId(null)}
+                disabled={isSaving}
+                style={{
+                  padding: '8px 16px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  backgroundColor: 'white',
+                  color: '#374151',
+                  cursor: isSaving ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500'
+                }}
+              >
+                Cancelar
+              </button>
+              <button 
+                type="button"
+                onClick={() => handleDeleteSession(deleteConfirmModalId)}
+                disabled={isSaving}
+                style={{
+                  padding: '8px 16px',
+                  border: 'none',
+                  borderRadius: '4px',
+                  backgroundColor: '#ef4444',
+                  color: 'white',
+                  cursor: isSaving ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  opacity: isSaving ? 0.7 : 1
+                }}
+              >
+                {isSaving ? 'Excluindo...' : 'Confirmar Exclusão'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {auditModalData && (

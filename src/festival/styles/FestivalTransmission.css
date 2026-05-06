@@ -1,0 +1,317 @@
+.transmission-page {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #14213d 0%, #0f172a 42%, #020617 100%);
+  color: #e2e8f0;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.card-surface {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+}
+
+.transmission-header,
+.transmission-controls,
+.transmission-panel,
+.transmission-loading {
+  border-radius: 20px;
+}
+
+.transmission-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding: 24px 28px;
+  margin-bottom: 16px;
+}
+
+.transmission-header h1,
+.transmission-panel h2 {
+  margin: 0;
+  color: #f8fafc;
+}
+
+.transmission-header p,
+.transmission-panel p {
+  margin: 6px 0 0 0;
+  color: #cbd5e1;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 12px;
+  color: #7dd3fc;
+  margin: 0 0 8px 0;
+}
+
+.transmission-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.transmission-status button,
+.transmission-controls button {
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.transmission-status button {
+  background: #e2e8f0;
+  color: #0f172a;
+  padding: 10px 16px;
+}
+
+.transmission-controls {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.transmission-controls button {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  padding: 12px 18px;
+}
+
+.transmission-controls button.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+}
+
+.transmission-controls button:hover,
+.transmission-status button:hover {
+  transform: translateY(-1px);
+}
+
+.transmission-panel,
+.transmission-loading {
+  min-height: calc(100vh - 180px);
+  padding: 28px;
+}
+
+.transmission-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.transmission-table-wrap {
+  overflow: auto;
+  margin-top: 18px;
+}
+
+.transmission-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e2e8f0;
+}
+
+.transmission-table-wrap th,
+.transmission-table-wrap td {
+  padding: 14px 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  text-align: left;
+}
+
+.transmission-table-wrap thead th {
+  color: #94a3b8;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.transmission-metric {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 18px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.transmission-metric span {
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.transmission-metric strong {
+  color: #ffffff;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.transmission-alert {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(248, 113, 113, 0.14);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  color: #fecaca;
+}
+
+.transmission-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #e2e8f0;
+}
+
+@media (max-width: 900px) {
+  .transmission-page {
+    padding: 16px;
+  }
+
+  .transmission-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* --- POPULAR VOTE TRANSMISSION DESIGN --- */
+.transmission-popular-view {
+  min-height: calc(100vh - 180px);
+  background-color: #F8F5EB;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+  color: #333;
+}
+
+.transmission-diamonds {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 150px;
+  z-index: 1;
+}
+
+.diamond-shape {
+  width: 24px;
+  height: 24px;
+  transform: rotate(45deg);
+}
+
+.diamond-shape.green { background-color: #0d5c19; }
+.diamond-shape.yellow { background-color: #FFDE00; }
+.diamond-shape.blue { background-color: #1355a6; }
+.diamond-shape.light-green { background-color: #4ade80; }
+.diamond-shape.olive { background-color: #7B692A; }
+
+.popular-view-header {
+  text-align: center;
+  margin-bottom: 40px;
+  z-index: 2;
+}
+
+.votation-popular-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 80px;
+  font-weight: 900;
+  color: #0d5c19;
+  line-height: 0.9;
+  margin: 0 0 10px 0 !important;
+  letter-spacing: -0.02em;
+}
+
+.real-time-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 72px;
+  font-weight: 800;
+  color: #333;
+  margin: 0 !important;
+  letter-spacing: -0.01em;
+}
+
+.popular-votes-container {
+  background: #fff !important;
+  border: 1px solid rgba(13, 92, 25, 0.1) !important;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 24px !important;
+  padding: 60px 80px 40px !important;
+  width: 100%;
+  max-width: 900px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  backdrop-filter: none !important;
+}
+
+.festival-sticker {
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 120px;
+  height: 120px;
+  transform: rotate(10deg);
+  z-index: 3;
+}
+
+.festival-sticker img {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
+}
+
+.votes-number-display {
+  font-family: 'Outfit', sans-serif;
+  font-size: 200px;
+  font-weight: 900;
+  color: #0d5c19;
+  line-height: 1;
+  margin-bottom: 20px;
+  letter-spacing: -0.04em;
+}
+
+.votes-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #666;
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: 0.05em;
+}
+
+.votes-footer span {
+  margin-top: 2px;
+}
+
+@media (max-width: 1024px) {
+  .votation-popular-title { font-size: 60px; }
+  .real-time-title { font-size: 54px; }
+  .votes-number-display { font-size: 140px; }
+  .festival-sticker { width: 90px; height: 90px; top: -20px; right: -20px; }
+}
+
+@media (max-width: 768px) {
+  .votation-popular-title { font-size: 44px; }
+  .real-time-title { font-size: 38px; }
+  .votes-number-display { font-size: 100px; }
+  .transmission-diamonds { gap: 40px; top: 20px; }
+  .popular-votes-container { padding: 40px 30px 30px !important; }
+}

@@ -27,6 +27,7 @@ import LoginCandidato from "./festival/pages/LoginCandidato";
 import LoginJuradoAdmin from "./festival/pages/LoginJuradoAdmin";
 import CandidateArea from "./festival/pages/CandidateArea";
 import FestivalAdmin from "./festival/pages/FestivalAdmin";
+import FestivalTransmission from "./festival/pages/FestivalTransmission";
 
 import "./index.css";
 
@@ -111,6 +112,7 @@ const App = () => {
         <Route path="/festival-forro/login" element={<LoginJuradoAdmin />} />
         <Route path="/festival-forro/admin/login" element={<LoginJuradoAdmin />} />
         <Route path="/festival-forro/admin" element={<ProtectedRouteFestivalAdmin><FestivalAdmin /></ProtectedRouteFestivalAdmin>} />
+        <Route path="/festival-forro/admin/transmissao/:sessionId" element={<ProtectedRouteFestivalAdmin><FestivalTransmission /></ProtectedRouteFestivalAdmin>} />
         <Route path="/area-candidato" element={<ProtectedRouteCandidato><CandidateArea /></ProtectedRouteCandidato>} />
       </Routes>
       </Router>

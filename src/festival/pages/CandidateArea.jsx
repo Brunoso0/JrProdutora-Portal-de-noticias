@@ -171,6 +171,29 @@ const CandidateArea = () => {
     return missing;
   };
 
+  const logoutCandidate = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login-candidato', { replace: true });
+  }, [navigate]);
+
+  const isAuthSessionExpiredError = useCallback((error) => {
+    const status = error?.response?.status;
+    const requestUrl = String(error?.config?.url || '').toLowerCase();
+    const backendMessage = String(error?.response?.data?.message || error?.message || '').toLowerCase();
+    const isCandidateMeRoute = requestUrl.includes('/api/candidate/me');
+    const hasTokenHint = /token|jwt|expir|unauthor|inv[aá]lid|sess[aã]o/.test(backendMessage);
+
+    if (status === 401 || status === 403) return true;
+
+    // Some backend paths may return 404 for invalid/expired auth on this endpoint.
+    if (status === 404 && isCandidateMeRoute && hasTokenHint) {
+      return true;
+    }
+
+    return false;
+  }, []);
+
   const formatSessionDate = (dateValue) => {
     if (!dateValue) return 'Data não definida';
     const parsed = new Date(dateValue);
@@ -284,6 +307,9 @@ const CandidateArea = () => {
 
                   return response?.data || null;
                 } catch (error) {
+                  if (isAuthSessionExpiredError(error)) {
+                    throw error;
+                  }
                   return null;
                 }
               })
@@ -298,11 +324,8 @@ const CandidateArea = () => {
           }
         }
       } catch (error) {
-        const status = error?.response?.status;
-        if (status === 401 || status === 403) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          navigate('/login-candidato');
+        if (isAuthSessionExpiredError(error)) {
+          logoutCandidate();
           return;
         }
 
@@ -313,7 +336,7 @@ const CandidateArea = () => {
     };
 
     bootstrapCandidateArea();
-  }, [API_FESTIVAL_BASE_URL, navigate, resolveProfilePhotoUrl]);
+  }, [API_FESTIVAL_BASE_URL, isAuthSessionExpiredError, logoutCandidate, navigate, resolveProfilePhotoUrl]);
 
   const nextSession = sessions.find((session) => session.session_status !== 'finished') || sessions[0] || null;
   const finishedSessionsCount = sessions.filter((session) => session.session_status === 'finished').length;
@@ -399,6 +422,20 @@ const CandidateArea = () => {
   const handleEditInputChange = (event) => {
     const { name, value } = event.target;
     setEditForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const formatPhoneNumber = (value) => {
+    const cleaned = String(value || '').replace(/\D/g, '');
+    if (cleaned.length <= 2) return cleaned;
+    if (cleaned.length <= 6) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+    if (cleaned.length <= 10) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
+    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7, 11)}`;
+  };
+
+  const handlePhoneChange = (event) => {
+    const rawValue = event.target.value;
+    const formattedValue = formatPhoneNumber(rawValue);
+    setEditForm((current) => ({ ...current, phone: formattedValue }));
   };
 
   const handlePhotoChange = (event) => {
@@ -509,6 +546,11 @@ const CandidateArea = () => {
       setProfileSuccess(response?.data?.message || 'Perfil atualizado com sucesso.');
       setIsEditModalOpen(false);
     } catch (error) {
+      if (isAuthSessionExpiredError(error)) {
+        logoutCandidate();
+        return;
+      }
+
       const friendlyErrorMessage = formatErrorMessage(error);
       setEditError(friendlyErrorMessage);
     } finally {
@@ -517,9 +559,7 @@ const CandidateArea = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login-candidato');
+    logoutCandidate();
   };
 
   const handleMenuClick = (menu) => {
@@ -581,9 +621,9 @@ const CandidateArea = () => {
           </nav>
 
           <div className="sidebar-bottom">
-            <button className="btn-yellow" disabled={profile?.status === 'eliminado'} title={profile?.status === 'eliminado' ? 'Bloqueado para candidatos eliminados' : ''}>VER INSCRIÇÃO</button>
+            {/* <button className="btn-yellow" disabled={profile?.status === 'eliminado'} title={profile?.status === 'eliminado' ? 'Bloqueado para candidatos eliminados' : ''}>VER INSCRIÇÃO</button> */}
             <button className="bottom-link" disabled={profile?.status === 'eliminado'} title={profile?.status === 'eliminado' ? 'Bloqueado para candidatos eliminados' : ''}>
-              <Settings size={15} /> CONFIGURAÇÕES
+              {/* <Settings size={15} /> CONFIGURAÇÕES */}
             </button>
             <button className="bottom-link red" onClick={handleLogout}>
               <LogOut size={15} /> SAIR
@@ -819,7 +859,7 @@ const CandidateArea = () => {
               <div className="duvidas-card">
                 <div className="duvidas-text">
                   <h3>Dúvidas sobre sua avaliação?</h3>
-                  <p>Nossa equipe técnica está pronta para dar o feedback detalhado por video-chamada.</p>
+                  <p>Nossa equipe técnica está pronta para dar o feedback detalhado por Mensagem.</p>
                 </div>
                 <button className="btn-white">TIRE SUA DÚVIDA</button>
               </div>
@@ -1212,14 +1252,38 @@ const CandidateArea = () => {
               </div>
 
               <div className="apresentacao-content">
-                <div className="apresentacao-empty-state">
-                  <div className="empty-state-icon">
-                    <Calendar size={64} />
+                {hasScheduleInfo ? (
+                  <div className="apresentacao-scheduled-state">
+                    <div className="scheduled-icon-row">
+                      <Calendar size={64} />
+                    </div>
+                    <h3>Apresentação Agendada!</h3>
+                    <div className="scheduled-details">
+                      <div className="detail-item">
+                        <span>Data:</span>
+                        <strong>{formatSessionDate(nextSession?.session_date)}</strong>
+                      </div>
+                      <div className="detail-item">
+                        <span>Horário:</span>
+                        <strong>{formatSessionTime(nextSession?.session_time)}</strong>
+                      </div>
+                      <div className="detail-item">
+                        <span>Local:</span>
+                        <strong>{nextSession?.location || 'Local não definido'}</strong>
+                      </div>
+                    </div>
+                    <p className="scheduled-state-info">Sua apresentação acontecerá na sessão "{nextSession?.title}". Chegue com pelo menos 1 hora de antecedência e procure a produção.</p>
                   </div>
-                  <h3>Aguardando agendamento</h3>
-                  <p>Ainda não há uma data agendada para sua apresentação.</p>
-                  <p className="empty-state-info">Assim que a produção confirmar o horário e local, você receberá uma notificação e as informações aparecerão aqui.</p>
-                </div>
+                ) : (
+                  <div className="apresentacao-empty-state">
+                    <div className="empty-state-icon">
+                      <Calendar size={64} />
+                    </div>
+                    <h3>Aguardando agendamento</h3>
+                    <p>Ainda não há uma data agendada para sua apresentação.</p>
+                    <p className="empty-state-info">Assim que a produção confirmar o horário e local, você receberá uma notificação e as informações aparecerão aqui.</p>
+                  </div>
+                )}
 
                 <div className="apresentacao-checklist">
                   <h4>Prepare-se enquanto isso:</h4>
@@ -1345,7 +1409,7 @@ const CandidateArea = () => {
 
                     <div className="candidate-modal-field">
                       <label htmlFor="phone">Telefone</label>
-                      <input id="phone" name="phone" value={editForm.phone} onChange={handleEditInputChange} disabled={!canEditProfile || isSavingProfile} />
+                      <input id="phone" name="phone" value={editForm.phone} onChange={handlePhoneChange} disabled={!canEditProfile || isSavingProfile} placeholder="(xx) x xxxx-xxxx" />
                     </div>
 
                     <div className="candidate-modal-field candidate-modal-field-full">
