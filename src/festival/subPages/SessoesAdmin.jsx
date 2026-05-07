@@ -94,6 +94,7 @@ const findCandidateMatch = (rawName, candidateOptions) => {
 };
 
 const getTransmissionLabel = (mode) => {
+  if (mode === 'total_public_votes') return 'Total de votos públicos';
   if (mode === 'ranking_public') return 'Ranking dos votos públicos';
   if (mode === 'ranking_judges') return 'Ranking dos votos dos jurados';
   if (mode === 'winners') return 'Vencedores';
@@ -198,7 +199,7 @@ const SessoesAdmin = () => {
 
   const [sortableCandidates, setSortableCandidates] = useState([]);
   const [deleteConfirmModalId, setDeleteConfirmModalId] = useState(null);
-  const [broadcastMode, setBroadcastMode] = useState('none');
+  const [broadcastMode, setBroadcastMode] = useState('idle');
   const [isBroadcastLoading, setIsBroadcastLoading] = useState(false);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
@@ -261,8 +262,8 @@ const SessoesAdmin = () => {
     setIsBroadcastLoading(true);
     try {
       const response = await apiRequest('get', `/api/sessions/${sessionId}/broadcast`);
-      const nextBroadcast = response?.data?.broadcast || { display_mode: 'none', show_names: true };
-      setBroadcastMode(nextBroadcast.display_mode || 'none');
+      const nextBroadcast = response?.data?.broadcast || { display_mode: 'idle', show_names: true };
+      setBroadcastMode(nextBroadcast.display_mode || 'idle');
     } catch (error) {
       setBroadcastMode('none');
     } finally {
@@ -325,7 +326,7 @@ const SessoesAdmin = () => {
       setResultsData(null);
       setSessionJudges([]);
       setAuditData([]);
-      setBroadcastMode('none');
+      setBroadcastMode('idle');
       setActiveCandidateName('');
       setScoreCorrection({ candidateName: '', adjustment: '' });
       setSortableCandidates([]);
@@ -707,7 +708,6 @@ const SessoesAdmin = () => {
         `festival-transmission-update-${selectedSessionId}`,
         JSON.stringify({ sessionId: selectedSessionId, display_mode: mode, updatedAt: Date.now() })
       );
-      await loadSessionBroadcast(selectedSessionId);
     } catch (error) {
       setErrorMsg(formatErrorMessage(error));
     }
@@ -717,7 +717,7 @@ const SessoesAdmin = () => {
     if (!selectedSessionId) return;
     const sessionRoute = `${window.location.origin}/festival-forro/admin/transmissao/${selectedSessionId}`;
     window.open(sessionRoute, '_blank', 'noopener,noreferrer');
-    await loadSessionBroadcast(selectedSessionId);
+    // não recarregar aqui — a guia de transmissão será notificada via storage event
   };
 
   useEffect(() => {
@@ -1315,6 +1315,7 @@ const SessoesAdmin = () => {
                   </p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
                     <button type="button" className={`candidate-action-btn ${broadcastMode === 'idle' ? 'active' : ''}`} onClick={() => handleBroadcastModeChange('idle')} disabled={isBroadcastLoading || isSaving}>Tela em branco</button>
+                    <button type="button" className={`candidate-action-btn ${broadcastMode === 'total_public_votes' ? 'active' : ''}`} onClick={() => handleBroadcastModeChange('total_public_votes')} disabled={isBroadcastLoading || isSaving}>Total de votos públicos</button>
                     <button type="button" className={`candidate-action-btn ${broadcastMode === 'ranking_public' ? 'active' : ''}`} onClick={() => handleBroadcastModeChange('ranking_public')} disabled={isBroadcastLoading || isSaving}>Ranking dos votos públicos</button>
                     <button type="button" className={`candidate-action-btn ${broadcastMode === 'ranking_judges' ? 'active' : ''}`} onClick={() => handleBroadcastModeChange('ranking_judges')} disabled={isBroadcastLoading || isSaving}>Ranking dos votos dos jurados</button>
                     <button type="button" className={`candidate-action-btn ${broadcastMode === 'winners' ? 'active' : ''}`} onClick={() => handleBroadcastModeChange('winners')} disabled={isBroadcastLoading || isSaving}>Vencedores</button>
