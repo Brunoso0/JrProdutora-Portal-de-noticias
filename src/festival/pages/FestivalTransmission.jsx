@@ -24,6 +24,7 @@ const FestivalTransmission = () => {
   const [session, setSession] = useState(null);
   const [broadcast, setBroadcast] = useState({ display_mode: 'idle', show_names: true });
   const [results, setResults] = useState(null);
+  const [audit, setAudit] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -33,11 +34,22 @@ const FestivalTransmission = () => {
   const socketRef = useRef(null);
 
   const resolvePhotoUrl = (url) => {
-    if (!url) return LOGO_PATH;
-    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:') || url.startsWith('/img/')) {
-      return url;
+    const val = String(url || '').trim();
+    if (!val) return LOGO_PATH;
+    
+    if (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:') || val.startsWith('/img/') || val.startsWith('blob:')) {
+      return val;
     }
-    const normalizedPath = url.startsWith('/') ? url : `/${url}`;
+
+    const isUploadFile = val.startsWith('uploads/') || val.startsWith('/uploads/');
+    const normalizedPath = val.startsWith('/') ? val : `/${val}`;
+
+    if (isUploadFile) {
+      // Remove /api from end of apiBase to get server root
+      const serverRoot = apiBase.replace(/\/api\/?$/i, '').replace(/\/$/, '');
+      return `${serverRoot}${normalizedPath}`;
+    }
+
     return `${apiBase}${normalizedPath}`;
   };
 
@@ -48,10 +60,11 @@ const FestivalTransmission = () => {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
     try {
-      const [sessionsResponse, broadcastResponse, resultsResponse] = await Promise.all([
+      const [sessionsResponse, broadcastResponse, resultsResponse, auditResponse] = await Promise.all([
         axios.get(`${apiBase}/api/sessions`, { headers }),
         axios.get(`${apiBase}/api/sessions/${sessionId}/broadcast`, { headers }),
-        axios.get(`${apiBase}/api/sessions/${sessionId}/results`, { headers })
+        axios.get(`${apiBase}/api/sessions/${sessionId}/results`, { headers }),
+        axios.get(`${apiBase}/api/sessions/${sessionId}/audit`, { headers }).catch(() => ({ data: { auditData: [] } }))
       ]);
 
       const currentSession = Array.isArray(sessionsResponse?.data?.sessions)
@@ -73,6 +86,7 @@ const FestivalTransmission = () => {
         setBroadcast(serverBroadcast || { display_mode: 'idle', show_names: true });
       }
       setResults(resultsResponse?.data || null);
+      setAudit(auditResponse?.data?.auditData || []);
       setErrorMsg('');
     } catch (error) {
       setErrorMsg(error?.response?.data?.message || 'Não foi possível carregar a transmissão.');
@@ -153,60 +167,80 @@ const FestivalTransmission = () => {
   const renderModeContent = () => {
     if (selectedMode === 'ranking_judges') {
       const rows = results?.technical_ranking || [];
+      const leader = rows[0];
+      
+
+      // TELA DE RANKING TÉCNICO - VOTOS DOS JURADOS
       return (
-        <div className="jury-ranking-fidelity">
-          <header className="jury-header-fidelity">
-            <div className="header-label-line">
-              <div className="line"></div>
-              <span>CLASSIFICAÇÃO TÉCNICA</span>
-              <div className="line"></div>
-            </div>
-            <h2>{session?.title || 'JURADOS'}</h2>
-            <p>Médias baseadas em ritmo, harmonia e performance.</p>
+        <div className="public-ranking-screen jury-version">
+          <header className="public-header-fidelity">
+            <span className="label">RANKING TÉCNICO</span>
+            <h2>AVALIAÇÃO DO JÚRI: <span>{session?.title || 'JURADOS'}</span></h2>
+            <div className="underline" style={{ background: 'linear-gradient(90deg, #1355a6, transparent)' }}></div>
           </header>
 
-          <div className="jury-list-fidelity">
-            {rows.slice(0, 5).map((item, index) => {
-              if (index === 0) {
-                return (
-                  <div key={item.candidate_id} className="jury-leader-card-fidelity">
-                    <div className="jury-icon-box-gold">
-                      <Award size={48} />
-                    </div>
-                    <div className="jury-photo-fidelity">
-                      <img src={resolvePhotoUrl(item.profile_photo_url || item.photo_url)} alt="Logo" />
-                    </div>
-                    <div className="jury-info-fidelity">
-                      <div className="jury-label-fidelity">PRIMEIRO LUGAR</div>
-                      <div className="jury-name-fidelity">{item.artistic_name || item.name}</div>
-                    </div>
-                    <div className="jury-score-fidelity">
-                      <div className="score-val-large">{Number(item.judge_average || 0).toFixed(1)}</div>
-                      <div className="score-lbl-small">PONTUAÇÃO TÉCNICA</div>
-                    </div>
+          {leader && (
+            <div className="leader-card-fidelity">
+              <div className="rank-diamond-badge" style={{ backgroundColor: '#1355a6' }}>
+                <span>1º</span>
+              </div>
+              <div className="leader-photo-side">
+                <img src={resolvePhotoUrl(leader.profile_photo_url || leader.photo_url || leader.candidate_profile_photo_url || leader.user_profile_photo_url)} alt={leader.artistic_name || leader.name} />
+              </div>
+              <div className="leader-info-side">
+                <div className="absolute-leadership" style={{color: '#60a5fa' }}>
+                  <Award size={16} fill="currentColor" />
+                  DESEMPENHO SUPERIOR
+                </div>
+                <div className="leader-name-fidelity">{leader.artistic_name || leader.name}</div>
+                
+                <div className="leader-stats-row">
+                  <div className="leader-votos-num">Média: {Number(leader.judge_average || 0).toFixed(2)}</div>
+                  <div className="leader-percent-num">
+                    {(Number(leader.judge_average || 0) * 10).toFixed(0)}% de Precisão
                   </div>
-                );
-              }
+                </div>
+                <div className="leader-progress-fidelity">
+                  <div className="leader-progress-fill" style={{ width: `${(Number(leader.judge_average || 0) / 10) * 100}%`, backgroundColor: '#1355a6' }}></div>
+                </div>
+              </div>
+            </div>
+          )}
 
+          <div className="secondary-list-fidelity">
+            {rows.slice(1, 5).map((item, index) => {
+              const average = Number(item.judge_average || 0);
+              const percent = (average / 10) * 100;
+              const rankColor = (index + 2) === 2 ? 'blue' : (index + 2) === 3 ? 'green' : 'dark';
               return (
-                <div key={item.candidate_id} className="jury-item-fidelity">
-                  <div className="jury-icon-box-grey">
-                    {index === 1 ? <Trophy size={32} /> : <Award size={32} />}
+                <div key={item.candidate_id} className="ranking-item-fidelity">
+                  <div className={`item-rank-diamond ${rankColor}`}>
+                    <span>{index + 2}º</span>
                   </div>
-                  <div className="jury-rank-tag-fidelity">
-                    {index + 1}º
+                  <div className="item-photo-fidelity">
+                     <img src={resolvePhotoUrl(item.profile_photo_url || item.photo_url || item.candidate_profile_photo_url || item.user_profile_photo_url)} alt={item.artistic_name || item.name} />
                   </div>
-                  <div className="item-jury-name">{item.artistic_name || item.name}</div>
-                  <div className="item-jury-score">{Number(item.judge_average || 0).toFixed(1)}</div>
+                  <div className="item-content-fidelity">
+                    <div className="item-name-fidelity">{item.artistic_name || item.name}</div>
+                    <div className="item-progress-fidelity">
+                      <div className="item-progress-fill-fidelity" style={{ 
+                        width: `${percent}%`, 
+                        backgroundColor: (index + 2) === 2 ? '#1355a6' : (index + 2) === 3 ? '#4ade80' : 'rgba(255,255,255,0.2)' 
+                      }}></div>
+                    </div>
+                  </div>
+                  <div className="item-stats-fidelity">
+                    Nota: {average.toFixed(2)} <span>({percent.toFixed(0)}%)</span>
+                  </div>
                 </div>
               );
             })}
           </div>
 
-          <footer className="jury-footer-fidelity">
+          <footer className="jury-footer-fidelity" style={{ marginTop: '40px' }}>
             <div className="status-realtime">
               <div className="status-dot-red"></div>
-              APURAÇÃO EM TEMPO REAL
+              AVALIAÇÃO TÉCNICA EM TEMPO REAL
             </div>
             <div className="validation-pill">
               <CheckCircle size={20} />
@@ -222,11 +256,13 @@ const FestivalTransmission = () => {
       const leader = rows[0];
       const totalVotes = rows.reduce((acc, r) => acc + Number(r.public_votes || 0), 0);
       
+
+      // TELA DE RANKING POPULAR - VOTOS DO PÚBLICO
       return (
         <div className="public-ranking-screen">
           <header className="public-header-fidelity">
             <span className="label">RANKING POPULAR</span>
-            <h2>VOTO DO POVO: <span>{session?.title || 'FESTIVAL'}</span></h2>
+            <h2>AVALIAÇÃO DO PUBLICO: <span>{session?.title || 'FESTIVAL'}</span></h2>
             <div className="underline"></div>
           </header>
 
@@ -236,7 +272,7 @@ const FestivalTransmission = () => {
                 <span>1º</span>
               </div>
               <div className="leader-photo-side">
-                <img src={resolvePhotoUrl(leader.profile_photo_url || leader.photo_url)} alt="Líder" />
+                <img src={resolvePhotoUrl(leader.profile_photo_url || leader.photo_url || leader.candidate_profile_photo_url || leader.user_profile_photo_url)} alt={leader.artistic_name || leader.name} />
               </div>
               <div className="leader-info-side">
                 <div className="absolute-leadership">
@@ -268,7 +304,7 @@ const FestivalTransmission = () => {
                     <span>{index + 2}º</span>
                   </div>
                   <div className="item-photo-fidelity">
-                     <img src={resolvePhotoUrl(item.profile_photo_url || item.photo_url)} alt="Foto" />
+                     <img src={resolvePhotoUrl(item.profile_photo_url || item.photo_url || item.candidate_profile_photo_url || item.user_profile_photo_url)} alt={item.artistic_name || item.name} />
                   </div>
                   <div className="item-content-fidelity">
                     <div className="item-name-fidelity">{item.artistic_name || item.name}</div>
@@ -305,6 +341,8 @@ const FestivalTransmission = () => {
       const popularWinner = publicCount > 0 ? results?.popular_ranking?.[0] : null;
       const isGrandeFinal = session?.title?.toLowerCase().includes('grande final');
 
+
+      // TELA DE VENCEDORES - PÓDIO E DESTAQUES
       return (
         <div className="winners-screen-fidelity">
           <header className="winners-header-fidelity">
@@ -324,7 +362,7 @@ const FestivalTransmission = () => {
                 <div className="winner-card-fidelity second">
                   <div className="floating-rank-badge blue">2º</div>
                   <div className="winner-photo-wrap">
-                    <img src={resolvePhotoUrl(podium[0]?.profile_photo_url || podium[0]?.photo_url)} alt="2nd" />
+                    <img src={resolvePhotoUrl(podium[0]?.profile_photo_url || podium[0]?.photo_url || podium[0]?.candidate_profile_photo_url || podium[0]?.user_profile_photo_url)} alt={podium[0]?.artistic_name || podium[0]?.name} />
                   </div>
                   <div className="winner-name-fidelity">{podium[0]?.artistic_name || podium[0]?.name || '---'}</div>
                   <div className="winner-score-pill-fidelity blue">
@@ -347,7 +385,7 @@ const FestivalTransmission = () => {
                   </div>
                   <div className="floating-rank-badge gold">1º LUGAR</div>
                   <div className="winner-photo-wrap" style={{ padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '15px' }}>
-                    <img src={resolvePhotoUrl(podium[1]?.profile_photo_url || podium[1]?.photo_url)} alt="1st" />
+                    <img src={resolvePhotoUrl(podium[1]?.profile_photo_url || podium[1]?.photo_url || podium[1]?.candidate_profile_photo_url || podium[1]?.user_profile_photo_url)} alt={podium[1]?.artistic_name || podium[1]?.name} />
                   </div>
                   <div className="winner-name-fidelity">{podium[1]?.artistic_name || podium[1]?.name || '---'}</div>
                   <div className="winner-score-pill-fidelity gold">
@@ -367,7 +405,7 @@ const FestivalTransmission = () => {
                 <div className="winner-card-fidelity third">
                   <div className="floating-rank-badge orange">3º</div>
                   <div className="winner-photo-wrap">
-                    <img src={resolvePhotoUrl(podium[2]?.profile_photo_url || podium[2]?.photo_url)} alt="3rd" />
+                    <img src={resolvePhotoUrl(podium[2]?.profile_photo_url || podium[2]?.photo_url || podium[2]?.candidate_profile_photo_url || podium[2]?.user_profile_photo_url)} alt={podium[2]?.artistic_name || podium[2]?.name} />
                   </div>
                   <div className="winner-name-fidelity">{podium[2]?.artistic_name || podium[2]?.name || '---'}</div>
                   <div className="winner-score-pill-fidelity orange">
@@ -387,7 +425,7 @@ const FestivalTransmission = () => {
                 <div className="winner-card-fidelity popular">
                   <div className="floating-rank-badge red">FAVORITO DO PÚBLICO</div>
                   <div className="winner-photo-wrap" style={{ filter: 'grayscale(0.5)' }}>
-                    <img src={resolvePhotoUrl(popularWinner?.profile_photo_url || popularWinner?.photo_url)} alt="Popular" />
+                    <img src={resolvePhotoUrl(popularWinner?.profile_photo_url || popularWinner?.photo_url || popularWinner?.candidate_profile_photo_url || popularWinner?.user_profile_photo_url)} alt={popularWinner?.artistic_name || popularWinner?.name} />
                   </div>
                   <div className="winner-name-fidelity">{popularWinner?.artistic_name || popularWinner?.name || '---'}</div>
                   <div className="winner-score-pill-fidelity red">
@@ -405,10 +443,166 @@ const FestivalTransmission = () => {
       );
     }
 
+    if (selectedMode === 'current_candidate_score') {
+      const activeCandidateId = session?.active_candidate_id;
+      if (!activeCandidateId) {
+        return (
+          <div className="transmission-waiting">
+            <h2>AGUARDANDO CANDIDATO...</h2>
+          </div>
+        );
+      }
+
+      // Find candidate data in audit
+      const candidateAudit = Array.isArray(audit) ? audit.find(a => Number(a.candidate_id) === Number(activeCandidateId)) : null;
+      // Check in technical_ranking for averages
+      const candidateResult = results?.technical_ranking?.find(r => Number(r.candidate_id) === Number(activeCandidateId));
+      
+      // Check in session candidates or participants list
+      const sessionCandidate = (Array.isArray(session?.candidates) ? session.candidates : [])
+        .concat(Array.isArray(session?.participants) ? session.participants : [])
+        .find(c => Number(c.id || c.candidate_id || c.userId) === Number(activeCandidateId));
+
+      const candidateName = session?.active_candidate_name ||
+                            candidateAudit?.artistic_name || 
+                            candidateAudit?.name || 
+                            candidateResult?.artistic_name || 
+                            sessionCandidate?.artistic_name || 
+                            sessionCandidate?.name || 
+                            candidateResult?.name || 
+                            '---';
+      
+      const rawPhoto = session?.active_candidate_photo ||
+                       candidateAudit?.profile_photo_url || 
+                       candidateAudit?.photo_url ||
+                       candidateAudit?.photo ||
+                       candidateAudit?.avatar ||
+                       candidateResult?.profile_photo_url || 
+                       candidateResult?.photo_url || 
+                       candidateResult?.photo ||
+                       sessionCandidate?.profile_photo_url || 
+                       sessionCandidate?.photo_url ||
+                       sessionCandidate?.photo ||
+                       sessionCandidate?.avatar ||
+                       sessionCandidate?.profile_photo ||
+                       sessionCandidate?.image;
+                       
+      const photoUrl = resolvePhotoUrl(rawPhoto);
+
+      // We need to map the votes. Audit usually has a 'votes' array.
+      const votes = candidateAudit?.votes || [];
+      
+      // We expect Jurors A, B, C, D. If we have more or less, we map what we have.
+      const jurors = ['JURADO A', 'JURADO B', 'JURADO C', 'JURADO D'];
+      
+      const criteriaList = [
+        { key: 'tuning', label: 'AFINAÇÃO' },
+        { key: 'stage_presence', label: 'PRESENÇA DE PALCO' },
+        { key: 'harmony', label: 'MELODIA / HARMONIA' },
+        { key: 'rhythm', label: 'RITMO' },
+        { key: 'interpretation', label: 'INTERPRETAÇÃO' },
+        { key: 'authenticity', label: 'AUTENTICIDADE' },
+        { key: 'diction', label: 'DICÇÃO / PRONÚNCIA' }
+      ];
+
+      const getVoteValue = (jurorIndex, criterionKey) => {
+        const vote = votes[jurorIndex];
+        if (!vote) return '-';
+        const val = vote[criterionKey];
+        if (val === undefined || val === null) return '-';
+        return Number(val).toFixed(1).replace('.0', '');
+      };
+
+      const finalAverage = candidateResult?.judge_average || 0;
+      const currentRank = results?.technical_ranking?.findIndex(r => Number(r.candidate_id) === Number(activeCandidateId)) + 1 || '-';
+
+
+      // TELA DE PONTUAÇÃO DO CANDIDATO ATIVO - VOTOS DOS JURADOS EM TEMPO REAL
+      return (
+        <div className="candidate-score-fidelity">
+          <div className="score-left-column">
+             <div className="candidate-image-bg">
+                <img src={photoUrl} alt={candidateName} />
+                <div className="image-overlay-gradient"></div>
+             </div>
+             
+             <div className="live-badge-top">
+                <div className="dot"></div>
+                AO VIVO
+             </div>
+
+             <div className="candidate-name-footer">
+                <h1>{candidateName}</h1>
+             </div>
+          </div>
+
+          <div className="score-right-column">
+             <header className="score-panel-header">
+                <div className="festival-title-row">
+                   <Trophy size={28} className="trophy-icon" />
+                   <h2>FESTIVAL DE FORRÓ 2026</h2>
+                </div>
+                <p className="realtime-kicker">PAINEL DE PONTUAÇÃO EM TEMPO REAL</p>
+                <div className="header-divider"></div>
+             </header>
+
+             <div className="score-table-container">
+                <table className="score-fidelity-table">
+                   <thead>
+                      <tr>
+                         <th className="th-criteria">CRITÉRIOS</th>
+                         {jurors.map((j, i) => (
+                           <th key={i} className="th-juror">{j}</th>
+                         ))}
+                      </tr>
+                   </thead>
+                   <tbody>
+                      {criteriaList.map((criterion, idx) => (
+                        <tr key={idx}>
+                           <td className="td-criteria">{criterion.label}</td>
+                           {jurors.map((_, jIdx) => (
+                             <td key={jIdx} className="td-score">
+                                {getVoteValue(jIdx, criterion.key)}
+                             </td>
+                           ))}
+                        </tr>
+                      ))}
+                   </tbody>
+                </table>
+             </div>
+
+             <div className="score-summary-card">
+                <div className="summary-left">
+                   <h3>MÉDIA FINAL</h3>
+                   <div className="rank-badge-fidelity">
+                      {currentRank}º LUGAR ATUAL
+                   </div>
+                </div>
+                <div className="summary-center">
+                   <div className="final-score-value">
+                      {Number(finalAverage).toFixed(1)}
+                   </div>
+                </div>
+                <div className="summary-right">
+                   <span className="pts-label">PTS</span>
+                   <div className="level-meter-graphic">
+                      <div className="bar"></div>
+                      <div className="bar"></div>
+                      <div className="bar"></div>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
+      );
+    }
+
     if (selectedMode === 'total_public_votes') {
       const rows = results?.popular_ranking || [];
       const totalVotes = rows.reduce((acc, r) => acc + Number(r.public_votes || 0), 0);
       
+
+      // TELA DE TOTAL DE VOTOS POPULARES EM TEMPO REAL
       return (
         <div className="realtime-votes-screen">
           <div className="bg-decorations">
@@ -466,6 +660,8 @@ const FestivalTransmission = () => {
     );
   };
 
+
+  // RENDERIZAÇÃO PRINCIPAL DA PÁGINA DE TRANSMISSÃO
   return (
     <div className="transmission-page">
       <div className="flags-decoration-css">
