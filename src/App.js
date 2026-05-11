@@ -15,6 +15,7 @@ import VerTodos from "./portal/pages/VerTudoPage";
 import ProtectedRoute from "./shared/components/ProtectedRoute";
 import ProtectedRouteCandidato from "./shared/components/ProtectedRouteCandidato";
 import ProtectedRouteFestivalAdmin from "./shared/components/ProtectedRouteFestivalAdmin";
+import ProtectedRouteJudge from "./shared/components/ProtectedRouteJudge";
 
 import CandidaturaVagas from './vagas/pages/CandidaturaVagas';
 import LoginVagas from "./vagas/pages/LoginVagas";
@@ -28,6 +29,7 @@ import LoginJuradoAdmin from "./festival/pages/LoginJuradoAdmin";
 import CandidateArea from "./festival/pages/CandidateArea";
 import FestivalAdmin from "./festival/pages/FestivalAdmin";
 import FestivalTransmission from "./festival/pages/FestivalTransmission";
+import JudgeArea from "./festival/pages/JudgeArea";
 
 import "./index.css";
 
@@ -113,6 +115,7 @@ const App = () => {
         <Route path="/festival-forro/admin/login" element={<LoginJuradoAdmin />} />
         <Route path="/festival-forro/admin" element={<ProtectedRouteFestivalAdmin><FestivalAdmin /></ProtectedRouteFestivalAdmin>} />
         <Route path="/festival-forro/admin/transmissao/:sessionId" element={<ProtectedRouteFestivalAdmin><FestivalTransmission /></ProtectedRouteFestivalAdmin>} />
+        <Route path="/festival-forro/jurado" element={<ProtectedRouteJudge><JudgeArea /></ProtectedRouteJudge>} />
         <Route path="/area-candidato" element={<ProtectedRouteCandidato><CandidateArea /></ProtectedRouteCandidato>} />
       </Routes>
       </Router>

@@ -55,8 +55,8 @@ const LoginJuradoAdmin = () => {
       const role = (user?.role || response?.data?.role || '').toString().toLowerCase();
       const token = readTokenFromResponse(response);
 
-      if (role && role !== 'admin') {
-        setErrorMsg('Acesso permitido apenas para administradores.');
+      if (role && role !== 'admin' && role !== 'judge') {
+        setErrorMsg('Acesso permitido apenas para administradores e jurados.');
         return;
       }
 
@@ -71,7 +71,14 @@ const LoginJuradoAdmin = () => {
         localStorage.setItem('festivalAdminUser', JSON.stringify(user));
         localStorage.setItem('user', JSON.stringify(user));
       }
-      navigate('/festival-forro/admin');
+      if (role === 'admin') {
+        navigate('/festival-forro/admin');
+      } else if (role === 'judge') {
+        navigate('/festival-forro/jurado');
+      } else {
+        // Fallback for any other allowed role
+        navigate('/festival-forro/admin');
+      }
     } catch (error) {
       setErrorMsg(formatErrorMessage(error));
     } finally {

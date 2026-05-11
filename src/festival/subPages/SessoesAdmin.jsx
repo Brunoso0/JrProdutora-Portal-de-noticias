@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { Plus, MoreVertical, ArrowRight, RefreshCw, Trash2, Edit2, Eye, GripVertical } from 'lucide-react';
+import { Plus, MoreVertical, ArrowRight, RefreshCw, Trash2, Edit2, Eye, GripVertical, AlertTriangle } from 'lucide-react';
 import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { formatErrorMessage } from '../utils/errorFormatter';
 import '../styles/SessoesAdmin.css';
+import { io } from 'socket.io-client';
+import { useRef } from 'react';
 
 const STATUS_OPTIONS = ['waiting', 'public_voting', 'judge_voting', 'finished'];
 const STATUS_LABELS = {
@@ -713,6 +715,35 @@ const SessoesAdmin = () => {
     }
   };
 
+
+  const handleResolveAlert = async (alertId) => {
+    if (!alertId) return;
+    
+    // Usamos o runAction para que ele recarregue os dados automaticamente após resolver
+    await runAction(async () => {
+      await apiRequest('patch', `/api/alerts/${alertId}/resolve`);
+    }, 'Alerta marcado como resolvido.');
+
+    // Atualiza o modal de auditoria para remover o alerta da lista visual imediatamente
+    setAuditModalData(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        alerts: prev.alerts.filter(a => a.id !== alertId)
+      };
+    });
+  };
+
+  // Dentro do componente SessoesAdmin
+  const sessionAlerts = useMemo(() => {
+    // Filtra alertas da sessão atual que NÃO sejam de categoria 'vote_error'
+    return auditData.reduce((acc, candidate) => {
+      const nonVoteAlerts = (candidate.alerts || []).filter(a => a.category !== 'vote_error');
+      return [...acc, ...nonVoteAlerts];
+    }, []);
+  }, [auditData]);
+
+
   const openBroadcastScreen = async () => {
     if (!selectedSessionId) return;
     const sessionRoute = `${window.location.origin}/festival-forro/admin/transmissao/${selectedSessionId}`;
@@ -721,12 +752,53 @@ const SessoesAdmin = () => {
   };
 
   useEffect(() => {
-    // Atualiza os dados do modal se os dados de auditoria mudarem no fundo
-    if (auditModalData && auditData) {
-      const updated = auditData.find(a => a.candidate_id === auditModalData.candidate_id);
-      if (updated) setAuditModalData(updated);
+    if (auditModalData && auditData.length > 0) {
+      // Procura o candidato atual dentro do novo lote de dados de auditoria
+      const updatedCandidate = auditData.find(
+        a => Number(a.candidate_id) === Number(auditModalData.candidate_id)
+      );
+      
+      if (updatedCandidate) {
+        // Sincroniza o modal com os dados novos (incluindo as novas notas)
+        setAuditModalData(updatedCandidate);
+      }
     }
-  }, [auditData, auditModalData]);
+  }, [auditData]);
+
+  useEffect(() => {
+    const token = getToken();
+    if (!token) return;
+
+    // Conecta ao socket
+    const socket = io(apiBase, {
+      auth: { token }
+    });
+
+    // Ouvinte para novos alertas
+    socket.on('alert:created', (newAlert) => {
+      console.log('Novo alerta recebido via socket:', newAlert);
+      
+      // 1. Recarrega os dados de auditoria para garantir consistência
+      if (selectedSessionId && Number(newAlert.session_id) === Number(selectedSessionId)) {
+        loadAuditData(selectedSessionId);
+      }
+      
+      // 2. Opcional: Atualiza a lista de sessões para o contador de participantes/status
+      loadSessions();
+    });
+
+    // Ouvinte para alertas resolvidos
+    socket.on('alert:resolved', (payload) => {
+      if (selectedSessionId && Number(payload.session_id) === Number(selectedSessionId)) {
+        loadAuditData(selectedSessionId);
+      }
+    });
+
+    // Limpeza ao desmontar o componente
+    return () => {
+      socket.disconnect();
+    };
+  }, [selectedSessionId, apiBase, getToken, loadAuditData, loadSessions]);
 
   return (
     <div className="sessoes-admin-container" onClick={() => setDropdownOpenId(null)}>
@@ -1103,10 +1175,47 @@ const SessoesAdmin = () => {
             )}
 
             {activeSessionTab === 'votacao' && (
-              <div className="control-grid">
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-                  <div className="control-card">
-                    <h4>Voto Popular (Público)</h4>
+            <div className="control-grid">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                
+                {/* NOVO BLOCO DE ALERTAS DE SISTEMA/GERAIS */}
+                {sessionAlerts.length > 0 && (
+                  <div className="alerts-control-panel">
+                    <div className="alerts-panel-header">
+                      <div className="header-title">
+                        <AlertTriangle size={20} className="pulse-icon" />
+                        <strong>CENTRAL DE OCORRÊNCIAS ({sessionAlerts.length})</strong>
+                      </div>
+                      <span className="header-subtitle">Ações imediatas para produção e sistema</span>
+                    </div>
+                    
+                    <div className="alerts-scroll-area">
+                      {sessionAlerts.map(alert => (
+                        <div key={alert.id} className={`alert-card-item category-${alert.category}`}>
+                          <div className="alert-card-content">
+                            <div className="alert-judge-tag">
+                              <span className="judge-name">{alert.judge_name}</span>
+                              <span className="alert-time">{new Date(alert.created_at).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</span>
+                            </div>
+                            <p className="alert-message">"{alert.message}"</p>
+                            <div className="alert-category-badge">
+                              {alert.category === 'system_error' ? '🛠️ ERRO TÉCNICO' : '📢 AVISO GERAL'}
+                            </div>
+                          </div>
+                          <button 
+                            onClick={() => handleResolveAlert(alert.id)}
+                            className="btn-resolve-alert"
+                          >
+                            RESOLVER
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="control-card">
+                  <h4>Voto Popular (Público)</h4>
                     <p style={{ marginBottom: 16, fontSize: 13, color: '#6b7280' }}>
                       A votação popular exibe todos os candidatos desta sessão simultaneamente para que o público escolha seu favorito.
                     </p>
@@ -1230,20 +1339,33 @@ const SessoesAdmin = () => {
                       <table className="candidate-table">
                         <tbody>
                           {auditData.map((item) => {
-                            const hasAlerts = item.alerts && item.alerts.length > 0;
+                            const hasVoteAlerts = item.alerts && item.alerts.some(a => a.category === 'vote_error');
+  
                             return (
                               <tr key={item.candidate_id} className="candidate-table-row">
                                 <td>
                                   <div className="candidate-cell-content">
-                                    <span style={{ fontWeight: hasAlerts ? 'bold' : 'normal' }}>{item.artistic_name || item.name}</span>
+                                    <span style={{ fontWeight: hasVoteAlerts ? 'bold' : 'normal' }}>{item.artistic_name || item.name}</span>
                                   </div>
                                 </td>
                                 <td>{item.votes ? item.votes.length : 0}</td>
                                 <td>
-                                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, borderRadius: '50%', backgroundColor: hasAlerts ? '#ef4444' : '#e5e7eb', color: hasAlerts ? 'white' : '#9ca3af' }} title={hasAlerts ? 'Possui Alertas' : 'Sem alertas'}>
-                                    <span style={{ fontSize: 14, fontWeight: 'bold' }}>!</span>
-                                  </div>
-                                </td>
+                                <div 
+                                  style={{ 
+                                    display: 'inline-flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center', 
+                                    width: 24, 
+                                    height: 24, 
+                                    borderRadius: '50%', 
+                                    backgroundColor: hasVoteAlerts ? '#ef4444' : '#e5e7eb', // Usa a nova lógica
+                                    color: hasVoteAlerts ? 'white' : '#9ca3af' 
+                                  }} 
+                                  title={hasVoteAlerts ? 'Possui Erro de Voto' : 'Sem alertas de voto'}
+                                >
+                                  <span style={{ fontSize: 14, fontWeight: 'bold' }}>!</span>
+                                </div>
+                              </td>
                                 <td>
                                   <button type="button" className="candidate-action-btn" onClick={() => setAuditModalData(item)} disabled={isSaving}>Ver Notas</button>
                                 </td>
@@ -1421,11 +1543,18 @@ const SessoesAdmin = () => {
               <button className="close-btn" onClick={() => { setAuditModalData(null); setEditingVoteId(null); }} style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: '#6b7280' }}>&times;</button>
             </div>
             <div className="sessoes-modal-body">
-              {auditModalData.alerts && auditModalData.alerts.length > 0 && (
+              {auditModalData.alerts && auditModalData.alerts.filter(a => a.category === 'vote_error').length > 0 && (
                 <div className="sessoes-alert erro" style={{ marginBottom: 16 }}>
-                  <strong>Alertas pendentes:</strong>
+                  <strong>Alertas de Votação:</strong>
                   <ul style={{ margin: '8px 0 0 16px', padding: 0 }}>
-                    {auditModalData.alerts.map(a => <li key={a.id}>{a.message}</li>)}
+                    {auditModalData.alerts
+                      .filter(a => a.category === 'vote_error') // MOSTRA APENAS VOTO
+                      .map(a => (
+                        <li key={a.id}>
+                          <strong>{a.judge_name}:</strong> {a.message}
+                        </li>
+                      ))
+                    }
                   </ul>
                 </div>
               )}
