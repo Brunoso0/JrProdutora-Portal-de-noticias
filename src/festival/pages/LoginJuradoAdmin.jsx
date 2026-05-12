@@ -168,7 +168,7 @@ const LoginJuradoAdmin = () => {
       </div>
 
       <footer className="login-footer">
-        © 2024 FESTIVAL DE FORRÓ - O CORAÇÃO DO NORDESTE
+        © 2026 FESTIVAL DE FORRÓ - O CORAÇÃO DO NORDESTE
       </footer>
     </div>
   );

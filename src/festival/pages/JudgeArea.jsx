@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -49,7 +50,9 @@ const JudgeArea = () => {
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [alertForm, setAlertForm] = useState({ category: 'vote_error', message: '' });
   const [isAssigned, setIsAssigned] = useState(true); // Começa como true para não piscar erro
+  const socketRef = useRef(null);
 
+  // Mount: load stored user, fetch initial data and initialize socket (no polling)
   useEffect(() => {
     const storedUser = localStorage.getItem('user') || localStorage.getItem('festivalAdminUser');
     if (storedUser) {
@@ -57,15 +60,52 @@ const JudgeArea = () => {
     }
 
     fetchActiveData();
-    const interval = setInterval(fetchActiveData, 5000); // Poll every 5 seconds
-    
-    // Check for vote when candidate changes
+
+    const socketUrl = API_FESTIVAL && API_FESTIVAL.startsWith('http')
+      ? API_FESTIVAL.replace(/\/api\/?$/i, '')
+      : window.location.origin;
+
+    socketRef.current = io(socketUrl, {
+      transports: ['websocket', 'polling'],
+      auth: { token: null },
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    socketRef.current.on('connect', () => {
+      console.log('Socket conectado (JudgeArea):', socketRef.current.id);
+    });
+
+    socketRef.current.on('connect_error', (err) => {
+      console.error('Socket connect_error (JudgeArea):', err?.message || err);
+    });
+
+    socketRef.current.on('session:updated', () => fetchActiveData());
+    socketRef.current.on('session:candidates:updated', () => fetchActiveData());
+    socketRef.current.on('session:active_candidate', (payload) => {
+      if (payload?.candidate) setCandidate(payload.candidate);
+    });
+
+    return () => {
+      socketRef.current?.removeAllListeners();
+      socketRef.current?.disconnect();
+    };
+  }, []);
+
+  // When session or candidate changes, check existing judge vote
+  useEffect(() => {
     if (session?.id && candidate?.id) {
       checkExistingVote(session.id, candidate.id);
     }
-
-    return () => clearInterval(interval);
   }, [session?.id, candidate?.id]);
+
+  // Emit join to room when session becomes available
+  useEffect(() => {
+    if (socketRef.current && session?.id) {
+      console.log('Entrando na sala da sessão (JudgeArea):', session.id);
+      socketRef.current.emit('session:join', session.id);
+    }
+  }, [session?.id]);
 
   const checkExistingVote = async (sessionId, candidateId) => {
     try {
@@ -311,7 +351,7 @@ if (session && !isAssigned) {
       </div>
 
       <footer className="judge-footer-links">
-        <p className="footer-copy">© 2024 FESTIVAL DE FORRÓ - JR PRODUTORA.</p>
+        <p className="footer-copy">© 2026 FESTIVAL DE FORRÓ - JR PRODUTORA.</p>
       </footer>
     </div>
   );
@@ -395,7 +435,7 @@ if (session && !isAssigned) {
         <section className="voting-ballot">
           <div className="ballot-header">
             <h2>BOLETIM DE VOTAÇÃO</h2>
-            <p>{session?.title || 'Festival de Forró'} - Edição 2024</p>
+            <p>{session?.title || 'Festival de Forró'} - Edição 2026</p>
           </div>
 
           <div className="divider-dots"></div>
@@ -459,7 +499,7 @@ if (session && !isAssigned) {
       </main>
 
       <footer className="judge-footer-links">
-        <p className="footer-copy">© 2024 FESTIVAL DE FORRÓ - O CORAÇÃO DO NORDESTE BATE AQUI.</p>
+        <p className="footer-copy">© 6 FESTIVAL DE FORRÓ - O CORAÇÃO DO NORDESTE BATE AQUI.</p>
         <nav className="footer-nav">
           <a href="#">Privacidade</a>
           <a href="#">Termos de Uso</a>

@@ -124,7 +124,7 @@ Edite o caminho da imagem em `CandidaturaVagas.jsx`:
 
 No rodapé de `CandidaturaVagas.jsx`:
 ```jsx
-<p>Estaremos aceitando currículos até o dia <b>31 de dezembro de 2024</b></p>
+<p>Estaremos aceitando currículos até o dia <b>11 de maio de 2026</b></p>
 ```
 
 ### Modificar Email de Contato

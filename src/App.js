@@ -30,6 +30,7 @@ import CandidateArea from "./festival/pages/CandidateArea";
 import FestivalAdmin from "./festival/pages/FestivalAdmin";
 import FestivalTransmission from "./festival/pages/FestivalTransmission";
 import JudgeArea from "./festival/pages/JudgeArea";
+import FestivalVotar from "./festival/pages/FestivalVotar";
 
 import "./index.css";
 
@@ -110,6 +111,7 @@ const App = () => {
         <Route path="/vagas/candidatos" element={<ListaCandidatosVagas />} />
         <Route path="/festival-forro" element={<FestivalHome />} />
         <Route path="/festival-forro/inscricao" element={<FestivalInscricao />} />
+        <Route path="/festival-forro/votar" element={<FestivalVotar />} />
         <Route path="/login-candidato" element={<LoginCandidato />} />
         <Route path="/festival-forro/login" element={<LoginJuradoAdmin />} />
         <Route path="/festival-forro/admin/login" element={<LoginJuradoAdmin />} />
