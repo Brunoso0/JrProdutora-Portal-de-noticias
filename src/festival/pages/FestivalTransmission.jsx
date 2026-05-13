@@ -119,10 +119,8 @@ const FestivalTransmission = () => {
 
     window.addEventListener('storage', handleStorageUpdate);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    const intervalId = window.setInterval(loadTransmissionData, 3000);
 
     return () => {
-      window.clearInterval(intervalId);
       window.removeEventListener('storage', handleStorageUpdate);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
@@ -138,7 +136,10 @@ const FestivalTransmission = () => {
         }
         const token = getToken();
         const origin = apiBase.replace(/\/api\/?$/i, '').replace(/\/$/, '');
-        const socket = io(origin, { auth: { token } });
+        const socket = io(origin, { 
+          transports: ['polling', 'websocket'],
+          auth: { token } 
+        });
         socketRef.current = socket;
         socket.on('connect', () => socket.emit('session:join', sessionId));
         socket.on('session:broadcast:updated', (payload) => {
@@ -150,6 +151,16 @@ const FestivalTransmission = () => {
             if (needsFetch) loadTransmissionData();
           }
         });
+        
+        socket.on('session:updated', () => loadTransmissionData());
+        socket.on('session:candidates:updated', () => loadTransmissionData());
+        socket.on('session:candidate:removed', () => loadTransmissionData());
+        socket.on('session:active_candidate:updated', () => loadTransmissionData());
+        socket.on('session:active_candidate:released', () => loadTransmissionData());
+        socket.on('vote:public:created', () => loadTransmissionData());
+        socket.on('vote:judge:created', () => loadTransmissionData());
+        socket.on('vote:judge:deleted', () => loadTransmissionData());
+        socket.on('session:manual_adjustment:updated', () => loadTransmissionData());
       } catch (err) {}
     };
     connectSocket();

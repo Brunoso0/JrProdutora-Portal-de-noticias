@@ -769,8 +769,8 @@ const SessoesAdmin = () => {
     const token = getToken();
     if (!token) return;
 
-    // Conecta ao socket
     const socket = io(apiBase, {
+      transports: ['polling', 'websocket'],
       auth: { token }
     });
 
@@ -790,6 +790,19 @@ const SessoesAdmin = () => {
     // Ouvinte para alertas resolvidos
     socket.on('alert:resolved', (payload) => {
       if (selectedSessionId && Number(payload.session_id) === Number(selectedSessionId)) {
+        loadAuditData(selectedSessionId);
+      }
+    });
+
+    // Ouvintes para atualização automática das notas em tempo real
+    socket.on('vote:judge:created', (payload) => {
+      if (selectedSessionId && Number(payload.sessionId) === Number(selectedSessionId)) {
+        loadAuditData(selectedSessionId);
+      }
+    });
+
+    socket.on('vote:judge:deleted', (payload) => {
+      if (selectedSessionId && Number(payload.sessionId) === Number(selectedSessionId)) {
         loadAuditData(selectedSessionId);
       }
     });
@@ -1550,8 +1563,17 @@ const SessoesAdmin = () => {
                     {auditModalData.alerts
                       .filter(a => a.category === 'vote_error') // MOSTRA APENAS VOTO
                       .map(a => (
-                        <li key={a.id}>
-                          <strong>{a.judge_name}:</strong> {a.message}
+                        <li key={a.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <div>
+                            <strong>{a.judge_name}:</strong> {a.message}
+                          </div>
+                          <button 
+                            type="button"
+                            onClick={() => handleResolveAlert(a.id)}
+                            style={{ padding: '2px 8px', fontSize: 10, backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: 4, cursor: 'pointer', marginLeft: 'auto' }}
+                          >
+                            RESOLVER
+                          </button>
                         </li>
                       ))
                     }

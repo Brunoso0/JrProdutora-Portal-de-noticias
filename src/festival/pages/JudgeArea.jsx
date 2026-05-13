@@ -66,7 +66,7 @@ const JudgeArea = () => {
       : window.location.origin;
 
     socketRef.current = io(socketUrl, {
-      transports: ['websocket', 'polling'],
+      transports: ['polling', 'websocket'],
       auth: { token: null },
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
@@ -82,9 +82,11 @@ const JudgeArea = () => {
 
     socketRef.current.on('session:updated', () => fetchActiveData());
     socketRef.current.on('session:candidates:updated', () => fetchActiveData());
-    socketRef.current.on('session:active_candidate', (payload) => {
-      if (payload?.candidate) setCandidate(payload.candidate);
-    });
+    socketRef.current.on('session:candidate:removed', () => fetchActiveData());
+    socketRef.current.on('session:active_candidate:updated', () => fetchActiveData());
+    socketRef.current.on('session:active_candidate:released', () => fetchActiveData());
+    socketRef.current.on('vote:judge:deleted', () => fetchActiveData());
+    socketRef.current.on('vote:judge:updated', () => fetchActiveData());
 
     return () => {
       socketRef.current?.removeAllListeners();
@@ -155,6 +157,8 @@ const JudgeArea = () => {
       // 1. Pega as sessões
       const sessionsRes = await axios.get(`${API_FESTIVAL}/api/sessions`, { headers });
       const activeSession = sessionsRes.data.sessions?.find(s => s.status === 'judge_voting');
+      console.debug('JudgeArea: /api/sessions response', sessionsRes.data.sessions?.length || 0, 'sessions');
+      console.debug('JudgeArea: activeSession candidate/status', activeSession?.id, activeSession?.status, activeSession?.active_candidate_id);
 
       if (activeSession) {
         setSession(activeSession);
@@ -166,6 +170,7 @@ const JudgeArea = () => {
         
         // Verifica se o ID do usuário atual está no array de jurados da sessão
         const assigned = sessionJudges.some(j => Number(j.id) === Number(user?.id));
+        console.debug('JudgeArea: session judges count', sessionJudges.length, 'assigned?', assigned, 'userId', user?.id);
         setIsAssigned(assigned);
 
         if (assigned && activeSession.active_candidate_id) {
@@ -302,7 +307,7 @@ const JudgeArea = () => {
           <h2 className="waiting-title">SISTEMA EM ESPERA</h2>
           <p className="waiting-msg">Aguardando Administração liberar a votação do candidato.</p>
           <div className="waiting-badge">
-            STATUS: {session ? 'SESSÃO AGUARDANDO COMANDO' : 'NENHUMA SESSÃO ATIVA'}
+            {session ? `STATUS: ${String(session.status).toUpperCase()}${session.active_candidate_id ? ` • CANDIDATO_ATIVO ${session.active_candidate_id}` : ''}` : 'NENHUMA SESSÃO ATIVA'}
           </div>
         </div>
 

@@ -29,6 +29,7 @@ const FestivalVotar = () => {
 
 
     socketRef.current = io(socketUrl, {
+      transports: ['polling', 'websocket'],
       auth: { token: null }, // O novo auth.js que te mandei vai aceitar isso
       reconnectionAttempts: 5,
     });
@@ -47,6 +48,9 @@ const FestivalVotar = () => {
     });
 
     socketRef.current.on('session:updated', () => fetchActiveSession());
+    socketRef.current.on('session:candidate:removed', () => fetchActiveSession());
+    socketRef.current.on('session:active_candidate:updated', () => fetchActiveSession());
+    socketRef.current.on('session:active_candidate:released', () => fetchActiveSession());
 
     return () => {
       if (socketRef.current) {
