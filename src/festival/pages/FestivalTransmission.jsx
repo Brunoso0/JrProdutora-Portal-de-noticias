@@ -338,7 +338,7 @@ const FestivalTransmission = () => {
     }
 
     if (selectedMode === 'winners') {
-      const rows = results?.final_ranking || [];
+      const rows = results?.technical_ranking || [];
       const judgesCount = Number(session?.winners_count_judges || 3);
       const publicCount = Number(session?.winners_count_public || 1);
       
@@ -348,22 +348,20 @@ const FestivalTransmission = () => {
       if (podiumRaw.length >= 2) podium[0] = podiumRaw[1]; // 2nd
       if (podiumRaw.length >= 1) podium[1] = podiumRaw[0]; // 1st
       if (podiumRaw.length >= 3) podium[2] = podiumRaw[2]; // 3rd
+      // Additional judge winners beyond the top 3
+      const additionalJudgeWinners = podiumRaw.length > 3 ? podiumRaw.slice(3) : [];
 
-      const popularWinner = publicCount > 0 ? results?.popular_ranking?.[0] : null;
+      const popularWinners = results?.popular_winners || [];
       const isGrandeFinal = session?.title?.toLowerCase().includes('grande final');
 
-
-      // TELA DE VENCEDORES - PÓDIO E DESTAQUES
       return (
-        <div className="winners-screen-fidelity">
+        <div className="winners-screen-fidelity scale-in-center">
           <header className="winners-header-fidelity">
-            <div className="header-label-line">
-              <div className="line"></div>
-              <span>{isGrandeFinal ? 'GRANDE FINAL' : 'EDIÇÃO ESPECIAL 2026'}</span>
-              <div className="line"></div>
-            </div>
-            <h2 className="realtime-title-sub" style={{ fontSize: '92px' }}>RESULTADO: {session?.title || 'SESSÃO'}</h2>
-            <p style={{ color: '#8df7a8', fontWeight: 800, marginTop: '10px' }}>{isGrandeFinal ? 'O CAMPEÃO DOS CAMPEÕES' : 'FESTIVAL DE FORRÓ'}</p>
+            <h4 style={{ color: 'var(--transmission-gold)', letterSpacing: '2px', fontSize: '14px', marginBottom: '10px' }}>— EDIÇÃO ESPECIAL 2026 —</h4>
+            <h1 style={{ fontSize: '4rem', fontWeight: 900, textTransform: 'uppercase', color: '#fff', textShadow: '0 4px 15px rgba(0,0,0,0.5)' }}>
+              RESULTADO: {session?.title || 'FESTIVAL'}
+            </h1>
+            <p style={{ color: '#a7f3d0', fontSize: '1.2rem', marginTop: '10px' }}>FESTIVAL DE FORRÓ</p>
           </header>
 
           <div className="winners-podium-grid-fidelity">
@@ -378,7 +376,7 @@ const FestivalTransmission = () => {
                   <div className="winner-name-fidelity">{podium[0]?.artistic_name || podium[0]?.name || '---'}</div>
                   <div className="winner-score-pill-fidelity blue">
                     <Star size={20} fill="currentColor" />
-                    {Number(podium[0]?.effective_score || 0).toFixed(2)}
+                    {Number(podium[0]?.judge_average || 0).toFixed(2)}
                   </div>
                 </div>
                 <div className="winner-base-fidelity silver">
@@ -390,10 +388,8 @@ const FestivalTransmission = () => {
             {/* First Place */}
             {podium[1] && (
               <div className="winner-podium-column-fidelity pos-1">
-                <div className="winner-card-fidelity first">
-                  <div className="star-top-decoration">
-                    <Star size={48} fill="currentColor" />
-                  </div>
+                <div className="winner-card-fidelity first" style={isGrandeFinal ? { minHeight: '550px' } : {}}>
+                  <div className="winner-crown-fidelity"><Star size={48} fill="currentColor" /></div>
                   <div className="floating-rank-badge gold">1º LUGAR</div>
                   <div className="winner-photo-wrap" style={{ padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '15px' }}>
                     <img src={resolvePhotoUrl(podium[1]?.profile_photo_url || podium[1]?.photo_url || podium[1]?.candidate_profile_photo_url || podium[1]?.user_profile_photo_url)} alt={podium[1]?.artistic_name || podium[1]?.name} />
@@ -401,7 +397,7 @@ const FestivalTransmission = () => {
                   <div className="winner-name-fidelity">{podium[1]?.artistic_name || podium[1]?.name || '---'}</div>
                   <div className="winner-score-pill-fidelity gold">
                     <Trophy size={28} />
-                    {Number(podium[1]?.effective_score || 0).toFixed(2)}
+                    {Number(podium[1]?.judge_average || 0).toFixed(2)}
                   </div>
                 </div>
                 <div className="winner-base-fidelity gold">
@@ -421,7 +417,7 @@ const FestivalTransmission = () => {
                   <div className="winner-name-fidelity">{podium[2]?.artistic_name || podium[2]?.name || '---'}</div>
                   <div className="winner-score-pill-fidelity orange">
                     <Star size={20} fill="currentColor" />
-                    {Number(podium[2]?.effective_score || 0).toFixed(2)}
+                    {Number(podium[2]?.judge_average || 0).toFixed(2)}
                   </div>
                 </div>
                 <div className="winner-base-fidelity bronze">
@@ -430,25 +426,48 @@ const FestivalTransmission = () => {
               </div>
             )}
 
-            {/* Popular Choice */}
-            {popularWinner && (
-              <div className="winner-podium-column-fidelity pos-pop">
-                <div className="winner-card-fidelity popular">
-                  <div className="floating-rank-badge red">FAVORITO DO PÚBLICO</div>
-                  <div className="winner-photo-wrap" style={{ filter: 'grayscale(0.5)' }}>
-                    <img src={resolvePhotoUrl(popularWinner?.profile_photo_url || popularWinner?.photo_url || popularWinner?.candidate_profile_photo_url || popularWinner?.user_profile_photo_url)} alt={popularWinner?.artistic_name || popularWinner?.name} />
+            {/* Additional judge winners (4th place onwards) */}
+            {additionalJudgeWinners.map((item) => (
+              <div key={`judge-${item.candidate_id}`} className="winner-podium-column-fidelity pos-pop">
+                <div style={{ width: '100%' }}>
+                  <div className="winner-card-fidelity third" style={{ minHeight: '380px' }}>
+                    <div className="winner-photo-wrap">
+                      <img src={resolvePhotoUrl(item.profile_photo_url || item.photo_url || item.candidate_profile_photo_url || item.user_profile_photo_url)} alt={item.artistic_name || item.name} />
+                    </div>
+                    <div className="winner-name-fidelity">{item.artistic_name || item.name || '---'}</div>
+                    <div className="winner-score-pill-fidelity orange">
+                      <Star size={20} fill="currentColor" style={{ marginRight: '4px' }} />
+                      {Number(item.judge_average || 0).toFixed(2)}
+                    </div>
                   </div>
-                  <div className="winner-name-fidelity">{popularWinner?.artistic_name || popularWinner?.name || '---'}</div>
-                  <div className="winner-score-pill-fidelity red">
-                    <Heart size={18} fill="currentColor" />
-                    {Number(popularWinner?.public_votes || 0).toLocaleString('pt-BR')} Votos
+                  <div className="winner-base-fidelity bronze">
+                    <div className="winner-base-text">BRONZE</div>
                   </div>
-                </div>
-                <div className="winner-base-fidelity red">
-                  <div className="winner-base-text">POPULAR</div>
                 </div>
               </div>
-            )}
+            ))}
+
+            {/* Popular Choices */}
+            {popularWinners.map((pw, idx) => (
+              <div key={`pop-${pw.candidate_id || idx}`} className="winner-podium-column-fidelity pos-pop">
+                <div style={{ width: '100%' }}>
+                  <div className={`winner-card-fidelity popular ${idx === 0 ? 'popular-first' : ''}`} style={{ minHeight: '380px' }}>
+                    {idx === 0 && <div className="floating-rank-badge red">FAVORITO DO PÚBLICO</div>}
+                    <div className="winner-photo-wrap" style={{ filter: 'grayscale(0.5)' }}>
+                      <img src={resolvePhotoUrl(pw?.profile_photo_url || pw?.photo_url || pw?.candidate_profile_photo_url || pw?.user_profile_photo_url)} alt={pw?.artistic_name || pw?.name} />
+                    </div>
+                    <div className="winner-name-fidelity">{pw?.artistic_name || pw?.name || '---'}</div>
+                    <div className="winner-score-pill-fidelity red">
+                      <Heart size={18} fill="currentColor" style={{ marginRight: '5px' }} />
+                      {Number(pw?.public_votes || 0).toLocaleString('pt-BR')} Votos
+                    </div>
+                  </div>
+                  <div className="winner-base-fidelity red">
+                    <div className="winner-base-text">POPULAR</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       );

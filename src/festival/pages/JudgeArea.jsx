@@ -154,6 +154,17 @@ const JudgeArea = () => {
       const token = localStorage.getItem('token') || localStorage.getItem('festivalAdminToken');
       const headers = { Authorization: `Bearer ${token}` };
 
+      // Ensure we use the stored user if `user` state hasn't updated yet
+      const storedUserStr = localStorage.getItem('user') || localStorage.getItem('festivalAdminUser');
+      let currentUser = user;
+      if (!currentUser && storedUserStr) {
+        try {
+          currentUser = JSON.parse(storedUserStr);
+        } catch (e) {
+          currentUser = null;
+        }
+      }
+
       // 1. Pega as sessões
       const sessionsRes = await axios.get(`${API_FESTIVAL}/api/sessions`, { headers });
       const activeSession = sessionsRes.data.sessions?.find(s => s.status === 'judge_voting');
@@ -169,8 +180,8 @@ const JudgeArea = () => {
         const sessionJudges = judgesRes.data.judges || [];
         
         // Verifica se o ID do usuário atual está no array de jurados da sessão
-        const assigned = sessionJudges.some(j => Number(j.id) === Number(user?.id));
-        console.debug('JudgeArea: session judges count', sessionJudges.length, 'assigned?', assigned, 'userId', user?.id);
+        const assigned = sessionJudges.some(j => Number(j.id) === Number(currentUser?.id));
+        console.debug('JudgeArea: session judges count', sessionJudges.length, 'assigned?', assigned, 'userId', currentUser?.id);
         setIsAssigned(assigned);
 
         if (assigned && activeSession.active_candidate_id) {

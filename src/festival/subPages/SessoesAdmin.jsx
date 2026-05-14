@@ -30,6 +30,16 @@ const formatDate = (dateString) => {
   return parsed.toLocaleDateString('pt-BR');
 };
 
+// Normalize a backend date (ISO or YYYY-MM-DD) to the input[type=date] value format: yyyy-MM-dd
+const toInputDate = (raw) => {
+  if (!raw) return '';
+  const s = String(raw).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const d = new Date(s);
+  if (Number.isNaN(d.getTime())) return s.slice(0, 10);
+  return d.toISOString().slice(0, 10);
+};
+
 const normalizeText = (value) => String(value || '').trim().toLowerCase();
 
 const getApiOrigin = (apiBase) => {
@@ -447,7 +457,7 @@ const SessoesAdmin = () => {
     if (!selectedSession) return;
     setSessionForm({
       title: selectedSession.title || '',
-      session_date: selectedSession.session_date || '',
+      session_date: toInputDate(selectedSession.session_date) || '',
       session_time: selectedSession.session_time || '',
       location: selectedSession.location || '',
       status: selectedSession.status || 'waiting',
@@ -470,7 +480,10 @@ const SessoesAdmin = () => {
 
   const counters = useMemo(() => {
     const today = new Date().toISOString().slice(0, 10);
-    const todayCount = sessions.filter((item) => item.session_date && item.session_date.slice(0, 10) === today).length;
+    const todayCount = sessions.filter((item) => {
+      const d = toInputDate(item.session_date);
+      return d && d.slice(0, 10) === today;
+    }).length;
     const scheduled = sessions.filter((item) => item.status === 'waiting').length;
     return { todayCount, scheduled };
   }, [sessions]);
@@ -500,8 +513,8 @@ const SessoesAdmin = () => {
     await runAction(async () => {
       const payload = {
         title: createForm.title, session_date: createForm.session_date || undefined, session_time: createForm.session_time || undefined,
-        location: createForm.location || undefined, status: createForm.status, winners_count_judges: Number(createForm.winners_count_judges),
-        winners_count_public: Number(createForm.winners_count_public), is_public_voting_open: Boolean(createForm.is_public_voting_open),
+        location: createForm.location || undefined, status: createForm.status, judge_winners_count: Number(createForm.winners_count_judges),
+        public_winners_count: Number(createForm.winners_count_public), is_public_voting_open: Boolean(createForm.is_public_voting_open),
         candidates_limit: Number(createForm.candidates_limit), participants_limit: Number(createForm.candidates_limit), max_candidates: Number(createForm.candidates_limit)
       };
       const response = await apiRequest('post', '/api/sessions', payload);
@@ -517,7 +530,7 @@ const SessoesAdmin = () => {
     await runAction(() => apiRequest('patch', `/api/sessions/${selectedSessionId}`, {
       title: sessionForm.title, session_date: sessionForm.session_date || null, session_time: sessionForm.session_time || null,
       location: sessionForm.location || null, status: sessionForm.status,
-      winners_count_judges: Number(sessionForm.winners_count_judges), winners_count_public: Number(sessionForm.winners_count_public),
+      judge_winners_count: Number(sessionForm.winners_count_judges), public_winners_count: Number(sessionForm.winners_count_public),
       candidates_limit: Number(sessionForm.candidates_limit), participants_limit: Number(sessionForm.candidates_limit), max_candidates: Number(sessionForm.candidates_limit),
       is_public_voting_open: Boolean(sessionForm.is_public_voting_open)
     }), 'Dados gerais da sessão atualizados.');

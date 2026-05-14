@@ -800,6 +800,126 @@
   min-width: 200px;
 }
 
+/* Dynamic winners layout (supports N winners) */
+.winners-dynamic-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 30px auto;
+  max-width: 1200px;
+  padding: 10px;
+}
+
+.winner-card-dynamic {
+  width: 220px;
+  background: rgba(0, 40, 10, 0.45);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 14px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.winner-card-dynamic .rank-badge {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-weight: 900;
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.winner-card-dynamic .winner-photo img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.04);
+}
+
+.winner-card-dynamic .winner-name {
+  margin-top: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  color: #fff;
+}
+
+.winner-card-dynamic .winner-score {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--transmission-gold);
+}
+
+.popular-winners-section {
+  margin-top: 36px;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.popular-winners-section h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.popular-winners-list {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.popular-winner-card {
+  width: 160px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.popular-winner-card .pop-photo img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.popular-winner-card .pop-name {
+  margin-top: 8px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.popular-winner-card .pop-votes {
+  margin-top: 6px;
+  color: rgba(255,255,255,0.8);
+  font-weight: 700;
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+  .winner-card-dynamic { width: 45%; }
+  .winner-card-dynamic .winner-photo img { width: 120px; height: 120px; }
+  .popular-winner-card { width: 40%; }
+}
+
+@media (max-width: 480px) {
+  .winner-card-dynamic { width: 100%; }
+  .popular-winner-card { width: 48%; }
+}
+
 .item-stats-fidelity span {
   color: #1355a6;
 }
@@ -815,7 +935,8 @@
 /* WINNERS PODIUM - EXTREME FIDELITY */
 .winners-screen-fidelity {
   width: 100%;
-  max-width: 1300px;
+  max-width: 100%;
+  padding: 0 40px;
   display: flex;
   flex-direction: column;
 }
@@ -826,19 +947,55 @@
 }
 
 .winners-podium-grid-fidelity {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 20px;
-  align-items: flex-end;
-  margin-top: 40px;
-}
-
-.winners-podium-grid-fidelity {
-  display: grid;
-  grid-template-columns: 1fr 1.1fr 1fr 1fr;
-  gap: 15px;
   align-items: flex-start;
   margin-top: 60px;
+}
+
+/* Extra winners are placed directly in the flex container, so they wrap naturally */
+.winner-podium-column-fidelity {
+  flex: 0 0 auto;
+  width: 280px; /* Fixed width to keep cards consistent in flex layout */
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: center;
+}
+
+@media (max-width: 1400px) {
+  .winner-podium-column-fidelity {
+    width: 240px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .winners-podium-grid-fidelity {
+    gap: 15px;
+  }
+  .winner-podium-column-fidelity {
+    width: 220px;
+  }
+}
+
+@media (max-width: 700px) {
+  .winner-podium-column-fidelity {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 700px) {
+  .winners-podium-grid-fidelity {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .additional-judges-list {
+    grid-template-columns: 1fr;
+  }
+  .pos-pop-multi { grid-column: 1 / -1; flex-direction: column; }
 }
 
 .winner-podium-column-fidelity {
@@ -935,7 +1092,7 @@
 
 .winner-base-text {
   font-family: 'Outfit', sans-serif;
-  font-size: 50px;
+  font-size: 45px;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.1em;

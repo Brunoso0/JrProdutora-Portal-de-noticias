@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Checklist de Testes — Festival de Forró</title>
+  <style>
+    body{font-family:Inter,system-ui,Arial;background:#f7fafc;color:#0f172a;padding:24px}
+    h1{margin:0 0 12px}
+    .container{max-width:1000px;margin:0 auto;background:#fff;padding:20px;border-radius:8px;box-shadow:0 6px 18px rgba(2,6,23,0.06)}
+    .section{margin:18px 0}
+    ul{padding-left:18px}
+    li{margin:8px 0}
+    .meta{color:#475569;font-size:13px}
+    .actions{margin-top:16px}
+    a.button{display:inline-block;padding:8px 12px;background:#10b981;color:white;border-radius:6px;text-decoration:none}
+    .small{font-size:13px;color:#475569}
+    .export{float:right}
+  </style>
+  <script>
+    function exportChecklist(){
+      const items = Array.from(document.querySelectorAll('input[type=checkbox]')).map(cb=>({id:cb.id,label:cb.nextSibling?cb.nextSibling.textContent.trim():cb.parentElement.textContent.trim(),checked:cb.checked}));
+      const blob = new Blob([JSON.stringify({updated: new Date().toISOString(),items},null,2)],{type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'festival-checklist.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    }
+    function importChecklist(e){
+      const file = e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{
+        try{const data=JSON.parse(reader.result); data.items.forEach(it=>{const cb=document.getElementById(it.id); if(cb) cb.checked=!!it.checked}); alert('Checklist importado');}catch(err){alert('Arquivo inválido')}
+      }; reader.readAsText(file);
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Checklist Interativo — Festival de Forró</h1>
+    <p class="meta">Versão expandida. Baseado no <a href="./festival-test-plan-expanded.md">plano de testes expandido</a>. Marque cada item ao testá-lo.</p>
+
+    <div style="overflow:auto">
+      <div class="actions export">
+        <a class="button" href="#" onclick="exportChecklist();return false">Exportar JSON</a>
+        <label style="margin-left:8px;background:#f3f4f6;padding:8px;border-radius:6px;cursor:pointer"><input type="file" accept="application/json" style="display:none" onchange="importChecklist(event)"/>Importar</label>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Autenticação</h2>
+      <ul>
+        <li><label><input type="checkbox" id="auth-admin"/> Login Admin - email/senha e token salvo no <em>localStorage</em></label></li>
+        <li><label><input type="checkbox" id="auth-judge"/> Login Jurado</label></li>
+        <li><label><input type="checkbox" id="auth-candidate"/> Login Candidato</label></li>
+        <li><label><input type="checkbox" id="auth-logout"/> Logout limpa `localStorage` e redireciona</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Sessões</h2>
+      <ul>
+        <li><label><input type="checkbox" id="session-create"/> Criar sessão (Admin)</label></li>
+        <li><label><input type="checkbox" id="session-edit"/> Editar sessão (dados gerais)</label></li>
+        <li><label><input type="checkbox" id="session-status"/> Alterar status: waiting → judge_voting → finished</label></li>
+        <li><label><input type="checkbox" id="session-active-candidate"/> Definir candidato ativo e verificar broadcast</label></li>
+        <li><label><input type="checkbox" id="session-winners-count"/> Configurar `winners_count_judges` e validar resultado</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Candidatos</h2>
+      <ul>
+        <li><label><input type="checkbox" id="candidate-list"/> Listar candidatos (Admin)</label></li>
+        <li><label><input type="checkbox" id="candidate-crud"/> Criar/Editar/Excluir candidato</label></li>
+        <li><label><input type="checkbox" id="candidate-upload"/> Upload de imagem e `resolvePhotoUrl`</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Jurados</h2>
+      <ul>
+        <li><label><input type="checkbox" id="judge-crud"/> CRUD de jurados (Admin)</label></li>
+        <li><label><input type="checkbox" id="judge-assign"/> Atribuir/remover jurado a sessão e recepção via socket</label></li>
+        <li><label><input type="checkbox" id="judge-access"/> `JudgeArea` mostra acesso apenas quando jurado escalado</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Fluxo de Votação (Jurados)</h2>
+      <ul>
+        <li><label><input type="checkbox" id="vote-visibility"/> Candidato ativo visível para jurado</label></li>
+        <li><label><input type="checkbox" id="vote-submit-judge"/> Submeter voto - verificar `/api/votes/judge`</label></li>
+        <li><label><input type="checkbox" id="vote-check-judge"/> Verificar `/api/votes/judge/check` retorna `hasVoted`</label></li>
+        <li><label><input type="checkbox" id="vote-idempotency"/> Teste de idempotência / concorrência (duplicação de submit)</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Votação Pública</h2>
+      <ul>
+        <li><label><input type="checkbox" id="public-active"/> Lista de votação pública ativa</label></li>
+        <li><label><input type="checkbox" id="public-vote"/> Enviar voto público e validar limites</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Auditoria e Edição</h2>
+      <ul>
+        <li><label><input type="checkbox" id="audit-view"/> Visualizar auditoria de votos (Admin)</label></li>
+        <li><label><input type="checkbox" id="audit-edit"/> Editar/Excluir voto via Admin e verificar recalculos</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Alertas & Notificações</h2>
+      <ul>
+        <li><label><input type="checkbox" id="alert-send"/> Enviar alerta (`/api/alerts`) e receber socket `alert:created`</label></li>
+        <li><label><input type="checkbox" id="alert-resolve"/> Resolver alerta e verificar socket `alert:resolved`</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Transmissão / Broadcast</h2>
+      <ul>
+        <li><label><input type="checkbox" id="broadcast-get"/> Recuperar estado de transmissão</label></li>
+        <li><label><input type="checkbox" id="broadcast-set"/> Alterar modo de transmissão (admin) e validar update</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Uploads e Mídia</h2>
+      <ul>
+        <li><label><input type="checkbox" id="upload-image"/> Upload de imagem (multipart) e validação de retorno `url`</label></li>
+        <li><label><input type="checkbox" id="upload-large"/> Upload de arquivo grande e tratamento de erro</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Candidate Area & Inscrição</h2>
+      <ul>
+        <li><label><input type="checkbox" id="candidate-area"/> Visualizar/editar perfil do candidato autenticado</label></li>
+        <li><label><input type="checkbox" id="inscricao"/> Fluxo de inscrição e upload de documentos</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>UI e Estados</h2>
+      <ul>
+        <li><label><input type="checkbox" id="ui-waiting"/> `SISTEMA EM ESPERA` exibido quando não há candidato ativo</label></li>
+        <li><label><input type="checkbox" id="ui-unauthorized"/> `ACESSO NÃO AUTORIZADO` quando jurado não está escalado</label></li>
+        <li><label><input type="checkbox" id="ui-voted"/> Estado visual `já votou` após submissão</label></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Segurança & Edge Cases</h2>
+      <ul>
+        <li><label><input type="checkbox" id="sec-token-expired"/> Token expirado → 401 e logout</label></li>
+        <li><label><input type="checkbox" id="sec-admin-only"/> Endpoints admin retornam 403 para jurados</label></li>
+        <li><label><input type="checkbox" id="edge-invalid-payload"/> Enviar payloads inválidos e validar erros 4xx</label></li>
+      </ul>
+    </div>
+
+    <div class="actions">
+      <a class="button" href="./festival-test-plan-expanded.md" target="_blank">Abrir plano expandido</a>
+      <a class="button" style="background:#6366f1;margin-left:8px" href="./tests/playwright/README.md" target="_blank">Instruções Playwright</a>
+    </div>
+
+    <p style="margin-top:18px;color:#334155;font-size:13px">Use os botões "Exportar JSON" e "Importar" para salvar e restaurar o progresso localmente.</p>
+  </div>
+</body>
+</html>
