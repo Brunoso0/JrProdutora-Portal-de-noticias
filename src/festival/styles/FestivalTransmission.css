@@ -47,20 +47,38 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 40px;
+  height: 56px; /* taller for bunting */
   display: flex;
   justify-content: center;
-  gap: 5px;
-  z-index: 5;
+  gap: 8px;
+  z-index: 8;
   pointer-events: none;
-  overflow: hidden;
+  overflow: visible;
+  align-items: flex-start;
+}
+
+.flags-decoration-css::before {
+  /* decorative string that the flags hang from */
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  z-index: 7;
 }
 
 .flag {
-  width: 30px;
-  height: 45px;
-  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%);
+  width: 40px;
+  height: 54px;
+  clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 50% 80%, 15% 100%);
   flex-shrink: 0;
+  transform-origin: 50% 10%;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+  border-radius: 2px;
+  transform: translateY(0) rotate(0deg);
+  animation: flag-swing 3.6s ease-in-out infinite;
 }
 
 .flag:nth-child(4n+1) {
@@ -92,11 +110,37 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 40px 10px;
+  padding: 56px 40px 10px; /* space for bunting flags */
   /* Space for flags */
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* stagger animations for flags */
+.flag:nth-child(1) { animation-delay: 0s; }
+.flag:nth-child(2) { animation-delay: 0.15s; }
+.flag:nth-child(3) { animation-delay: 0.3s; }
+.flag:nth-child(4) { animation-delay: 0.45s; }
+.flag:nth-child(5) { animation-delay: 0.6s; }
+.flag:nth-child(6) { animation-delay: 0.75s; }
+.flag:nth-child(7) { animation-delay: 0.9s; }
+.flag:nth-child(8) { animation-delay: 1.05s; }
+
+@keyframes flag-swing {
+  0% { transform: translateY(0) rotate(-2deg); }
+  25% { transform: translateY(-6px) rotate(2deg); }
+  50% { transform: translateY(0) rotate(-1deg); }
+  75% { transform: translateY(-6px) rotate(2deg); }
+  100% { transform: translateY(0) rotate(-2deg); }
+}
+
+/* Make bunting denser and scaled on small screens */
+@media (max-width: 700px) {
+  .flags-decoration-css { height: 46px; }
+  .flags-decoration-css::before { top: 18px; }
+  .flag { width: 34px; height: 44px; }
+  .transmission-header { padding-top: 46px; }
 }
 
 .transmission-header h1 {
@@ -114,7 +158,7 @@
   align-items: center;
   justify-content: center;
   /* PERFECT CENTERING */
-  padding: 20px;
+  padding: 50px 20px 20px 20px;
 }
 
 /* TITLES WITH GRADIENT */
@@ -1175,6 +1219,25 @@
   z-index: 15;
 }
 
+/* Star for 1st place: yellow, centered above the first place name, slow vertical float */
+.winner-card-fidelity.first .star-top-decoration {
+  color: var(--transmission-gold);
+  top: -90px; /* sits above the name/title area */
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  font-size: 48px;
+  line-height: 1;
+  z-index: 20;
+  text-shadow: 0 6px 18px rgba(255, 222, 0, 0.45);
+  animation: float-slow 4.5s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-14px); }
+  100% { transform: translateX(-50%) translateY(0); }
+}
+
 /* Photo */
 .winner-photo-wrap {
   width: 100%;
@@ -1597,6 +1660,49 @@
   color: var(--transmission-gold);
   margin: 0;
   line-height: 1;
+}
+
+/* Notebook-specific responsive tweaks (laptops ~1024px - 1400px) */
+@media (min-width: 1024px) and (max-width: 1400px) {
+  .screen-title-large { font-size: 54px; }
+  .screen-subtitle-white { font-size: 16px; }
+
+  .idle-title-main { font-size: 36px; max-width: 700px; }
+  .idle-subtitle-year { font-size: 48px; }
+
+  .winner-card-fidelity { min-height: 420px; padding: 20px; }
+  .winner-card-fidelity.first { min-height: 460px; }
+
+  /* Ajuste da estela/estrela para notebooks */
+  .star-top-decoration { top: -45px; }
+  .winner-card-fidelity.first .star-top-decoration { top: -60px; font-size: 42px; }
+
+  /* Ajustes de badges flutuantes para melhor posicionamento em telas menores */
+  .floating-rank-badge.gold { top: -18px; font-size: 18px; padding: 6px 18px; }
+  .floating-rank-badge.blue,
+  .floating-rank-badge.orange {
+    width: 44px;
+    height: 44px;
+    top: -12px;
+    font-size: 18px;
+    right: -8px;
+    left: auto;
+  }
+
+  .winner-name-fidelity { font-size: 22px; }
+  .winner-score-pill-fidelity.gold { font-size: 28px; }
+
+  /* Realtime / números grandes reduzidos para caber em notebooks */
+  .realtime-title-main { font-size: 64px; }
+  .realtime-number-neon { font-size: 180px; }
+  .realtime-floating-logo { top: 80px; right: -30px; width: 140px; transform: rotate(8deg); }
+
+  /* Header e utilitários */
+  .transmission-header { padding: 12px 24px 8px; }
+  .transmission-header h1 { font-size: 18px; }
+
+  .winner-base-text { font-size: 36px; }
+  .live-badge-pill { padding: 8px 20px; font-size: 14px; }
 }
 
 .rank-badge-fidelity {
