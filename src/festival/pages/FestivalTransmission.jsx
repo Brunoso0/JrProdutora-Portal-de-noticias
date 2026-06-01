@@ -22,6 +22,7 @@ const getToken = () => localStorage.getItem('festivalAdminToken') || localStorag
 const FestivalTransmission = () => {
   const { sessionId } = useParams();
   const [session, setSession] = useState(null);
+  const [sessionJudges, setSessionJudges] = useState([]);
   const [broadcast, setBroadcast] = useState({ display_mode: 'idle', show_names: true });
   const [results, setResults] = useState(null);
   const [audit, setAudit] = useState(null);
@@ -60,11 +61,12 @@ const FestivalTransmission = () => {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
     try {
-      const [sessionsResponse, broadcastResponse, resultsResponse, auditResponse] = await Promise.all([
+      const [sessionsResponse, broadcastResponse, resultsResponse, auditResponse, judgesResponse] = await Promise.all([
         axios.get(`${apiBase}/api/sessions`, { headers }),
         axios.get(`${apiBase}/api/sessions/${sessionId}/broadcast`, { headers }),
         axios.get(`${apiBase}/api/sessions/${sessionId}/results`, { headers }),
-        axios.get(`${apiBase}/api/sessions/${sessionId}/audit`, { headers }).catch(() => ({ data: { auditData: [] } }))
+        axios.get(`${apiBase}/api/sessions/${sessionId}/audit`, { headers }).catch(() => ({ data: { auditData: [] } })),
+        axios.get(`${apiBase}/api/sessions/${sessionId}/judges`, { headers }).catch(() => ({ data: { judges: [] } }))
       ]);
 
       const currentSession = Array.isArray(sessionsResponse?.data?.sessions)
@@ -87,6 +89,7 @@ const FestivalTransmission = () => {
       }
       setResults(resultsResponse?.data || null);
       setAudit(auditResponse?.data?.auditData || []);
+      setSessionJudges(judgesResponse?.data?.judges || []);
       setErrorMsg('');
     } catch (error) {
       setErrorMsg(error?.response?.data?.message || 'Não foi possível carregar a transmissão.');
@@ -522,8 +525,28 @@ const FestivalTransmission = () => {
       // We need to map the votes. Audit usually has a 'votes' array.
       const votes = candidateAudit?.votes || [];
 
-      // We expect Jurors A, B, C, D. If we have more or less, we map what we have.
-      const jurors = ['JURADO A', 'JURADO B', 'JURADO C', 'JURADO D'];
+      // Prefer the session judges list for display order and names.
+      // Fallback to the audit votes' juror names, then to generic labels.
+      const jurorNames = (Array.isArray(sessionJudges) && sessionJudges.length > 0)
+        ? sessionJudges.map((j, i) => {
+            const name = j?.name || j?.juror_name || j?.full_name || j?.displayName || j?.label || j?.user?.name;
+            return name ? String(name) : `JURADO ${String.fromCharCode(65 + i)}`;
+          })
+        : (Array.isArray(votes) && votes.length > 0)
+          ? votes.map((v, i) => {
+              const name = v?.juror_name || v?.judge_name || v?.name || v?.judge || v?.user?.name || v?.evaluator || v?.evaluator_name;
+              return name ? String(name) : `JURADO ${String.fromCharCode(65 + i)}`;
+            })
+          : ['JURADO A', 'JURADO B', 'JURADO C', 'JURADO D'];
+
+      // Build a lookup from judge id or name to the vote object so we can show '-' when a judge hasn't voted yet.
+      const voteLookup = {};
+      if (Array.isArray(votes)) {
+        votes.forEach((v) => {
+          const judgeId = v?.judge_id || v?.juror_id || v?.judgeId || v?.user_id || v?.userId;
+          if (judgeId !== undefined && judgeId !== null) voteLookup[String(judgeId)] = v;
+        });
+      }
 
       const criteriaList = [
         { key: 'tuning', label: 'AFINAÇÃO' },
@@ -536,7 +559,14 @@ const FestivalTransmission = () => {
       ];
 
       const getVoteValue = (jurorIndex, criterionKey) => {
-        const vote = votes[jurorIndex];
+        // Try to resolve vote by sessionJudges order (if available) using judge id; otherwise fall back to array index.
+        let vote = null;
+        if (Array.isArray(sessionJudges) && sessionJudges[jurorIndex]) {
+          const j = sessionJudges[jurorIndex];
+          const judgeId = j?.id || j?.judge_id || j?.user_id || j?.judgeId || j?.userId;
+          if (judgeId !== undefined && judgeId !== null) vote = voteLookup[String(judgeId)];
+        }
+        if (!vote) vote = votes[jurorIndex];
         if (!vote) return '-';
         const val = vote[criterionKey];
         if (val === undefined || val === null) return '-';
@@ -581,16 +611,16 @@ const FestivalTransmission = () => {
                 <thead>
                   <tr>
                     <th className="th-criteria">CRITÉRIOS</th>
-                    {jurors.map((j, i) => (
-                      <th key={i} className="th-juror">{j}</th>
-                    ))}
+                    {jurorNames.map((j, i) => (
+                          <th key={i} className="th-juror">{j}</th>
+                        ))}
                   </tr>
                 </thead>
                 <tbody>
                   {criteriaList.map((criterion, idx) => (
                     <tr key={idx}>
                       <td className="td-criteria">{criterion.label}</td>
-                      {jurors.map((_, jIdx) => (
+                      {jurorNames.map((_, jIdx) => (
                         <td key={jIdx} className="td-score">
                           {getVoteValue(jIdx, criterion.key)}
                         </td>

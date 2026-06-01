@@ -615,11 +615,12 @@ const SessoesAdmin = () => {
     }));
 
     await runAction(async () => {
-      await Promise.all(payload.map((item) => apiRequest('patch', `/api/sessions/${selectedSessionId}/candidates/${item.candidateId}/details`, {
-        presentation_order: item.presentation_order,
-        presentation_time: item.presentation_time,
-        estimated_time: item.estimated_time
-      })));
+      await Promise.all(payload.map((item) => {
+        const body = { presentation_order: item.presentation_order };
+        if (item.presentation_time !== null && item.presentation_time !== undefined && String(item.presentation_time).trim() !== '') body.presentation_time = item.presentation_time;
+        if (item.estimated_time !== null && item.estimated_time !== undefined && String(item.estimated_time).trim() !== '') body.estimated_time = item.estimated_time;
+        return apiRequest('patch', `/api/sessions/${selectedSessionId}/candidates/${item.candidateId}/details`, body);
+      }));
     }, 'Ordem e horários salvos com sucesso.');
   };
 

@@ -1608,14 +1608,15 @@
 }
 
 .score-fidelity-table th.th-criteria {
-  text-align: left;
   padding-left: 0;
   color: #4ade80;
   opacity: 0.8;
+  font-size: large;
 }
 
 .score-fidelity-table th.th-juror {
   color: var(--transmission-gold);
+  font-size: large;
 }
 
 .score-fidelity-table td {
