@@ -94,6 +94,46 @@
   100% { transform: rotate(360deg); }
 }
 
+/* Tela de Aguardando Votação */
+.empty-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56vh;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.waiting-screen .waiting-inner {
+  max-width: 720px;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,244,237,0.85));
+  border: 2px solid var(--votar-border);
+  box-shadow: 6px 6px 0px rgba(47,29,17,0.08);
+  padding: 28px;
+  border-radius: 6px;
+}
+
+.waiting-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: var(--votar-accent-dark);
+  margin: 8px 0 6px 0;
+  text-transform: none;
+}
+
+.waiting-subtitle {
+  color: var(--votar-text-light);
+  font-size: 0.98rem;
+  margin-bottom: 6px;
+}
+
+.waiting-screen .votar-logo-box { margin-bottom: 8px; }
+.waiting-screen .votar-logo { max-width: 220px; }
+
+
 /* Header */
 .votar-header {
   text-align: center;

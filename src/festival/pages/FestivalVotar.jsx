@@ -149,11 +149,14 @@ const FestivalVotar = () => {
 
   if (!session) {
     return (
-      <div className="empty-container">
-        <div className="votar-logo-box">
-          <img src="/img/LOGO_FESTIVAL_DE_FORRO.png" alt="Logo" className="votar-logo" />
+      <div className="empty-container waiting-screen">
+        <div className="waiting-inner">
+          <div className="votar-logo-box">
+            <img src="/img/LOGO_FESTIVAL_DE_FORRO.png" alt="Logo" className="votar-logo" />
+          </div>
+          <h2 className="waiting-title">Aguarde — votação em breve</h2>
+          <p className="waiting-subtitle">A equipe está finalizando os preparativos. Atualize a página ou volte em alguns instantes.</p>
         </div>
-        <p>Aguarde a votação iniciar</p>
       </div>
     );
   }
