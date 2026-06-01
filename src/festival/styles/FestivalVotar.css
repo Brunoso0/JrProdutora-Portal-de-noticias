@@ -105,10 +105,7 @@
 }
 
 .votar-logo-box {
-  background-color: white;
   padding: 20px;
-  border: 1px solid #e0d0c0;
-  box-shadow: 0 4px 15px rgba(47, 29, 17, 0.05);
   margin-bottom: 25px;
   display: inline-flex;
   justify-content: center;
@@ -119,6 +116,12 @@
 .votar-logo {
   max-width: 100%;
   height: auto;
+  animation: logoPulse 3s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .votar-title {

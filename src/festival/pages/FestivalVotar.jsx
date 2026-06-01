@@ -18,7 +18,7 @@ const FestivalVotar = () => {
   const [honeypot, setHoneypot] = useState('');
   const [confirmCandidate, setConfirmCandidate] = useState(null);
 
-  const voteQueues = useRef({}); 
+  const voteQueues = useRef({});
   const timers = useRef({});
   const socketRef = useRef(null);
 
@@ -70,7 +70,7 @@ const FestivalVotar = () => {
     try {
       // Nota: Removi o setLoading(true) daqui para evitar o "pisca" da tela no F5 automático do socket
       const response = await axios.get(`${API_URL}/api/votes/public/active`);
-      
+
       if (response.data && response.data.session) {
         setSession(response.data.session);
         setCandidates(response.data.candidates || []);
@@ -105,7 +105,7 @@ const FestivalVotar = () => {
         candidate_id: candidateId,
         quantity: quantity,
         fingerprint: visitorId,
-        email_confirm: honeypot 
+        email_confirm: honeypot
       });
       setVoteSuccess(`${quantity} voto(s) enviado(s)!`);
       setTimeout(() => setVoteSuccess(null), 3000);
@@ -126,11 +126,11 @@ const FestivalVotar = () => {
 
     let prefix = 'C';
     const phase = String(candidate.current_phase || session?.current_phase || 'audicao').toLowerCase();
-    if (phase.includes('audicao')) prefix = 'A';
-    else if (phase.includes('final')) prefix = 'F';
-    else if (phase.includes('vencedor')) prefix = 'V';
-    else if (phase.includes('inscrito')) prefix = 'I';
-    else if (phase.includes('popular')) prefix = 'P';
+    if (phase.includes('audicao')) prefix = '#';
+    else if (phase.includes('final')) prefix = '#';
+    else if (phase.includes('vencedor')) prefix = '#';
+    else if (phase.includes('inscrito')) prefix = '#';
+    else if (phase.includes('popular')) prefix = '#';
     else if (phase.includes('juri') || phase.includes('jurado')) prefix = 'J';
 
     const numVal = candidate.presentationOrder || candidate.order || candidate.id || (index + 1);
@@ -214,10 +214,10 @@ const FestivalVotar = () => {
               <div key={candidate.id} className="candidate-card">
                 <div className="candidate-image-wrapper">
                   <span className="candidate-badge">{getCandidateBadge(candidate, index)}</span>
-                  <img 
-                    src={candidate.profile_photo_url?.startsWith('http') ? candidate.profile_photo_url : `${API_URL}/${candidate.profile_photo_url?.replace(/^\//, '')}`} 
-                    alt={candidate.artistic_name} 
-                    className="candidate-image" 
+                  <img
+                    src={candidate.profile_photo_url?.startsWith('http') ? candidate.profile_photo_url : `${API_URL}/${candidate.profile_photo_url?.replace(/^\//, '')}`}
+                    alt={candidate.artistic_name}
+                    className="candidate-image"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = '/img/user.jpg';
@@ -228,10 +228,10 @@ const FestivalVotar = () => {
                   <h3 className="candidate-name">{candidate.artistic_name}</h3>
                   <div className="candidate-location">
                     <MapPin size={14} />
-                    <span>{candidate.address || 'Local não informado'}</span>
+                    <span>{candidate.address || 'Senhor do Bonfim - BA'}</span>
                   </div>
-                  <button 
-                    className="btn-votar" 
+                  <button
+                    className="btn-votar"
                     onClick={() => setConfirmCandidate(candidate)}
                     disabled={voteLoading}
                   >
@@ -263,11 +263,11 @@ const FestivalVotar = () => {
         <div className="vote-modal-overlay" onClick={() => setConfirmCandidate(null)}>
           <div className="vote-modal-container" onClick={(e) => e.stopPropagation()}>
             <h2 className="vote-modal-title">Confirmar Voto</h2>
-            
+
             <div className="vote-modal-avatar-wrapper">
-              <img 
-                src={confirmCandidate.profile_photo_url?.startsWith('http') ? confirmCandidate.profile_photo_url : `${API_URL}/${confirmCandidate.profile_photo_url?.replace(/^\//, '')}`} 
-                alt={confirmCandidate.artistic_name} 
+              <img
+                src={confirmCandidate.profile_photo_url?.startsWith('http') ? confirmCandidate.profile_photo_url : `${API_URL}/${confirmCandidate.profile_photo_url?.replace(/^\//, '')}`}
+                alt={confirmCandidate.artistic_name}
                 className="vote-modal-avatar"
                 onError={(e) => {
                   e.target.onerror = null;
@@ -275,20 +275,20 @@ const FestivalVotar = () => {
                 }}
               />
             </div>
-            
+
             <h3 className="vote-modal-candidate-name">{confirmCandidate.artistic_name}</h3>
-            
+
             <div className="vote-modal-candidate-location">
               <MapPin size={15} />
-              <span>{confirmCandidate.address || 'Local não informado'}</span>
+              <span>{confirmCandidate.address || 'Senhor do Bonfim - BA'}</span>
             </div>
-            
+
             <p className="vote-modal-text">
               Deseja confirmar o seu voto em <strong>{confirmCandidate.artistic_name}</strong> para a Votação Popular do Festival de Forró?
             </p>
-            
+
             <div className="vote-modal-actions">
-              <button 
+              <button
                 className="btn-modal-confirm"
                 onClick={() => {
                   handleVote(confirmCandidate.id);
@@ -297,7 +297,7 @@ const FestivalVotar = () => {
               >
                 Sim, confirmar
               </button>
-              <button 
+              <button
                 className="btn-modal-cancel"
                 onClick={() => setConfirmCandidate(null)}
               >
